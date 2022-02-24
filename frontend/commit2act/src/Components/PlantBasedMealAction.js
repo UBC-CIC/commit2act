@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 const PlantBasedMealAction = () => {
   return (
@@ -7,10 +8,16 @@ const PlantBasedMealAction = () => {
       sx={{
         width: 300,
         height: 300,
-        backgroundColor: '#A3E4D7',
+        backgroundColor: '#DAF7A6',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '30px',
       }}
     >
-      This is the action panel for the plant based meal action
+      <p>Plant Based Meals</p>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <TextField id="outlined-basic" label="# of meals" variant="outlined" />
+      </Box>
     </Box>
   );
 };

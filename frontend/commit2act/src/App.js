@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import SelfReportMenu from './Components/SelfReportMenu';
+import SelfReportMenu from './components/SelfReportMenu';
 
 function App() {
   return (

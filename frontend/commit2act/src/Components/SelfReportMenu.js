@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
+import { Box, Autocomplete, TextField } from '@mui/material';
+import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterMoment';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
 import moment from 'moment';
 import PlantBasedMealAction from './PlantBasedMealAction';
 import TransportationAction from './TransportationAction';
@@ -37,13 +34,20 @@ const SelfReportMenu = () => {
   return (
     <div>
       <h1>Self Report Actions</h1>
-      <div style={{ display: 'flex' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Box style={{ display: 'flex' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            paddingRight: '20px',
+            gap: '20px',
+          }}
+        >
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Choose Date"
               value={selectedDate}
-              onChange={(event, newDate) => {
+              onChange={(newDate) => {
                 setSelectedDate(newDate);
               }}
               renderInput={(selectedDate) => <TextField {...selectedDate} />}
@@ -68,10 +72,10 @@ const SelfReportMenu = () => {
               <TextField {...params} label="Choose Self/Group" />
             )}
           />
-          <Button variant="contained">Add Action</Button>
-        </div>
+          {/* <Button variant="contained">Add Action</Button> */}
+        </Box>
         <div>{renderActionPanel()}</div>
-      </div>
+      </Box>
     </div>
   );
 };

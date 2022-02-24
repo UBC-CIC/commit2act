@@ -1,5 +1,5 @@
 import React from 'react';
-import Box from '@mui/material/Box';
+import { Box, TextField } from '@mui/material';
 
 const PlasticWasteAction = () => {
   return (
@@ -8,9 +8,23 @@ const PlasticWasteAction = () => {
         width: 300,
         height: 300,
         backgroundColor: '#F5EEF8',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '30px',
       }}
     >
-      This is the action panel for the reducing plastic waste action
+      <p>Reducing Plastic Waste</p>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
+        <TextField id="outlined-basic" label="mL of water" variant="outlined" />
+        <TextField id="outlined-basic" label="L of water" variant="outlined" />
+      </Box>
     </Box>
   );
 };
