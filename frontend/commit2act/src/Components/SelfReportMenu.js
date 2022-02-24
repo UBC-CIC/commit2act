@@ -38,7 +38,7 @@ const SelfReportMenu = () => {
     <div>
       <h1>Self Report Actions</h1>
       <div style={{ display: 'flex' }}>
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Choose Date"
