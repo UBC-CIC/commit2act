@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Typography, Grid } from '@mui/material';
 
 const TransportationAction = () => {
   const [stepNumber, setStepNumber] = useState(1);
@@ -10,16 +10,27 @@ const TransportationAction = () => {
   const renderFormStepOne = () => {
     return (
       stepNumber === 1 && (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            paddingBottom: '10px',
-          }}
-        >
-          <p style={{ fontSize: '17px' }}>{fact}</p>
-        </Box>
+        <Grid container direction="column" gap="20px">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              padding: '20px',
+              backgroundColor: '#FFFFFF',
+            }}
+          >
+            <Typography variant="body1">{fact}</Typography>
+          </Box>
+          <Button
+            onClick={() => {
+              setStepNumber(2);
+            }}
+            variant="contained"
+          >
+            Get Started
+          </Button>
+        </Grid>
       )
     );
   };
@@ -33,7 +44,6 @@ const TransportationAction = () => {
             justifyContent: 'center',
             flexDirection: 'column',
             gap: '20px',
-            paddingBottom: '10px',
           }}
         >
           <TextField
@@ -47,44 +57,28 @@ const TransportationAction = () => {
             variant="outlined"
           />
           <TextField id="outlined-basic" label="Bus kms" variant="outlined" />
+          <Button variant="contained">Add Action</Button>
         </Box>
       )
     );
   };
 
-  const renderButton = () => {
-    if (stepNumber === 1) {
-      return (
-        <Button
-          onClick={() => {
-            setStepNumber(2);
-          }}
-          variant="contained"
-        >
-          Get Started
-        </Button>
-      );
-    } else if (stepNumber === 2) {
-      return <Button variant="contained">Add Action</Button>;
-    }
-  };
-
   return (
-    <Box
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-evenly"
       sx={{
-        width: 300,
-        height: 350,
+        width: 400,
+        minHeight: '32vw',
         backgroundColor: '#e8f4f8',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '30px',
+        padding: '50px',
       }}
     >
-      <p>Transportation</p>
+      <Typography variant="h5">Transportation</Typography>
       {renderFormStepOne()}
       {renderFormStepTwo()}
-      {renderButton()}
-    </Box>
+    </Grid>
   );
 };
 

@@ -1,31 +1,23 @@
 import React from 'react';
-import { Box, TextField } from '@mui/material';
+import { Grid, TextField, Typography } from '@mui/material';
 
 const PlasticWasteAction = () => {
   return (
-    <Box
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-evenly"
       sx={{
-        width: 300,
-        height: 300,
+        width: 400,
+        minHeight: '32vw',
         backgroundColor: '#F5EEF8',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '30px',
+        padding: '50px',
       }}
     >
-      <p>Reducing Plastic Waste</p>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: '20px',
-        }}
-      >
-        <TextField id="outlined-basic" label="mL of water" variant="outlined" />
-        <TextField id="outlined-basic" label="L of water" variant="outlined" />
-      </Box>
-    </Box>
+      <Typography variant="h5">Reducing Plastic Waste</Typography>
+      <TextField id="outlined-basic" label="mL of water" variant="outlined" />
+      <TextField id="outlined-basic" label="L of water" variant="outlined" />
+    </Grid>
   );
 };
 
