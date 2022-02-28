@@ -8,14 +8,15 @@ import {
   Drawer,
   Divider,
   List,
-  ListItemText,
   ListItem,
 } from '@mui/material';
-import { Menu } from '@mui/icons-material';
+import { Menu, Group, Home, Assessment, Info } from '@mui/icons-material';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
   const drawerWidth = 240;
   const [openDrawer, setOpenDrawer] = useState(false);
+
   return (
     <div>
       <AppBar position="static">
@@ -35,7 +36,6 @@ const Navbar = () => {
           <Avatar>A</Avatar>
         </Toolbar>
       </AppBar>
-
       <Drawer
         anchor="left"
         variant="persistant"
@@ -45,13 +45,38 @@ const Navbar = () => {
       >
         <Divider />
         <List>
-          {['Home', 'Find Groups', 'Report Actions', 'Info'].map(
-            (text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text}></ListItemText>
-              </ListItem>
-            )
-          )}
+          <NavLink to="/" style={{ textDecoration: 'none' }}>
+            <ListItem button>
+              <IconButton>
+                <Home />
+                <Typography variant="subtitle1">Home</Typography>
+              </IconButton>
+            </ListItem>
+          </NavLink>
+          <NavLink to="/find-group" style={{ textDecoration: 'none' }}>
+            <ListItem button>
+              <IconButton>
+                <Group />
+                <Typography variant="subtitle1">Find Group</Typography>
+              </IconButton>
+            </ListItem>
+          </NavLink>
+          <NavLink to="/report-action" style={{ textDecoration: 'none' }}>
+            <ListItem button>
+              <IconButton>
+                <Assessment />
+                <Typography variant="subtitle1">Report Action</Typography>
+              </IconButton>
+            </ListItem>
+          </NavLink>
+          <NavLink to="/info" style={{ textDecoration: 'none' }}>
+            <ListItem button>
+              <IconButton>
+                <Info />
+                <Typography variant="subtitle1">Info</Typography>
+              </IconButton>
+            </ListItem>
+          </NavLink>
         </List>
       </Drawer>
     </div>

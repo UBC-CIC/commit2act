@@ -42,11 +42,11 @@ const SelfReportMenu = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h3" sx={{ mb: 5 }}>
+    <Grid container justifyContent="center">
+      <Typography variant="h3" sx={{ py: 5 }}>
         Self Report Actions
       </Typography>
-      <Grid container justifyContent="center" spacing={6} columnSpacing={6}>
+      <Grid container justifyContent="center" columnSpacing={6}>
         <Grid item>
           <Grid container direction="column" gap="20px">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -80,11 +80,9 @@ const SelfReportMenu = () => {
             />
           </Grid>
         </Grid>
-        <Grid item xs={6}>
-          {renderActionPanel()}
-        </Grid>
+        <Grid item>{renderActionPanel()}</Grid>
       </Grid>
-    </div>
+    </Grid>
   );
 };
 
