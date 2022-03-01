@@ -12,13 +12,37 @@ import {
 } from '@mui/material';
 import { Menu, Group, Home, Assessment, Info } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
+import { createTheme, ThemeProvider, styled } from '@mui/material';
+
+const theme = createTheme({
+  components: {
+    MuiTypography: {
+      variants: [
+        {
+          props: {
+            variant: 'subtitle1',
+          },
+          style: {
+            fontSize: 15,
+            color: 'black',
+            paddingLeft: 5,
+          },
+        },
+      ],
+    },
+  },
+});
+
+const StyledNavLink = styled(NavLink)({
+  textDecoration: 'none',
+});
 
 const Navbar = () => {
   const drawerWidth = 240;
   const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
       <AppBar position="static">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <IconButton
@@ -45,41 +69,41 @@ const Navbar = () => {
       >
         <Divider />
         <List>
-          <NavLink to="/" style={{ textDecoration: 'none' }}>
+          <StyledNavLink to="/">
             <ListItem button>
               <IconButton>
                 <Home />
                 <Typography variant="subtitle1">Home</Typography>
               </IconButton>
             </ListItem>
-          </NavLink>
-          <NavLink to="/find-group" style={{ textDecoration: 'none' }}>
+          </StyledNavLink>
+          <StyledNavLink to="/find-group">
             <ListItem button>
               <IconButton>
                 <Group />
                 <Typography variant="subtitle1">Find Group</Typography>
               </IconButton>
             </ListItem>
-          </NavLink>
-          <NavLink to="/report-action" style={{ textDecoration: 'none' }}>
+          </StyledNavLink>
+          <StyledNavLink to="/report-action">
             <ListItem button>
               <IconButton>
                 <Assessment />
                 <Typography variant="subtitle1">Report Action</Typography>
               </IconButton>
             </ListItem>
-          </NavLink>
-          <NavLink to="/info" style={{ textDecoration: 'none' }}>
+          </StyledNavLink>
+          <StyledNavLink to="/info">
             <ListItem button>
               <IconButton>
                 <Info />
                 <Typography variant="subtitle1">Info</Typography>
               </IconButton>
             </ListItem>
-          </NavLink>
+          </StyledNavLink>
         </List>
       </Drawer>
-    </div>
+    </ThemeProvider>
   );
 };
 
