@@ -10,11 +10,16 @@ const TransportationAction = () => {
   const renderFormStepOne = () => {
     return (
       stepNumber === 1 && (
-        <Grid container direction="column" gap="20px">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'center',
               flexDirection: 'column',
               padding: '20px',
               backgroundColor: '#FFFFFF',
@@ -30,7 +35,7 @@ const TransportationAction = () => {
           >
             Get Started
           </Button>
-        </Grid>
+        </Box>
       )
     );
   };
@@ -41,7 +46,6 @@ const TransportationAction = () => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'center',
             flexDirection: 'column',
             gap: '20px',
           }}
@@ -67,7 +71,8 @@ const TransportationAction = () => {
     <Grid
       container
       direction="column"
-      justifyContent="space-evenly"
+      gap="30px"
+      justifyContent="center"
       sx={{
         width: 400,
         minHeight: '32vw',

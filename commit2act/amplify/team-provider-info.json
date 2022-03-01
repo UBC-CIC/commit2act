@@ -1,15 +1,23 @@
 {
-  "dev": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-commit2act-dev-115636-authRole",
-      "UnauthRoleArn": "arn:aws:iam::016942909762:role/amplify-commit2act-dev-115636-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::016942909762:role/amplify-commit2act-dev-115636-authRole",
-      "Region": "ca-central-1",
-      "DeploymentBucketName": "amplify-commit2act-dev-115636-deployment",
-      "UnauthRoleName": "amplify-commit2act-dev-115636-unauthRole",
-      "StackName": "amplify-commit2act-dev-115636",
-      "StackId": "arn:aws:cloudformation:ca-central-1:016942909762:stack/amplify-commit2act-dev-115636/981b79e0-94e2-11ec-9475-06fba0b2386e",
-      "AmplifyAppId": "d2dgbokgf4vgx"
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-commit2act-dev-115636-authRole",
+            "UnauthRoleArn": "arn:aws:iam::016942909762:role/amplify-commit2act-dev-115636-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::016942909762:role/amplify-commit2act-dev-115636-authRole",
+            "Region": "ca-central-1",
+            "DeploymentBucketName": "amplify-commit2act-dev-115636-deployment",
+            "UnauthRoleName": "amplify-commit2act-dev-115636-unauthRole",
+            "StackName": "amplify-commit2act-dev-115636",
+            "StackId": "arn:aws:cloudformation:ca-central-1:016942909762:stack/amplify-commit2act-dev-115636/981b79e0-94e2-11ec-9475-06fba0b2386e",
+            "AmplifyAppId": "d2dgbokgf4vgx"
+        },
+        "categories": {
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d2dgbokgf4vgx",
+                    "type": "cicd"
+                }
+            }
+        }
     }
-  }
 }
