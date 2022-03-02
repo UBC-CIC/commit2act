@@ -52,15 +52,21 @@ const TransportationAction = () => {
         >
           <TextField
             id="outlined-basic"
-            label="Walking kms "
+            label="Distance Walked (km)"
             variant="outlined"
+            helperText="How far you walked"
           />
           <TextField
             id="outlined-basic"
-            label="Cycling kms"
+            label="Distance Cycled (km)"
             variant="outlined"
+            helperText="How far you walked"
           />
-          <TextField id="outlined-basic" label="Bus kms" variant="outlined" />
+          <TextField 
+            id="outlined-basic" 
+            label="Distance Transited (km)" 
+            variant="outlined"
+            helperText="How far you took public transit" />
           <Button variant="contained">Add Action</Button>
         </Box>
       )
