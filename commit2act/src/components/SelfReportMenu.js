@@ -43,7 +43,7 @@ const SelfReportMenu = () => {
 
   return (
     <Grid container justifyContent="center">
-      <Typography variant="h3" sx={{ py: 5 }}>
+      <Typography variant="h4" sx={{ py: 5 }}>
         Self Report Actions
       </Typography>
       <Grid container justifyContent="center" columnSpacing={6}>

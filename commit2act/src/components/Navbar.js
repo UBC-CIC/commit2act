@@ -20,6 +20,16 @@ const theme = createTheme({
       variants: [
         {
           props: {
+            variant: 'h2',
+          },
+          style: {
+            fontSize: 30,
+            color: 'black',
+            fontWeight: 100,
+          },
+        },
+        {
+          props: {
             variant: 'subtitle1',
           },
           style: {
@@ -54,7 +64,7 @@ const Navbar = () => {
           >
             <Menu />
           </IconButton>
-          <Typography variant="h6" color="inherit" component="div">
+          <Typography variant="h2" color="inherit" component="div">
             Commit2Act
           </Typography>
           <Avatar>A</Avatar>
