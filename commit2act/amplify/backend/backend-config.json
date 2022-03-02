@@ -1,11 +1,4 @@
 {
-  "hosting": {
-    "amplifyhosting": {
-      "service": "amplifyhosting",
-      "type": "cicd",
-      "lastPushTimeStamp": "2022-03-01T23:18:50.299Z"
-    }
-  },
   "api": {
     "commit2act": {
       "service": "AppSync",
@@ -26,6 +19,13 @@
           ]
         }
       }
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "providerPlugin": "awscloudformation",
+      "type": "manual"
     }
   }
 }

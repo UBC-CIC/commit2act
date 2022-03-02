@@ -1,0 +1,19 @@
+type PlantBasedMealAction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  number_of_plant_based_meals: Int!
+  date_of_action: AWSDate!
+}
+
+type WaterAction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  ml_tap_water: Float!
+  date_of_action: AWSDate!
+}
+
+type TransportationAction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  km_walked: Float!
+  km_biked: Float!
+  km_transited: Float!
+  date_of_action: AWSDate!
+}
