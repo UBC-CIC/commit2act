@@ -63,6 +63,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const StyledNavLink = styled(NavLink)({
   textDecoration: 'none',
+  '&:hover': {
+    opacity: 0.8,
+  },
 });
 
 const Navbar = () => {
@@ -86,7 +89,9 @@ const Navbar = () => {
           <Typography variant="h2" color="inherit" component="div">
             Commit2Act
           </Typography>
-          <Avatar>A</Avatar>
+          <StyledNavLink to="/account-settings">
+            <Avatar>A</Avatar>
+          </StyledNavLink>
         </Toolbar>
       </AppBar>
       <Drawer

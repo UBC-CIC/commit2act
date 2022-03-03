@@ -60,13 +60,14 @@ const TransportationAction = () => {
             id="outlined-basic"
             label="Distance Cycled (km)"
             variant="outlined"
-            helperText="How far you walked"
+            helperText="How far you cycled"
           />
-          <TextField 
-            id="outlined-basic" 
-            label="Distance Transited (km)" 
+          <TextField
+            id="outlined-basic"
+            label="Distance Transited (km)"
             variant="outlined"
-            helperText="How far you took public transit" />
+            helperText="How far you took public transit"
+          />
           <Button variant="contained">Add Action</Button>
         </Box>
       )
