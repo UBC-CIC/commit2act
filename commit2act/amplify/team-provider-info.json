@@ -32,5 +32,26 @@
       "StackId": "arn:aws:cloudformation:ca-central-1:016942909762:stack/amplify-commit2act-dev-115636/981b79e0-94e2-11ec-9475-06fba0b2386e",
       "AmplifyAppId": "d2dgbokgf4vgx"
     }
+  },
+  "testing": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-commit2act-testing-102946-authRole",
+      "UnauthRoleArn": "arn:aws:iam::016942909762:role/amplify-commit2act-testing-102946-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::016942909762:role/amplify-commit2act-testing-102946-authRole",
+      "Region": "ca-central-1",
+      "DeploymentBucketName": "amplify-commit2act-testing-102946-deployment",
+      "UnauthRoleName": "amplify-commit2act-testing-102946-unauthRole",
+      "StackName": "amplify-commit2act-testing-102946",
+      "StackId": "arn:aws:cloudformation:ca-central-1:016942909762:stack/amplify-commit2act-testing-102946/e886e9d0-9b1f-11ec-a4d3-020cfec4695e",
+      "AmplifyAppId": "d2dgbokgf4vgx"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2dgbokgf4vgx",
+          "type": "manual"
+        }
+      }
+    }
   }
 }
