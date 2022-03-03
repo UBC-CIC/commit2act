@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Autocomplete, Box, TextField, Typography, Grid } from '@mui/material';
+import { Autocomplete, TextField, Typography, Grid } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterMoment';
 import moment from 'moment';
 import PlantBasedMealAction from './PlantBasedMealAction';
 import TransportationAction from './TransportationAction';
 import PlasticWasteAction from './PlasticWasteAction';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const SelfReportMenu = () => {
+  const mobileGap = useMediaQuery('(min-width:600px') ? '0px' : '50px';
   const [selectedDate, setSelectedDate] = useState(
     moment().format('MMM Do YY')
   );
@@ -28,16 +30,6 @@ const SelfReportMenu = () => {
       return <TransportationAction />;
     } else if (selectedAction === 'Reducing Plastic Waste') {
       return <PlasticWasteAction />;
-    } else {
-      return (
-        <Box
-          sx={{
-            width: 400,
-            minHeight: '32vw',
-            backgroundColor: '#e8f4f8',
-          }}
-        ></Box>
-      );
     }
   };
 
@@ -46,7 +38,12 @@ const SelfReportMenu = () => {
       <Typography variant="h4" sx={{ py: 5 }}>
         Self Report Actions
       </Typography>
-      <Grid container justifyContent="center" columnSpacing={6}>
+      <Grid
+        container
+        justifyContent="center"
+        columnSpacing={selectedAction ? 6 : 0}
+        gap={mobileGap}
+      >
         <Grid item>
           <Grid container direction="column" gap="20px">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
