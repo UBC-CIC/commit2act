@@ -1,13 +1,59 @@
+enum UserRole {
+  STUDENT
+  EDUCATOR
+  ADMINISTRATOR
+  DEVELOPER
+  USER
+}
+
+type Group @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String!
+  image: AWSURL
+  userID: ID! @index(name: "byUser")
+  users: [User] @manyToMany(relationName: "UserGroup")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String!
+  email: AWSEmail!
+  avatar: AWSURL
+  role: UserRole!
+  PlantBasedMealActions: [PlantBasedMealAction] @hasMany(indexName: "byUser", fields: ["id"])
+  WaterActions: [WaterAction] @hasMany(indexName: "byUser", fields: ["id"])
+  TransportationActions: [TransportationAction] @hasMany(indexName: "byUser", fields: ["id"])
+  GroupsOwned: [Group] @hasMany(indexName: "byUser", fields: ["id"])
+  JoinedGroups: [Group] @manyToMany(relationName: "UserGroup")
+}
+
+type FactBonusPointQuiz @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  fact_text: String!
+  question_text: String!
+  answers: [String!]!
+  correct_answer: Int!
+}
+
 type PlantBasedMealAction @model @auth(rules: [{allow: public}]) {
   id: ID!
   number_of_plant_based_meals: Int!
   date_of_action: AWSDate!
+  image: AWSURL
+  points_received: Int!
+  g_co2_saved: Float!
+  userID: ID! @index(name: "byUser")
 }
 
 type WaterAction @model @auth(rules: [{allow: public}]) {
   id: ID!
   ml_tap_water: Float!
   date_of_action: AWSDate!
+  image: AWSURL
+  points_received: Int!
+  g_co2_saved: Float!
+  userID: ID! @index(name: "byUser")
 }
 
 type TransportationAction @model @auth(rules: [{allow: public}]) {
@@ -16,4 +62,8 @@ type TransportationAction @model @auth(rules: [{allow: public}]) {
   km_biked: Float!
   km_transited: Float!
   date_of_action: AWSDate!
+  image: AWSURL
+  points_received: Int!
+  g_co2_save: Float!
+  userID: ID! @index(name: "byUser")
 }

@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "commit2act",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-9f5bec9d-4e3e-4ac4-800f-e827204c6acb/amplify/backend/api/commit2act/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-934b0467-962a-4bc8-9516-5351e6626eae/amplify/backend/api/commit2act/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
       "keyDescription": "api key description",
