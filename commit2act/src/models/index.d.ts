@@ -117,7 +117,7 @@ export declare class FactBonusPointQuiz {
   readonly fact_text: string;
   readonly question_text: string;
   readonly answers: string[];
-  readonly correct_answer: number;
+  readonly correct_answer: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<FactBonusPointQuiz, FactBonusPointQuizMetaData>);

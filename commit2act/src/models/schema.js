@@ -613,7 +613,7 @@ export const schema = {
                 "correct_answer": {
                     "name": "correct_answer",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -735,5 +735,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "777ddf2c1ffb24cada85d72806227ed3"
+    "version": "573216e7f57aa30031ecda75bb808e33"
 };

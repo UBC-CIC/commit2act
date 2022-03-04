@@ -33,7 +33,7 @@ type FactBonusPointQuiz @model @auth(rules: [{allow: public}]) {
   fact_text: String!
   question_text: String!
   answers: [String!]!
-  correct_answer: Int!
+  correct_answer: String!
 }
 
 type PlantBasedMealAction @model @auth(rules: [{allow: public}]) {
@@ -67,3 +67,4 @@ type TransportationAction @model @auth(rules: [{allow: public}]) {
   g_co2_save: Float!
   userID: ID! @index(name: "byUser")
 }
+ 
