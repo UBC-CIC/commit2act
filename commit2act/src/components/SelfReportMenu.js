@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Autocomplete, TextField, Typography, Grid } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterMoment';
 import moment from 'moment';
-import PlantBasedMealAction from './PlantBasedMealAction';
-import TransportationAction from './TransportationAction';
-import PlasticWasteAction from './PlasticWasteAction';
+import ActionFact from './ActionFact';
+import ActionPanel from './ActionPanel';
 import { styled } from '@mui/material';
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
@@ -19,6 +18,14 @@ const SelfReportMenu = () => {
     moment().format('MMM Do YY')
   );
   const [selectedAction, setSelectedAction] = useState();
+  //this will be used to get the fact answers for the bonus quiz step of the form
+  const [fact, setFact] = useState();
+  const [stepNumber, setStepNumber] = useState(0);
+
+  const handleChangeStep = (stepNumber) => {
+    setStepNumber(stepNumber);
+  };
+
   let actionOptions = [
     'Plant Based Meals',
     'Transportation',
@@ -26,15 +33,14 @@ const SelfReportMenu = () => {
   ];
   let groupOptions = ['Individual', 'UBC CIC'];
 
-  const renderActionPanel = () => {
-    if (selectedAction === 'Plant Based Meals') {
-      return <PlantBasedMealAction />;
-    } else if (selectedAction === 'Transportation') {
-      return <TransportationAction />;
-    } else if (selectedAction === 'Reducing Plastic Waste') {
-      return <PlasticWasteAction />;
+  //resets the form everytime a new action is selected
+  useEffect(() => {
+    if (selectedAction) {
+      setStepNumber(1);
+    } else {
+      setStepNumber(0);
     }
-  };
+  }, [selectedAction]);
 
   return (
     <Grid container justifyContent="center" alignItems="center">
@@ -82,7 +88,16 @@ const SelfReportMenu = () => {
             />
           </Grid>
         </Grid>
-        <Grid item>{renderActionPanel()}</Grid>
+        <Grid item>
+          {stepNumber === 1 && (
+            <ActionFact setFact={setFact} changeStep={handleChangeStep} />
+          )}
+        </Grid>
+        <Grid item>
+          {selectedAction && stepNumber === 2 && (
+            <ActionPanel selectedAction={selectedAction} />
+          )}
+        </Grid>
       </StyledGrid>
     </Grid>
   );
