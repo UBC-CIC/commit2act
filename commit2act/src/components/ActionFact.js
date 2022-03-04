@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Button, Typography, Grid } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 const ActionFact = ({ changeStep, setFact }) => {
   //will be replaced w queried fact

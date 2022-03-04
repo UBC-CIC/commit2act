@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Button } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import PlantBasedMealAction from './PlantBasedMealAction';
 import TransportationAction from './TransportationAction';
 import PlasticWasteAction from './PlasticWasteAction';

@@ -15,9 +15,7 @@ const StyledGrid = styled(Grid)(({ theme }) => ({
 }));
 
 const SelfReportMenu = () => {
-  const [selectedDate, setSelectedDate] = useState(
-    moment().format('MMM Do YY')
-  );
+  const [selectedDate, setSelectedDate] = useState();
   const [selectedAction, setSelectedAction] = useState();
   //this will be used to get the fact answers for the bonus quiz step of the form
   const [fact, setFact] = useState();
@@ -73,6 +71,7 @@ const SelfReportMenu = () => {
     );
   };
 
+  console.log(selectedDate);
   return (
     <Grid container justifyContent="center" alignItems="center">
       <Typography variant="h4" sx={{ py: 5 }}>
@@ -93,7 +92,9 @@ const SelfReportMenu = () => {
                 label="Choose Date"
                 value={selectedDate}
                 onChange={(newDate) => {
-                  setSelectedDate(newDate);
+                  setSelectedDate(
+                    moment(new Date(newDate)).format('MM/DD/YYYY')
+                  );
                 }}
                 renderInput={(selectedDate) => <TextField {...selectedDate} />}
               />
