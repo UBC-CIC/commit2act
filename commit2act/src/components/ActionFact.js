@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
 import { Box, Button, Typography } from '@mui/material';
+import { API, graphqlOperation } from 'aws-amplify';
+import { listQuizID } from '../graphql/queries';
 
 const ActionFact = ({ changeStep, setFact }) => {
+  const getFactIds = async () => {
+    const res = await API.graphql(graphqlOperation(listQuizID));
+    console.log(res);
+  };
   //will be replaced w queried fact
   let selectedFact =
     'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production';
@@ -30,6 +36,7 @@ const ActionFact = ({ changeStep, setFact }) => {
       </Box>
       <Button
         onClick={() => {
+          getFactIds();
           changeStep(2);
         }}
         variant="contained"

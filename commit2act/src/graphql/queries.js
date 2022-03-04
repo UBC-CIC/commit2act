@@ -699,6 +699,27 @@ export const listFactBonusPointQuizs = /* GraphQL */ `
     }
   }
 `;
+
+export const listQuizID = /* GraphQL */ `
+  query ListFactBonusPointQuizs(
+    $filter: ModelFactBonusPointQuizFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listFactBonusPointQuizs(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+
 export const syncFactBonusPointQuizs = /* GraphQL */ `
   query SyncFactBonusPointQuizs(
     $filter: ModelFactBonusPointQuizFilterInput
