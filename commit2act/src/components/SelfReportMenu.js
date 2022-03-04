@@ -92,8 +92,6 @@ const SelfReportMenu = () => {
           {stepNumber === 1 && (
             <ActionFact setFact={setFact} changeStep={handleChangeStep} />
           )}
-        </Grid>
-        <Grid item>
           {selectedAction && stepNumber === 2 && (
             <ActionPanel selectedAction={selectedAction} />
           )}
