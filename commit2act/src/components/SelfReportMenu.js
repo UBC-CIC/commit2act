@@ -71,7 +71,6 @@ const SelfReportMenu = () => {
     );
   };
 
-  console.log(selectedDate);
   return (
     <Grid container justifyContent="center" alignItems="center">
       <Typography variant="h4" sx={{ py: 5 }}>
