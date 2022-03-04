@@ -1,60 +1,99 @@
-import React, { useState } from 'react';
-import { Autocomplete, Box, TextField, Typography, Grid } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Autocomplete, TextField, Typography, Grid } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterMoment';
 import moment from 'moment';
-import PlantBasedMealAction from './PlantBasedMealAction';
-import TransportationAction from './TransportationAction';
-import PlasticWasteAction from './PlasticWasteAction';
+import ActionFact from './ActionFact';
+import ActionPanel from './ActionPanel';
+import { styled } from '@mui/material';
+import BonusPointQuiz from './BonusPointQuiz';
+
+const StyledGrid = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    gap: '50px 0px',
+  },
+}));
 
 const SelfReportMenu = () => {
-  const [selectedDate, setSelectedDate] = useState(
-    moment().format('MMM Do YY')
-  );
+  const [selectedDate, setSelectedDate] = useState();
   const [selectedAction, setSelectedAction] = useState();
+  //this will be used to get the fact answers for the bonus quiz step of the form
+  const [fact, setFact] = useState();
+  const [stepNumber, setStepNumber] = useState(0);
+
+  const handleChangeStep = (stepNumber) => {
+    setStepNumber(stepNumber);
+  };
 
   let actionOptions = [
     'Plant Based Meals',
     'Transportation',
     'Reducing Plastic Waste',
   ];
-
   let groupOptions = ['Individual', 'UBC CIC'];
 
-  const renderActionPanel = () => {
-    if (selectedAction === 'Plant Based Meals') {
-      return <PlantBasedMealAction />;
-    } else if (selectedAction === 'Transportation') {
-      return <TransportationAction />;
-    } else if (selectedAction === 'Reducing Plastic Waste') {
-      return <PlasticWasteAction />;
+  //resets the form everytime a new action is selected
+  useEffect(() => {
+    if (selectedAction) {
+      setStepNumber(1);
     } else {
-      return (
-        <Box
+      setStepNumber(0);
+    }
+  }, [selectedAction]);
+
+  const renderFormStep = () => {
+    return (
+      selectedAction && (
+        <Grid
+          container
+          direction="column"
+          gap="30px"
+          justifyContent="center"
           sx={{
             width: 400,
             minHeight: '32vw',
             backgroundColor: '#e8f4f8',
+            padding: '50px',
           }}
-        ></Box>
-      );
-    }
+        >
+          {stepNumber === 1 && (
+            <ActionFact setFact={setFact} changeStep={handleChangeStep} />
+          )}
+          {selectedAction && stepNumber === 2 && (
+            <ActionPanel
+              selectedAction={selectedAction}
+              changeStep={handleChangeStep}
+            />
+          )}
+          {stepNumber === 3 && <BonusPointQuiz fact={fact} />}
+        </Grid>
+      )
+    );
   };
 
   return (
-    <Grid container justifyContent="center">
+    <Grid container justifyContent="center" alignItems="center">
       <Typography variant="h4" sx={{ py: 5 }}>
         Self Report Actions
       </Typography>
-      <Grid container justifyContent="center" columnSpacing={6}>
+      <StyledGrid
+        container
+        justifyContent="center"
+        columnSpacing={selectedAction ? 6 : 0}
+      >
         <Grid item>
           <Grid container direction="column" gap="20px">
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider
+              dateAdapter={AdapterDateFns}
+              sx={{ minWidth: 300 }}
+            >
               <DatePicker
                 label="Choose Date"
                 value={selectedDate}
                 onChange={(newDate) => {
-                  setSelectedDate(newDate);
+                  setSelectedDate(
+                    moment(new Date(newDate)).format('MM/DD/YYYY')
+                  );
                 }}
                 renderInput={(selectedDate) => <TextField {...selectedDate} />}
               />
@@ -62,7 +101,7 @@ const SelfReportMenu = () => {
             <Autocomplete
               disablePortal
               options={actionOptions}
-              sx={{ width: 300 }}
+              sx={{ minWidth: 300 }}
               onChange={(event, newAction) => {
                 setSelectedAction(newAction);
               }}
@@ -73,15 +112,15 @@ const SelfReportMenu = () => {
             <Autocomplete
               disablePortal
               options={groupOptions}
-              sx={{ width: 300 }}
+              sx={{ minWidth: 300 }}
               renderInput={(params) => (
                 <TextField {...params} label="Choose Self/Group" />
               )}
             />
           </Grid>
         </Grid>
-        <Grid item>{renderActionPanel()}</Grid>
-      </Grid>
+        <Grid item>{renderFormStep()}</Grid>
+      </StyledGrid>
     </Grid>
   );
 };

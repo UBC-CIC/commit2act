@@ -10,9 +10,18 @@ import {
   List,
   ListItem,
 } from '@mui/material';
-import { Menu, Group, Home, Assessment, Info } from '@mui/icons-material';
+import {
+  Menu,
+  Group,
+  Home,
+  Assessment,
+  Info,
+  ChevronLeft,
+  ExpandLess,
+} from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { createTheme, ThemeProvider, styled } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const theme = createTheme({
   components: {
@@ -43,17 +52,30 @@ const theme = createTheme({
   },
 });
 
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end',
+}));
+
 const StyledNavLink = styled(NavLink)({
   textDecoration: 'none',
+  '&:hover': {
+    opacity: 0.8,
+  },
 });
 
 const Navbar = () => {
-  const drawerWidth = 240;
+  const drawerWidth = useMediaQuery('(min-width:600px') ? 240 : '100%';
+  const drawerAnchor = useMediaQuery('(min-width:600px') ? 'left' : 'top';
   const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <IconButton
             edge="start"
@@ -67,16 +89,27 @@ const Navbar = () => {
           <Typography variant="h2" color="inherit" component="div">
             Commit2Act
           </Typography>
-          <Avatar>A</Avatar>
+          <StyledNavLink to="/account-settings">
+            <Avatar>A</Avatar>
+          </StyledNavLink>
         </Toolbar>
       </AppBar>
       <Drawer
-        anchor="left"
-        variant="persistant"
+        anchor={drawerAnchor}
+        variant="persistent"
         open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
-        PaperProps={{ sx: { width: drawerWidth } }}
+        PaperProps={{
+          sx: { width: drawerWidth },
+        }}
       >
+        <DrawerHeader>
+          <IconButton
+            onClick={() => setOpenDrawer(false)}
+            sx={{ paddingRight: '20px' }}
+          >
+            {drawerAnchor === 'left' ? <ChevronLeft /> : <ExpandLess />}
+          </IconButton>
+        </DrawerHeader>
         <Divider />
         <List>
           <StyledNavLink to="/">
