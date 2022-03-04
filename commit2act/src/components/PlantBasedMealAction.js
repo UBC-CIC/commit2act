@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 
 const PlantBasedMealAction = () => {
   return (
@@ -11,7 +11,6 @@ const PlantBasedMealAction = () => {
       }}
     >
       <TextField id="outlined-basic" label="# of meals" variant="outlined" />
-      <Button variant="contained">Add Action</Button>
     </Box>
   );
 };

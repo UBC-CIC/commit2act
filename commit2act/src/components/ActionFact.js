@@ -11,45 +11,32 @@ const ActionFact = ({ changeStep, setFact }) => {
   }, [selectedFact]);
 
   return (
-    <Grid
-      container
-      direction="column"
-      gap="30px"
-      justifyContent="center"
+    <Box
       sx={{
-        width: 400,
-        minHeight: '32vw',
-        backgroundColor: '#e8f4f8',
-        padding: '50px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
       }}
     >
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
+          padding: '20px',
+          backgroundColor: '#FFFFFF',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '20px',
-            backgroundColor: '#FFFFFF',
-          }}
-        >
-          <Typography variant="body1">{selectedFact}</Typography>
-        </Box>
-        <Button
-          onClick={() => {
-            changeStep(2);
-          }}
-          variant="contained"
-        >
-          Get Started
-        </Button>
+        <Typography variant="body1">{selectedFact}</Typography>
       </Box>
-    </Grid>
+      <Button
+        onClick={() => {
+          changeStep(2);
+        }}
+        variant="contained"
+      >
+        Get Started
+      </Button>
+    </Box>
   );
 };
 

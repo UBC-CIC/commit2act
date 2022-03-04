@@ -6,6 +6,7 @@ import moment from 'moment';
 import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import { styled } from '@mui/material';
+import BonusPointQuiz from './BonusPointQuiz';
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -41,6 +42,36 @@ const SelfReportMenu = () => {
       setStepNumber(0);
     }
   }, [selectedAction]);
+
+  const renderFormStep = () => {
+    return (
+      selectedAction && (
+        <Grid
+          container
+          direction="column"
+          gap="30px"
+          justifyContent="center"
+          sx={{
+            width: 400,
+            minHeight: '32vw',
+            backgroundColor: '#e8f4f8',
+            padding: '50px',
+          }}
+        >
+          {stepNumber === 1 && (
+            <ActionFact setFact={setFact} changeStep={handleChangeStep} />
+          )}
+          {selectedAction && stepNumber === 2 && (
+            <ActionPanel
+              selectedAction={selectedAction}
+              changeStep={handleChangeStep}
+            />
+          )}
+          {stepNumber === 3 && <BonusPointQuiz fact={fact} />}
+        </Grid>
+      )
+    );
+  };
 
   return (
     <Grid container justifyContent="center" alignItems="center">
@@ -88,14 +119,7 @@ const SelfReportMenu = () => {
             />
           </Grid>
         </Grid>
-        <Grid item>
-          {stepNumber === 1 && (
-            <ActionFact setFact={setFact} changeStep={handleChangeStep} />
-          )}
-          {selectedAction && stepNumber === 2 && (
-            <ActionPanel selectedAction={selectedAction} />
-          )}
-        </Grid>
+        <Grid item>{renderFormStep()}</Grid>
       </StyledGrid>
     </Grid>
   );

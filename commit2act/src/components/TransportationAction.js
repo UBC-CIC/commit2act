@@ -28,7 +28,6 @@ const TransportationAction = () => {
         variant="outlined"
         helperText="How far you took public transit"
       />
-      <Button variant="contained">Add Action</Button>
     </Box>
   );
 };

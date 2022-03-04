@@ -12,7 +12,6 @@ const PlasticWasteAction = () => {
     >
       <TextField id="outlined-basic" label="mL of water" variant="outlined" />
       <TextField id="outlined-basic" label="L of water" variant="outlined" />
-      <Button variant="contained">Add Action</Button>
     </Box>
   );
 };
