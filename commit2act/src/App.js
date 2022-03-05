@@ -11,9 +11,9 @@ import AccountSettingsPage from './pages/AccountSettingsPage';
 import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
 
-function App() {
-  Amplify.configure(awsconfig);
+Amplify.configure(awsconfig);
 
+function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
