@@ -6,7 +6,10 @@ import { listQuizID } from '../graphql/queries';
 const ActionFact = ({ changeStep, setFact }) => {
   const getFactIds = async () => {
     const res = await API.graphql(graphqlOperation(listQuizID));
-    console.log(res);
+    let numFacts = res.data.listFactBonusPointQuizs.items.length;
+    let randomNumber = Math.floor(Math.random() * numFacts);
+    let selectedId = res.data.listFactBonusPointQuizs.items[randomNumber].id;
+    console.log(selectedId);
   };
   //will be replaced w queried fact
   let selectedFact =

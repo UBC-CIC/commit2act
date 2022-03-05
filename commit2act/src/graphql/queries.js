@@ -714,8 +714,6 @@ export const listQuizID = /* GraphQL */ `
       items {
         id
       }
-      nextToken
-      startedAt
     }
   }
 `;
