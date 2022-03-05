@@ -9,9 +9,9 @@ import InfoPage from './pages/InfoPage';
 import LandingPage from './pages/LandingPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
 import Amplify from 'aws-amplify';
-import awsconfig from './aws-exports';
+import awsmobile from './aws-exports';
 
-Amplify.configure(awsconfig);
+Amplify.configure(awsmobile);
 
 function App() {
   return (
