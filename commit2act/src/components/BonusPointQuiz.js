@@ -9,53 +9,136 @@ import {
   RadioGroup,
   Radio,
 } from '@mui/material';
+import { CheckCircle, Cancel } from '@mui/icons-material';
+import { createTheme, ThemeProvider } from '@mui/material';
+
+const theme = createTheme({
+  components: {
+    MuiTypography: {
+      variants: [
+        {
+          props: {
+            variant: 'h2',
+          },
+          style: {
+            fontSize: 30,
+            color: 'black',
+            fontWeight: 100,
+          },
+        },
+        {
+          props: {
+            variant: 'h6',
+          },
+          style: {
+            fontSize: 25,
+            color: 'black',
+          },
+        },
+      ],
+    },
+  },
+});
 
 const BonusPointQuiz = ({ fact, changeStep }) => {
   const { question_text, answers, correct_answer } = fact;
 
   const [userAnswer, setUserAnswer] = useState();
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
+  const [numTries, setNumTries] = useState(1);
+
+  const displayQuiz = () => {
+    return (
+      <>
+        <Typography variant="subtitle1">{question_text}</Typography>
+        <FormControl>
+          <FormLabel id="bonus-quiz-answer-choices">Answer Choices</FormLabel>
+          <RadioGroup
+            aria-labelledby="bonus-quiz-answer-choices"
+            name="quiz-answer-choices-group"
+            value={userAnswer}
+            onChange={(e) => setUserAnswer(e.target.value)}
+          >
+            {answers.map((answer, index) => {
+              return (
+                <FormControlLabel
+                  key={index}
+                  value={answer}
+                  control={<Radio />}
+                  label={answer}
+                />
+              );
+            })}
+          </RadioGroup>
+          <Button
+            onClick={() => {
+              setIsAnswerSelected(true);
+            }}
+            variant="contained"
+            sx={{ marginY: 5 }}
+          >
+            Submit Answer
+          </Button>
+        </FormControl>
+      </>
+    );
+  };
+
+  const displayAnswer = () => {
+    return (
+      <>
+        {userAnswer === correct_answer ? (
+          <>
+            <Typography variant="h6">Correct!</Typography>
+            <CheckCircle sx={{ fontSize: 80 }} />
+            <Typography variant="subtitle1">
+              {numTries > 1
+                ? '0 bonus points will be added to your entry'
+                : '10 bonus points will be added to your entry'}
+            </Typography>
+            <Button
+              onClick={() => {
+                changeStep(4);
+              }}
+              variant="contained"
+            >
+              Next
+            </Button>
+          </>
+        ) : (
+          <>
+            <Typography variant="h6">Incorrect!</Typography>
+            <Cancel sx={{ fontSize: 80 }} />
+            <Button
+              onClick={() => {
+                setNumTries(numTries + 1);
+                setIsAnswerSelected(false);
+              }}
+              variant="contained"
+            >
+              Try Again
+            </Button>
+          </>
+        )}
+      </>
+    );
+  };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-        alignItems: 'center',
-      }}
-    >
-      <Typography variant="h5">Bonus Point Quiz</Typography>
-      <Typography variant="h6">{question_text}</Typography>
-      <FormControl>
-        <FormLabel id="bonus-quiz-answer-choices">Answer Choices</FormLabel>
-        <RadioGroup
-          aria-labelledby="bonus-quiz-answer-choices"
-          name="quiz-answer-choices-group"
-          value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
-        >
-          {answers.map((answer, index) => {
-            return (
-              <FormControlLabel
-                key={index}
-                value={answer}
-                control={<Radio />}
-                label={answer}
-              />
-            );
-          })}
-        </RadioGroup>
-        <Button
-          onClick={() => {
-            setIsAnswerSelected(true);
-          }}
-          variant="contained"
-        >
-          Submit Answer
-        </Button>
-      </FormControl>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          alignItems: 'center',
+          textAlign: 'center',
+        }}
+      >
+        <Typography variant="h2">Bonus Point Quiz</Typography>
+        {isAnswerSelected ? displayAnswer() : displayQuiz()}
+      </Box>
+    </ThemeProvider>
   );
 };
 

@@ -7,6 +7,7 @@ import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import { styled } from '@mui/material';
 import BonusPointQuiz from './BonusPointQuiz';
+import Co2SavedScreen from './Co2SavedScreen';
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -72,13 +73,19 @@ const SelfReportMenu = () => {
           {stepNumber === 3 && (
             <BonusPointQuiz fact={fact} changeStep={handleChangeStep} />
           )}
+          {stepNumber === 4 && <Co2SavedScreen changeStep={handleChangeStep} />}
         </Grid>
       )
     );
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center">
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      textAlign="center"
+    >
       <Typography variant="h4" sx={{ py: 5 }}>
         Self Report Actions
       </Typography>
