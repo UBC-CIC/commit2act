@@ -69,7 +69,9 @@ const SelfReportMenu = () => {
               changeStep={handleChangeStep}
             />
           )}
-          {stepNumber === 3 && <BonusPointQuiz fact={fact} />}
+          {stepNumber === 3 && (
+            <BonusPointQuiz fact={fact} changeStep={handleChangeStep} />
+          )}
         </Grid>
       )
     );

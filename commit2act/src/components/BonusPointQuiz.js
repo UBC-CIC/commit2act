@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
+  Button,
   Typography,
   FormControl,
   FormLabel,
@@ -9,8 +10,11 @@ import {
   Radio,
 } from '@mui/material';
 
-const BonusPointQuiz = ({ fact }) => {
+const BonusPointQuiz = ({ fact, changeStep }) => {
   const { question_text, answers, correct_answer } = fact;
+
+  const [userAnswer, setUserAnswer] = useState();
+  const [isAnswerSelected, setIsAnswerSelected] = useState(false);
 
   return (
     <Box
@@ -24,16 +28,32 @@ const BonusPointQuiz = ({ fact }) => {
       <Typography variant="h5">Bonus Point Quiz</Typography>
       <Typography variant="h6">{question_text}</Typography>
       <FormControl>
-        <FormLabel id="demo-controlled-radio-buttons-group">Choices</FormLabel>
+        <FormLabel id="bonus-quiz-answer-choices">Answer Choices</FormLabel>
         <RadioGroup
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="bonus-quiz-answers"
-          //   value={value}
-          //   onChange={handleChange}
+          aria-labelledby="bonus-quiz-answer-choices"
+          name="quiz-answer-choices-group"
+          value={userAnswer}
+          onChange={(e) => setUserAnswer(e.target.value)}
         >
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
+          {answers.map((answer, index) => {
+            return (
+              <FormControlLabel
+                key={index}
+                value={answer}
+                control={<Radio />}
+                label={answer}
+              />
+            );
+          })}
         </RadioGroup>
+        <Button
+          onClick={() => {
+            setIsAnswerSelected(true);
+          }}
+          variant="contained"
+        >
+          Submit Answer
+        </Button>
       </FormControl>
     </Box>
   );
