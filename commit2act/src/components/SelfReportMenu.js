@@ -57,7 +57,11 @@ const SelfReportMenu = () => {
           }}
         >
           {stepNumber === 1 && (
-            <ActionFact setFact={setFact} changeStep={handleChangeStep} />
+            <ActionFact
+              fact={fact}
+              setFact={setFact}
+              changeStep={handleChangeStep}
+            />
           )}
           {selectedAction && stepNumber === 2 && (
             <ActionPanel
