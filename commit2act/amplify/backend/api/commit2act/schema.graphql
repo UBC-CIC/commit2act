@@ -1,18 +1,8 @@
-enum UserRole {
-  STUDENT
-  EDUCATOR
-  ADMINISTRATOR
-  DEVELOPER
-  USER
-}
-
-type Group @model @auth(rules: [{allow: public}]) {
+type EducatorUser @model @auth(rules: [{allow: public}]) {
   id: ID!
-  name: String!
-  description: String!
-  image: AWSURL
-  userID: ID! @index(name: "byUser")
-  users: [User] @manyToMany(relationName: "UserGroup")
+  User: User @hasOne
+  School: School @hasOne
+  OwnedGroups: [Group] @manyToMany(relationName: "EducatorUserGroup")
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -20,12 +10,57 @@ type User @model @auth(rules: [{allow: public}]) {
   username: String!
   email: AWSEmail!
   avatar: AWSURL
-  role: UserRole!
-  PlantBasedMealActions: [PlantBasedMealAction] @hasMany(indexName: "byUser", fields: ["id"])
-  WaterActions: [WaterAction] @hasMany(indexName: "byUser", fields: ["id"])
-  TransportationActions: [TransportationAction] @hasMany(indexName: "byUser", fields: ["id"])
-  GroupsOwned: [Group] @hasMany(indexName: "byUser", fields: ["id"])
-  JoinedGroups: [Group] @manyToMany(relationName: "UserGroup")
+  type: UserType!
+  Actions: [Action] @hasMany(indexName: "byUser", fields: ["id"])
+  total_points: Float!
+  total_g_co2_saved: Float!
+}
+
+type StudentUser @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  User: User @hasOne
+  School: School @hasOne
+  JoinedGroups: [Group] @manyToMany(relationName: "StudentUserGroup")
+}
+
+type School @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  city: String
+  country: String
+}
+
+type Group @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String!
+  image: AWSURL
+  studentusers: [StudentUser] @manyToMany(relationName: "StudentUserGroup")
+  educatorusers: [EducatorUser] @manyToMany(relationName: "EducatorUserGroup")
+}
+
+enum UserType {
+  STUDENT
+  EDUCATOR
+  ADMINISTRATOR
+  DEVELOPER
+  USER
+}
+
+type SubmittedAction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Action: Action @hasOne
+  FactBonusPointQuiz: FactBonusPointQuiz @hasOne
+  User: User @hasOne
+}
+
+type Action @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  date_of_action: AWSDate!
+  image: AWSURL
+  points_received: Float!
+  g_co2_saved: Float!
+  userID: ID! @index(name: "byUser")
 }
 
 type FactBonusPointQuiz @model @auth(rules: [{allow: public}]) {
@@ -34,37 +69,5 @@ type FactBonusPointQuiz @model @auth(rules: [{allow: public}]) {
   question_text: String!
   answers: [String!]!
   correct_answer: String!
-}
-
-type PlantBasedMealAction @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  number_of_plant_based_meals: Int!
-  date_of_action: AWSDate!
-  image: AWSURL
-  points_received: Int!
-  g_co2_saved: Float!
-  userID: ID! @index(name: "byUser")
-}
-
-type WaterAction @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  ml_tap_water: Float!
-  date_of_action: AWSDate!
-  image: AWSURL
-  points_received: Int!
-  g_co2_saved: Float!
-  userID: ID! @index(name: "byUser")
-}
-
-type TransportationAction @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  km_walked: Float!
-  km_biked: Float!
-  km_transited: Float!
-  date_of_action: AWSDate!
-  image: AWSURL
-  points_received: Int!
-  g_co2_save: Float!
-  userID: ID! @index(name: "byUser")
 }
  
