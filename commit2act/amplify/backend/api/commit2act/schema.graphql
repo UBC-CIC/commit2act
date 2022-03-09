@@ -11,9 +11,9 @@ type User @model @auth(rules: [{allow: public}]) {
   email: AWSEmail!
   avatar: AWSURL
   type: UserType!
-  Actions: [Action] @hasMany(indexName: "byUser", fields: ["id"])
   total_points: Float!
   total_g_co2_saved: Float!
+  SubmittedActions: [SubmittedAction] @hasMany(indexName: "byUser", fields: ["id"])
 }
 
 type StudentUser @model @auth(rules: [{allow: public}]) {
@@ -51,7 +51,7 @@ type SubmittedAction @model @auth(rules: [{allow: public}]) {
   id: ID!
   Action: Action @hasOne
   FactBonusPointQuiz: FactBonusPointQuiz @hasOne
-  User: User @hasOne
+  userID: ID! @index(name: "byUser")
 }
 
 type Action @model @auth(rules: [{allow: public}]) {
@@ -60,7 +60,8 @@ type Action @model @auth(rules: [{allow: public}]) {
   image: AWSURL
   points_received: Float!
   g_co2_saved: Float!
-  userID: ID! @index(name: "byUser")
+  action_name: String!
+  action_items: AWSJSON!
 }
 
 type FactBonusPointQuiz @model @auth(rules: [{allow: public}]) {

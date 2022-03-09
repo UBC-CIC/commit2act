@@ -10,17 +10,17 @@ const UserType = {
   "USER": "USER"
 };
 
-const { EducatorUser, User, Action, School, Group, StudentUser, SubmittedAction, FactBonusPointQuiz, EducatorUserGroup, StudentUserGroup } = initSchema(schema);
+const { EducatorUser, User, SubmittedAction, Action, FactBonusPointQuiz, School, Group, StudentUser, EducatorUserGroup, StudentUserGroup } = initSchema(schema);
 
 export {
   EducatorUser,
   User,
+  SubmittedAction,
   Action,
+  FactBonusPointQuiz,
   School,
   Group,
   StudentUser,
-  SubmittedAction,
-  FactBonusPointQuiz,
   EducatorUserGroup,
   StudentUserGroup,
   UserType
