@@ -31,7 +31,6 @@ const SelfReportMenu = () => {
     'Transportation',
     'Reducing Plastic Waste',
   ];
-  let groupOptions = ['Individual', 'UBC CIC'];
 
   //resets the form everytime a new action is selected
   useEffect(() => {
@@ -120,14 +119,6 @@ const SelfReportMenu = () => {
               }}
               renderInput={(params) => (
                 <TextField {...params} label="Choose Action" />
-              )}
-            />
-            <Autocomplete
-              disablePortal
-              options={groupOptions}
-              sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Choose Self/Group" />
               )}
             />
           </Grid>
