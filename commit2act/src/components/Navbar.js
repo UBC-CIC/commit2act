@@ -14,15 +14,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import {
-  Group,
-  Home,
-  Assessment,
-  Info,
-  ExitToApp,
-  AccountBox,
-  More,
-} from '@mui/icons-material';
+import { ExitToApp, More } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Auth } from 'aws-amplify';
 import { connect } from 'react-redux';
@@ -145,10 +137,7 @@ function Navbar(props) {
       onClose={handleMobileMenuClose}
     >
       <MenuItem disabled>
-        <AccountBox />
-        <Typography variant={'subtitle1'} noWrap>
-          {user}
-        </Typography>
+        <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
       </MenuItem>
       <MenuItem onClick={handleLogout}>
         <span>Logout </span>
@@ -198,18 +187,12 @@ function Navbar(props) {
             component={'h1'}
             noWrap
           >
-            <span>
-              <span>App</span>
-              <span style={{ color: `${theme.palette.secondary.main}` }}>
-                /
-              </span>
-              <span>Name</span>
-            </span>
+            Commit2Act
           </Typography>
           <img
             className={classes.logo}
             style={{ width: '270px', height: '30px' }}
-            src={process.env.PUBLIC_URL + './Assets/Images/logo_inverse.png'}
+            src={process.env.PUBLIC_URL + './assets/images/logo_inverse.png'}
             alt="..."
           />
           <div className={classes.grow} />
@@ -222,10 +205,7 @@ function Navbar(props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountBox fontSize={'large'} />
-              <Typography variant={'subtitle1'} noWrap>
-                {user}
-              </Typography>
+              <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

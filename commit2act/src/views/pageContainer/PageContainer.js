@@ -10,7 +10,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { Inbox, Mail, Home, Dashboard } from '@mui/icons-material';
+import {
+  Info,
+  Assessment,
+  Home,
+  Group,
+  AccountCircle,
+} from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from '../../components/Navbar';
 import { connect } from 'react-redux';
@@ -75,7 +81,7 @@ function PageContainer(props) {
       onKeyDown={handleSideMenuClose(false)}
     >
       <List>
-        <ListItem button key={'home'} onClick={() => navigate('/home')}>
+        <ListItem button key={'home'} onClick={() => navigate('/')}>
           <ListItemIcon>
             <Home />
           </ListItemIcon>
@@ -83,25 +89,41 @@ function PageContainer(props) {
         </ListItem>
         <ListItem
           button
-          key={'controlPanel'}
-          onClick={() => navigate('/controlPanel')}
+          key={'findGroup'}
+          onClick={() => navigate('/find-group')}
         >
           <ListItemIcon>
-            <Dashboard />
+            <Group />
           </ListItemIcon>
-          <ListItemText primary={'Control Panel'} />
+          <ListItemText primary={'Find Group'} />
         </ListItem>
-      </List>
-      <Divider />
-      <List>
-        {['Inactive', 'Inactive', 'Inactive'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <Inbox /> : <Mail />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem
+          button
+          key={'reportAction'}
+          onClick={() => navigate('/report-action')}
+        >
+          <ListItemIcon>
+            <Assessment />
+          </ListItemIcon>
+          <ListItemText primary={'Report Action'} />
+        </ListItem>
+        <ListItem button key={'info'} onClick={() => navigate('/info')}>
+          <ListItemIcon>
+            <Info />
+          </ListItemIcon>
+          <ListItemText primary={'Info'} />
+        </ListItem>
+        <Divider />
+        <ListItem
+          button
+          key={'myAccount'}
+          onClick={() => navigate('/account-settings')}
+        >
+          <ListItemIcon>
+            <AccountCircle />
+          </ListItemIcon>
+          <ListItemText primary={'My Account'} />
+        </ListItem>
       </List>
     </div>
   );
@@ -136,6 +158,12 @@ function PageContainer(props) {
             <Route exact path={'/'} element={<LandingPage />} />
             <Route exact path={'/find-group'} element={<FindGroupPage />} />
             <Route exact path={'/report-action'} element={<SelfReportMenu />} />
+            <Route exact path="/info" element={<InfoPage />} />
+            <Route
+              exact
+              path="/account-settings"
+              element={<AccountSettingsPage />}
+            />
           </Routes>
         </main>
       </Grid>
