@@ -7,6 +7,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  RadioGroup,
 } from '@material-ui/core';
 import { Alert } from '@mui/lab';
 
@@ -30,12 +31,14 @@ import { connect } from 'react-redux';
 import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
+import { FormControl, FormControlLabel, FormLabel, Radio } from '@mui/material';
 
 const initialFormState = {
   email: '',
   password: '',
-  given_name: '',
-  family_name: '',
+  name: '',
+  preferred_username: '',
+  user_type: '',
   authCode: '',
   resetCode: '',
 };
@@ -743,6 +746,30 @@ function Login(props) {
                 <BannerMessage type={'error'} typeCheck={emptyInputError}>
                   Please fill in all fields.
                 </BannerMessage>
+                <FormControl>
+                  <FormLabel id="user-group-choices">
+                    Choose User Type
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    aria-labelledby="user-group-choices"
+                    name="quiz-answer-choices-group"
+                    sx={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <FormControlLabel
+                      value={'User'}
+                      control={<Radio />}
+                      label={'User'}
+                      onChange={onChange}
+                    />
+                    <FormControlLabel
+                      value={'Educator'}
+                      control={<Radio />}
+                      label={'Educator'}
+                      onChange={onChange}
+                    />
+                  </RadioGroup>
+                </FormControl>
                 <TextFieldStartAdornment
                   startIcon={false}
                   label={'Name'}
