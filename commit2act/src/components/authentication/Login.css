@@ -107,7 +107,7 @@ video {
   background-color: whitesmoke;
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  max-height: 90vh;
   flex-wrap: nowrap;
   overflow: auto;
 }
