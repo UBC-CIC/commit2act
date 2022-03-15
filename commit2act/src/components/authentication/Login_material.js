@@ -36,6 +36,7 @@ import {
   FormControlLabel,
   FormLabel,
   Radio,
+  Snackbar,
 } from '@mui/material';
 
 const initialFormState = {
@@ -144,7 +145,7 @@ function Login(props) {
   const [emptyInputError, setEmptyInputError] = useState(false);
   const [invalidEmailError, setInvalidEmailError] = useState(false);
   const [timeLimitError, setTimeLimitError] = useState('');
-
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   // password check
   const [passwordRequirements, setPasswordRequirements] = useState({
     uppercase: { error: false, description: 'At least one uppercase letter' },
@@ -270,7 +271,8 @@ function Login(props) {
       const { email, authCode } = formState;
       setLoading(true);
       await Auth.confirmSignUp(email, authCode);
-      resetStates('signedIn');
+      resetStates('signIn');
+      setShowSuccessAlert(true);
       setLoading(false);
     } catch (e) {
       setVerificationError(true);
@@ -569,6 +571,13 @@ function Login(props) {
             </Grid>
             {loginState === 'signIn' && (
               <Grid>
+                <Snackbar
+                  autoHideDuration={2000}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                  open={showSuccessAlert}
+                  message="Success! Redirecting you to sign in page"
+                  onClose={() => setShowSuccessAlert(false)}
+                />
                 <BannerMessage type={'error'} typeCheck={accountLoginError}>
                   Incorrect username or password.
                 </BannerMessage>

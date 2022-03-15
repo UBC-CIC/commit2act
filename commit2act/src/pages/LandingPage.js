@@ -7,6 +7,7 @@ const LandingPage = () => {
 
   const getUserInfo = async () => {
     const userInfo = await Auth.currentUserInfo();
+    console.log(userInfo);
     setUser(userInfo);
   };
 
