@@ -7,7 +7,6 @@ const LandingPage = () => {
 
   const getUserInfo = async () => {
     const userInfo = await Auth.currentUserInfo();
-    console.log(userInfo);
     setUser(userInfo);
   };
 
@@ -18,7 +17,10 @@ const LandingPage = () => {
   return (
     <>
       {user && (
-        <Typography variant="h4">Welcome {user.attributes.name}!</Typography>
+        <Typography variant="h4">
+          Welcome {user.attributes.name}! You are a{' '}
+          {user.attributes['custom:user_type']}
+        </Typography>
       )}
     </>
   );

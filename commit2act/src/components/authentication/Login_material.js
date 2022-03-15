@@ -195,7 +195,6 @@ function Login(props) {
     clearErrors();
 
     updateFormState({ ...formState, [e.target.name]: e.target.value });
-    console.log(formState);
   }
 
   function onChangePassword(e) {
@@ -224,9 +223,11 @@ function Login(props) {
       // check if both passwords match first before signing up
       checkMatchingPasswords();
 
-      const { email, password, name, preferred_username } = formState;
+      const { email, password, name, preferred_username, user_type } =
+        formState;
       checkEmptyString(name);
       checkEmptyString(preferred_username);
+      checkEmptyString(user_type);
 
       setLoading(true);
       await Auth.signUp({
@@ -235,6 +236,7 @@ function Login(props) {
         attributes: {
           name: name,
           preferred_username: preferred_username,
+          'custom:user_type': user_type,
         },
       });
       updateFormState(() => ({ ...initialFormState, email }));
