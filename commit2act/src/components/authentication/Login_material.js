@@ -7,7 +7,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  RadioGroup,
 } from '@material-ui/core';
 import { Alert } from '@mui/lab';
 
@@ -31,7 +30,13 @@ import { connect } from 'react-redux';
 import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
-import { FormControl, FormControlLabel, FormLabel, Radio } from '@mui/material';
+import {
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+} from '@mui/material';
 
 const initialFormState = {
   email: '',
@@ -190,6 +195,7 @@ function Login(props) {
     clearErrors();
 
     updateFormState({ ...formState, [e.target.name]: e.target.value });
+    console.log(formState);
   }
 
   function onChangePassword(e) {
@@ -753,20 +759,23 @@ function Login(props) {
                   <RadioGroup
                     row
                     aria-labelledby="user-group-choices"
-                    name="quiz-answer-choices-group"
-                    sx={{ display: 'flex', justifyContent: 'space-between' }}
+                    name="user_group"
+                    onChange={(e) =>
+                      updateFormState({
+                        ...formState,
+                        user_type: e.target.value,
+                      })
+                    }
                   >
                     <FormControlLabel
-                      value={'User'}
+                      value="User"
                       control={<Radio />}
-                      label={'User'}
-                      onChange={onChange}
+                      label="User"
                     />
                     <FormControlLabel
-                      value={'Educator'}
+                      value="Educator"
                       control={<Radio />}
-                      label={'Educator'}
-                      onChange={onChange}
+                      label="Educator"
                     />
                   </RadioGroup>
                 </FormControl>
