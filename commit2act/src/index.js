@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { applyMiddleware, compose, createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import awsExports from './aws-exports';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Amplify, { AuthModeStrategyType, Hub } from 'aws-amplify';
+import Amplify from 'aws-amplify';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reducers from './reducers';
 

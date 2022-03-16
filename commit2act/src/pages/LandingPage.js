@@ -18,7 +18,7 @@ const LandingPage = () => {
     <>
       {user && (
         <Typography variant="h4">
-          Welcome {user.attributes.name}! You are a{' '}
+          Welcome {user.attributes.name}! Account Type:
           {user.attributes['custom:user_type']}
         </Typography>
       )}
