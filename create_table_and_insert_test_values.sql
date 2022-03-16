@@ -1,31 +1,25 @@
--- Remove all tables that existed before
-
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `School`;
+
 DROP TABLE IF EXISTS `Role`;
-DROP TABLE IF EXISTS `GroupUser`;
+DROP TABLE IF EXISTS GroupUser;
 DROP TABLE IF EXISTS `User`;
 DROP TABLE IF EXISTS `Group`;
-DROP TABLE IF EXISTS `SubmittedAction`;
+DROP TABLE IF EXISTS SubmittedAction;
 DROP TABLE IF EXISTS `Action`;
-DROP TABLE IF EXISTS `ActionQuiz`;
-DROP TABLE IF EXISTS `ActionItem`;
-DROP TABLE IF EXISTS `ActionQuizAnswer`;
+DROP TABLE IF EXISTS ActionQuiz;
+DROP TABLE IF EXISTS ActionItem;
+DROP TABLE IF EXISTS ActionQuizAnswer;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-
-
--- Create tables: 
 
 CREATE TABLE `User` (
   `user_id` int PRIMARY KEY AUTO_INCREMENT,
   `username` varchar(50) UNIQUE NOT NULL,
   `name` text NOT NULL,
   `email` varchar(50) UNIQUE NOT NULL,
-  `avatar` text,
-  `school_id` int
+  `avatar` text
 );
 
 CREATE TABLE `Role` (
@@ -80,7 +74,9 @@ CREATE TABLE `Group` (
   `group_id` int PRIMARY KEY AUTO_INCREMENT,
   `name` text NOT NULL,
   `description` text NOT NULL,
-  `image` text
+  `image` text,
+  `is_public` boolean DEFAULT true,
+  `private_password` text DEFAULT null
 );
 
 CREATE TABLE `GroupUser` (
@@ -90,17 +86,6 @@ CREATE TABLE `GroupUser` (
   PRIMARY KEY (`group_id`, `user_id`)
 );
 
-CREATE TABLE `School` (
-  `school_id` int PRIMARY KEY AUTO_INCREMENT,
-  `school_name` text NOT NULL,
-  `country` text,
-  `city` text
-);
-
-
--- Adding foreign keys
-
-ALTER TABLE `User` ADD FOREIGN KEY (`school_id`) REFERENCES `School` (`school_id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 ALTER TABLE `Role` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -121,20 +106,14 @@ ALTER TABLE `GroupUser` ADD FOREIGN KEY (`group_id`) REFERENCES `Group` (`group_
 ALTER TABLE `GroupUser` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
--- Populate all tables with test data
-
 INSERT INTO `User` VALUES
-(null, 'michael', 'Michael', 'woolsey@example.com', null, null);
+(null, 'michael', 'Michael', 'woolsey@example.com', null);
 INSERT INTO `User` VALUES
-(null, 'christy', 'Christy', 'christy@example.com', null, null);
-INSERT INTO School VALUES
-(null, 'UBC', 'Canada', 'Vancouver');
+(null, 'christy', 'Christy', 'christy@example.com', null);
 INSERT INTO `User` VALUES
-(null, 'teststudent', 'Knott Payingattention', 'student@example.com', null,
- (select school_id from School where school_name='UBC'));
+(null, 'teststudent', 'Knott Payingattention', 'student@example.com', null);
 INSERT INTO `User` VALUES
-(null, 'testeducator', 'Readin Lotsabooks', 'educator@example.com', null,
- (select school_id from School where school_name='UBC'));
+(null, 'testeducator', 'Readin Lotsabooks', 'educator@example.com', null);
 
 INSERT INTO Role VALUES
 ((select user_id from `User` where username='teststudent'), "student");
@@ -147,7 +126,7 @@ INSERT INTO Role VALUES
 
 
 INSERT INTO `Group` VALUES
-(null, 'Test group', "This is a test group\'s description!", null);
+(null, 'Test group', "This is a test group\'s description!", null, true, null);
 
 INSERT INTO GroupUser VALUES
 ((select group_id from `Group` where name='Test group'),
@@ -231,18 +210,18 @@ INSERT INTO ActionQuizAnswer VALUES
 
 
 INSERT INTO ActionQuiz VALUES
-(null, 'Plants are delicious',
-"Tofu is good for you!", 
+(null, 'Yummy plants mmmmm yum',
+"I like plants and tofu and brussel sprouts!", 
 (select action_id from `Action` where action_name='Plant Based Meals'));
 
 INSERT INTO ActionQuizAnswer VALUES
 (
-	(select quiz_id from ActionQuiz where fact_text='Plants are delicious'),
+	(select quiz_id from ActionQuiz where fact_text='Yummy plants mmmmm yum'),
 	"True",
     true
 ),
 (
-	(select quiz_id from ActionQuiz where fact_text='Plants are delicious'),
+	(select quiz_id from ActionQuiz where fact_text='Yummy plants mmmmm yum'),
 	"False",
     false
 );
