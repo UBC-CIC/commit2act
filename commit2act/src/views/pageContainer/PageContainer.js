@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
   Drawer,
@@ -16,6 +16,7 @@ import {
   Home,
   Group,
   AccountCircle,
+  AssignmentTurnedIn,
 } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from '../../components/Navbar';
@@ -26,6 +27,8 @@ import FindGroupPage from '../../pages/FindGroupPage';
 import InfoPage from '../../pages/InfoPage';
 import AccountSettingsPage from '../../pages/AccountSettingsPage';
 import SelfReportMenu from '../../components/SelfReportMenu';
+import ValidateActionsPage from '../../pages/ValidateActionsPage';
+import { Auth } from 'aws-amplify';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,6 +60,17 @@ function PageContainer(props) {
   const { menuEnabled, updateMenuState } = props;
   const classes = useStyles();
   const navigate = useNavigate();
+  const [userType, setUserType] = useState();
+
+  const getUserType = async () => {
+    const user = await Auth.currentUserInfo();
+    const type = user.attributes['custom:user_type'];
+    setUserType(type);
+  };
+
+  useEffect(() => {
+    getUserType();
+  }, []);
 
   /*
    * Handles closing side menu if an event occurs
@@ -97,6 +111,7 @@ function PageContainer(props) {
           </ListItemIcon>
           <ListItemText primary={'Find Group'} />
         </ListItem>
+
         <ListItem
           button
           key={'reportAction'}
@@ -107,6 +122,20 @@ function PageContainer(props) {
           </ListItemIcon>
           <ListItemText primary={'Report Action'} />
         </ListItem>
+        {userType && userType === 'Educator' && (
+          <>
+            <ListItem
+              button
+              key={'validateActions'}
+              onClick={() => navigate('/validate-actions')}
+            >
+              <ListItemIcon>
+                <AssignmentTurnedIn />
+              </ListItemIcon>
+              <ListItemText primary={'Validate Actions'} />
+            </ListItem>
+          </>
+        )}
         <ListItem button key={'info'} onClick={() => navigate('/info')}>
           <ListItemIcon>
             <Info />
@@ -158,10 +187,17 @@ function PageContainer(props) {
             <Route exact path={'/'} element={<LandingPage />} />
             <Route exact path={'/find-group'} element={<FindGroupPage />} />
             <Route exact path={'/report-action'} element={<SelfReportMenu />} />
-            <Route exact path="/info" element={<InfoPage />} />
+            <Route exact path={'/info'} element={<InfoPage />} />
+            {userType === 'Educator' && (
+              <Route
+                exact
+                path={'/validate-actions'}
+                element={<ValidateActionsPage />}
+              />
+            )}
             <Route
               exact
-              path="/account-settings"
+              path={'/account-settings'}
               element={<AccountSettingsPage />}
             />
           </Routes>
