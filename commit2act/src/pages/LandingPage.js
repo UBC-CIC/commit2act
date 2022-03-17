@@ -9,7 +9,7 @@ const GroupCard = styled(Grid)(({ theme }) => ({
   width: '100%',
   minHeight: '25vh',
   marginBottom: '20px',
-  padding: '20px',
+  padding: '30px',
   alignContent: 'center',
   borderRadius: '8px',
   [theme.breakpoints.down('md')]: {
@@ -89,9 +89,11 @@ const LandingPage = () => {
       {user && (
         <>
           <Typography variant="h1">Welcome {user.attributes.name}!</Typography>
-          <Typography variant="h2" sx={{ margin: '80px 0 20px' }}>
-            Recent Progress
-          </Typography>
+          <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+            <Typography variant="h2" sx={{ margin: '50px 0 20px' }}>
+              Recent Progress
+            </Typography>
+          </Box>
           <Box
             component="div"
             sx={{
@@ -165,7 +167,12 @@ const LandingPage = () => {
                       mb: '10px',
                     }}
                   >
-                    <Typography variant="h3">{group.name}</Typography>
+                    <Typography
+                      variant="h3"
+                      sx={{ ':hover': { opacity: '0.6', cursor: 'pointer' } }}
+                    >
+                      {group.name}
+                    </Typography>
                   </Box>
                   <Typography variant="body2">{group.description}</Typography>
                 </Box>
