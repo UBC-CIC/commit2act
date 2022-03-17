@@ -33,7 +33,7 @@ const theme = createTheme({
             variant: 'h2',
           },
           style: {
-            fontSize: 25,
+            fontSize: 30,
             color: '#112D4E',
             fontWeight: 400,
           },
@@ -132,9 +132,9 @@ const Landing = () => {
           >
             <Grid item xs={4}>
               <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
-                <CardActionArea>
+                <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">CO2 Saved This Week</Typography>
-                  <CardContent sx={{ textAlign: 'center' }}>
+                  <CardContent>
                     <Typography variant="h5">
                       <AutoGraphOutlined fontSize="large" />
                       150g
@@ -145,9 +145,9 @@ const Landing = () => {
             </Grid>
             <Grid item xs={3}>
               <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
-                <CardActionArea>
+                <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Total CO2 Saved</Typography>
-                  <CardContent sx={{ textAlign: 'center' }}>
+                  <CardContent>
                     <Typography variant="h5">800g</Typography>
                   </CardContent>
                 </CardActionArea>
@@ -155,7 +155,7 @@ const Landing = () => {
             </Grid>
             <Grid item xs>
               <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
-                <CardActionArea>
+                <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Recent Actions</Typography>
                 </CardActionArea>
               </Card>
