@@ -1,22 +1,9 @@
-import { Typography, Box, Button, Avatar, Grid } from '@mui/material';
+import { Typography, Box, Button } from '@mui/material';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
-const GroupCard = styled(Grid)(({ theme }) => ({
-  backgroundColor: '#DBE2EF',
-  width: '100%',
-  minHeight: '25vh',
-  marginBottom: '1.25em',
-  padding: '1.875em',
-  alignContent: 'center',
-  borderRadius: '8px',
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-}));
+import GroupCard from '../components/GroupCard';
 
 const theme = createTheme({
   components: {
@@ -84,6 +71,14 @@ const LandingPage = () => {
   };
   let groups = [group1, group2];
 
+  const renderGroupCards = () => {
+    if (groups) {
+      return groups.map((group, index) => (
+        <GroupCard key={index} group={group} />
+      ));
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       {user && (
@@ -116,7 +111,7 @@ const LandingPage = () => {
           >
             <Typography variant="h2">My Groups</Typography>
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={() => {
                 navigate('/create-group');
               }}
@@ -124,61 +119,7 @@ const LandingPage = () => {
               Create New Group
             </Button>
           </Box>
-
-          {groups.map((group, index) => {
-            return (
-              <GroupCard key={index} container>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    width: {
-                      xs: '19vw',
-                      sm: '22vw',
-                      md: '9vw',
-                      xl: '9vw',
-                    },
-                    height: {
-                      xs: '10vh',
-                      sm: '12vh',
-                      md: '18vh',
-                      xl: '18vh',
-                    },
-                    alignSelf: { xs: 'center' },
-                    mb: { xs: '1.25em' },
-                  }}
-                >
-                  {group.name.charAt(0)}
-                </Avatar>
-                <Box
-                  component="div"
-                  sx={{
-                    width: '60vw',
-                    height: '100%',
-                    ml: { sm: '0em', md: '2.5em' },
-                    overflow: 'auto',
-                    textAlign: { xs: 'center', md: 'left' },
-                  }}
-                >
-                  <Box
-                    component="div"
-                    sx={{
-                      height: '5vh',
-                      borderBottom: '3px solid #3F72AF',
-                      mb: '0.625em',
-                    }}
-                  >
-                    <Typography
-                      variant="h3"
-                      sx={{ ':hover': { opacity: '0.6', cursor: 'pointer' } }}
-                    >
-                      {group.name}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2">{group.description}</Typography>
-                </Box>
-              </GroupCard>
-            );
-          })}
+          {renderGroupCards()}
         </>
       )}
     </ThemeProvider>

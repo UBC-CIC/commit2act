@@ -168,7 +168,7 @@ function Navbar(props) {
 
   return (
     <Grid item xs={12} className={classes.appBar}>
-      <AppBar position="static">
+      <AppBar position="static" style={{ backgroundColor: '#3F72AF' }}>
         <Toolbar>
           {showSideMenuButton ? (
             <IconButton
