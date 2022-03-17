@@ -1,7 +1,7 @@
 import React from 'react';
 
-const CreateGroupPage = () => {
+const CreateGroup = () => {
   return <div>This is the create group page</div>;
 };
 
-export default CreateGroupPage;
+export default CreateGroup;

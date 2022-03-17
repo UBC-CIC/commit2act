@@ -11,25 +11,25 @@ import {
   ListItemText,
 } from '@mui/material';
 import {
-  Info,
   Assessment,
   Home,
   Group,
   AccountCircle,
   AssignmentTurnedIn,
 } from '@mui/icons-material';
+import { Info as InfoIcon } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from '../../components/Navbar';
 import { connect } from 'react-redux';
 import { updateMenuState } from '../../actions/menuActions';
-import LandingPage from '../../pages/LandingPage';
-import FindGroupPage from '../../pages/FindGroupPage';
-import InfoPage from '../../pages/InfoPage';
-import AccountSettingsPage from '../../pages/AccountSettingsPage';
+import Landing from '../../pages/Landing';
+import FindGroup from '../../pages/FindGroup';
+import Info from '../../pages/Info';
+import AccountSettings from '../../pages/AccountSettings';
 import SelfReportMenu from '../../components/SelfReportMenu';
-import ValidateActionsPage from '../../pages/ValidateActionsPage';
+import ValidateActions from '../../pages/ValidateActions';
 import { Auth } from 'aws-amplify';
-import CreateGroupPage from '../../pages/CreateGroupPage';
+import CreateGroup from '../../pages/CreateGroup';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,7 +142,7 @@ function PageContainer(props) {
         )}
         <ListItem button key={'info'} onClick={() => navigate('/info')}>
           <ListItemIcon>
-            <Info />
+            <InfoIcon />
           </ListItemIcon>
           <ListItemText primary={'Info'} />
         </ListItem>
@@ -188,23 +188,23 @@ function PageContainer(props) {
                 with your app's contents */}
 
           <Routes>
-            <Route exact path={'/'} element={<LandingPage />} />
-            <Route exact path={'/find-group'} element={<FindGroupPage />} />
+            <Route exact path={'/'} element={<Landing />} />
+            <Route exact path={'/find-group'} element={<FindGroup />} />
             <Route exact path={'/report-action'} element={<SelfReportMenu />} />
-            <Route exact path={'/info'} element={<InfoPage />} />
-            <Route exact path={'/create-group'} element={<CreateGroupPage />} />
+            <Route exact path={'/info'} element={<Info />} />
+            <Route exact path={'/create-group'} element={<CreateGroup />} />
 
             {userType === 'Educator' && (
               <Route
                 exact
                 path={'/validate-actions'}
-                element={<ValidateActionsPage />}
+                element={<ValidateActions />}
               />
             )}
             <Route
               exact
               path={'/account-settings'}
-              element={<AccountSettingsPage />}
+              element={<AccountSettings />}
             />
           </Routes>
         </main>

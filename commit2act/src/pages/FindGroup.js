@@ -1,7 +1,7 @@
 import React from 'react';
 
-const FindGroupPage = () => {
+const FindGroup = () => {
   return <div>This is the find group page</div>;
 };
 
-export default FindGroupPage;
+export default FindGroup;

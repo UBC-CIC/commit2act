@@ -1,7 +1,7 @@
 import React from 'react';
 
-const AccountSettingsPage = () => {
+const AccountSettings = () => {
   return <div>This is the account settings page</div>;
 };
 
-export default AccountSettingsPage;
+export default AccountSettings;

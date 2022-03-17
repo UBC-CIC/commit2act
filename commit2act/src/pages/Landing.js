@@ -44,7 +44,7 @@ const theme = createTheme({
   },
 });
 
-const LandingPage = () => {
+const Landing = () => {
   const [user, setUser] = useState();
   const navigate = useNavigate();
 
@@ -126,4 +126,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default Landing;

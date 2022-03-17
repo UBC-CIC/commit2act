@@ -1,7 +1,7 @@
 import React from 'react';
 
-const InfoPage = () => {
+const Info = () => {
   return <div>This is the info page</div>;
 };
 
-export default InfoPage;
+export default Info;
