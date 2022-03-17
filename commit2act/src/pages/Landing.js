@@ -1,4 +1,13 @@
-import { Typography, Box, Button } from '@mui/material';
+import {
+  Typography,
+  Box,
+  Button,
+  Grid,
+  Card,
+  CardActionArea,
+  CardContent,
+} from '@mui/material';
+import { AutoGraphOutlined } from '@mui/icons-material';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
@@ -14,7 +23,7 @@ const theme = createTheme({
             variant: 'h1',
           },
           style: {
-            fontSize: 35,
+            fontSize: 36,
             color: 'black',
             fontWeight: 200,
           },
@@ -25,7 +34,7 @@ const theme = createTheme({
           },
           style: {
             fontSize: 25,
-            color: 'black',
+            color: '#112D4E',
             fontWeight: 400,
           },
         },
@@ -37,6 +46,26 @@ const theme = createTheme({
             fontSize: 20,
             color: 'black',
             fontWeight: 500,
+          },
+        },
+        {
+          props: {
+            variant: 'h4',
+          },
+          style: {
+            fontSize: 25,
+            color: 'black',
+            fontWeight: 100,
+          },
+        },
+        {
+          props: {
+            variant: 'h5',
+          },
+          style: {
+            fontSize: 50,
+            color: 'black',
+            fontWeight: 400,
           },
         },
       ],
@@ -89,15 +118,49 @@ const Landing = () => {
               Recent Progress
             </Typography>
           </Box>
-          <Box
-            component="div"
+          <Grid
+            container
+            spacing={1}
+            direction={{ xs: 'column', md: 'row' }}
             sx={{
               width: '100%',
-              height: '50vh',
+              minHeight: '50vh',
               backgroundColor: '#DBE2EF',
               borderRadius: '8px',
+              padding: '1.5em',
             }}
-          />
+          >
+            <Grid item xs={4}>
+              <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
+                <CardActionArea>
+                  <Typography variant="h4">CO2 Saved This Week</Typography>
+                  <CardContent sx={{ textAlign: 'center' }}>
+                    <Typography variant="h5">
+                      <AutoGraphOutlined fontSize="large" />
+                      150g
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid item xs={3}>
+              <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
+                <CardActionArea>
+                  <Typography variant="h4">Total CO2 Saved</Typography>
+                  <CardContent sx={{ textAlign: 'center' }}>
+                    <Typography variant="h5">800g</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid item xs>
+              <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
+                <CardActionArea>
+                  <Typography variant="h4">Recent Actions</Typography>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          </Grid>
           <Box
             component="div"
             sx={{
