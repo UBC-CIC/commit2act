@@ -8,8 +8,8 @@ const GroupCard = styled(Grid)(({ theme }) => ({
   backgroundColor: '#DBE2EF',
   width: '100%',
   minHeight: '25vh',
-  marginBottom: '20px',
-  padding: '30px',
+  marginBottom: '1.25em',
+  padding: '1.875em',
   alignContent: 'center',
   borderRadius: '8px',
   [theme.breakpoints.down('md')]: {
@@ -90,7 +90,7 @@ const LandingPage = () => {
         <>
           <Typography variant="h1">Welcome {user.attributes.name}!</Typography>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-            <Typography variant="h2" sx={{ margin: '50px 0 20px' }}>
+            <Typography variant="h2" sx={{ m: '3.125em 0 1.25em' }}>
               Recent Progress
             </Typography>
           </Box>
@@ -109,9 +109,9 @@ const LandingPage = () => {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              m: '80px 0 20px',
+              m: '5em 0 1.25em',
               flexDirection: { xs: 'column', md: 'row' },
-              gap: { xs: '15px' },
+              gap: { xs: '1em' },
             }}
           >
             <Typography variant="h2">My Groups</Typography>
@@ -144,7 +144,7 @@ const LandingPage = () => {
                       xl: '18vh',
                     },
                     alignSelf: { xs: 'center' },
-                    mb: { xs: '20px' },
+                    mb: { xs: '1.25em' },
                   }}
                 >
                   {group.name.charAt(0)}
@@ -154,7 +154,7 @@ const LandingPage = () => {
                   sx={{
                     width: '60vw',
                     height: '100%',
-                    ml: { sm: '0px', md: '40px' },
+                    ml: { sm: '0em', md: '2.5em' },
                     overflow: 'auto',
                     textAlign: { xs: 'center', md: 'left' },
                   }}
@@ -164,7 +164,7 @@ const LandingPage = () => {
                     sx={{
                       height: '5vh',
                       borderBottom: '3px solid #3F72AF',
-                      mb: '10px',
+                      mb: '0.625em',
                     }}
                   >
                     <Typography
