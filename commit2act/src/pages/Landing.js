@@ -23,9 +23,9 @@ const theme = createTheme({
             variant: 'h1',
           },
           style: {
-            fontSize: 36,
+            fontSize: 40,
             color: 'black',
-            fontWeight: 200,
+            fontWeight: 300,
           },
         },
         {
@@ -114,7 +114,7 @@ const Landing = () => {
         <>
           <Typography variant="h1">Welcome {user.attributes.name}!</Typography>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-            <Typography variant="h2" sx={{ m: '3.125em 0 1.25em' }}>
+            <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
               Recent Progress
             </Typography>
           </Box>
