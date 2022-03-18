@@ -19,7 +19,8 @@ CREATE TABLE `User` (
   `username` varchar(50) UNIQUE NOT NULL,
   `name` text NOT NULL,
   `email` varchar(50) UNIQUE NOT NULL,
-  `avatar` text
+  `avatar` text,
+  UNIQUE INDEX (username)
 );
 
 CREATE TABLE `Role` (
@@ -64,7 +65,7 @@ CREATE TABLE `SubmittedAction` (
   `quiz_id` int,
   `g_co2_saved` float NOT NULL,
   `date_of_action` date NOT NULL,
-  `time_sumbitted` datetime,
+  `time_submitted` datetime,
   `first_quiz_answer_correct` boolean NOT NULL,
   `quiz_answered` boolean NOT NULL,
   `is_validated` boolean NOT NULL
@@ -72,9 +73,9 @@ CREATE TABLE `SubmittedAction` (
 
 CREATE TABLE `Group` (
   `group_id` int PRIMARY KEY AUTO_INCREMENT,
-  `name` text NOT NULL,
-  `description` text NOT NULL,
-  `image` text,
+  `group_name` text NOT NULL,
+  `group_description` text NOT NULL,
+  `group_image` text,
   `is_public` boolean DEFAULT true,
   `private_password` text DEFAULT null
 );
@@ -127,16 +128,35 @@ INSERT INTO Role VALUES
 
 INSERT INTO `Group` VALUES
 (null, 'Test group', "This is a test group\'s description!", null, true, null);
+INSERT INTO `Group` VALUES
+(null, 'Test group 2', "This is a test group\'s 2 description!", "image.png", false, "password");
+INSERT INTO `Group` VALUES
+(null, 'Test group 3', "This is test group\'s 3 description!", "image3.png", true, null);
 
 INSERT INTO GroupUser VALUES
-((select group_id from `Group` where name='Test group'),
+((select group_id from `Group` where group_name='Test group'),
 (select user_id from `User` where username='teststudent'),
 'member');
 INSERT INTO GroupUser VALUES
-((select group_id from `Group` where name='Test group'),
+((select group_id from `Group` where group_name='Test group 3'),
+(select user_id from `User` where username='teststudent'),
+'member');
+INSERT INTO GroupUser VALUES
+((select group_id from `Group` where group_name='Test group'),
 (select user_id from `User` where username='testeducator'),
 'owner');
-
+INSERT INTO GroupUser VALUES
+((select group_id from `Group` where group_name='Test group'),
+(select user_id from `User` where username='michael'),
+'member');
+INSERT INTO GroupUser VALUES
+((select group_id from `Group` where group_name='Test group 2'),
+(select user_id from `User` where username='michael'),
+'owner');
+INSERT INTO GroupUser VALUES
+((select group_id from `Group` where group_name='Test group 3'),
+(select user_id from `User` where username='michael'),
+'owner');
 
 INSERT INTO Action VALUES
 (null, 'Transportation', null, null, null);
@@ -251,6 +271,129 @@ current_timestamp() - interval floor(rand() * 10000) second,
 false,
 true, 
 false
+),
+(
+null,
+(select user_id from `User` where username="michael"),
+(select action_id from `Action` where action_name="Plant Based Meals"),
+(select quiz_id from `ActionQuiz` where action_id=(select action_id from `Action` where action_name="Plant Based Meals") LIMIT 1),
+60.0,
+current_date() - interval floor(rand() * 14) day, -- generates random date
+current_timestamp() - interval floor(rand() * 10000) second,
+false,
+true, 
+false
+),
+(
+null,
+(select user_id from `User` where username="michael"),
+(select action_id from `Action` where action_name="Transportation"),
+(select quiz_id from `ActionQuiz` where action_id=(select action_id from `Action` where action_name="Transportation") LIMIT 1),
+260.0,
+current_date() - interval floor(rand() * 14) day, -- generates random date
+current_timestamp() - interval floor(rand() * 10000) second,
+false,
+true, 
+false
+),
+(
+null,
+(select user_id from `User` where username="michael"),
+(select action_id from `Action` where action_name="Plant Based Meals"),
+(select quiz_id from `ActionQuiz` where action_id=(select action_id from `Action` where action_name="Plant Based Meals") LIMIT 1),
+20.0,
+current_date() - interval floor(rand() * 143) day, -- generates random date
+current_timestamp() - interval floor(rand() * 10000000) second,
+false,
+true, 
+false
+),
+(
+null,
+(select user_id from `User` where username="testeducator"),
+(select action_id from `Action` where action_name="Reducing Plastic Waste"),
+(select quiz_id from `ActionQuiz` where action_id=(select action_id from `Action` where action_name="Reducing Plastic Waste") LIMIT 1),
+200.0,
+current_date() - interval floor(rand() * 14) day, -- generates random date
+current_timestamp() - interval floor(rand() * 10000) second,
+false,
+true, 
+false
 );
 
-SELECT * FROM `SubmittedAction`;
+
+
+select * from `User`;
+SELECT * FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id;
+
+-- delete from `User` where username='teststudent' ;
+-- SELECT * FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id;
+
+update `User` set avatar="example.png" where username="michael";
+SELECT `User`.avatar, g_co2_saved FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id;
+
+select * from `User` 
+INNER JOIN `GroupUser` on `User`.user_id = GroupUser.user_id
+INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id; -- gets all groups
+-- WHERE `User`.user_id = 3; -- gets all groups for user 3
+
+update `Group` set group_image='example.jpg' where `Group`.group_id = 1;
+
+select * from `User` 
+INNER JOIN `GroupUser` on `User`.user_id = GroupUser.user_id
+INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id;
+
+select `User`.user_id, `User`.name, SUM(SubmittedAction.g_co2_saved) from `Group`
+inner join GroupUser on `Group`.group_id = GroupUser.group_id and `Group`.group_id = 1
+inner join `User` on GroupUser.user_id = `User`.user_id
+inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id
+group by `User`.user_id
+order by SUM(SubmittedAction.g_co2_saved) DESC; -- gets a group's co2 leaderboard sorted
+
+select SUM(SubmittedAction.g_co2_saved) from `Group`
+inner join GroupUser on `Group`.group_id = GroupUser.group_id and `Group`.group_id = 1
+inner join `User` on GroupUser.user_id = `User`.user_id
+inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id; -- gets a group's total co2 saved
+
+select SUM(SubmittedAction.g_co2_saved) from `User` -- sum of a user's total co2
+inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id and `User`.user_id = 1;
+
+select SUM(SubmittedAction.g_co2_saved) from `User` 
+inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id and `User`.user_id = 1
+where SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now(); -- gets user's total co2 for the last 7 days
+
+
+select `Group`.group_id from `User`
+inner join GroupUser on `User`.user_id = GroupUser.user_id and `User`.user_id=1
+INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id
+where GroupUser.user_role='owner'; -- group id of groups owned by user
+
+-- all users which are in groups the user owns
+select `User`.user_id, `User`.name from `User` 
+INNER JOIN `GroupUser` on `User`.user_id = GroupUser.user_id
+INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id
+where `Group`.group_id in
+	(select `Group`.group_id from `User`
+	inner join GroupUser on `User`.user_id = GroupUser.user_id and `User`.user_id=1
+	INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id
+	where GroupUser.user_role='owner')
+group by `User`.user_id;
+
+-- all unverified actions from all groups where user is owner
+select user_names_in_group, user_id_in_group, sa_id, g_co2_saved, time_submitted, date_of_action from SubmittedAction
+INNER JOIN 
+	(select `User`.user_id AS user_id_in_group, `User`.name AS user_names_in_group from `User` 
+	INNER JOIN `GroupUser` on `User`.user_id = GroupUser.user_id
+	INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id
+	where `Group`.group_id in
+		(select `Group`.group_id from `User`
+		inner join GroupUser on `User`.user_id = GroupUser.user_id and `User`.user_id=4
+		INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id
+		where GroupUser.user_role='owner')
+	group by `User`.user_id) sub
+where SubmittedAction.user_id = user_id_in_group and is_validated = false
+order by SubmittedAction.time_submitted ASC;
+    
+
+
+
