@@ -194,7 +194,10 @@ function PageContainer(props) {
             <Route exact path={'/report-action'} element={<SelfReportMenu />} />
             <Route exact path={'/info'} element={<Info />} />
             <Route exact path={'/create-group'} element={<CreateGroup />} />
-            <Route path={'/group-profile'} element={<GroupProfile />} />
+            <Route
+              path="/group-profile/:groupName"
+              element={<GroupProfile />}
+            />
             {userType === 'Educator' && (
               <Route
                 exact

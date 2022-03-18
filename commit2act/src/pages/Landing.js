@@ -91,7 +91,6 @@ const Landing = () => {
     name: 'UBC CIC',
     description:
       'UBC’s CIC is a public-private collaboration between UBC and Amazon. A CIC identifies digital transformation challenges, the problems or opportunities that matter to the community, and provides subject matter expertise and CIC leadership.',
-    is_public: true,
   };
   let group2 = {
     name: 'AWS',
@@ -131,7 +130,7 @@ const Landing = () => {
             }}
           >
             <Grid item xs={4}>
-              <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">CO2 Saved This Week</Typography>
                   <CardContent>
@@ -144,7 +143,7 @@ const Landing = () => {
               </Card>
             </Grid>
             <Grid item xs={3}>
-              <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Total CO2 Saved</Typography>
                   <CardContent>
@@ -154,7 +153,7 @@ const Landing = () => {
               </Card>
             </Grid>
             <Grid item xs>
-              <Card raised="true" sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Recent Actions</Typography>
                 </CardActionArea>

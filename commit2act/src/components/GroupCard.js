@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material';
 import { Typography, Box, Avatar, Grid } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(Grid)(({ theme }) => ({
   backgroundColor: '#DBE2EF',
@@ -18,6 +19,7 @@ const Card = styled(Grid)(({ theme }) => ({
 
 const GroupCard = ({ group }) => {
   const { name, description } = group;
+  const navigate = useNavigate();
 
   return (
     <Card container>
@@ -62,6 +64,9 @@ const GroupCard = ({ group }) => {
         >
           <Typography
             variant="h3"
+            onClick={() => {
+              navigate(`/group-profile/${name}`);
+            }}
             sx={{ ':hover': { opacity: '0.6', cursor: 'pointer' } }}
           >
             {name}
