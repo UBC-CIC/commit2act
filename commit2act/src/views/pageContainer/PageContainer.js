@@ -30,6 +30,7 @@ import SelfReportMenu from '../../components/SelfReportMenu';
 import ValidateActions from '../../pages/ValidateActions';
 import { Auth } from 'aws-amplify';
 import CreateGroup from '../../pages/CreateGroup';
+import GroupProfile from '../../pages/GroupProfile';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(3),
     },
-    padding: theme.spacing(10),
+    padding: theme.spacing(8),
   },
 }));
 
@@ -193,7 +194,7 @@ function PageContainer(props) {
             <Route exact path={'/report-action'} element={<SelfReportMenu />} />
             <Route exact path={'/info'} element={<Info />} />
             <Route exact path={'/create-group'} element={<CreateGroup />} />
-
+            <Route path={'/group-profile'} element={<GroupProfile />} />
             {userType === 'Educator' && (
               <Route
                 exact
