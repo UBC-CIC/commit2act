@@ -332,6 +332,8 @@ SELECT * FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.
 update `User` set avatar="example.png" where username="michael";
 SELECT `User`.avatar, g_co2_saved FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id;
 
+select user_id, username, avatar from `User`;
+
 select * from `User` 
 INNER JOIN `GroupUser` on `User`.user_id = GroupUser.user_id
 INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id; -- gets all groups
@@ -390,10 +392,10 @@ INNER JOIN
 		inner join GroupUser on `User`.user_id = GroupUser.user_id and `User`.user_id=4
 		INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id
 		where GroupUser.user_role='owner')
-	group by `User`.user_id) sub
+	group by `User`.user_id) sub -- mySQL thing
 where SubmittedAction.user_id = user_id_in_group and is_validated = false
 order by SubmittedAction.time_submitted ASC;
     
-
+select SUM(SubmittedAction.g_co2_saved) from SubmittedAction -- get total CO2 saved for all users
 
 
