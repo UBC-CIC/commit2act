@@ -76,7 +76,55 @@ const GroupProfile = () => {
 
   let description =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In neque eros, dignissim quis lobortis quis, luctus a libero. Sed in lectus ut odio porta pharetra. Maecenas at congue tellus. Suspendisse interdum suscipit feugiat. Curabitur ultricies quis lorem eu aliquam. Duis et elit facilisis, finibus dolor nec, euismod eros.';
-  //need to add query to get group description
+  //need to add query to get group description and other information
+
+  let members = [
+    { name: 'Christy' },
+    { name: 'John' },
+    { name: 'Michael' },
+    { name: 'Alex' },
+    { name: 'Test' },
+    { name: 'Liana' },
+    { name: 'Mike' },
+  ];
+
+  const renderGroupMembers = () => {
+    if (members) {
+      return members.map((member, index) => (
+        <Grid
+          container
+          xs={6}
+          sm={6}
+          md={2}
+          lg={2}
+          xl={2}
+          sx={{ justifyContent: 'center' }}
+        >
+          <Avatar
+            key={index}
+            variant="rounded"
+            sx={{
+              width: {
+                xs: '28vw',
+                sm: '22vw',
+                md: '10vw',
+                lg: '10vw',
+                xl: '10vw',
+              },
+              height: {
+                xs: '12vh',
+                md: '22vh',
+                lg: '18vh',
+              },
+              mb: { xs: '1.5em' },
+            }}
+          >
+            {member.name.charAt(0)}
+          </Avatar>
+        </Grid>
+      ));
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -92,7 +140,7 @@ const GroupProfile = () => {
           alignItems="flex-start"
           sx={{ mt: '2em' }}
         >
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} lg={3}>
             <Grid
               container
               direction="column"
@@ -103,16 +151,17 @@ const GroupProfile = () => {
                 variant="rounded"
                 sx={{
                   width: {
-                    xs: '19vw',
+                    xs: '24vw',
                     sm: '22vw',
-                    md: '15vw',
-                    xl: '9vw',
+                    md: '20vw',
+                    lg: '15vw',
+                    xl: '15vw',
                   },
                   height: {
-                    xs: '10vh',
-                    sm: '12vh',
-                    md: '28vh',
-                    xl: '18vh',
+                    xs: '12vh',
+                    md: '22vh',
+                    lg: '24vh',
+                    xl: '26vh',
                   },
                 }}
               >
@@ -120,7 +169,7 @@ const GroupProfile = () => {
               </Avatar>
               <Button
                 variant="outlined"
-                sx={{ mt: '2em', mb: { xs: '2em', md: '0em' } }}
+                sx={{ mt: '2em', mb: { xs: '2em', lg: '0em' } }}
               >
                 Join Group
               </Button>
@@ -129,14 +178,15 @@ const GroupProfile = () => {
           <Grid
             item
             xs={12}
-            md={9}
-            sx={{ textAlign: { xs: 'center', md: 'left' } }}
+            lg={9}
+            sx={{ textAlign: { xs: 'center', lg: 'left' } }}
           >
             <Typography variant="subtitle1">{description}</Typography>
             <Grid
               container
-              spacing={1}
-              direction={{ xs: 'column', md: 'row' }}
+              rowSpacing={1}
+              columnSpacing={{ xs: 1 }}
+              direction={{ xs: 'column', lg: 'row' }}
               sx={{
                 width: '100%',
                 minHeight: '50vh',
@@ -178,23 +228,27 @@ const GroupProfile = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ textAlign: { xs: 'center', lg: 'left' } }}>
             <Typography variant="h2" sx={{ mt: '3em' }}>
-              Groups Members
+              Group Members
             </Typography>
             <Grid
               container
-              spacing={1}
-              direction={{ xs: 'column', md: 'row' }}
+              columnSpacing={1}
               sx={{
                 width: '100%',
-                minHeight: '50vh',
+                height: '50vh',
                 backgroundColor: '#DBE2EF',
                 borderRadius: '8px',
                 padding: '1.5em',
                 mt: '2em',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                overflow: 'auto',
               }}
-            ></Grid>
+            >
+              {renderGroupMembers()}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
