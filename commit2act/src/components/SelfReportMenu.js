@@ -6,8 +6,28 @@ import moment from 'moment';
 import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import { styled } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
 import BonusPointQuiz from './BonusPointQuiz';
 import Co2SavedScreen from './Co2SavedScreen';
+
+const theme = createTheme({
+  components: {
+    MuiTypography: {
+      variants: [
+        {
+          props: {
+            variant: 'h1',
+          },
+          style: {
+            fontSize: 40,
+            color: 'black',
+            fontWeight: 300,
+          },
+        },
+      ],
+    },
+  },
+});
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -79,53 +99,57 @@ const SelfReportMenu = () => {
   };
 
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
-    >
-      <Typography variant="h4" sx={{ py: 5 }}>
-        Self Report Actions
-      </Typography>
-      <StyledGrid
+    <ThemeProvider theme={theme}>
+      <Grid
         container
         justifyContent="center"
-        columnSpacing={selectedAction ? 6 : 0}
+        alignItems="center"
+        textAlign="center"
       >
-        <Grid item>
-          <Grid container direction="column" gap="20px">
-            <LocalizationProvider
-              dateAdapter={AdapterDateFns}
-              sx={{ minWidth: 300 }}
-            >
-              <DatePicker
-                label="Choose Date"
-                value={selectedDate}
-                onChange={(newDate) => {
-                  setSelectedDate(
-                    moment(new Date(newDate)).format('MM/DD/YYYY')
-                  );
+        <Typography variant="h1" sx={{ py: 5 }}>
+          Self Report Actions
+        </Typography>
+        <StyledGrid
+          container
+          justifyContent="center"
+          columnSpacing={selectedAction ? 6 : 0}
+        >
+          <Grid item>
+            <Grid container direction="column" gap="20px">
+              <LocalizationProvider
+                dateAdapter={AdapterDateFns}
+                sx={{ minWidth: 300 }}
+              >
+                <DatePicker
+                  label="Choose Date"
+                  value={selectedDate}
+                  onChange={(newDate) => {
+                    setSelectedDate(
+                      moment(new Date(newDate)).format('MM/DD/YYYY')
+                    );
+                  }}
+                  renderInput={(selectedDate) => (
+                    <TextField {...selectedDate} />
+                  )}
+                />
+              </LocalizationProvider>
+              <Autocomplete
+                disablePortal
+                options={actionOptions}
+                sx={{ minWidth: 300 }}
+                onChange={(event, newAction) => {
+                  setSelectedAction(newAction);
                 }}
-                renderInput={(selectedDate) => <TextField {...selectedDate} />}
+                renderInput={(params) => (
+                  <TextField {...params} label="Choose Action" />
+                )}
               />
-            </LocalizationProvider>
-            <Autocomplete
-              disablePortal
-              options={actionOptions}
-              sx={{ minWidth: 300 }}
-              onChange={(event, newAction) => {
-                setSelectedAction(newAction);
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label="Choose Action" />
-              )}
-            />
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid item>{renderFormStep()}</Grid>
-      </StyledGrid>
-    </Grid>
+          <Grid item>{renderFormStep()}</Grid>
+        </StyledGrid>
+      </Grid>
+    </ThemeProvider>
   );
 };
 
