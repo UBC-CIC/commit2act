@@ -127,20 +127,18 @@ function PageContainer(props) {
           </ListItemIcon>
           <ListItemText primary={'Report Action'} />
         </ListItem>
-        {userType && userType === 'Educator' && (
-          <>
-            <ListItem
-              button
-              key={'validateActions'}
-              onClick={() => navigate('/validate-actions')}
-            >
-              <ListItemIcon>
-                <AssignmentTurnedIn />
-              </ListItemIcon>
-              <ListItemText primary={'Validate Actions'} />
-            </ListItem>
-          </>
-        )}
+
+        <ListItem
+          button
+          key={'validateActions'}
+          onClick={() => navigate('/validate-actions')}
+        >
+          <ListItemIcon>
+            <AssignmentTurnedIn />
+          </ListItemIcon>
+          <ListItemText primary={'Validate Actions'} />
+        </ListItem>
+
         <ListItem button key={'info'} onClick={() => navigate('/info')}>
           <ListItemIcon>
             <InfoIcon />
@@ -198,13 +196,12 @@ function PageContainer(props) {
               path="/group-profile/:groupName"
               element={<GroupProfile />}
             />
-            {userType === 'Educator' && (
-              <Route
-                exact
-                path={'/validate-actions'}
-                element={<ValidateActions />}
-              />
-            )}
+
+            <Route
+              exact
+              path={'/validate-actions'}
+              element={<ValidateActions />}
+            />
             <Route
               exact
               path={'/account-settings'}

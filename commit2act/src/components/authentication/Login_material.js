@@ -224,11 +224,9 @@ function Login(props) {
       // check if both passwords match first before signing up
       checkMatchingPasswords();
 
-      const { email, password, name, preferred_username, user_type } =
-        formState;
+      const { email, password, name, preferred_username } = formState;
       checkEmptyString(name);
       checkEmptyString(preferred_username);
-      checkEmptyString(user_type);
 
       setLoading(true);
       await Auth.signUp({
@@ -237,7 +235,7 @@ function Login(props) {
         attributes: {
           name: name,
           preferred_username: preferred_username,
-          'custom:user_type': user_type,
+          'custom:user_type': 'User',
         },
       });
       updateFormState(() => ({ ...initialFormState, email }));
@@ -763,33 +761,6 @@ function Login(props) {
                 <BannerMessage type={'error'} typeCheck={emptyInputError}>
                   Please fill in all fields.
                 </BannerMessage>
-                <FormControl>
-                  <FormLabel id="user-group-choices">
-                    Choose User Type
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    aria-labelledby="user-group-choices"
-                    name="user_group"
-                    onChange={(e) =>
-                      updateFormState({
-                        ...formState,
-                        user_type: e.target.value,
-                      })
-                    }
-                  >
-                    <FormControlLabel
-                      value="User"
-                      control={<Radio />}
-                      label="User"
-                    />
-                    <FormControlLabel
-                      value="Educator"
-                      control={<Radio />}
-                      label="Educator"
-                    />
-                  </RadioGroup>
-                </FormControl>
                 <TextFieldStartAdornment
                   startIcon={false}
                   label={'Name'}
