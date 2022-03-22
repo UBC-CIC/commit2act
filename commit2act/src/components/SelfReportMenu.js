@@ -24,6 +24,16 @@ const theme = createTheme({
             fontWeight: 300,
           },
         },
+        {
+          props: {
+            variant: 'h2',
+          },
+          style: {
+            fontSize: 25,
+            color: 'black',
+            fontWeight: 300,
+          },
+        },
       ],
     },
   },

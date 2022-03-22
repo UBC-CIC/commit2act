@@ -111,15 +111,18 @@ const Landing = () => {
     <ThemeProvider theme={theme}>
       {user && (
         <>
-          <Typography variant="h1">Welcome {user.attributes.name}!</Typography>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+            <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+              Welcome {user.attributes.name}!
+            </Typography>
             <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
               Recent Progress
             </Typography>
           </Box>
           <Grid
             container
-            spacing={1}
+            rowSpacing={1}
+            columnSpacing={{ xs: 0, md: 1 }}
             direction={{ xs: 'column', md: 'row' }}
             sx={{
               width: '100%',
@@ -155,7 +158,7 @@ const Landing = () => {
             <Grid item xs>
               <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4">Recent Actions</Typography>
+                  <Typography variant="h4">Collective Impact</Typography>
                 </CardActionArea>
               </Card>
             </Grid>

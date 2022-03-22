@@ -10,6 +10,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateLoginState } from './actions/loginActions';
 import theme from './themes';
+import ScrollToTop from './components/ScrollToTop';
 
 Amplify.configure(awsmobile);
 
@@ -66,6 +67,7 @@ function App(props) {
           )}
           {currentLoginState === 'signedIn' && (
             <BrowserRouter>
+              <ScrollToTop />
               <PageContainer />
             </BrowserRouter>
           )}

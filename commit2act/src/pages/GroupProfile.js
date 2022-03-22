@@ -75,7 +75,7 @@ const GroupProfile = () => {
   const { groupName } = useParams();
 
   let description =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In neque eros, dignissim quis lobortis quis, luctus a libero. Sed in lectus ut odio porta pharetra. Maecenas at congue tellus. Suspendisse interdum suscipit feugiat. Curabitur ultricies quis lorem eu aliquam. Duis et elit facilisis, finibus dolor nec, euismod eros.';
+    'UBC’s CIC is a public-private collaboration between UBC and Amazon. A CIC identifies digital transformation challenges, the problems or opportunities that matter to the community, and provides subject matter expertise and CIC leadership.';
   //need to add query to get group description and other information
 
   let members = [
@@ -185,7 +185,7 @@ const GroupProfile = () => {
             <Grid
               container
               rowSpacing={1}
-              columnSpacing={{ xs: 1 }}
+              columnSpacing={{ xs: 0, md: 1 }}
               direction={{ xs: 'column', lg: 'row' }}
               sx={{
                 width: '100%',
@@ -203,7 +203,7 @@ const GroupProfile = () => {
                     <CardContent>
                       <Typography variant="h5">
                         <AutoGraphOutlined fontSize="large" />
-                        150g
+                        800g
                       </Typography>
                     </CardContent>
                   </CardActionArea>
@@ -214,7 +214,7 @@ const GroupProfile = () => {
                   <CardActionArea sx={{ textAlign: 'center' }}>
                     <Typography variant="h4">Total CO2 Saved</Typography>
                     <CardContent>
-                      <Typography variant="h5">800g</Typography>
+                      <Typography variant="h5">1600g</Typography>
                     </CardContent>
                   </CardActionArea>
                 </Card>
@@ -234,7 +234,7 @@ const GroupProfile = () => {
             </Typography>
             <Grid
               container
-              columnSpacing={1}
+              columnSpacing={{ xs: 0, md: 1 }}
               sx={{
                 width: '100%',
                 height: '50vh',
