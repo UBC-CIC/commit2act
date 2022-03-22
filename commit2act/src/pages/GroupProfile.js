@@ -171,7 +171,7 @@ const GroupProfile = () => {
                 variant="outlined"
                 sx={{ mt: '2em', mb: { xs: '2em', lg: '0em' } }}
               >
-                Join Group
+                Leave Group
               </Button>
             </Grid>
           </Grid>

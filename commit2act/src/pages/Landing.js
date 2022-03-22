@@ -159,6 +159,9 @@ const Landing = () => {
               <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Collective Impact</Typography>
+                  <CardContent>
+                    <Typography variant="h5">8100g</Typography>
+                  </CardContent>
                 </CardActionArea>
               </Card>
             </Grid>

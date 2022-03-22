@@ -49,6 +49,7 @@ const Co2SavedScreen = ({ totalCo2Saved, changeStep }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: '20px',
+          minHeight: '20vh',
         }}
       >
         <Typography variant="h2">Thank you!</Typography>
