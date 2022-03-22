@@ -41,7 +41,11 @@ const theme = createTheme({
 });
 
 const BonusPointQuiz = ({ fact, changeStep }) => {
-  const { question_text, answers, correct_answer } = fact;
+  // const { question_text, answers, correct_answer } = fact;
+  let question_text =
+    'What percentage of an average Canadian’s total CO2 production is due to transportation?';
+  let answers = ['55%', '20%', '35%', '70%'];
+  let correct_answer = '35%';
 
   const [userAnswer, setUserAnswer] = useState();
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
