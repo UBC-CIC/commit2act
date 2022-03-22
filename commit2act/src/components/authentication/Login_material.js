@@ -30,14 +30,7 @@ import { connect } from 'react-redux';
 import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
-import {
-  RadioGroup,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  Snackbar,
-} from '@mui/material';
+import { Snackbar } from '@mui/material';
 
 const initialFormState = {
   email: '',

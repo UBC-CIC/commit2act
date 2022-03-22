@@ -51,6 +51,7 @@ const SelfReportMenu = () => {
   //this will be used to get the fact answers for the bonus quiz step of the form
   const [fact, setFact] = useState();
   const [stepNumber, setStepNumber] = useState(0);
+  const [totalCo2Saved, setTotalCo2Saved] = useState();
 
   const handleChangeStep = (stepNumber) => {
     setStepNumber(stepNumber);
@@ -97,12 +98,18 @@ const SelfReportMenu = () => {
             <ActionPanel
               selectedAction={selectedAction}
               changeStep={handleChangeStep}
+              setTotalCo2Saved={setTotalCo2Saved}
             />
           )}
           {stepNumber === 3 && (
             <BonusPointQuiz fact={fact} changeStep={handleChangeStep} />
           )}
-          {stepNumber === 4 && <Co2SavedScreen changeStep={handleChangeStep} />}
+          {stepNumber === 4 && (
+            <Co2SavedScreen
+              totalCo2Saved={totalCo2Saved}
+              changeStep={handleChangeStep}
+            />
+          )}
         </Grid>
       )
     );
