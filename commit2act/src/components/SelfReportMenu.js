@@ -51,7 +51,7 @@ const SelfReportMenu = () => {
   //this will be used to get the fact answers for the bonus quiz step of the form
   const [fact, setFact] = useState();
   const [stepNumber, setStepNumber] = useState(0);
-  const [totalCo2Saved, setTotalCo2Saved] = useState();
+  const [totalCo2Saved, setTotalCo2Saved] = useState(0);
 
   const handleChangeStep = (stepNumber) => {
     setStepNumber(stepNumber);
