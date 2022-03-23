@@ -33,7 +33,7 @@ const theme = createTheme({
 const SubmittedActionCard = ({ action }) => {
   return (
     <ThemeProvider theme={theme}>
-      <Card sx={{ minWidth: 275, textAlign: 'center' }}>
+      <Card sx={{ textAlign: 'center' }}>
         <CardContent>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex' }}>
@@ -42,7 +42,6 @@ const SubmittedActionCard = ({ action }) => {
                 {action.time_submitted}
               </Typography>
             </Box>
-            <Typography variant="h3">Group: UBC CIC</Typography>
           </Box>
           <Typography variant="h1" component="h2">
             {action.action.action_name}
