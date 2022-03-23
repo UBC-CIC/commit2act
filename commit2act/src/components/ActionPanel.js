@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, Box, TextField } from '@mui/material';
 
-const ActionPanel = ({ selectedAction, changeStep, setTotalCo2Saved }) => {
+const ActionPanel = ({
+  selectedAction,
+  changeStep,
+  totalCo2Saved,
+  setTotalCo2Saved,
+}) => {
   const [actionItems, setActionItems] = useState();
 
   const plantBasedMealActionItems = [
@@ -62,7 +67,9 @@ const ActionPanel = ({ selectedAction, changeStep, setTotalCo2Saved }) => {
           variant="outlined"
           helperText={item.item_description}
           onChange={(e) =>
-            setTotalCo2Saved(e.target.value * item.co2_saved_per_unit)
+            setTotalCo2Saved(
+              totalCo2Saved + e.target.value * item.co2_saved_per_unit
+            )
           }
         />
       ));

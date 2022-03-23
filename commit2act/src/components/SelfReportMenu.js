@@ -51,7 +51,7 @@ const SelfReportMenu = () => {
   //this will be used to get the fact answers for the bonus quiz step of the form
   const [fact, setFact] = useState();
   const [stepNumber, setStepNumber] = useState(0);
-  const [totalCo2Saved, setTotalCo2Saved] = useState();
+  const [totalCo2Saved, setTotalCo2Saved] = useState(0);
 
   const handleChangeStep = (stepNumber) => {
     setStepNumber(stepNumber);
@@ -71,6 +71,12 @@ const SelfReportMenu = () => {
       setStepNumber(0);
     }
   }, [selectedAction]);
+
+  useEffect(() => {
+    if (stepNumber === 1) {
+      setTotalCo2Saved(0);
+    }
+  }, [stepNumber]);
 
   const renderFormStep = () => {
     return (
@@ -99,6 +105,7 @@ const SelfReportMenu = () => {
               selectedAction={selectedAction}
               changeStep={handleChangeStep}
               setTotalCo2Saved={setTotalCo2Saved}
+              totalCo2Saved={totalCo2Saved}
             />
           )}
           {stepNumber === 3 && (
@@ -108,6 +115,7 @@ const SelfReportMenu = () => {
             <Co2SavedScreen
               totalCo2Saved={totalCo2Saved}
               changeStep={handleChangeStep}
+              setTotalCo2Saved={setTotalCo2Saved}
             />
           )}
         </Grid>
