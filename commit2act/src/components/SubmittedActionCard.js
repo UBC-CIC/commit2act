@@ -35,7 +35,12 @@ const SubmittedActionCard = ({ action }) => {
     <ThemeProvider theme={theme}>
       <Card sx={{ textAlign: 'center' }}>
         <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: { xs: 'center', md: 'space-between' },
+            }}
+          >
             <Box sx={{ display: 'flex' }}>
               <Typography variant="h3">{action.date_of_action}</Typography>
               <Typography variant="h3" sx={{ ml: '2em' }}>
@@ -43,13 +48,24 @@ const SubmittedActionCard = ({ action }) => {
               </Typography>
             </Box>
           </Box>
-          <Typography variant="h1" component="h2">
+          <Typography
+            variant="h1"
+            component="h2"
+            sx={{ mt: { xs: '0.5em', md: '0' } }}
+          >
             {action.action.action_name}
           </Typography>
           <Typography sx={{ my: 1.5 }} color="text.secondary">
             {action.actionItem.item_name}: 7 km
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              justifyContent: { xs: 'center', md: 'space-between' },
+              gap: { xs: '0.4em', md: '0' },
+            }}
+          >
             <Typography variant="h3">
               Bonus Points:
               {action.first_quiz_answer_correct ? '10' : '0'}

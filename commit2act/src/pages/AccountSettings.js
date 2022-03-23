@@ -46,6 +46,7 @@ const theme = createTheme({
             fontSize: 25,
             color: 'black',
             fontWeight: 100,
+            marginBottom: '0.5em',
           },
         },
         {
@@ -204,7 +205,10 @@ const AccountSettings = () => {
                     },
                   }}
                 ></Avatar>
-                <Button variant="outlined" sx={{ mt: '1em' }}>
+                <Button
+                  variant="outlined"
+                  sx={{ mt: '1em', mb: { xs: '1.5em' } }}
+                >
                   Change Photo
                 </Button>
               </Grid>
@@ -217,8 +221,10 @@ const AccountSettings = () => {
                   borderRadius: '5px',
                   padding: '1.5em',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  flexFlow: 'row wrap',
+                  justifyContent: { xs: 'center', md: 'space-between' },
+                  flexFlow: { xs: 'none', md: 'row wrap' },
+                  flexDirection: { xs: 'column' },
+                  alignItems: { xs: 'center', md: 'flex-start' },
                 }}
               >
                 <Box>
@@ -232,7 +238,7 @@ const AccountSettings = () => {
                     Email: {user.attributes.email}
                   </Typography>
                 </Box>
-                <Button size="small" sx={{ alignSelf: 'flex-start' }}>
+                <Button size="small" sx={{ alignSelf: { md: 'flex-start' } }}>
                   Edit Info
                 </Button>
               </Grid>
