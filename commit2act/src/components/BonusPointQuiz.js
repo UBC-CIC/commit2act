@@ -50,6 +50,13 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
   const [userAnswer, setUserAnswer] = useState();
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
   const [numTries, setNumTries] = useState(1);
+  const [quizSkipped, setQuizSkipped] = useState(false);
+
+  // const handleButtonClick = () => {
+  //   userAnswer !== null
+  //     ? setIsAnswerSelected(true)
+  //     : setIsAnswerSelected(false);
+  // };
 
   const displayQuiz = () => {
     return (
@@ -75,15 +82,28 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
               );
             })}
           </RadioGroup>
-          <Button
-            onClick={() => {
-              setIsAnswerSelected(true);
-            }}
-            variant="contained"
-            sx={{ marginY: 5 }}
-          >
-            Submit Answer
-          </Button>
+          {userAnswer ? (
+            <Button
+              onClick={() => {
+                setIsAnswerSelected(true);
+              }}
+              variant="contained"
+              sx={{ marginY: 5 }}
+            >
+              Submit Quiz
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                setQuizSkipped(true);
+                changeStep(4);
+              }}
+              variant="contained"
+              sx={{ marginY: 5 }}
+            >
+              Skip Quiz
+            </Button>
+          )}
         </FormControl>
       </>
     );
