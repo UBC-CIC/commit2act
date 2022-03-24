@@ -82,7 +82,7 @@ const SelfReportMenu = () => {
           justifyContent="center"
           sx={{
             width: 400,
-            minHeight: '32vw',
+            minHeight: '40vh',
             backgroundColor: '#e8f4f8',
             padding: '50px',
           }}

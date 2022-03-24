@@ -36,6 +36,7 @@ const theme = createTheme({
             fontSize: 20,
             color: 'black',
             fontWeight: 500,
+            marginRight: '1em',
           },
         },
         {
@@ -43,7 +44,7 @@ const theme = createTheme({
             variant: 'h4',
           },
           style: {
-            fontSize: 25,
+            fontSize: 20,
             color: 'black',
             fontWeight: 100,
             marginBottom: '0.5em',
@@ -186,35 +187,44 @@ const AccountSettings = () => {
                 alignItems: { xs: 'center', md: 'flex-start' },
               }}
             >
-              <Grid item xs={3}>
-                <Avatar
-                  variant="rounded"
+              <Grid item xs={12} md={3}>
+                <Box
                   sx={{
-                    width: {
-                      xs: '24vw',
-                      sm: '22vw',
-                      md: '20vw',
-                      lg: '15vw',
-                      xl: '15vw',
-                    },
-                    height: {
-                      xs: '12vh',
-                      md: '22vh',
-                      lg: '24vh',
-                      xl: '26vh',
-                    },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                   }}
-                ></Avatar>
-                <Button
-                  variant="outlined"
-                  sx={{ mt: '1em', mb: { xs: '1.5em' } }}
                 >
-                  Change Photo
-                </Button>
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      width: {
+                        xs: '24vw',
+                        sm: '22vw',
+                        md: '20vw',
+                        lg: '15vw',
+                        xl: '15vw',
+                      },
+                      height: {
+                        xs: '12vh',
+                        md: '22vh',
+                        lg: '24vh',
+                        xl: '26vh',
+                      },
+                    }}
+                  ></Avatar>
+                  <Button
+                    variant="outlined"
+                    sx={{ mt: '1em', mb: { xs: '1.5em' } }}
+                  >
+                    Change Photo
+                  </Button>
+                </Box>
               </Grid>
               <Grid
                 item
-                xs={9}
+                xs={12}
+                md={9}
                 sx={{
                   width: '100%',
                   outline: '2px solid #3F72AF',
@@ -225,17 +235,27 @@ const AccountSettings = () => {
                   flexFlow: { xs: 'none', md: 'row wrap' },
                   flexDirection: { xs: 'column' },
                   alignItems: { xs: 'center', md: 'flex-start' },
+                  overflow: 'auto',
                 }}
               >
                 <Box>
                   <Typography variant="h4">
-                    Name: {user.attributes.name}
+                    <Typography variant="h3" component="span">
+                      Name:
+                    </Typography>
+                    {user.attributes.name}
                   </Typography>
                   <Typography variant="h4">
-                    Username: {user.attributes.preferred_username}
+                    <Typography variant="h3" component="span">
+                      Username:
+                    </Typography>
+                    {user.attributes.preferred_username}
                   </Typography>
                   <Typography variant="h4">
-                    Email: {user.attributes.email}
+                    <Typography variant="h3" component="span">
+                      Email:
+                    </Typography>
+                    {user.attributes.email}
                   </Typography>
                 </Box>
                 <Button size="small" sx={{ alignSelf: { md: 'flex-start' } }}>

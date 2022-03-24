@@ -52,12 +52,6 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
   const [numTries, setNumTries] = useState(1);
   const [quizSkipped, setQuizSkipped] = useState(false);
 
-  // const handleButtonClick = () => {
-  //   userAnswer !== null
-  //     ? setIsAnswerSelected(true)
-  //     : setIsAnswerSelected(false);
-  // };
-
   const displayQuiz = () => {
     return (
       <>

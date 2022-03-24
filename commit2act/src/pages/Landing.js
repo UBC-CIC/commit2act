@@ -24,7 +24,7 @@ const theme = createTheme({
           },
           style: {
             fontSize: 40,
-            color: 'black',
+            color: '#112D4E',
             fontWeight: 300,
           },
         },
