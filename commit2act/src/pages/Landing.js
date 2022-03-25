@@ -169,7 +169,7 @@ const Landing = () => {
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Collective Impact</Typography>
                   <CardContent>
-                    <Typography variant="h5">{collectiveImpact}</Typography>
+                    <Typography variant="h5">{collectiveImpact}g</Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>

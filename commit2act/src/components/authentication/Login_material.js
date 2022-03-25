@@ -31,6 +31,8 @@ import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
 import { Snackbar } from '@mui/material';
+import { API, graphqlOperation } from 'aws-amplify';
+import { createUser } from '../../graphql/mutations';
 
 const initialFormState = {
   email: '',
@@ -231,6 +233,13 @@ function Login(props) {
           'custom:user_type': 'User',
         },
       });
+
+      const userId = await API.graphql(graphqlOperation(createUser), {
+        input: name,
+        preferred_username,
+        email,
+      });
+      console.log(userId);
       updateFormState(() => ({ ...initialFormState, email }));
       updateLoginState('confirmSignUp');
       setLoading(false);
