@@ -149,7 +149,7 @@ const AccountSettings = () => {
     },
     actionItem: {
       item_name: 'mL Water',
-      co2_saved_per_unit: 200.0,
+      co2_saved_per_unit: 300.0,
     },
   };
 
