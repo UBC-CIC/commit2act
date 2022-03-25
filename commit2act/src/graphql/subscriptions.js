@@ -1,26 +1,130 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateGroup = /* GraphQL */ `
-  subscription OnCreateGroup {
-    onCreateGroup {
+export const onCreateEducatorUser = /* GraphQL */ `
+  subscription OnCreateEducatorUser {
+    onCreateEducatorUser {
       id
-      name
-      description
-      image
-      userID
-      users {
+      User {
+        id
+        username
+        email
+        avatar
+        type
+        total_points
+        total_g_co2_saved
+        SubmittedActions {
+          items {
+            id
+            Action {
+              id
+              date_of_action
+              image
+              points_received
+              g_co2_saved
+              action_name
+              action_items
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            FactBonusPointQuiz {
+              id
+              fact_text
+              question_text
+              answers
+              correct_answer
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            userID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            submittedActionActionId
+            submittedActionFactBonusPointQuizId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      School {
+        id
+        name
+        city
+        country
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      OwnedGroups {
         items {
           id
+          educatorUserID
           groupID
-          userID
+          educatorUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            OwnedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            educatorUserUserId
+            educatorUserSchoolId
+          }
           group {
             id
             name
             description
             image
-            userID
-            users {
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
               nextToken
               startedAt
             }
@@ -30,29 +134,1140 @@ export const onCreateGroup = /* GraphQL */ `
             _deleted
             _lastChangedAt
           }
-          user {
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      educatorUserUserId
+      educatorUserSchoolId
+    }
+  }
+`;
+export const onUpdateEducatorUser = /* GraphQL */ `
+  subscription OnUpdateEducatorUser {
+    onUpdateEducatorUser {
+      id
+      User {
+        id
+        username
+        email
+        avatar
+        type
+        total_points
+        total_g_co2_saved
+        SubmittedActions {
+          items {
             id
-            username
-            email
-            avatar
-            role
-            PlantBasedMealActions {
+            Action {
+              id
+              date_of_action
+              image
+              points_received
+              g_co2_saved
+              action_name
+              action_items
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            FactBonusPointQuiz {
+              id
+              fact_text
+              question_text
+              answers
+              correct_answer
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            userID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            submittedActionActionId
+            submittedActionFactBonusPointQuizId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      School {
+        id
+        name
+        city
+        country
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      OwnedGroups {
+        items {
+          id
+          educatorUserID
+          groupID
+          educatorUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            OwnedGroups {
               nextToken
               startedAt
             }
-            WaterActions {
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            educatorUserUserId
+            educatorUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
               nextToken
               startedAt
             }
-            TransportationActions {
+            educatorusers {
               nextToken
               startedAt
             }
-            GroupsOwned {
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      educatorUserUserId
+      educatorUserSchoolId
+    }
+  }
+`;
+export const onDeleteEducatorUser = /* GraphQL */ `
+  subscription OnDeleteEducatorUser {
+    onDeleteEducatorUser {
+      id
+      User {
+        id
+        username
+        email
+        avatar
+        type
+        total_points
+        total_g_co2_saved
+        SubmittedActions {
+          items {
+            id
+            Action {
+              id
+              date_of_action
+              image
+              points_received
+              g_co2_saved
+              action_name
+              action_items
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            FactBonusPointQuiz {
+              id
+              fact_text
+              question_text
+              answers
+              correct_answer
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            userID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            submittedActionActionId
+            submittedActionFactBonusPointQuizId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      School {
+        id
+        name
+        city
+        country
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      OwnedGroups {
+        items {
+          id
+          educatorUserID
+          groupID
+          educatorUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            OwnedGroups {
               nextToken
               startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            educatorUserUserId
+            educatorUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      educatorUserUserId
+      educatorUserSchoolId
+    }
+  }
+`;
+export const onCreateUser = /* GraphQL */ `
+  subscription OnCreateUser {
+    onCreateUser {
+      id
+      username
+      email
+      avatar
+      type
+      total_points
+      total_g_co2_saved
+      SubmittedActions {
+        items {
+          id
+          Action {
+            id
+            date_of_action
+            image
+            points_received
+            g_co2_saved
+            action_name
+            action_items
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          FactBonusPointQuiz {
+            id
+            fact_text
+            question_text
+            answers
+            correct_answer
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          submittedActionActionId
+          submittedActionFactBonusPointQuizId
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateUser = /* GraphQL */ `
+  subscription OnUpdateUser {
+    onUpdateUser {
+      id
+      username
+      email
+      avatar
+      type
+      total_points
+      total_g_co2_saved
+      SubmittedActions {
+        items {
+          id
+          Action {
+            id
+            date_of_action
+            image
+            points_received
+            g_co2_saved
+            action_name
+            action_items
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          FactBonusPointQuiz {
+            id
+            fact_text
+            question_text
+            answers
+            correct_answer
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          submittedActionActionId
+          submittedActionFactBonusPointQuizId
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteUser = /* GraphQL */ `
+  subscription OnDeleteUser {
+    onDeleteUser {
+      id
+      username
+      email
+      avatar
+      type
+      total_points
+      total_g_co2_saved
+      SubmittedActions {
+        items {
+          id
+          Action {
+            id
+            date_of_action
+            image
+            points_received
+            g_co2_saved
+            action_name
+            action_items
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          FactBonusPointQuiz {
+            id
+            fact_text
+            question_text
+            answers
+            correct_answer
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          userID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          submittedActionActionId
+          submittedActionFactBonusPointQuizId
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateStudentUser = /* GraphQL */ `
+  subscription OnCreateStudentUser {
+    onCreateStudentUser {
+      id
+      User {
+        id
+        username
+        email
+        avatar
+        type
+        total_points
+        total_g_co2_saved
+        SubmittedActions {
+          items {
+            id
+            Action {
+              id
+              date_of_action
+              image
+              points_received
+              g_co2_saved
+              action_name
+              action_items
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            FactBonusPointQuiz {
+              id
+              fact_text
+              question_text
+              answers
+              correct_answer
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            userID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            submittedActionActionId
+            submittedActionFactBonusPointQuizId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      School {
+        id
+        name
+        city
+        country
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      JoinedGroups {
+        items {
+          id
+          studentUserID
+          groupID
+          studentUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
             }
             JoinedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            studentUserUserId
+            studentUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      studentUserUserId
+      studentUserSchoolId
+    }
+  }
+`;
+export const onUpdateStudentUser = /* GraphQL */ `
+  subscription OnUpdateStudentUser {
+    onUpdateStudentUser {
+      id
+      User {
+        id
+        username
+        email
+        avatar
+        type
+        total_points
+        total_g_co2_saved
+        SubmittedActions {
+          items {
+            id
+            Action {
+              id
+              date_of_action
+              image
+              points_received
+              g_co2_saved
+              action_name
+              action_items
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            FactBonusPointQuiz {
+              id
+              fact_text
+              question_text
+              answers
+              correct_answer
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            userID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            submittedActionActionId
+            submittedActionFactBonusPointQuizId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      School {
+        id
+        name
+        city
+        country
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      JoinedGroups {
+        items {
+          id
+          studentUserID
+          groupID
+          studentUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            JoinedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            studentUserUserId
+            studentUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      studentUserUserId
+      studentUserSchoolId
+    }
+  }
+`;
+export const onDeleteStudentUser = /* GraphQL */ `
+  subscription OnDeleteStudentUser {
+    onDeleteStudentUser {
+      id
+      User {
+        id
+        username
+        email
+        avatar
+        type
+        total_points
+        total_g_co2_saved
+        SubmittedActions {
+          items {
+            id
+            Action {
+              id
+              date_of_action
+              image
+              points_received
+              g_co2_saved
+              action_name
+              action_items
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            FactBonusPointQuiz {
+              id
+              fact_text
+              question_text
+              answers
+              correct_answer
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            userID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            submittedActionActionId
+            submittedActionFactBonusPointQuizId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      School {
+        id
+        name
+        city
+        country
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      JoinedGroups {
+        items {
+          id
+          studentUserID
+          groupID
+          studentUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            JoinedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            studentUserUserId
+            studentUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      studentUserUserId
+      studentUserSchoolId
+    }
+  }
+`;
+export const onCreateSchool = /* GraphQL */ `
+  subscription OnCreateSchool {
+    onCreateSchool {
+      id
+      name
+      city
+      country
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateSchool = /* GraphQL */ `
+  subscription OnUpdateSchool {
+    onUpdateSchool {
+      id
+      name
+      city
+      country
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteSchool = /* GraphQL */ `
+  subscription OnDeleteSchool {
+    onDeleteSchool {
+      id
+      name
+      city
+      country
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateGroup = /* GraphQL */ `
+  subscription OnCreateGroup {
+    onCreateGroup {
+      id
+      name
+      description
+      image
+      studentusers {
+        items {
+          id
+          studentUserID
+          groupID
+          studentUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            JoinedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            studentUserUserId
+            studentUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      educatorusers {
+        items {
+          id
+          educatorUserID
+          groupID
+          educatorUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            OwnedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            educatorUserUserId
+            educatorUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
               nextToken
               startedAt
             }
@@ -86,19 +1301,60 @@ export const onUpdateGroup = /* GraphQL */ `
       name
       description
       image
-      userID
-      users {
+      studentusers {
         items {
           id
+          studentUserID
           groupID
-          userID
+          studentUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            JoinedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            studentUserUserId
+            studentUserSchoolId
+          }
           group {
             id
             name
             description
             image
-            userID
-            users {
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
               nextToken
               startedAt
             }
@@ -108,29 +1364,69 @@ export const onUpdateGroup = /* GraphQL */ `
             _deleted
             _lastChangedAt
           }
-          user {
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      educatorusers {
+        items {
+          id
+          educatorUserID
+          groupID
+          educatorUser {
             id
-            username
-            email
-            avatar
-            role
-            PlantBasedMealActions {
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            OwnedGroups {
               nextToken
               startedAt
             }
-            WaterActions {
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            educatorUserUserId
+            educatorUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
               nextToken
               startedAt
             }
-            TransportationActions {
-              nextToken
-              startedAt
-            }
-            GroupsOwned {
-              nextToken
-              startedAt
-            }
-            JoinedGroups {
+            educatorusers {
               nextToken
               startedAt
             }
@@ -164,69 +1460,291 @@ export const onDeleteGroup = /* GraphQL */ `
       name
       description
       image
+      studentusers {
+        items {
+          id
+          studentUserID
+          groupID
+          studentUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            JoinedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            studentUserUserId
+            studentUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      educatorusers {
+        items {
+          id
+          educatorUserID
+          groupID
+          educatorUser {
+            id
+            User {
+              id
+              username
+              email
+              avatar
+              type
+              total_points
+              total_g_co2_saved
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            School {
+              id
+              name
+              city
+              country
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            OwnedGroups {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            educatorUserUserId
+            educatorUserSchoolId
+          }
+          group {
+            id
+            name
+            description
+            image
+            studentusers {
+              nextToken
+              startedAt
+            }
+            educatorusers {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateSubmittedAction = /* GraphQL */ `
+  subscription OnCreateSubmittedAction {
+    onCreateSubmittedAction {
+      id
+      Action {
+        id
+        date_of_action
+        image
+        points_received
+        g_co2_saved
+        action_name
+        action_items
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      FactBonusPointQuiz {
+        id
+        fact_text
+        question_text
+        answers
+        correct_answer
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       userID
-      users {
-        items {
-          id
-          groupID
-          userID
-          group {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          user {
-            id
-            username
-            email
-            avatar
-            role
-            PlantBasedMealActions {
-              nextToken
-              startedAt
-            }
-            WaterActions {
-              nextToken
-              startedAt
-            }
-            TransportationActions {
-              nextToken
-              startedAt
-            }
-            GroupsOwned {
-              nextToken
-              startedAt
-            }
-            JoinedGroups {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      submittedActionActionId
+      submittedActionFactBonusPointQuizId
+    }
+  }
+`;
+export const onUpdateSubmittedAction = /* GraphQL */ `
+  subscription OnUpdateSubmittedAction {
+    onUpdateSubmittedAction {
+      id
+      Action {
+        id
+        date_of_action
+        image
+        points_received
+        g_co2_saved
+        action_name
+        action_items
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
+      FactBonusPointQuiz {
+        id
+        fact_text
+        question_text
+        answers
+        correct_answer
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      submittedActionActionId
+      submittedActionFactBonusPointQuizId
+    }
+  }
+`;
+export const onDeleteSubmittedAction = /* GraphQL */ `
+  subscription OnDeleteSubmittedAction {
+    onDeleteSubmittedAction {
+      id
+      Action {
+        id
+        date_of_action
+        image
+        points_received
+        g_co2_saved
+        action_name
+        action_items
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      FactBonusPointQuiz {
+        id
+        fact_text
+        question_text
+        answers
+        correct_answer
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      userID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      submittedActionActionId
+      submittedActionFactBonusPointQuizId
+    }
+  }
+`;
+export const onCreateAction = /* GraphQL */ `
+  subscription OnCreateAction {
+    onCreateAction {
+      id
+      date_of_action
+      image
+      points_received
+      g_co2_saved
+      action_name
+      action_items
       createdAt
       updatedAt
       _version
@@ -235,162 +1753,16 @@ export const onDeleteGroup = /* GraphQL */ `
     }
   }
 `;
-export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser {
-    onCreateUser {
+export const onUpdateAction = /* GraphQL */ `
+  subscription OnUpdateAction {
+    onUpdateAction {
       id
-      username
-      email
-      avatar
-      role
-      PlantBasedMealActions {
-        items {
-          id
-          number_of_plant_based_meals
-          date_of_action
-          image
-          points_received
-          g_co2_saved
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      WaterActions {
-        items {
-          id
-          ml_tap_water
-          date_of_action
-          image
-          points_received
-          g_co2_saved
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      TransportationActions {
-        items {
-          id
-          km_walked
-          km_biked
-          km_transited
-          date_of_action
-          image
-          points_received
-          g_co2_save
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      GroupsOwned {
-        items {
-          id
-          name
-          description
-          image
-          userID
-          users {
-            items {
-              id
-              groupID
-              userID
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            nextToken
-            startedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      JoinedGroups {
-        items {
-          id
-          groupID
-          userID
-          group {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          user {
-            id
-            username
-            email
-            avatar
-            role
-            PlantBasedMealActions {
-              nextToken
-              startedAt
-            }
-            WaterActions {
-              nextToken
-              startedAt
-            }
-            TransportationActions {
-              nextToken
-              startedAt
-            }
-            GroupsOwned {
-              nextToken
-              startedAt
-            }
-            JoinedGroups {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
+      date_of_action
+      image
+      points_received
+      g_co2_saved
+      action_name
+      action_items
       createdAt
       updatedAt
       _version
@@ -399,326 +1771,16 @@ export const onCreateUser = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser {
-    onUpdateUser {
+export const onDeleteAction = /* GraphQL */ `
+  subscription OnDeleteAction {
+    onDeleteAction {
       id
-      username
-      email
-      avatar
-      role
-      PlantBasedMealActions {
-        items {
-          id
-          number_of_plant_based_meals
-          date_of_action
-          image
-          points_received
-          g_co2_saved
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      WaterActions {
-        items {
-          id
-          ml_tap_water
-          date_of_action
-          image
-          points_received
-          g_co2_saved
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      TransportationActions {
-        items {
-          id
-          km_walked
-          km_biked
-          km_transited
-          date_of_action
-          image
-          points_received
-          g_co2_save
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      GroupsOwned {
-        items {
-          id
-          name
-          description
-          image
-          userID
-          users {
-            items {
-              id
-              groupID
-              userID
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            nextToken
-            startedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      JoinedGroups {
-        items {
-          id
-          groupID
-          userID
-          group {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          user {
-            id
-            username
-            email
-            avatar
-            role
-            PlantBasedMealActions {
-              nextToken
-              startedAt
-            }
-            WaterActions {
-              nextToken
-              startedAt
-            }
-            TransportationActions {
-              nextToken
-              startedAt
-            }
-            GroupsOwned {
-              nextToken
-              startedAt
-            }
-            JoinedGroups {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser {
-    onDeleteUser {
-      id
-      username
-      email
-      avatar
-      role
-      PlantBasedMealActions {
-        items {
-          id
-          number_of_plant_based_meals
-          date_of_action
-          image
-          points_received
-          g_co2_saved
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      WaterActions {
-        items {
-          id
-          ml_tap_water
-          date_of_action
-          image
-          points_received
-          g_co2_saved
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      TransportationActions {
-        items {
-          id
-          km_walked
-          km_biked
-          km_transited
-          date_of_action
-          image
-          points_received
-          g_co2_save
-          userID
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      GroupsOwned {
-        items {
-          id
-          name
-          description
-          image
-          userID
-          users {
-            items {
-              id
-              groupID
-              userID
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            nextToken
-            startedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
-      JoinedGroups {
-        items {
-          id
-          groupID
-          userID
-          group {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          user {
-            id
-            username
-            email
-            avatar
-            role
-            PlantBasedMealActions {
-              nextToken
-              startedAt
-            }
-            WaterActions {
-              nextToken
-              startedAt
-            }
-            TransportationActions {
-              nextToken
-              startedAt
-            }
-            GroupsOwned {
-              nextToken
-              startedAt
-            }
-            JoinedGroups {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        nextToken
-        startedAt
-      }
+      date_of_action
+      image
+      points_received
+      g_co2_saved
+      action_name
+      action_items
       createdAt
       updatedAt
       _version
@@ -775,209 +1837,122 @@ export const onDeleteFactBonusPointQuiz = /* GraphQL */ `
     }
   }
 `;
-export const onCreatePlantBasedMealAction = /* GraphQL */ `
-  subscription OnCreatePlantBasedMealAction {
-    onCreatePlantBasedMealAction {
+export const onCreateEducatorUserGroup = /* GraphQL */ `
+  subscription OnCreateEducatorUserGroup {
+    onCreateEducatorUserGroup {
       id
-      number_of_plant_based_meals
-      date_of_action
-      image
-      points_received
-      g_co2_saved
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onUpdatePlantBasedMealAction = /* GraphQL */ `
-  subscription OnUpdatePlantBasedMealAction {
-    onUpdatePlantBasedMealAction {
-      id
-      number_of_plant_based_meals
-      date_of_action
-      image
-      points_received
-      g_co2_saved
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onDeletePlantBasedMealAction = /* GraphQL */ `
-  subscription OnDeletePlantBasedMealAction {
-    onDeletePlantBasedMealAction {
-      id
-      number_of_plant_based_meals
-      date_of_action
-      image
-      points_received
-      g_co2_saved
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onCreateWaterAction = /* GraphQL */ `
-  subscription OnCreateWaterAction {
-    onCreateWaterAction {
-      id
-      ml_tap_water
-      date_of_action
-      image
-      points_received
-      g_co2_saved
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onUpdateWaterAction = /* GraphQL */ `
-  subscription OnUpdateWaterAction {
-    onUpdateWaterAction {
-      id
-      ml_tap_water
-      date_of_action
-      image
-      points_received
-      g_co2_saved
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onDeleteWaterAction = /* GraphQL */ `
-  subscription OnDeleteWaterAction {
-    onDeleteWaterAction {
-      id
-      ml_tap_water
-      date_of_action
-      image
-      points_received
-      g_co2_saved
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onCreateTransportationAction = /* GraphQL */ `
-  subscription OnCreateTransportationAction {
-    onCreateTransportationAction {
-      id
-      km_walked
-      km_biked
-      km_transited
-      date_of_action
-      image
-      points_received
-      g_co2_save
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onUpdateTransportationAction = /* GraphQL */ `
-  subscription OnUpdateTransportationAction {
-    onUpdateTransportationAction {
-      id
-      km_walked
-      km_biked
-      km_transited
-      date_of_action
-      image
-      points_received
-      g_co2_save
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onDeleteTransportationAction = /* GraphQL */ `
-  subscription OnDeleteTransportationAction {
-    onDeleteTransportationAction {
-      id
-      km_walked
-      km_biked
-      km_transited
-      date_of_action
-      image
-      points_received
-      g_co2_save
-      userID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-  }
-`;
-export const onCreateUserGroup = /* GraphQL */ `
-  subscription OnCreateUserGroup {
-    onCreateUserGroup {
-      id
+      educatorUserID
       groupID
-      userID
+      educatorUser {
+        id
+        User {
+          id
+          username
+          email
+          avatar
+          type
+          total_points
+          total_g_co2_saved
+          SubmittedActions {
+            items {
+              id
+              userID
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              submittedActionActionId
+              submittedActionFactBonusPointQuizId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        School {
+          id
+          name
+          city
+          country
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        OwnedGroups {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        educatorUserUserId
+        educatorUserSchoolId
+      }
       group {
         id
         name
         description
         image
-        userID
-        users {
+        studentusers {
           items {
             id
+            studentUserID
             groupID
-            userID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
             group {
               id
               name
               description
               image
-              userID
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            user {
-              id
-              username
-              email
-              avatar
-              role
               createdAt
               updatedAt
               _version
@@ -993,117 +1968,26 @@ export const onCreateUserGroup = /* GraphQL */ `
           nextToken
           startedAt
         }
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      user {
-        id
-        username
-        email
-        avatar
-        role
-        PlantBasedMealActions {
+        educatorusers {
           items {
             id
-            number_of_plant_based_meals
-            date_of_action
-            image
-            points_received
-            g_co2_saved
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        WaterActions {
-          items {
-            id
-            ml_tap_water
-            date_of_action
-            image
-            points_received
-            g_co2_saved
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        TransportationActions {
-          items {
-            id
-            km_walked
-            km_biked
-            km_transited
-            date_of_action
-            image
-            points_received
-            g_co2_save
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        GroupsOwned {
-          items {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        JoinedGroups {
-          items {
-            id
+            educatorUserID
             groupID
-            userID
+            educatorUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
             group {
               id
               name
               description
               image
-              userID
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            user {
-              id
-              username
-              email
-              avatar
-              role
               createdAt
               updatedAt
               _version
@@ -1133,41 +2017,74 @@ export const onCreateUserGroup = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateUserGroup = /* GraphQL */ `
-  subscription OnUpdateUserGroup {
-    onUpdateUserGroup {
+export const onUpdateEducatorUserGroup = /* GraphQL */ `
+  subscription OnUpdateEducatorUserGroup {
+    onUpdateEducatorUserGroup {
       id
+      educatorUserID
       groupID
-      userID
-      group {
+      educatorUser {
         id
-        name
-        description
-        image
-        userID
-        users {
-          items {
-            id
-            groupID
-            userID
-            group {
+        User {
+          id
+          username
+          email
+          avatar
+          type
+          total_points
+          total_g_co2_saved
+          SubmittedActions {
+            items {
               id
-              name
-              description
-              image
               userID
               createdAt
               updatedAt
               _version
               _deleted
               _lastChangedAt
+              submittedActionActionId
+              submittedActionFactBonusPointQuizId
             }
-            user {
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        School {
+          id
+          name
+          city
+          country
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        OwnedGroups {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
               id
-              username
-              email
-              avatar
-              role
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
               createdAt
               updatedAt
               _version
@@ -1188,112 +2105,69 @@ export const onUpdateUserGroup = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        educatorUserUserId
+        educatorUserSchoolId
       }
-      user {
+      group {
         id
-        username
-        email
-        avatar
-        role
-        PlantBasedMealActions {
+        name
+        description
+        image
+        studentusers {
           items {
             id
-            number_of_plant_based_meals
-            date_of_action
-            image
-            points_received
-            g_co2_saved
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        WaterActions {
-          items {
-            id
-            ml_tap_water
-            date_of_action
-            image
-            points_received
-            g_co2_saved
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        TransportationActions {
-          items {
-            id
-            km_walked
-            km_biked
-            km_transited
-            date_of_action
-            image
-            points_received
-            g_co2_save
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        GroupsOwned {
-          items {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        JoinedGroups {
-          items {
-            id
+            studentUserID
             groupID
-            userID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
             group {
               id
               name
               description
               image
-              userID
               createdAt
               updatedAt
               _version
               _deleted
               _lastChangedAt
             }
-            user {
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        educatorusers {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
               id
-              username
-              email
-              avatar
-              role
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
               createdAt
               updatedAt
               _version
@@ -1323,41 +2197,157 @@ export const onUpdateUserGroup = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteUserGroup = /* GraphQL */ `
-  subscription OnDeleteUserGroup {
-    onDeleteUserGroup {
+export const onDeleteEducatorUserGroup = /* GraphQL */ `
+  subscription OnDeleteEducatorUserGroup {
+    onDeleteEducatorUserGroup {
       id
+      educatorUserID
       groupID
-      userID
-      group {
+      educatorUser {
         id
-        name
-        description
-        image
-        userID
-        users {
-          items {
-            id
-            groupID
-            userID
-            group {
+        User {
+          id
+          username
+          email
+          avatar
+          type
+          total_points
+          total_g_co2_saved
+          SubmittedActions {
+            items {
               id
-              name
-              description
-              image
               userID
               createdAt
               updatedAt
               _version
               _deleted
               _lastChangedAt
+              submittedActionActionId
+              submittedActionFactBonusPointQuizId
             }
-            user {
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        School {
+          id
+          name
+          city
+          country
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        OwnedGroups {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
               id
-              username
-              email
-              avatar
-              role
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        educatorUserUserId
+        educatorUserSchoolId
+      }
+      group {
+        id
+        name
+        description
+        image
+        studentusers {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        educatorusers {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
               createdAt
               updatedAt
               _version
@@ -1379,111 +2369,525 @@ export const onDeleteUserGroup = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
-      user {
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateStudentUserGroup = /* GraphQL */ `
+  subscription OnCreateStudentUserGroup {
+    onCreateStudentUserGroup {
+      id
+      studentUserID
+      groupID
+      studentUser {
         id
-        username
-        email
-        avatar
-        role
-        PlantBasedMealActions {
-          items {
-            id
-            number_of_plant_based_meals
-            date_of_action
-            image
-            points_received
-            g_co2_saved
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        WaterActions {
-          items {
-            id
-            ml_tap_water
-            date_of_action
-            image
-            points_received
-            g_co2_saved
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        TransportationActions {
-          items {
-            id
-            km_walked
-            km_biked
-            km_transited
-            date_of_action
-            image
-            points_received
-            g_co2_save
-            userID
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        GroupsOwned {
-          items {
-            id
-            name
-            description
-            image
-            userID
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-        JoinedGroups {
-          items {
-            id
-            groupID
-            userID
-            group {
+        User {
+          id
+          username
+          email
+          avatar
+          type
+          total_points
+          total_g_co2_saved
+          SubmittedActions {
+            items {
               id
-              name
-              description
-              image
               userID
               createdAt
               updatedAt
               _version
               _deleted
               _lastChangedAt
+              submittedActionActionId
+              submittedActionFactBonusPointQuizId
             }
-            user {
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        School {
+          id
+          name
+          city
+          country
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        JoinedGroups {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
               id
-              username
-              email
-              avatar
-              role
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        studentUserUserId
+        studentUserSchoolId
+      }
+      group {
+        id
+        name
+        description
+        image
+        studentusers {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        educatorusers {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateStudentUserGroup = /* GraphQL */ `
+  subscription OnUpdateStudentUserGroup {
+    onUpdateStudentUserGroup {
+      id
+      studentUserID
+      groupID
+      studentUser {
+        id
+        User {
+          id
+          username
+          email
+          avatar
+          type
+          total_points
+          total_g_co2_saved
+          SubmittedActions {
+            items {
+              id
+              userID
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              submittedActionActionId
+              submittedActionFactBonusPointQuizId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        School {
+          id
+          name
+          city
+          country
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        JoinedGroups {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        studentUserUserId
+        studentUserSchoolId
+      }
+      group {
+        id
+        name
+        description
+        image
+        studentusers {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        educatorusers {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteStudentUserGroup = /* GraphQL */ `
+  subscription OnDeleteStudentUserGroup {
+    onDeleteStudentUserGroup {
+      id
+      studentUserID
+      groupID
+      studentUser {
+        id
+        User {
+          id
+          username
+          email
+          avatar
+          type
+          total_points
+          total_g_co2_saved
+          SubmittedActions {
+            items {
+              id
+              userID
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              submittedActionActionId
+              submittedActionFactBonusPointQuizId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        School {
+          id
+          name
+          city
+          country
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        JoinedGroups {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        studentUserUserId
+        studentUserSchoolId
+      }
+      group {
+        id
+        name
+        description
+        image
+        studentusers {
+          items {
+            id
+            studentUserID
+            groupID
+            studentUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              studentUserUserId
+              studentUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+        educatorusers {
+          items {
+            id
+            educatorUserID
+            groupID
+            educatorUser {
+              id
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              educatorUserUserId
+              educatorUserSchoolId
+            }
+            group {
+              id
+              name
+              description
+              image
               createdAt
               updatedAt
               _version

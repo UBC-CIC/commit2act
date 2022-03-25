@@ -33,7 +33,10 @@
       "AmplifyAppId": "d2dgbokgf4vgx"
     },
     "categories": {
-      "hosting": {}
+      "hosting": {},
+      "auth": {
+        "commit2act": {}
+      }
     }
   },
   "testing": {

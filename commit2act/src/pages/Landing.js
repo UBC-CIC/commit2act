@@ -13,6 +13,8 @@ import React, { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import GroupCard from '../components/GroupCard';
+import { API, graphqlOperation } from 'aws-amplify';
+import { getTotalGlobalCO2 } from '../graphql/queries';
 
 const theme = createTheme({
   components: {
@@ -76,6 +78,7 @@ const theme = createTheme({
 const Landing = () => {
   const [user, setUser] = useState();
   const navigate = useNavigate();
+  const [collectiveImpact, setCollectiveImpact] = useState();
 
   const getUserInfo = async () => {
     const userInfo = await Auth.currentUserInfo();
@@ -84,7 +87,13 @@ const Landing = () => {
 
   useEffect(() => {
     getUserInfo();
+    getTotalCo2();
   }, []);
+
+  const getTotalCo2 = async () => {
+    const res = await API.graphql(graphqlOperation(getTotalGlobalCO2));
+    setCollectiveImpact(res.data.getTotalGlobalCO2);
+  };
 
   //filler content for groups(will replace once database is set up)
   let group1 = {
@@ -160,7 +169,7 @@ const Landing = () => {
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Collective Impact</Typography>
                   <CardContent>
-                    <Typography variant="h5">8100g</Typography>
+                    <Typography variant="h5">{collectiveImpact}</Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>
