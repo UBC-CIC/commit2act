@@ -1,5 +1,5 @@
 projects:
-  commit2act-develop:
+  Commit2ActGraphQLAPI:
     schemaPath: src/graphql/schema.json
     includes:
       - src/graphql/**/*.js
@@ -11,7 +11,7 @@ projects:
         generatedFileName: ''
         docsFilePath: src/graphql
         region: ca-central-1
-        apiId: g6mjjumkirdpdk237eszbv6h7e
+        apiId: adra2ga3hrhb3b6b4wfbnftjry
         maxDepth: 4
 extensions:
   amplify:
