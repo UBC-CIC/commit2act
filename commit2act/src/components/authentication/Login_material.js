@@ -268,9 +268,19 @@ function Login(props) {
     // Verify Account with confirmation code after sign up page
     try {
       setNewVerification(false);
-      const { email, authCode } = formState;
+      const { name, preferred_username, email, authCode } = formState;
       setLoading(true);
       await Auth.confirmSignUp(email, authCode);
+      //inputs user in database, returns userID
+      let userData = {
+        name: name,
+        username: preferred_username,
+        email: email,
+      };
+      const userId = await API.graphql(graphqlOperation(createUser), {
+        input: userData,
+      });
+      console.log(userId);
       resetStates('signIn');
       setShowSuccessAlert(true);
       setLoading(false);
