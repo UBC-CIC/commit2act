@@ -1,6 +1,6 @@
 projects:
-  commit2act:
-    schemaPath: amplify/backend/api/commit2act/build/schema.graphql
+  commit2act-develop:
+    schemaPath: src/graphql/schema.json
     includes:
       - src/graphql/**/*.js
     excludes:
@@ -11,5 +11,8 @@ projects:
         generatedFileName: ''
         docsFilePath: src/graphql
         region: ca-central-1
-        apiId: null
-        maxDepth: 5
+        apiId: g6mjjumkirdpdk237eszbv6h7e
+        maxDepth: 4
+extensions:
+  amplify:
+    version: 3
