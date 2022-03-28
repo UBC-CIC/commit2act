@@ -234,19 +234,17 @@ function Login(props) {
         },
       });
 
-      const userId = await API.graphql(graphqlOperation(createUser), {
-        input: name,
+      updateFormState(() => ({
+        ...initialFormState,
+        name,
         preferred_username,
         email,
-      });
-      console.log(userId);
-      updateFormState(() => ({ ...initialFormState, email }));
+      }));
       updateLoginState('confirmSignUp');
       setLoading(false);
     } catch (e) {
       setLoading(false);
       setEmptyInputError(false);
-
       const errorMsg = e.message;
 
       if (errorMsg.includes('empty')) {
@@ -268,19 +266,20 @@ function Login(props) {
     // Verify Account with confirmation code after sign up page
     try {
       setNewVerification(false);
-      const { name, preferred_username, email, authCode } = formState;
+      const { email, authCode, name, preferred_username } = formState;
       setLoading(true);
-      await Auth.confirmSignUp(email, authCode);
-      //inputs user in database, returns userID
-      let userData = {
-        name: name,
-        username: preferred_username,
-        email: email,
-      };
-      const userId = await API.graphql(graphqlOperation(createUser), {
-        input: userData,
+      const authConfirmation = await Auth.confirmSignUp(email, authCode);
+      //add user to database
+      const databaseUser = await API.graphql({
+        query: createUser,
+        variables: { name: name, username: preferred_username, email: email },
       });
-      console.log(userId);
+
+      const addUserPromise = await Promise.all([
+        authConfirmation,
+        databaseUser,
+      ]);
+
       resetStates('signIn');
       setShowSuccessAlert(true);
       setLoading(false);
