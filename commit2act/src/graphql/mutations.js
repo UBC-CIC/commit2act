@@ -22,13 +22,29 @@ export const createUser = /* GraphQL */ `
     }
   }
 `;
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $user_id: Int!
+    $name: String
+    $email: String
+    $avatar: String
+  ) {
+    updateUser(user_id: $user_id, name: $name, email: $email, avatar: $avatar) {
+      user_id
+      username
+      name
+      email
+      avatar
+    }
+  }
+`;
 export const createSubmittedAction = /* GraphQL */ `
   mutation CreateSubmittedAction(
     $user_id: Int!
     $action_id: Int!
     $quiz_id: Int
     $g_co2_saved: Float!
-    $time_sumbitted: String
+    $date_of_action: AWSDate!
     $first_quiz_answer_correct: Boolean!
     $quiz_answered: Boolean!
     $is_validated: Boolean!
@@ -39,7 +55,7 @@ export const createSubmittedAction = /* GraphQL */ `
       action_id: $action_id
       quiz_id: $quiz_id
       g_co2_saved: $g_co2_saved
-      time_sumbitted: $time_sumbitted
+      date_of_action: $date_of_action
       first_quiz_answer_correct: $first_quiz_answer_correct
       quiz_answered: $quiz_answered
       is_validated: $is_validated
@@ -50,6 +66,7 @@ export const createSubmittedAction = /* GraphQL */ `
       action_id
       quiz_id
       g_co2_saved
+      date_of_action
       time_sumbitted
       first_quiz_answer_correct
       quiz_answered

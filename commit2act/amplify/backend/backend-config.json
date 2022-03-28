@@ -33,5 +33,12 @@
         ]
       }
     }
+  },
+  "storage": {
+    "s3commit2actstorage4f79922d": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
   }
 }

@@ -9,5 +9,11 @@ export type AmplifyDependentResourcesAttributes = {
             "AppClientIDWeb": "string",
             "AppClientID": "string"
         }
+    },
+    "storage": {
+        "s3commit2actstorage4f79922d": {
+            "BucketName": "string",
+            "Region": "string"
+        }
     }
 }

@@ -1,9 +1,9 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const singleUser = /* GraphQL */ `
-  query SingleUser($user_id: Int!) {
-    singleUser(user_id: $user_id) {
+export const getSingleUser = /* GraphQL */ `
+  query GetSingleUser($user_id: Int!) {
+    getSingleUser(user_id: $user_id) {
       user_id
       username
       name
@@ -25,6 +25,34 @@ export const getAllUsers = /* GraphQL */ `
       name
       email
       avatar
+    }
+  }
+`;
+export const getAllActions = /* GraphQL */ `
+  query GetAllActions {
+    getAllActions {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+    }
+  }
+`;
+export const getAllSubmittedActions = /* GraphQL */ `
+  query GetAllSubmittedActions {
+    getAllSubmittedActions {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
     }
   }
 `;
