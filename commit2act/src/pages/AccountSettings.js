@@ -3,6 +3,7 @@ import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { Auth } from 'aws-amplify';
+import { styled } from '@mui/material/styles';
 
 const theme = createTheme({
   components: {
@@ -64,9 +65,15 @@ const theme = createTheme({
     },
   },
 });
+
+const Input = styled('input')({
+  display: 'none',
+});
+
 const AccountSettings = () => {
   const [user, setUser] = useState();
   const [showMore, setShowMore] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState();
 
   const getUserInfo = async () => {
     const userInfo = await Auth.currentUserInfo();
@@ -169,6 +176,21 @@ const AccountSettings = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const imageUrl = URL.createObjectURL(selectedAvatar);
+
+  // }, [selectedAvatar])
+
+  const handleAvatarChange = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setSelectedAvatar(null);
+      return;
+    }
+    const imageFile = e.target.files[0];
+    const imageUrl = URL.createObjectURL(imageFile);
+    setSelectedAvatar(imageUrl);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       {user && (
@@ -197,6 +219,7 @@ const AccountSettings = () => {
                 >
                   <Avatar
                     variant="rounded"
+                    src={selectedAvatar}
                     sx={{
                       width: {
                         xs: '24vw',
@@ -213,12 +236,22 @@ const AccountSettings = () => {
                       },
                     }}
                   ></Avatar>
-                  <Button
-                    variant="outlined"
-                    sx={{ mt: '1em', mb: { xs: '1.5em' } }}
-                  >
-                    Change Photo
-                  </Button>
+                  <label htmlFor="contained-button-file">
+                    <Input
+                      accept="image/*"
+                      id="contained-button-file"
+                      multiple
+                      type="file"
+                      onChange={handleAvatarChange}
+                    />
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      sx={{ mt: '1em', mb: { xs: '1.5em' } }}
+                    >
+                      Upload Photo
+                    </Button>
+                  </label>
                 </Box>
               </Grid>
               <Grid
