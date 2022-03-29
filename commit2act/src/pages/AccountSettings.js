@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { Auth } from 'aws-amplify';
+import { Auth, Storage } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -176,12 +176,7 @@ const AccountSettings = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const imageUrl = URL.createObjectURL(selectedAvatar);
-
-  // }, [selectedAvatar])
-
-  const handleAvatarChange = (e) => {
+  async function handleAvatarChange(e) {
     if (!e.target.files || e.target.files.length === 0) {
       setSelectedAvatar(null);
       return;
@@ -189,7 +184,12 @@ const AccountSettings = () => {
     const imageFile = e.target.files[0];
     const imageUrl = URL.createObjectURL(imageFile);
     setSelectedAvatar(imageUrl);
-  };
+    try {
+      await Storage.put(imageFile.name, imageFile);
+    } catch (error) {
+      console.log('Error uploading file', error);
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
