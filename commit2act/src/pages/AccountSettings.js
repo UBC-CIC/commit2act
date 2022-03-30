@@ -173,7 +173,6 @@ const AccountSettings = ({ user }) => {
       return;
     }
     const imageFile = e.target.files[0];
-    console.log(imageFile);
     const imageUrl = URL.createObjectURL(imageFile);
     const imageKey = user.preferred_username.concat('avatar');
     setSelectedAvatar(imageUrl);
