@@ -75,3 +75,20 @@ export const createSubmittedAction = /* GraphQL */ `
     }
   }
 `;
+export const createSubmittedActionItem = /* GraphQL */ `
+  mutation CreateSubmittedActionItem(
+    $sa_id: Int!
+    $item_name: String!
+    $input_value: Float!
+  ) {
+    createSubmittedActionItem(
+      sa_id: $sa_id
+      item_name: $item_name
+      input_value: $input_value
+    ) {
+      item_name
+      sa_id
+      input_value
+    }
+  }
+`;

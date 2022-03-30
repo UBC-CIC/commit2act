@@ -56,3 +56,13 @@ export const getAllSubmittedActions = /* GraphQL */ `
     }
   }
 `;
+export const getActionItemsForAction = /* GraphQL */ `
+  query GetActionItemsForAction($action_id: Int!) {
+    getActionItemsForAction(action_id: $action_id) {
+      action_id
+      item_name
+      item_description
+      co2_saved_per_unit
+    }
+  }
+`;
