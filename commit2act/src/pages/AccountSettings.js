@@ -5,7 +5,6 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { Auth, Storage } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { API } from 'aws-amplify';
-import { getSingleUser } from '../graphql/queries';
 
 const theme = createTheme({
   components: {
@@ -176,9 +175,10 @@ const AccountSettings = ({ user }) => {
     const imageFile = e.target.files[0];
     console.log(imageFile);
     const imageUrl = URL.createObjectURL(imageFile);
+    const imageKey = user.preferred_username.concat('avatar');
     setSelectedAvatar(imageUrl);
     try {
-      await Storage.put(imageFile.name, imageFile);
+      await Storage.put(imageKey, imageFile);
     } catch (error) {
       console.log('Error uploading file', error);
     }
