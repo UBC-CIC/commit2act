@@ -12,6 +12,17 @@ export const getSingleUser = /* GraphQL */ `
     }
   }
 `;
+export const getSingleUserByUsername = /* GraphQL */ `
+  query GetSingleUserByUsername($username: String!) {
+    getSingleUserByUsername(username: $username) {
+      user_id
+      username
+      name
+      email
+      avatar
+    }
+  }
+`;
 export const getTotalGlobalCO2 = /* GraphQL */ `
   query GetTotalGlobalCO2 {
     getTotalGlobalCO2

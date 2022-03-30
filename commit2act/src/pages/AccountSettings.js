@@ -4,6 +4,8 @@ import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { Auth, Storage } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
+import { API } from 'aws-amplify';
+import { getSingleUser } from '../graphql/queries';
 
 const theme = createTheme({
   components: {
@@ -70,19 +72,9 @@ const Input = styled('input')({
   display: 'none',
 });
 
-const AccountSettings = () => {
-  const [user, setUser] = useState();
+const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState();
-
-  const getUserInfo = async () => {
-    const userInfo = await Auth.currentUserInfo();
-    setUser(userInfo);
-  };
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   //hard coded submitted actions for now
   let action1 = {
@@ -182,6 +174,7 @@ const AccountSettings = () => {
       return;
     }
     const imageFile = e.target.files[0];
+    console.log(imageFile);
     const imageUrl = URL.createObjectURL(imageFile);
     setSelectedAvatar(imageUrl);
     try {
@@ -276,19 +269,19 @@ const AccountSettings = () => {
                     <Typography variant="h3" component="span">
                       Name:
                     </Typography>
-                    {user.attributes.name}
+                    {user.name}
                   </Typography>
                   <Typography variant="h4">
                     <Typography variant="h3" component="span">
                       Username:
                     </Typography>
-                    {user.attributes.preferred_username}
+                    {user.preferred_username}
                   </Typography>
                   <Typography variant="h4">
                     <Typography variant="h3" component="span">
                       Email:
                     </Typography>
-                    {user.attributes.email}
+                    {user.email}
                   </Typography>
                 </Box>
                 <Button size="small" sx={{ alignSelf: { md: 'flex-start' } }}>

@@ -31,6 +31,8 @@ import ValidateActions from '../../pages/ValidateActions';
 import { Auth } from 'aws-amplify';
 import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';
+import { API } from 'aws-amplify';
+import { getSingleUserByUsername } from '../../graphql/queries';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,17 +67,54 @@ function PageContainer(props) {
   const { menuEnabled, updateMenuState } = props;
   const classes = useStyles();
   const navigate = useNavigate();
-  const [userType, setUserType] = useState();
+  // const [userType, setUserType] = useState();
+  const [user, setUser] = useState();
 
-  const getUserType = async () => {
-    const user = await Auth.currentUserInfo();
-    const type = user.attributes['custom:user_type'];
-    setUserType(type);
+  const getUserInfo = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    const id = user.attributes['custom:id'];
+    //if theres no userId attribute in cognito already (user is logging in for first time), call getUserId() function
+    if (!id) {
+      getUserId(user);
+    } else {
+      setUser(user.attributes);
+    }
+  };
+
+  //gets user_id from database
+  const getUserId = async (user) => {
+    const username = user.attributes.preferred_username;
+    const userInfo = await API.graphql({
+      query: getSingleUserByUsername,
+      variables: { username: username },
+    });
+
+    const id = userInfo.data.getSingleUserByUsername.user_id;
+    updateUserId(id, user);
+  };
+
+  //updates the cognito user_id custom attribute
+  const updateUserId = async (id, user) => {
+    const idString = id.toString();
+    await Auth.updateUserAttributes(user, {
+      'custom:id': idString,
+    });
+    setUser(user.attributes);
   };
 
   useEffect(() => {
-    getUserType();
+    getUserInfo();
   }, []);
+
+  // const getUserType = async () => {
+  //   const user = await Auth.currentUserInfo();
+  //   const type = user.attributes['custom:user_type'];
+  //   setUserType(type);
+  // };
+
+  // useEffect(() => {
+  //   getUserType();
+  // }, []);
 
   /*
    * Handles closing side menu if an event occurs
@@ -205,7 +244,7 @@ function PageContainer(props) {
             <Route
               exact
               path={'/account-settings'}
-              element={<AccountSettings />}
+              element={<AccountSettings user={user} />}
             />
           </Routes>
         </main>
