@@ -75,6 +75,7 @@ const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
   const [userAvatar, setUserAvatar] = useState();
 
+  console.log(user);
   //hard coded submitted actions for now
   let action1 = {
     g_co2_saved: 300,
@@ -155,10 +156,9 @@ const AccountSettings = ({ user }) => {
 
   //updates user avatar field in database
   async function updateUserAvatar(userAvatarLink) {
-    console.log(user.id);
     await API.graphql({
       query: updateUser,
-      variables: { user_id: user.id, avatar: userAvatarLink },
+      variables: { user_id: user['custom:id'], avatar: userAvatarLink },
     });
 
     console.log('done updating avatar');

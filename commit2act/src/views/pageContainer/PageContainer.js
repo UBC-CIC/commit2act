@@ -67,43 +67,33 @@ function PageContainer(props) {
   const { menuEnabled, updateMenuState } = props;
   const classes = useStyles();
   const navigate = useNavigate();
-  // const [userType, setUserType] = useState();
   const [user, setUser] = useState();
 
-  const getUserInfo = async () => {
-    const user = await Auth.currentAuthenticatedUser();
-    const id = user.attributes['custom:id'];
-    //if theres no userId attribute in cognito already (user is logging in for first time), call getUserId() function
-    if (!id) {
-      getUserId(user);
-    } else {
-      setUser(user.attributes);
-    }
+  const getCognitoUser = async () => {
+    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
+    const id = cognitoUserEntry.attributes['custom:id'];
+    getUserInfo(cognitoUserEntry, id);
   };
 
-  //gets user_id from database
-  const getUserId = async (user) => {
-    const username = user.attributes.preferred_username;
-    const userInfo = await API.graphql({
+  const getUserInfo = async (cognitoUserEntry, id) => {
+    const username = cognitoUserEntry.attributes.preferred_username;
+    const res = await API.graphql({
       query: getSingleUserByUsername,
       variables: { username: username },
     });
+    const databaseUserEntry = res.data.getSingleUserByUsername;
 
-    const id = userInfo.data.getSingleUserByUsername.user_id;
-    updateUserId(id, user);
-  };
-
-  //updates the cognito user_id custom attribute
-  const updateUserId = async (id, user) => {
-    const idString = id.toString();
-    await Auth.updateUserAttributes(user, {
-      'custom:id': idString,
-    });
-    setUser(user.attributes);
+    if (!id) {
+      const idString = databaseUserEntry.user_id.toString();
+      await Auth.updateUserAttributes(cognitoUserEntry, {
+        'custom:id': idString,
+      });
+    }
+    setUser(databaseUserEntry);
   };
 
   useEffect(() => {
-    getUserInfo();
+    getCognitoUser();
   }, []);
 
   // const getUserType = async () => {
