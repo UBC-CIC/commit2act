@@ -69,6 +69,7 @@ function PageContainer(props) {
   const navigate = useNavigate();
   const [user, setUser] = useState();
 
+  //gets currently authenticated cognito user
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
@@ -76,6 +77,7 @@ function PageContainer(props) {
   };
 
   const getUserInfo = async (cognitoUserEntry, id) => {
+    //gets database entry for cognito user
     const username = cognitoUserEntry.attributes.preferred_username;
     const res = await API.graphql({
       query: getSingleUserByUsername,
@@ -83,6 +85,7 @@ function PageContainer(props) {
     });
     const databaseUserEntry = res.data.getSingleUserByUsername;
 
+    //if the cognito user has no id attribute (first time logging in), set the id attribute to the user_id field from the database entry
     if (!id) {
       const idString = databaseUserEntry.user_id.toString();
       await Auth.updateUserAttributes(cognitoUserEntry, {
@@ -95,17 +98,6 @@ function PageContainer(props) {
   useEffect(() => {
     getCognitoUser();
   }, []);
-
-  // const getUserType = async () => {
-  //   const user = await Auth.currentUserInfo();
-  //   const type = user.attributes['custom:user_type'];
-  //   setUserType(type);
-  // };
-
-  // useEffect(() => {
-  //   getUserType();
-  // }, []);
-
   /*
    * Handles closing side menu if an event occurs
    * */

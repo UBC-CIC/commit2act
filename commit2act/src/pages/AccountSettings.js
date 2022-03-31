@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { Auth, Storage, API } from 'aws-amplify';
+import { Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
 
@@ -73,9 +73,8 @@ const Input = styled('input')({
 
 const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
-  const [userAvatar, setUserAvatar] = useState();
-
-  console.log(user);
+  const [avatarPreview, setAvatarPreview] = useState();
+  const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
   //hard coded submitted actions for now
   let action1 = {
     g_co2_saved: 300,
@@ -158,33 +157,36 @@ const AccountSettings = ({ user }) => {
   async function updateUserAvatar(userAvatarLink) {
     await API.graphql({
       query: updateUser,
-      variables: { user_id: user['custom:id'], avatar: userAvatarLink },
+      variables: { user_id: user.user_id, avatar: userAvatarLink },
     });
-
-    console.log('done updating avatar');
   }
 
   //sends selected image to s3 storage
   async function handleAvatarChange(e) {
     if (!e.target.files || e.target.files.length === 0) {
-      setUserAvatar(null);
+      setAvatarPreview(null);
       return;
     }
-    const imageFile = e.target.files[0];
-    // const imageUrl = URL.createObjectURL(imageFile);
-    const imageKey = 'avatars/'.concat(user.preferred_username, 'avatar');
-    const imageType = imageFile.type;
-    // setSelectedAvatar(imageUrl);
+    let imageFile = e.target.files[0];
+    let imageKey = 'avatars/'.concat(user.username, 'avatar');
+    let imageType = imageFile.type;
+    let userAvatarLink =
+      process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+    //avatarPreview will display right after avatar is changed, since cloudfront url stays the same so changes in the avatar src aren't detected until page refresh
+    let previewLink = URL.createObjectURL(imageFile);
+    setAvatarPreview(previewLink);
     try {
       await Storage.put(imageKey, imageFile, {
         contentType: imageType,
         contentDisposition: 'inline',
       });
-      const userAvatarLink =
-        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-      updateUserAvatar(userAvatarLink);
+      setNewAvatarUploaded(true);
     } catch (error) {
       console.log('Error uploading file', error);
+    }
+    //if user avatar field was previously null, update field with new link
+    if (user.avatar === null) {
+      updateUserAvatar(userAvatarLink);
     }
   }
 
@@ -230,7 +232,12 @@ const AccountSettings = ({ user }) => {
                 >
                   <Avatar
                     variant="rounded"
-                    src={user.avatar}
+                    key={Date.now()}
+                    src={
+                      user.avatar && !newAvatarUploaded
+                        ? user.avatar
+                        : avatarPreview
+                    }
                     sx={{
                       width: {
                         xs: '24vw',
@@ -293,7 +300,7 @@ const AccountSettings = ({ user }) => {
                     <Typography variant="h3" component="span">
                       Username:
                     </Typography>
-                    {user.preferred_username}
+                    {user.username}
                   </Typography>
                   <Typography variant="h4">
                     <Typography variant="h3" component="span">
