@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { Auth, Storage } from 'aws-amplify';
+import { Auth, Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
-import { API } from 'aws-amplify';
+import { updateUser } from '../graphql/mutations';
 
 const theme = createTheme({
   components: {
@@ -73,7 +73,7 @@ const Input = styled('input')({
 
 const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState();
+  const [userAvatar, setUserAvatar] = useState();
 
   //hard coded submitted actions for now
   let action1 = {
@@ -153,6 +153,41 @@ const AccountSettings = ({ user }) => {
 
   let sampleSubmittedActions = [action1, action2, action3, action4, action5];
 
+  //updates user avatar field in database
+  async function updateUserAvatar(userAvatarLink) {
+    console.log(user.id);
+    await API.graphql({
+      query: updateUser,
+      variables: { user_id: user.id, avatar: userAvatarLink },
+    });
+
+    console.log('done updating avatar');
+  }
+
+  //sends selected image to s3 storage
+  async function handleAvatarChange(e) {
+    if (!e.target.files || e.target.files.length === 0) {
+      setUserAvatar(null);
+      return;
+    }
+    const imageFile = e.target.files[0];
+    // const imageUrl = URL.createObjectURL(imageFile);
+    const imageKey = 'avatars/'.concat(user.preferred_username, 'avatar');
+    const imageType = imageFile.type;
+    // setSelectedAvatar(imageUrl);
+    try {
+      await Storage.put(imageKey, imageFile, {
+        contentType: imageType,
+        contentDisposition: 'inline',
+      });
+      const userAvatarLink =
+        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      updateUserAvatar(userAvatarLink);
+    } catch (error) {
+      console.log('Error uploading file', error);
+    }
+  }
+
   const renderSubmittedActionCards = () => {
     if (sampleSubmittedActions) {
       return showMore
@@ -166,22 +201,6 @@ const AccountSettings = ({ user }) => {
             ));
     }
   };
-
-  async function handleAvatarChange(e) {
-    if (!e.target.files || e.target.files.length === 0) {
-      setSelectedAvatar(null);
-      return;
-    }
-    const imageFile = e.target.files[0];
-    const imageUrl = URL.createObjectURL(imageFile);
-    const imageKey = user.preferred_username.concat('avatar');
-    setSelectedAvatar(imageUrl);
-    try {
-      await Storage.put(imageKey, imageFile);
-    } catch (error) {
-      console.log('Error uploading file', error);
-    }
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -211,7 +230,7 @@ const AccountSettings = ({ user }) => {
                 >
                   <Avatar
                     variant="rounded"
-                    src={selectedAvatar}
+                    src={user.avatar}
                     sx={{
                       width: {
                         xs: '24vw',

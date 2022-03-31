@@ -31,7 +31,7 @@ import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
 import { Snackbar } from '@mui/material';
-import { API, graphqlOperation } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import { createUser } from '../../graphql/mutations';
 
 const initialFormState = {
