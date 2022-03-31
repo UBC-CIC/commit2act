@@ -158,13 +158,13 @@ function PageContainer(props) {
 
         <ListItem
           button
-          key={'reportAction'}
-          onClick={() => navigate('/report-action')}
+          key={'logAction'}
+          onClick={() => navigate('/log-action')}
         >
           <ListItemIcon>
             <Assessment />
           </ListItemIcon>
-          <ListItemText primary={'Report Action'} />
+          <ListItemText primary={'Log Action'} />
         </ListItem>
 
         <ListItem
@@ -228,7 +228,7 @@ function PageContainer(props) {
           <Routes>
             <Route exact path={'/'} element={<Landing />} />
             <Route exact path={'/find-group'} element={<FindGroup />} />
-            <Route exact path={'/report-action'} element={<SelfReportMenu />} />
+            <Route exact path={'/log-action'} element={<SelfReportMenu />} />
             <Route exact path={'/info'} element={<Info />} />
             <Route exact path={'/create-group'} element={<CreateGroup />} />
             <Route
