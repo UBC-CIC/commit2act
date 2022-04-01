@@ -121,7 +121,7 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
               }}
               variant="contained"
             >
-              Next
+              Finish
             </Button>
           </>
         ) : (
@@ -154,7 +154,7 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
           textAlign: 'center',
         }}
       >
-        <Typography variant="h2">Bonus Point Quiz</Typography>
+        <Typography variant="h2">Bonus Point Question</Typography>
         {isAnswerSelected ? displayAnswer() : displayQuiz()}
       </Box>
     </ThemeProvider>

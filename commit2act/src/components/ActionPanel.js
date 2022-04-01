@@ -67,6 +67,7 @@ const ActionPanel = ({
           label={item.item_name}
           variant="outlined"
           helperText={item.item_description}
+          InputLabelProps={{ shrink: true }}
           onChange={(e) =>
             setTotalCo2Saved(
               totalCo2Saved + e.target.value * item.co2_saved_per_unit
@@ -84,7 +85,7 @@ const ActionPanel = ({
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
+          gap: '2em',
         }}
       >
         {renderActionForm()}
@@ -95,7 +96,7 @@ const ActionPanel = ({
         }}
         variant="contained"
       >
-        Add Action
+        Next
       </Button>
     </>
   );
