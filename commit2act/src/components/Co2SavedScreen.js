@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { API } from 'aws-amplify';
+import { createSubmittedAction } from '../graphql/mutations';
 
 const theme = createTheme({
   components: {
@@ -41,7 +43,38 @@ const theme = createTheme({
   },
 });
 
-const Co2SavedScreen = ({ totalCo2Saved, changeStep }) => {
+const Co2SavedScreen = ({
+  actionId,
+  actionDate,
+  totalCo2Saved,
+  changeStep,
+  id,
+  quizAnswered,
+  firstQuizAnswerCorrect,
+  user,
+}) => {
+  useEffect(() => {
+    submitAction();
+  }, []);
+
+  const submitAction = async () => {
+    let points = firstQuizAnswerCorrect ? 10 : 0;
+    const res = await API.graphql({
+      query: createSubmittedAction,
+      variables: {
+        action_id: actionId,
+        date_of_action: actionDate,
+        first_quiz_answer_correct: firstQuizAnswerCorrect,
+        g_co2_saved: totalCo2Saved,
+        is_validated: false,
+        points_earned: points,
+        quiz_answered: quizAnswered,
+        user_id: user.user_id,
+      },
+    });
+    console.log(res);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box

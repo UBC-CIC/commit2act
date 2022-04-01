@@ -38,13 +38,18 @@ export const updateUser = /* GraphQL */ `
     }
   }
 `;
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser($user_id: Int!) {
+    deleteUser(user_id: $user_id)
+  }
+`;
 export const createSubmittedAction = /* GraphQL */ `
   mutation CreateSubmittedAction(
     $user_id: Int!
     $action_id: Int!
     $quiz_id: Int
     $g_co2_saved: Float!
-    $date_of_action: AWSDate!
+    $date_of_action: String!
     $first_quiz_answer_correct: Boolean!
     $quiz_answered: Boolean!
     $is_validated: Boolean!
@@ -90,5 +95,51 @@ export const createSubmittedActionItem = /* GraphQL */ `
       sa_id
       input_value
     }
+  }
+`;
+export const createAction = /* GraphQL */ `
+  mutation CreateAction(
+    $action_name: String!
+    $page_media: String
+    $action_icon: String
+    $fallback_quiz_media: String
+  ) {
+    createAction(
+      action_name: $action_name
+      page_media: $page_media
+      action_icon: $action_icon
+      fallback_quiz_media: $fallback_quiz_media
+    ) {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+    }
+  }
+`;
+export const createActionItem = /* GraphQL */ `
+  mutation CreateActionItem(
+    $action_id: Int!
+    $item_name: String!
+    $item_description: String!
+    $co2_saved_per_unit: Float!
+  ) {
+    createActionItem(
+      action_id: $action_id
+      item_name: $item_name
+      item_description: $item_description
+      co2_saved_per_unit: $co2_saved_per_unit
+    ) {
+      action_id
+      item_name
+      item_description
+      co2_saved_per_unit
+    }
+  }
+`;
+export const deleteAction = /* GraphQL */ `
+  mutation DeleteAction($action_id: Int!) {
+    deleteAction(action_id: $action_id)
   }
 `;

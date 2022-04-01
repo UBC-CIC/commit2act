@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, Box, TextField } from '@mui/material';
+import { API } from 'aws-amplify';
+import { getActionItemsForAction } from '../graphql/queries';
 
 const ActionPanel = ({
   selectedAction,
@@ -7,56 +9,33 @@ const ActionPanel = ({
   totalCo2Saved,
   setTotalCo2Saved,
 }) => {
+  const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
-
-  const plantBasedMealActionItems = [
-    {
-      item_name: '# of meals',
-      item_description: '# of plant based meals eaten',
-      co2_saved_per_unit: 200,
-    },
-  ];
-  const transportationActionItems = [
-    {
-      item_name: 'Distance Walked (km)',
-      item_description: 'How far you walked',
-      co2_saved_per_unit: 180,
-    },
-    {
-      item_name: 'Distance Cycled (km)',
-      item_description: 'How far you cycled',
-      co2_saved_per_unit: 180,
-    },
-    {
-      item_name: 'Distance Transited (km)',
-      item_description: 'How far you took public transit',
-      co2_saved_per_unit: 100,
-    },
-  ];
-
-  const plasticWasteItems = [
-    {
-      item_name: 'L of tap water',
-      item_description: 'L of tap water',
-      co2_saved_per_unit: 200,
-    },
-    {
-      item_name: 'mL of tap water',
-      item_description: 'mL of tap water',
-      co2_saved_per_unit: 200,
-    },
-  ];
+  const [actionItemValues, setActionItemValues] = useState([]);
 
   useEffect(() => {
-    if (selectedAction === 'Plant Based Meals') {
-      setActionItems(plantBasedMealActionItems);
-    } else if (selectedAction === 'Transportation') {
-      setActionItems(transportationActionItems);
-    } else {
-      setActionItems(plasticWasteItems);
-    }
+    getActionItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  //gets all action items related to the user selected action
+  const getActionItems = async () => {
+    const res = await API.graphql({
+      query: getActionItemsForAction,
+      variables: { action_id: action_id },
+    });
+    const items = res.data.getActionItemsForAction;
+    setActionItems(items);
+  };
+
+  //updates total co2 saved value and records what user inputs for each item field on the form
+  const handleActionItemInput = (value, item) => {
+    setTotalCo2Saved(totalCo2Saved + value * item.co2_saved_per_unit);
+    let input = { value, item };
+    // setActionItemValues({ ...item, [item.item_name]: e.target.value });
+    // setActionItemValues({ ...actionItemValues, ...input });
+    setActionItemValues((actionItemValues) => [...actionItemValues, input]);
+  };
 
   const renderActionForm = () => {
     if (actionItems) {
@@ -68,11 +47,7 @@ const ActionPanel = ({
           variant="outlined"
           helperText={item.item_description}
           InputLabelProps={{ shrink: true }}
-          onChange={(e) =>
-            setTotalCo2Saved(
-              totalCo2Saved + e.target.value * item.co2_saved_per_unit
-            )
-          }
+          onChange={(e) => handleActionItemInput(e.target.value, item)}
         />
       ));
     }
@@ -80,7 +55,7 @@ const ActionPanel = ({
 
   return (
     <>
-      <Typography variant="h2">{selectedAction}</Typography>
+      <Typography variant="h2">{action_name}</Typography>
       <Box
         sx={{
           display: 'flex',
