@@ -97,6 +97,7 @@ function PageContainer(props) {
 
   useEffect(() => {
     getCognitoUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   /*
    * Handles closing side menu if an event occurs

@@ -132,7 +132,7 @@ const SelfReportMenu = () => {
         textAlign="center"
       >
         <Typography variant="h1" sx={{ py: 5 }}>
-          Self Report Actions
+          Log Actions
         </Typography>
         <StyledGrid
           container

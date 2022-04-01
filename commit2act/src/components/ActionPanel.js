@@ -55,6 +55,7 @@ const ActionPanel = ({
     } else {
       setActionItems(plasticWasteItems);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderActionForm = () => {

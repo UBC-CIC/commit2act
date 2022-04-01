@@ -174,6 +174,7 @@ function Login(props) {
       } catch (e) {}
     }
     retrieveUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function clearErrors() {

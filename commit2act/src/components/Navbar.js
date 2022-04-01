@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useTheme } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -70,7 +69,6 @@ function Navbar(props) {
     showSideMenuButton,
   } = props;
   const classes = useStyles();
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const [user, setUser] = useState('');

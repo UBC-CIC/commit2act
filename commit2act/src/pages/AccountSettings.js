@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
@@ -75,6 +75,7 @@ const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
+  console.log(user);
   //hard coded submitted actions for now
   let action1 = {
     g_co2_saved: 300,
