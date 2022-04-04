@@ -52,13 +52,14 @@ const Co2SavedScreen = ({
   quizAnswered,
   firstQuizAnswerCorrect,
   user,
+  actionItemValues,
 }) => {
   useEffect(() => {
     submitAction();
   }, []);
 
   const submitAction = async () => {
-    let points = firstQuizAnswerCorrect ? 10 : 0;
+    const points = firstQuizAnswerCorrect ? 10 : 0;
     const res = await API.graphql({
       query: createSubmittedAction,
       variables: {

@@ -54,8 +54,9 @@ const SelfReportMenu = ({ user }) => {
   const [selectedAction, setSelectedAction] = useState();
   const [fact, setFact] = useState();
   const [stepNumber, setStepNumber] = useState(0);
-  const [totalCo2Saved, setTotalCo2Saved] = useState(0);
   const [actionOptions, setActionOptions] = useState();
+  const [actionItemValues, setActionItemValues] = useState([]);
+  const [totalCo2Saved, setTotalCo2Saved] = useState(0);
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
 
@@ -113,17 +114,19 @@ const SelfReportMenu = ({ user }) => {
           {selectedAction && stepNumber === 2 && (
             <ActionPanel
               selectedAction={selectedAction}
-              changeStep={handleChangeStep}
               setTotalCo2Saved={setTotalCo2Saved}
               totalCo2Saved={totalCo2Saved}
+              actionItemValues={actionItemValues}
+              setActionItemValues={setActionItemValues}
+              changeStep={handleChangeStep}
             />
           )}
           {stepNumber === 3 && (
             <BonusPointQuiz
               fact={fact}
-              changeStep={handleChangeStep}
               setQuizAnswered={setQuizAnswered}
               setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+              changeStep={handleChangeStep}
             />
           )}
           {stepNumber === 4 && (
@@ -135,6 +138,7 @@ const SelfReportMenu = ({ user }) => {
               quizAnswered={quizAnswered}
               firstQuizAnswerCorrect={firstQuizAnswerCorrect}
               user={user}
+              actionItemValues={actionItemValues}
               changeStep={handleChangeStep}
             />
           )}

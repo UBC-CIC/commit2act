@@ -75,7 +75,6 @@ const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
-  console.log(user);
   //hard coded submitted actions for now
   let action1 = {
     g_co2_saved: 300,
@@ -233,7 +232,6 @@ const AccountSettings = ({ user }) => {
                 >
                   <Avatar
                     variant="rounded"
-                    key={Date.now()}
                     src={
                       user.avatar && !newAvatarUploaded
                         ? user.avatar

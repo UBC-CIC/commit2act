@@ -8,10 +8,11 @@ const ActionPanel = ({
   changeStep,
   totalCo2Saved,
   setTotalCo2Saved,
+  actionItemValues,
+  setActionItemValues,
 }) => {
   const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
-  const [actionItemValues, setActionItemValues] = useState([]);
 
   useEffect(() => {
     getActionItems();
@@ -28,13 +29,20 @@ const ActionPanel = ({
     setActionItems(items);
   };
 
-  //updates total co2 saved value and records what user inputs for each item field on the form
+  //updates total co2 saved value and recordswq what user inputs for each item field on the form
   const handleActionItemInput = (value, item) => {
     setTotalCo2Saved(totalCo2Saved + value * item.co2_saved_per_unit);
-    let input = { value, item };
-    // setActionItemValues({ ...item, [item.item_name]: e.target.value });
-    // setActionItemValues({ ...actionItemValues, ...input });
-    setActionItemValues((actionItemValues) => [...actionItemValues, input]);
+    let input = { item, value };
+    //if the action item has already been added, update the value
+    if (actionItemValues.some((element) => element.item === item)) {
+      const updatedItemValues = actionItemValues.map((itemValue) =>
+        itemValue.item === item ? { ...itemValue, value: value } : itemValue
+      );
+      setActionItemValues(updatedItemValues);
+    } else {
+      //if the action item has not been added, add the item and corresponding value into the array
+      setActionItemValues((actionItemValues) => [...actionItemValues, input]);
+    }
   };
 
   const renderActionForm = () => {
