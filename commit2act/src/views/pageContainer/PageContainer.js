@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import { updateMenuState } from '../../actions/menuActions';
 import Landing from '../../pages/Landing';
 import FindGroup from '../../pages/FindGroup';
-import Info from '../../pages/Info';
 import AccountSettings from '../../pages/AccountSettings';
 import SelfReportMenu from '../../components/SelfReportMenu';
 import ValidateActions from '../../pages/ValidateActions';
@@ -33,6 +32,7 @@ import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';
 import { API } from 'aws-amplify';
 import { getSingleUserByUsername } from '../../graphql/queries';
+import CreateAction from '../../pages/CreateAction';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -161,11 +161,15 @@ function PageContainer(props) {
           <ListItemText primary={'Validate Actions'} />
         </ListItem>
 
-        <ListItem button key={'info'} onClick={() => navigate('/info')}>
+        <ListItem
+          button
+          key={'createAction'}
+          onClick={() => navigate('/create-action')}
+        >
           <ListItemIcon>
             <InfoIcon />
           </ListItemIcon>
-          <ListItemText primary={'Info'} />
+          <ListItemText primary={'Create Action'} />
         </ListItem>
         <Divider />
         <ListItem
@@ -212,7 +216,6 @@ function PageContainer(props) {
             <Route exact path={'/'} element={<Landing />} />
             <Route exact path={'/find-group'} element={<FindGroup />} />
             <Route exact path={'/log-action'} element={<SelfReportMenu />} />
-            <Route exact path={'/info'} element={<Info />} />
             <Route exact path={'/create-group'} element={<CreateGroup />} />
             <Route
               path="/group-profile/:groupName"
@@ -224,6 +227,7 @@ function PageContainer(props) {
               path={'/validate-actions'}
               element={<ValidateActions />}
             />
+            <Route exact path={'/create-action'} element={<CreateAction />} />
             <Route
               exact
               path={'/account-settings'}
