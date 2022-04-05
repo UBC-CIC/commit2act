@@ -68,11 +68,14 @@ function PageContainer(props) {
   const classes = useStyles();
   const navigate = useNavigate();
   const [user, setUser] = useState();
+  const [userType, setUserType] = useState();
 
   //gets currently authenticated cognito user
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
+    const type = cognitoUserEntry.attributes['custom:type'];
+    setUserType(type);
     getUserInfo(cognitoUserEntry, id);
   };
 
@@ -161,16 +164,18 @@ function PageContainer(props) {
           <ListItemText primary={'Validate Actions'} />
         </ListItem>
 
-        <ListItem
-          button
-          key={'createAction'}
-          onClick={() => navigate('/create-action')}
-        >
-          <ListItemIcon>
-            <InfoIcon />
-          </ListItemIcon>
-          <ListItemText primary={'Create Action'} />
-        </ListItem>
+        {userType === 'Admin' && (
+          <ListItem
+            button
+            key={'createAction'}
+            onClick={() => navigate('/create-action')}
+          >
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Create Action'} />
+          </ListItem>
+        )}
         <Divider />
         <ListItem
           button
@@ -227,7 +232,9 @@ function PageContainer(props) {
               path={'/validate-actions'}
               element={<ValidateActions />}
             />
-            <Route exact path={'/create-action'} element={<CreateAction />} />
+            {userType === 'Admin' && (
+              <Route exact path={'/create-action'} element={<CreateAction />} />
+            )}
             <Route
               exact
               path={'/account-settings'}

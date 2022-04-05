@@ -231,7 +231,7 @@ function Login(props) {
         attributes: {
           name: name,
           preferred_username: preferred_username,
-          'custom:user_type': 'User',
+          'custom:type': 'User',
         },
       });
 
