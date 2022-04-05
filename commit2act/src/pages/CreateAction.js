@@ -185,10 +185,8 @@ const CreateAction = () => {
   /** functions for validating and adding the action itself */
 
   useEffect(() => {
-    console.log('hi');
     //if the required inputs are valid and there is no error, continue and add the item
     if (isValid.actionItemsValid && isValid.actionNameValid) {
-      console.log('in function');
       submitAction();
       setIsValid((prev) => ({
         ...prev,
