@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -7,11 +7,12 @@ import {
   Grid,
   FormControl,
   FormGroup,
-  FormLabel,
   Card,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
+import { API } from 'aws-amplify';
+import { createActionItems, createAction } from '../graphql/mutations';
 
 const theme = createTheme({
   components: {
@@ -53,9 +54,10 @@ const theme = createTheme({
             variant: 'h4',
           },
           style: {
-            fontSize: 25,
-            color: 'black',
-            fontWeight: 100,
+            fontSize: 18,
+            color: '#112D4E',
+            fontWeight: 400,
+            margin: '1em 1em 0 0',
           },
         },
         {
@@ -63,7 +65,17 @@ const theme = createTheme({
             variant: 'h5',
           },
           style: {
-            fontSize: 50,
+            fontSize: 18,
+            color: 'black',
+            fontWeight: 300,
+          },
+        },
+        {
+          props: {
+            variant: 'subtitle1',
+          },
+          style: {
+            fontSize: '0.75rem',
             color: 'black',
             fontWeight: 400,
           },
@@ -79,24 +91,87 @@ const CreateAction = () => {
     item_description: '',
     co2_saved_per_unit: '',
   };
-  const [createActionForm, setCreateActionForm] = useState({
+  const emptyCreateActionForm = {
     action_name: '',
+    action_icon: '',
     page_media: '',
-    action_item: '',
     fallback_quiz_media: '',
-  });
+  };
+  const [createActionForm, setCreateActionForm] = useState(
+    emptyCreateActionForm
+  );
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [actionItems, setActionItems] = useState([]);
-  const [actionItemCounter, setActionItemCounter] = useState(1);
+  const [isValid, setIsValid] = useState({
+    co2Valid: false,
+    itemNameValid: false,
+    actionItemsValid: false,
+    actionNameValid: false,
+  });
+  const [formError, setFormError] = useState(false);
+  const [actionItemFormError, setActionItemFormError] = useState(false);
 
-  const updateItemForm = (e) => {
-    setActionItemsForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
+  const updateForm = (e) => {
+    if (e.target.name in actionItemsForm) {
+      setActionItemsForm((prev) => ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      }));
+    } else {
+      setCreateActionForm((prev) => ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      }));
+    }
   };
 
-  const handleAddActionItem = (e) => {
+  /** functions for validating and adding the actionItems */
+
+  useEffect(() => {
+    //if the required inputs are valid and there is no error, continue and add the item
+    if (isValid.co2Valid && isValid.itemNameValid) {
+      addActionItem();
+      setIsValid((prev) => ({
+        ...prev,
+        co2Valid: false,
+        itemNameValid: false,
+        actionItemsValid: true,
+      }));
+      setActionItemFormError(false);
+    }
+  }, [isValid.co2Valid, isValid.itemNameValid]);
+
+  const validateActionItem = () => {
+    // //checks to see if user input for co2 saved per unit field is a positive numerical value
+    if (!actionItemsForm.co2_saved_per_unit.match(/[0-9]*[.,]?[0-9]+/)) {
+      setIsValid((prev) => ({
+        ...prev,
+        co2Valid: false,
+      }));
+      setActionItemFormError(true);
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        co2Valid: true,
+      }));
+    }
+
+    //checks to see if user input for item name field is not null
+    if (!actionItemsForm.item_name) {
+      setIsValid((prev) => ({
+        ...prev,
+        itemNameValid: false,
+      }));
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        itemNameValid: true,
+      }));
+    }
+  };
+
+  const addActionItem = () => {
     //adds the item from the form into actionItems array
     setActionItems((actionItems) => [...actionItems, actionItemsForm]);
     //clears the actionItemsForm so user can enter in a new action item
@@ -107,22 +182,107 @@ const CreateAction = () => {
     setActionItems(actionItems.filter((item) => item.item_name !== name));
   };
 
+  /** functions for validating and adding the action itself */
+
+  useEffect(() => {
+    console.log('hi');
+    //if the required inputs are valid and there is no error, continue and add the item
+    if (isValid.actionItemsValid && isValid.actionNameValid) {
+      console.log('in function');
+      submitAction();
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: false,
+        actionNameValid: false,
+      }));
+      setFormError(false);
+    }
+  }, [isValid.actionItemsValid, isValid.actionNameValid]);
+
+  const validateCreateActionForm = () => {
+    if (!createActionForm.action_name) {
+      setIsValid((prev) => ({
+        ...prev,
+        actionNameValid: false,
+      }));
+      setFormError(true);
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        actionNameValid: true,
+      }));
+    }
+
+    if (actionItems.length < 1) {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: false,
+      }));
+      setFormError(true);
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: true,
+      }));
+    }
+  };
+
+  const submitAction = async () => {
+    //create the action and get its id
+    const createActionRes = await API.graphql({
+      query: createAction,
+      variables: createActionForm,
+    });
+    console.log(createActionRes);
+    const actionId = createActionRes.data.createAction.action_id;
+    //create the corresponding items for the action
+    const createItemsRes = await API.graphql({
+      query: createActionItems,
+      variables: { action_id: actionId, action_items: actionItems },
+    });
+    console.log(createItemsRes);
+    //clear form and related states
+    setCreateActionForm(emptyCreateActionForm);
+    setActionItems([]);
+  };
+
   const renderAddedActionItems = () => {
     return actionItems.map((item, index) => (
       <Card
         key={index}
         sx={{
-          width: '100%',
           backgroundColor: 'white',
           mt: '1em',
           borderRadius: '5px',
+          padding: '1em',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexDirection: { xs: 'column', md: 'row' },
         }}
       >
-        <Typography>Item Name: {item.item_name}</Typography>
-        <Typography>Item Description: {item.item_description}</Typography>
-        <Typography>CO2 Per Unit Saved: {item.co2_saved_per_unit}</Typography>
-        <Button sx={{}} onClick={() => handleRemoveActionItem(item.item_name)}>
-          <HighlightOff />
+        <Box>
+          <Typography variant="h5">
+            <Typography variant="h4" component="span">
+              Item Name:
+            </Typography>
+            {item.item_name}
+          </Typography>
+          <Typography variant="h5">
+            <Typography variant="h4" component="span">
+              Item Description:
+            </Typography>
+            {item.item_description}
+          </Typography>
+          <Typography variant="h5">
+            <Typography variant="h4" component="span">
+              CO2 Per Unit Saved:
+            </Typography>
+            {item.co2_saved_per_unit}
+          </Typography>
+        </Box>
+        <Button onClick={() => handleRemoveActionItem(item.item_name)}>
+          <HighlightOff fontSize="large" />
         </Button>
       </Card>
     ));
@@ -137,15 +297,13 @@ const CreateAction = () => {
       </Box>
       <Grid
         container
-        rowSpacing={1}
-        columnSpacing={{ xs: 0, md: 1 }}
         direction={{ xs: 'column', md: 'row' }}
         sx={{
-          width: '100%',
           minHeight: '50vh',
           backgroundColor: '#DBE2EF',
           borderRadius: '8px',
           padding: '1.5em',
+          justifyContent: 'center',
         }}
       >
         <FormControl>
@@ -154,11 +312,35 @@ const CreateAction = () => {
             required
             id="outlined-required"
             label="Action Name"
+            name="action_name"
             InputLabelProps={{ shrink: true }}
+            value={createActionForm.action_name}
+            error={formError && !isValid.actionNameValid}
+            helperText={
+              formError &&
+              !isValid.actionNameValid &&
+              'Action Name field must be completed'
+            }
+            onChange={updateForm}
           />
           <Typography variant="h3">Action Items</Typography>
+          <Typography
+            variant="subtitle1"
+            component="span"
+            sx={{
+              color: '#d32f2f',
+              display:
+                formError && !isValid.actionItemsValid ? 'inline' : 'none',
+            }}
+          >
+            New Action Type must have at least 1 action item
+          </Typography>
           <FormGroup
-            sx={{ gap: '1.5em', flexDirection: { xs: 'column', md: 'row' } }}
+            sx={{
+              mt: '1.5em',
+              gap: '1.5em',
+              flexDirection: { xs: 'column', md: 'row' },
+            }}
           >
             <TextField
               required
@@ -167,37 +349,61 @@ const CreateAction = () => {
               name="item_name"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_name}
-              onChange={updateItemForm}
+              error={actionItemFormError && !isValid.itemNameValid}
+              helperText={
+                actionItemFormError &&
+                !isValid.itemNameValid &&
+                'Item Name field must be completed'
+              }
+              onChange={updateForm}
             />
             <TextField
               label="Item Description"
               name="item_description"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_description}
-              onChange={updateItemForm}
+              onChange={updateForm}
             />
             <TextField
               required
               id="outlined-required"
               label="CO2 Per Unit Saved"
               name="co2_saved_per_unit"
+              inputMode="decimal"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.co2_saved_per_unit}
-              onChange={updateItemForm}
+              error={actionItemFormError && !isValid.co2Valid}
+              helperText={
+                actionItemFormError &&
+                !isValid.co2Valid &&
+                'Input must be a numerical value greater than 0'
+              }
+              onChange={updateForm}
             />
-            <Button variant="outlined" onClick={handleAddActionItem}>
+            <Button variant="outlined" onClick={validateActionItem}>
               Add Action Item
             </Button>
           </FormGroup>
           {renderAddedActionItems()}
           <Typography variant="h3">Fallback Text</Typography>
           <TextField
-            required
-            id="outlined-required"
             label="Text"
+            name="fallback_quiz_media"
             InputLabelProps={{ shrink: true }}
+            value={createActionForm.fallback_quiz_media}
+            onChange={updateForm}
           />
-          <Button sx={{ mt: '2em' }} variant="contained">
+          <Button
+            sx={{
+              mt: '2em',
+              backgroundColor: '#112D4E',
+              width: { xs: '100%', md: '40%' },
+              alignSelf: 'center',
+            }}
+            variant="contained"
+            type="submit"
+            onClick={validateCreateActionForm}
+          >
             Submit New Action
           </Button>
         </FormControl>

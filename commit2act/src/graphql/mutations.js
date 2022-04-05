@@ -118,12 +118,12 @@ export const createAction = /* GraphQL */ `
     }
   }
 `;
-export const createActionItem = /* GraphQL */ `
-  mutation CreateActionItem(
+export const createActionItems = /* GraphQL */ `
+  mutation CreateActionItems(
     $action_id: Int!
     $action_items: [ActionItemInput!]!
   ) {
-    createActionItem(action_id: $action_id, action_items: $action_items) {
+    createActionItems(action_id: $action_id, action_items: $action_items) {
       action_id
       item_name
       item_description
@@ -134,28 +134,5 @@ export const createActionItem = /* GraphQL */ `
 export const deleteAction = /* GraphQL */ `
   mutation DeleteAction($action_id: Int!) {
     deleteAction(action_id: $action_id)
-  }
-`;
-export const createActionWithItems = /* GraphQL */ `
-  mutation CreateActionWithItems(
-    $action_name: String!
-    $page_media: String
-    $action_icon: String
-    $fallback_quiz_media: String
-    $action_items: [ActionItemInput!]!
-  ) {
-    createActionWithItems(
-      action_name: $action_name
-      page_media: $page_media
-      action_icon: $action_icon
-      fallback_quiz_media: $fallback_quiz_media
-      action_items: $action_items
-    ) {
-      action_id
-      action_name
-      page_media
-      action_icon
-      fallback_quiz_media
-    }
   }
 `;

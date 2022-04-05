@@ -198,7 +198,7 @@ function PageContainer(props) {
           anchor={'left'}
           open={menuEnabled}
           onClose={handleSideMenuClose}
-          style={{ zIndex: 0 }}
+          style={{ zIndex: 2 }}
           classes={{
             paper: classes.drawerPaper,
           }}
