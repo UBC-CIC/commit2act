@@ -231,14 +231,12 @@ const CreateAction = () => {
       query: createAction,
       variables: createActionForm,
     });
-    console.log(createActionRes);
     const actionId = createActionRes.data.createAction.action_id;
     //create the corresponding items for the action
-    const createItemsRes = await API.graphql({
+    await API.graphql({
       query: createActionItems,
       variables: { action_id: actionId, action_items: actionItems },
     });
-    console.log(createItemsRes);
     //clear form and related states
     setCreateActionForm(emptyCreateActionForm);
     setActionItems([]);
