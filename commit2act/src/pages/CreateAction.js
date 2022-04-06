@@ -403,6 +403,7 @@ const CreateAction = () => {
                 !isValid.co2Valid &&
                 'Input must be a number greater than 0'
               }
+              sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
             />
             <Button variant="outlined" onClick={validateActionItem}>
@@ -420,7 +421,7 @@ const CreateAction = () => {
           />
           <Button
             sx={{
-              mt: '2em',
+              mt: '4em',
               backgroundColor: '#112D4E',
               width: { xs: '100%', md: '40%' },
               alignSelf: 'center',
