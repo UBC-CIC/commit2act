@@ -16,8 +16,8 @@ import {
   Group,
   AccountCircle,
   AssignmentTurnedIn,
+  Create,
 } from '@mui/icons-material';
-import { Info as InfoIcon } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from '../../components/Navbar';
 import { connect } from 'react-redux';
@@ -171,7 +171,7 @@ function PageContainer(props) {
             onClick={() => navigate('/create-action')}
           >
             <ListItemIcon>
-              <InfoIcon />
+              <Create />
             </ListItemIcon>
             <ListItemText primary={'Create Action'} />
           </ListItem>
