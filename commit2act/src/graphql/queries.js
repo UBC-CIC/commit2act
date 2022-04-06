@@ -126,3 +126,22 @@ export const getActionItemsForAction = /* GraphQL */ `
     }
   }
 `;
+export const getAllSubmittedActionsForUser = /* GraphQL */ `
+  query GetAllSubmittedActionsForUser($user_id: Int!) {
+    getAllSubmittedActionsForUser(user_id: $user_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      action_name
+    }
+  }
+`;

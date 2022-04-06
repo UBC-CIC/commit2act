@@ -320,7 +320,7 @@ const CreateAction = () => {
           minHeight: '50vh',
           backgroundColor: '#DBE2EF',
           borderRadius: '8px',
-          padding: '1.5em 0.5em 2em',
+          padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',
         }}
       >

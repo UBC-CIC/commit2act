@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
+import { getAllSubmittedActionsForUser } from '../graphql/queries';
 
 const theme = createTheme({
   components: {
@@ -75,83 +76,20 @@ const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
-  //hard coded submitted actions for now
-  let action1 = {
-    g_co2_saved: 300,
-    date_of_action: '2/11/2021',
-    time_submitted: '3:30 PM',
-    first_quiz_answer_correct: true,
-    quiz_answered: true,
-    action: {
-      action_name: 'Transportation',
-    },
-    actionItem: {
-      item_name: 'Distance Walked',
-      co2_saved_per_unit: 100.0,
-    },
-  };
+  const [userActions, setUserActions] = useState();
 
-  let action2 = {
-    g_co2_saved: 300,
-    date_of_action: '2/10/2021',
-    time_submitted: '12:30 PM',
-    first_quiz_answer_correct: true,
-    quiz_answered: true,
-    action: {
-      action_name: 'Plant Based Meal',
-    },
-    actionItem: {
-      item_name: 'Num Meals',
-      co2_saved_per_unit: 200.0,
-    },
-  };
+  useEffect(() => {
+    getUserActions();
+  }, []);
 
-  let action3 = {
-    g_co2_saved: 200,
-    date_of_action: '2/08/2021',
-    time_submitted: '6:15 PM',
-    first_quiz_answer_correct: true,
-    quiz_answered: true,
-    action: {
-      action_name: 'Reducing Plastic Waste',
-    },
-    actionItem: {
-      item_name: 'mL Water',
-      co2_saved_per_unit: 200.0,
-    },
+  const getUserActions = async () => {
+    const res = await API.graphql({
+      query: getAllSubmittedActionsForUser,
+      variables: { user_id: user.user_id },
+    });
+    console.log(res.data.getAllSubmittedActionsForUser);
+    setUserActions(res.data.getAllSubmittedActionsForUser);
   };
-
-  let action4 = {
-    g_co2_saved: 800,
-    date_of_action: '2/05/2021',
-    time_submitted: '3:13 PM',
-    first_quiz_answer_correct: true,
-    quiz_answered: true,
-    action: {
-      action_name: 'Reducing Plastic Waste',
-    },
-    actionItem: {
-      item_name: 'mL Water',
-      co2_saved_per_unit: 200.0,
-    },
-  };
-
-  let action5 = {
-    g_co2_saved: 800,
-    date_of_action: '2/04/2021',
-    time_submitted: '1:45 PM',
-    first_quiz_answer_correct: true,
-    quiz_answered: true,
-    action: {
-      action_name: 'Reducing Plastic Waste',
-    },
-    actionItem: {
-      item_name: 'mL Water',
-      co2_saved_per_unit: 300.0,
-    },
-  };
-
-  let sampleSubmittedActions = [action1, action2, action3, action4, action5];
 
   //updates user avatar field in database
   async function updateUserAvatar(userAvatarLink) {
@@ -190,13 +128,13 @@ const AccountSettings = ({ user }) => {
     }
   }
 
-  const renderSubmittedActionCards = () => {
-    if (sampleSubmittedActions) {
+  const renderActionCards = () => {
+    if (userActions) {
       return showMore
-        ? sampleSubmittedActions.map((action, index) => (
+        ? userActions.map((action, index) => (
             <SubmittedActionCard key={index} action={action} />
           ))
-        : sampleSubmittedActions
+        : userActions
             .slice(0, 3)
             .map((action, index) => (
               <SubmittedActionCard key={index} action={action} />
@@ -319,7 +257,7 @@ const AccountSettings = ({ user }) => {
             </Typography>
             <Box sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}>
               <Stack spacing={2}>
-                {renderSubmittedActionCards()}
+                {renderActionCards()}
                 <Button
                   sx={{ mt: '3em' }}
                   variant="outlined"

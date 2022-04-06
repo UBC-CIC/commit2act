@@ -77,18 +77,16 @@ const Co2SavedScreen = ({
         user_id: user.user_id,
       },
     });
-    console.log(res);
     const submittedActionId = res.data.createSubmittedAction.sa_id;
 
     //creates the submitted action items for the action
-    const r = await API.graphql({
+    await API.graphql({
       query: createSubmittedActionItems,
       variables: {
         sa_id: submittedActionId,
         submitted_action_items: actionItemValues,
       },
     });
-    console.log(r);
   };
 
   return (

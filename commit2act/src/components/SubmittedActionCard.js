@@ -42,9 +42,8 @@ const SubmittedActionCard = ({ action }) => {
             }}
           >
             <Box sx={{ display: 'flex' }}>
-              <Typography variant="h3">{action.date_of_action}</Typography>
-              <Typography variant="h3" sx={{ ml: '2em' }}>
-                {action.time_submitted}
+              <Typography variant="h3">
+                {action.date_of_action.split('T')[0]}
               </Typography>
             </Box>
           </Box>
@@ -53,10 +52,10 @@ const SubmittedActionCard = ({ action }) => {
             component="h2"
             sx={{ mt: { xs: '0.5em', md: '0' } }}
           >
-            {action.action.action_name}
+            {action.action_name}
           </Typography>
           <Typography sx={{ my: 1.5 }} color="text.secondary">
-            {action.actionItem.item_name}: 7 km
+            {action.submitted_action_items}
           </Typography>
           <Box
             sx={{
@@ -71,9 +70,11 @@ const SubmittedActionCard = ({ action }) => {
               {action.first_quiz_answer_correct ? '10' : '0'}
             </Typography>
             <Typography variant="h3">
-              CO2 Saved: {action.actionItem.co2_saved_per_unit}g
+              CO2 Saved: {action.g_co2_saved}g
             </Typography>
-            <Typography variant="h3">Total Points: 110</Typography>
+            <Typography variant="h3">
+              Total Points Earned: {action.points_earned}
+            </Typography>
           </Box>
         </CardContent>
       </Card>
