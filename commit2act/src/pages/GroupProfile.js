@@ -129,59 +129,52 @@ const GroupProfile = () => {
   return (
     <ThemeProvider theme={theme}>
       <Grid container>
-        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <Typography component="div" item xs={12} variant="h1">
-            {groupName}
-          </Typography>
-        </Grid>
         <Grid
           columnSpacing={10}
           container
           alignItems="flex-start"
           sx={{ mt: '2em' }}
         >
-          <Grid item xs={12} lg={3}>
+          <Grid item xs={4}>
             <Grid
               container
-              direction="column"
-              justifyContent="center"
+              direction="row"
               alignItems="center"
+              sx={{ mb: '1.5em' }}
             >
               <Avatar
                 variant="rounded"
                 sx={{
                   width: {
-                    xs: '24vw',
-                    sm: '22vw',
-                    md: '20vw',
-                    lg: '15vw',
-                    xl: '15vw',
+                    xs: '10vw',
                   },
                   height: {
-                    xs: '12vh',
-                    md: '22vh',
-                    lg: '24vh',
-                    xl: '26vh',
+                    xs: '16vh',
                   },
+                  mr: '1em',
                 }}
               >
                 {groupName.charAt(0)}
               </Avatar>
-              <Button
+              {/* <Button
                 variant="outlined"
                 sx={{ mt: '2em', mb: { xs: '2em', lg: '0em' } }}
               >
                 Leave Group
-              </Button>
+              </Button> */}
+              <Typography component="div" variant="h1">
+                {groupName}
+              </Typography>
             </Grid>
+            <Typography variant="subtitle1">{description}</Typography>
           </Grid>
           <Grid
             item
-            xs={12}
-            lg={9}
-            sx={{ textAlign: { xs: 'center', lg: 'left' } }}
+            xs={8}
+            sx={{
+              textAlign: { xs: 'center', lg: 'left' },
+            }}
           >
-            <Typography variant="subtitle1">{description}</Typography>
             <Grid
               container
               rowSpacing={1}
@@ -193,10 +186,9 @@ const GroupProfile = () => {
                 backgroundColor: '#DBE2EF',
                 borderRadius: '8px',
                 padding: '1.5em',
-                mt: '2em',
               }}
             >
-              <Grid item xs={4}>
+              <Grid item xs={6}>
                 <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                   <CardActionArea sx={{ textAlign: 'center' }}>
                     <Typography variant="h4">CO2 Saved This Week</Typography>
@@ -209,20 +201,13 @@ const GroupProfile = () => {
                   </CardActionArea>
                 </Card>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={6}>
                 <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
                   <CardActionArea sx={{ textAlign: 'center' }}>
                     <Typography variant="h4">Total CO2 Saved</Typography>
                     <CardContent>
                       <Typography variant="h5">1600g</Typography>
                     </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-              <Grid item xs>
-                <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
-                  <CardActionArea sx={{ textAlign: 'center' }}>
-                    <Typography variant="h4">Recent Actions</Typography>
                   </CardActionArea>
                 </Card>
               </Grid>
