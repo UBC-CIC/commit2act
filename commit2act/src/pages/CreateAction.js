@@ -8,6 +8,8 @@ import {
   FormControl,
   FormGroup,
   Card,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
@@ -105,11 +107,13 @@ const CreateAction = () => {
   const [isValid, setIsValid] = useState({
     co2Valid: false,
     itemNameValid: false,
+    itemDescriptionValid: false,
     actionItemsValid: false,
     actionNameValid: false,
   });
   const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
+  const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
 
   //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
   const updateForm = (e) => {
@@ -130,7 +134,11 @@ const CreateAction = () => {
 
   useEffect(() => {
     //if the required inputs are valid and there is no error, continue and add the item
-    if (isValid.co2Valid && isValid.itemNameValid) {
+    if (
+      isValid.co2Valid &&
+      isValid.itemNameValid &&
+      isValid.itemDescriptionValid
+    ) {
       addActionItem();
       setIsValid((prev) => ({
         ...prev,
@@ -140,7 +148,7 @@ const CreateAction = () => {
       }));
       setActionItemFormError(false);
     }
-  }, [isValid.co2Valid, isValid.itemNameValid]);
+  }, [isValid.co2Valid, isValid.itemNameValid, isValid.itemDescriptionValid]);
 
   const validateActionItem = () => {
     // //checks to see if user input for co2 saved per unit field is a positive numerical value
@@ -167,6 +175,18 @@ const CreateAction = () => {
       setIsValid((prev) => ({
         ...prev,
         itemNameValid: true,
+      }));
+    }
+
+    if (!actionItemsForm.item_description) {
+      setIsValid((prev) => ({
+        ...prev,
+        itemDescriptionValid: false,
+      }));
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        itemDescriptionValid: true,
       }));
     }
   };
@@ -240,6 +260,8 @@ const CreateAction = () => {
     //clear form and related states
     setCreateActionForm(emptyCreateActionForm);
     setActionItems([]);
+    //render success message
+    setSubmitActionSuccess(true);
   };
 
   const renderAddedActionItems = () => {
@@ -349,15 +371,22 @@ const CreateAction = () => {
               helperText={
                 actionItemFormError &&
                 !isValid.itemNameValid &&
-                'Item Name field must be completed'
+                'Input is required'
               }
               onChange={updateForm}
             />
             <TextField
+              required
               label="Item Description"
               name="item_description"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_description}
+              error={actionItemFormError && !isValid.itemDescriptionValid}
+              helperText={
+                actionItemFormError &&
+                !isValid.itemDescriptionValid &&
+                'Input is required'
+              }
               onChange={updateForm}
             />
             <TextField
@@ -372,7 +401,7 @@ const CreateAction = () => {
               helperText={
                 actionItemFormError &&
                 !isValid.co2Valid &&
-                'Input must be a numerical value greater than 0'
+                'Input must be a number greater than 0'
               }
               onChange={updateForm}
             />
@@ -403,6 +432,20 @@ const CreateAction = () => {
             Submit New Action
           </Button>
         </FormControl>
+
+        <Snackbar
+          open={submitActionSuccess}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          autoHideDuration={2000}
+        >
+          <Alert
+            onClose={() => setSubmitActionSuccess(false)}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            Your action has been submitted!
+          </Alert>
+        </Snackbar>
       </Grid>
     </ThemeProvider>
   );
