@@ -23,6 +23,45 @@ export const getSingleUserByUsername = /* GraphQL */ `
     }
   }
 `;
+export const getSingleSubmittedAction = /* GraphQL */ `
+  query GetSingleSubmittedAction($sa_id: Int!) {
+    getSingleSubmittedAction(sa_id: $sa_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+    }
+  }
+`;
+export const getSingleSubmittedActionWithItems = /* GraphQL */ `
+  query GetSingleSubmittedActionWithItems($sa_id: Int!) {
+    getSingleSubmittedActionWithItems(sa_id: $sa_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items {
+        item_name
+        sa_id
+        input_value
+      }
+    }
+  }
+`;
 export const getTotalGlobalCO2 = /* GraphQL */ `
   query GetTotalGlobalCO2 {
     getTotalGlobalCO2

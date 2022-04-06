@@ -97,6 +97,21 @@ export const createSubmittedActionItem = /* GraphQL */ `
     }
   }
 `;
+export const createSubmittedActionItems = /* GraphQL */ `
+  mutation CreateSubmittedActionItems(
+    $sa_id: Int!
+    $submitted_action_items: [SubmittedActionItemInput!]!
+  ) {
+    createSubmittedActionItems(
+      sa_id: $sa_id
+      submitted_action_items: $submitted_action_items
+    ) {
+      item_name
+      sa_id
+      input_value
+    }
+  }
+`;
 export const createAction = /* GraphQL */ `
   mutation CreateAction(
     $action_name: String!
@@ -118,19 +133,12 @@ export const createAction = /* GraphQL */ `
     }
   }
 `;
-export const createActionItem = /* GraphQL */ `
-  mutation CreateActionItem(
+export const createActionItems = /* GraphQL */ `
+  mutation CreateActionItems(
     $action_id: Int!
-    $item_name: String!
-    $item_description: String!
-    $co2_saved_per_unit: Float!
+    $action_items: [ActionItemInput!]!
   ) {
-    createActionItem(
-      action_id: $action_id
-      item_name: $item_name
-      item_description: $item_description
-      co2_saved_per_unit: $co2_saved_per_unit
-    ) {
+    createActionItems(action_id: $action_id, action_items: $action_items) {
       action_id
       item_name
       item_description

@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import { updateMenuState } from '../../actions/menuActions';
 import Landing from '../../pages/Landing';
 import FindGroup from '../../pages/FindGroup';
-import Info from '../../pages/Info';
 import AccountSettings from '../../pages/AccountSettings';
 import SelfReportMenu from '../../components/SelfReportMenu';
 import ValidateActions from '../../pages/ValidateActions';
@@ -33,6 +32,7 @@ import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';
 import { API } from 'aws-amplify';
 import { getSingleUserByUsername } from '../../graphql/queries';
+import CreateAction from '../../pages/CreateAction';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,11 +68,14 @@ function PageContainer(props) {
   const classes = useStyles();
   const navigate = useNavigate();
   const [user, setUser] = useState();
+  const [userType, setUserType] = useState();
 
   //gets currently authenticated cognito user
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
+    const type = cognitoUserEntry.attributes['custom:type'];
+    setUserType(type);
     getUserInfo(cognitoUserEntry, id);
   };
 
@@ -161,12 +164,18 @@ function PageContainer(props) {
           <ListItemText primary={'Validate Actions'} />
         </ListItem>
 
-        <ListItem button key={'info'} onClick={() => navigate('/info')}>
-          <ListItemIcon>
-            <InfoIcon />
-          </ListItemIcon>
-          <ListItemText primary={'Info'} />
-        </ListItem>
+        {userType === 'Admin' && (
+          <ListItem
+            button
+            key={'createAction'}
+            onClick={() => navigate('/create-action')}
+          >
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Create Action'} />
+          </ListItem>
+        )}
         <Divider />
         <ListItem
           button
@@ -194,7 +203,7 @@ function PageContainer(props) {
           anchor={'left'}
           open={menuEnabled}
           onClose={handleSideMenuClose}
-          style={{ zIndex: 0 }}
+          style={{ zIndex: 2 }}
           classes={{
             paper: classes.drawerPaper,
           }}
@@ -216,7 +225,6 @@ function PageContainer(props) {
               path={'/log-action'}
               element={<SelfReportMenu user={user} />}
             />
-            <Route exact path={'/info'} element={<Info />} />
             <Route exact path={'/create-group'} element={<CreateGroup />} />
             <Route
               path="/group-profile/:groupName"
@@ -228,6 +236,9 @@ function PageContainer(props) {
               path={'/validate-actions'}
               element={<ValidateActions />}
             />
+            {userType === 'Admin' && (
+              <Route exact path={'/create-action'} element={<CreateAction />} />
+            )}
             <Route
               exact
               path={'/account-settings'}

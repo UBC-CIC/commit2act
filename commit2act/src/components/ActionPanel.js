@@ -32,11 +32,15 @@ const ActionPanel = ({
   //updates total co2 saved value and recordswq what user inputs for each item field on the form
   const handleActionItemInput = (value, item) => {
     setTotalCo2Saved(totalCo2Saved + value * item.co2_saved_per_unit);
-    let input = { item, value };
+    let input = { item_name: item.item_name, input_value: value };
     //if the action item has already been added, update the value
-    if (actionItemValues.some((element) => element.item === item)) {
+    if (
+      actionItemValues.some((element) => element.item_name === item.item_name)
+    ) {
       const updatedItemValues = actionItemValues.map((itemValue) =>
-        itemValue.item === item ? { ...itemValue, value: value } : itemValue
+        itemValue.item_name === item.item_name
+          ? { ...itemValue, input_value: value }
+          : itemValue
       );
       setActionItemValues(updatedItemValues);
     } else {

@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { API } from 'aws-amplify';
-import { createSubmittedAction } from '../graphql/mutations';
+import {
+  createSubmittedAction,
+  createSubmittedActionItems,
+} from '../graphql/mutations';
 
 const theme = createTheme({
   components: {
@@ -59,6 +62,7 @@ const Co2SavedScreen = ({
   }, []);
 
   const submitAction = async () => {
+    //creates and submits the action, returns the submitted action id that is stored in database
     const points = firstQuizAnswerCorrect ? 10 : 0;
     const res = await API.graphql({
       query: createSubmittedAction,
@@ -74,6 +78,17 @@ const Co2SavedScreen = ({
       },
     });
     console.log(res);
+    const submittedActionId = res.data.createSubmittedAction.sa_id;
+
+    //creates the submitted action items for the action
+    const r = await API.graphql({
+      query: createSubmittedActionItems,
+      variables: {
+        sa_id: submittedActionId,
+        submitted_action_items: actionItemValues,
+      },
+    });
+    console.log(r);
   };
 
   return (
