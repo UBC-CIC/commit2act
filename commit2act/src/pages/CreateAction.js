@@ -168,6 +168,7 @@ const CreateAction = () => {
       }));
       setActionItemFormError(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValid.co2Valid, isValid.itemNameValid, isValid.itemDescriptionValid]);
 
   const validateActionItem = () => {
@@ -235,6 +236,7 @@ const CreateAction = () => {
       }));
       setFormError(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValid.actionItemsValid, isValid.actionNameValid]);
 
   const validateCreateActionForm = () => {
