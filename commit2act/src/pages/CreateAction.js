@@ -390,7 +390,12 @@ const CreateAction = () => {
             </Grid>
             <Grid item xs={6}>
               <Typography variant="h3">Action Icon</Typography>
-              <Box component="div" display="flex" alignItems="center">
+              <Box
+                component="div"
+                display="flex"
+                alignItems="center"
+                sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+              >
                 {actionIconPreviewLink ? (
                   <Box
                     component="img"
@@ -421,9 +426,9 @@ const CreateAction = () => {
                   <Button
                     variant="outlined"
                     component="span"
-                    sx={{ mb: { xs: '1.5em' }, ml: '2em' }}
+                    sx={{ m: { xs: '1.5em 0 0', md: '0 0 0 1.5em' } }}
                   >
-                    Upload Photo
+                    Upload Icon Image
                   </Button>
                 </label>
               </Box>
