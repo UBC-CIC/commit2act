@@ -13,7 +13,8 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
-import { API } from 'aws-amplify';
+import { styled } from '@mui/material/styles';
+import { Storage, API } from 'aws-amplify';
 import { createActionItems, createAction } from '../graphql/mutations';
 
 const theme = createTheme({
@@ -87,6 +88,10 @@ const theme = createTheme({
   },
 });
 
+const Input = styled('input')({
+  display: 'none',
+});
+
 const CreateAction = () => {
   const emptyActionItemForm = {
     item_name: '',
@@ -114,6 +119,8 @@ const CreateAction = () => {
   const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
   const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
+  const [actionIconFile, setActionIconFile] = useState();
+  const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
 
   //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
   const updateForm = (e) => {
@@ -128,6 +135,19 @@ const CreateAction = () => {
         [e.target.name]: e.target.value,
       }));
     }
+  };
+
+  /** functions for uploading an icon */
+
+  const handleIconUpload = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setActionIconFile(null);
+      return;
+    }
+    let imageFile = e.target.files[0];
+    let previewLink = URL.createObjectURL(imageFile);
+    setActionIconFile(imageFile);
+    setActionIconPreviewLink(previewLink);
   };
 
   /** functions for validating and adding the actionItems */
@@ -246,6 +266,24 @@ const CreateAction = () => {
   };
 
   const submitAction = async () => {
+    //get the action name to upload the action icon image to s3/cloudfront
+    if (actionIconFile) {
+      let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
+      let imageType = actionIconFile.type;
+      let iconLink =
+        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      setCreateActionForm((prev) => ({
+        ...prev,
+        action_icon: iconLink,
+      }));
+      try {
+        await Storage.put(imageKey, actionIconFile, {
+          contentType: imageType,
+        });
+      } catch (error) {
+        console.log('Error uploading file', error);
+      }
+    }
     //create the action and get its id
     const createActionRes = await API.graphql({
       query: createAction,
@@ -260,6 +298,7 @@ const CreateAction = () => {
     //clear form and related states
     setCreateActionForm(emptyCreateActionForm);
     setActionItems([]);
+    setActionIconPreviewLink();
     //render success message
     setSubmitActionSuccess(true);
   };
@@ -325,22 +364,71 @@ const CreateAction = () => {
         }}
       >
         <FormControl>
-          <Typography variant="h3">Action Name</Typography>
-          <TextField
-            required
-            id="outlined-required"
-            label="Action Name"
-            name="action_name"
-            InputLabelProps={{ shrink: true }}
-            value={createActionForm.action_name}
-            error={formError && !isValid.actionNameValid}
-            helperText={
-              formError &&
-              !isValid.actionNameValid &&
-              'Action Name field must be completed'
-            }
-            onChange={updateForm}
-          />
+          <Grid
+            container
+            spacing={{ xs: 2, md: 12 }}
+            direction={{ xs: 'column', md: 'row' }}
+          >
+            <Grid item xs={6}>
+              <Typography variant="h3">Action Name</Typography>
+              <TextField
+                required
+                id="outlined-required"
+                label="Action Name"
+                name="action_name"
+                InputLabelProps={{ shrink: true }}
+                value={createActionForm.action_name}
+                error={formError && !isValid.actionNameValid}
+                helperText={
+                  formError &&
+                  !isValid.actionNameValid &&
+                  'Action Name field must be completed'
+                }
+                onChange={updateForm}
+                sx={{ width: '100%' }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="h3">Action Icon</Typography>
+              <Box component="div" display="flex" alignItems="center">
+                {actionIconPreviewLink ? (
+                  <Box
+                    component="img"
+                    sx={{
+                      height: 80,
+                      width: 80,
+                    }}
+                    alt="Uploaded Action Icon"
+                    src={actionIconPreviewLink}
+                  />
+                ) : (
+                  <Box
+                    component="div"
+                    sx={{
+                      height: 80,
+                      width: 80,
+                      backgroundColor: '#A9A9A9',
+                    }}
+                  />
+                )}
+                <label htmlFor="action-icon-image">
+                  <Input
+                    accept="image/*"
+                    id="action-icon-image"
+                    type="file"
+                    onChange={handleIconUpload}
+                  />
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{ mb: { xs: '1.5em' }, ml: '2em' }}
+                  >
+                    Upload Photo
+                  </Button>
+                </label>
+              </Box>
+            </Grid>
+          </Grid>
           <Typography variant="h3">Action Items</Typography>
           <Typography
             variant="subtitle1"
