@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, TextField, Typography, Grid } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterMoment';
-import moment from 'moment';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { format } from 'date-fns';
 import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import { styled } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import BonusPointQuiz from './BonusPointQuiz';
 import Co2SavedScreen from './Co2SavedScreen';
+import { API } from 'aws-amplify';
+import { getAllActions } from '../graphql/queries';
 
 const theme = createTheme({
   components: {
@@ -45,23 +47,32 @@ const StyledGrid = styled(Grid)(({ theme }) => ({
   },
 }));
 
-const SelfReportMenu = () => {
-  const [selectedDate, setSelectedDate] = useState();
+const SelfReportMenu = ({ user }) => {
+  const [selectedDate, setSelectedDate] = useState(
+    format(new Date(), 'yyyy-MM-dd')
+  );
   const [selectedAction, setSelectedAction] = useState();
-  //this will be used to get the fact answers for the bonus quiz step of the form
   const [fact, setFact] = useState();
   const [stepNumber, setStepNumber] = useState(0);
+  const [actionOptions, setActionOptions] = useState();
+  const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCo2Saved, setTotalCo2Saved] = useState(0);
+  const [quizAnswered, setQuizAnswered] = useState(false);
+  const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
+
+  useEffect(() => {
+    getActions();
+  }, []);
+
+  const getActions = async () => {
+    const res = await API.graphql({ query: getAllActions });
+    const actions = res.data.getAllActions;
+    setActionOptions(actions);
+  };
 
   const handleChangeStep = (stepNumber) => {
     setStepNumber(stepNumber);
   };
-
-  let actionOptions = [
-    'Plant Based Meals',
-    'Transportation',
-    'Reducing Plastic Waste',
-  ];
 
   //resets the form everytime a new action is selected
   useEffect(() => {
@@ -103,19 +114,32 @@ const SelfReportMenu = () => {
           {selectedAction && stepNumber === 2 && (
             <ActionPanel
               selectedAction={selectedAction}
-              changeStep={handleChangeStep}
               setTotalCo2Saved={setTotalCo2Saved}
               totalCo2Saved={totalCo2Saved}
+              actionItemValues={actionItemValues}
+              setActionItemValues={setActionItemValues}
+              changeStep={handleChangeStep}
             />
           )}
           {stepNumber === 3 && (
-            <BonusPointQuiz fact={fact} changeStep={handleChangeStep} />
+            <BonusPointQuiz
+              fact={fact}
+              setQuizAnswered={setQuizAnswered}
+              setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+              changeStep={handleChangeStep}
+            />
           )}
           {stepNumber === 4 && (
             <Co2SavedScreen
+              actionId={selectedAction.action_id}
+              actionDate={selectedDate}
               totalCo2Saved={totalCo2Saved}
-              changeStep={handleChangeStep}
               setTotalCo2Saved={setTotalCo2Saved}
+              quizAnswered={quizAnswered}
+              firstQuizAnswerCorrect={firstQuizAnswerCorrect}
+              user={user}
+              actionItemValues={actionItemValues}
+              changeStep={handleChangeStep}
             />
           )}
         </Grid>
@@ -149,9 +173,7 @@ const SelfReportMenu = () => {
                   label="Choose Date"
                   value={selectedDate}
                   onChange={(newDate) => {
-                    setSelectedDate(
-                      moment(new Date(newDate)).format('MM/DD/YYYY')
-                    );
+                    setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
                   }}
                   renderInput={(selectedDate) => (
                     <TextField {...selectedDate} />
@@ -161,6 +183,7 @@ const SelfReportMenu = () => {
               <Autocomplete
                 disablePortal
                 options={actionOptions}
+                getOptionLabel={(option) => option.action_name}
                 sx={{ minWidth: 300 }}
                 onChange={(event, newAction) => {
                   setSelectedAction(newAction);

@@ -40,7 +40,12 @@ const theme = createTheme({
   },
 });
 
-const BonusPointQuiz = ({ fact, changeStep }) => {
+const BonusPointQuiz = ({
+  fact,
+  changeStep,
+  setQuizAnswered,
+  setFirstQuizAnswerCorrect,
+}) => {
   // const { question_text, answers, correct_answer } = fact;
   let question_text =
     'What percentage of an average Canadian’s total CO2 production is due to transportation?';
@@ -50,7 +55,6 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
   const [userAnswer, setUserAnswer] = useState();
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
   const [numTries, setNumTries] = useState(1);
-  const [quizSkipped, setQuizSkipped] = useState(false);
 
   const displayQuiz = () => {
     return (
@@ -80,6 +84,7 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
             <Button
               onClick={() => {
                 setIsAnswerSelected(true);
+                setQuizAnswered(true);
               }}
               variant="contained"
               sx={{ marginY: 5 }}
@@ -89,7 +94,6 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
           ) : (
             <Button
               onClick={() => {
-                setQuizSkipped(true);
                 changeStep(4);
               }}
               variant="contained"
@@ -117,6 +121,7 @@ const BonusPointQuiz = ({ fact, changeStep }) => {
             </Typography>
             <Button
               onClick={() => {
+                setFirstQuizAnswerCorrect(true);
                 changeStep(4);
               }}
               variant="contained"

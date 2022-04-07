@@ -10,10 +10,12 @@ import {
   Card,
   Snackbar,
   Alert,
+  LinearProgress,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
-import { API } from 'aws-amplify';
+import { styled } from '@mui/material/styles';
+import { Storage, API } from 'aws-amplify';
 import { createActionItems, createAction } from '../graphql/mutations';
 
 const theme = createTheme({
@@ -87,6 +89,10 @@ const theme = createTheme({
   },
 });
 
+const Input = styled('input')({
+  display: 'none',
+});
+
 const CreateAction = () => {
   const emptyActionItemForm = {
     item_name: '',
@@ -95,7 +101,6 @@ const CreateAction = () => {
   };
   const emptyCreateActionForm = {
     action_name: '',
-    action_icon: '',
     page_media: '',
     fallback_quiz_media: '',
   };
@@ -114,6 +119,9 @@ const CreateAction = () => {
   const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
   const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
+  const [actionIconFile, setActionIconFile] = useState();
+  const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
   const updateForm = (e) => {
@@ -122,147 +130,187 @@ const CreateAction = () => {
         ...prev,
         [e.target.name]: e.target.value,
       }));
+
+      switch (e.target.name) {
+        case 'item_name':
+          //checks to see if user input for item name field is null
+          if (!e.target.value) {
+            setIsValid((prev) => ({
+              ...prev,
+              itemNameValid: false,
+            }));
+            setActionItemFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              itemNameValid: true,
+            }));
+          }
+          break;
+        case 'item_description':
+          //checks to see if user input for item description field is null
+          if (!e.target.value) {
+            setIsValid((prev) => ({
+              ...prev,
+              itemDescriptionValid: false,
+            }));
+            setActionItemFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              itemDescriptionValid: true,
+            }));
+          }
+          break;
+        default:
+          //checks to see if user input for co2 saved per unit field is a positive numerical value
+          if (!e.target.value.match(/[0-9]*[.,]?[0-9]+/)) {
+            setIsValid((prev) => ({
+              ...prev,
+              co2Valid: false,
+            }));
+            setActionItemFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              co2Valid: true,
+            }));
+          }
+      }
     } else {
       setCreateActionForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
+      switch (e.target.name) {
+        //checks to see if action_name field is null
+        default:
+          if (!e.target.value) {
+            setIsValid((prev) => ({
+              ...prev,
+              actionNameValid: false,
+            }));
+            setFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              actionNameValid: true,
+            }));
+          }
+          break;
+      }
     }
+  };
+
+  /** functions for uploading an icon */
+
+  const handleIconUpload = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setActionIconFile(null);
+      return;
+    }
+    let imageFile = e.target.files[0];
+    let previewLink = URL.createObjectURL(imageFile);
+    setActionIconFile(imageFile);
+    setActionIconPreviewLink(previewLink);
   };
 
   /** functions for validating and adding the actionItems */
 
+  //checks to see if actionItems are valid for submission (if there is more than 1 item in the array)
   useEffect(() => {
-    //if the required inputs are valid and there is no error, continue and add the item
+    if (actionItems.length < 1) {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: false,
+      }));
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: true,
+      }));
+    }
+  }, [actionItems]);
+
+  const addActionItem = () => {
     if (
       isValid.co2Valid &&
       isValid.itemNameValid &&
       isValid.itemDescriptionValid
     ) {
-      addActionItem();
+      //adds the item from the form into actionItems array
+      setActionItems((actionItems) => [...actionItems, actionItemsForm]);
+      //clears the actionItemsForm so user can enter in a new action item
+      setActionItemsForm(emptyActionItemForm);
       setIsValid((prev) => ({
         ...prev,
         co2Valid: false,
         itemNameValid: false,
-        actionItemsValid: true,
+        itemDescriptionValid: false,
       }));
       setActionItemFormError(false);
     }
-  }, [isValid.co2Valid, isValid.itemNameValid, isValid.itemDescriptionValid]);
-
-  const validateActionItem = () => {
-    // //checks to see if user input for co2 saved per unit field is a positive numerical value
-    if (!actionItemsForm.co2_saved_per_unit.match(/[0-9]*[.,]?[0-9]+/)) {
-      setIsValid((prev) => ({
-        ...prev,
-        co2Valid: false,
-      }));
-      setActionItemFormError(true);
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        co2Valid: true,
-      }));
-    }
-
-    //checks to see if user input for item name field is not null
-    if (!actionItemsForm.item_name) {
-      setIsValid((prev) => ({
-        ...prev,
-        itemNameValid: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        itemNameValid: true,
-      }));
-    }
-
-    if (!actionItemsForm.item_description) {
-      setIsValid((prev) => ({
-        ...prev,
-        itemDescriptionValid: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        itemDescriptionValid: true,
-      }));
-    }
-  };
-
-  const addActionItem = () => {
-    //adds the item from the form into actionItems array
-    setActionItems((actionItems) => [...actionItems, actionItemsForm]);
-    //clears the actionItemsForm so user can enter in a new action item
-    setActionItemsForm(emptyActionItemForm);
   };
 
   const handleRemoveActionItem = (name) => {
     setActionItems(actionItems.filter((item) => item.item_name !== name));
   };
 
-  /** functions for validating and adding the action itself */
+  /** functions adding the action itself */
 
-  useEffect(() => {
-    //if the required inputs are valid and there is no error, continue and add the item
+  const submitAction = async () => {
     if (isValid.actionItemsValid && isValid.actionNameValid) {
-      submitAction();
+      setIsLoading(true);
+
+      //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
+      let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
+      let iconLink =
+        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      if (actionIconFile) {
+        let imageType = actionIconFile.type;
+        try {
+          await Storage.put(imageKey, actionIconFile, {
+            contentType: imageType,
+          });
+        } catch (error) {
+          console.log('Error uploading file', error);
+        }
+      }
+      //create the action and get its id
+      const createActionRes = await API.graphql({
+        query: createAction,
+        variables: {
+          action_name: createActionForm.action_name,
+          action_icon: iconLink,
+          fallback_quiz_media: createActionForm.fallback_quiz_media,
+        },
+      });
+      const actionId = createActionRes.data.createAction.action_id;
+      //create the corresponding items for the action
+      await API.graphql({
+        query: createActionItems,
+        variables: { action_id: actionId, action_items: actionItems },
+      });
+      //clear form and related states
+      setCreateActionForm(emptyCreateActionForm);
+      setActionItems([]);
+      setActionIconPreviewLink();
       setIsValid((prev) => ({
         ...prev,
-        actionItemsValid: false,
         actionNameValid: false,
       }));
       setFormError(false);
-    }
-  }, [isValid.actionItemsValid, isValid.actionNameValid]);
-
-  const validateCreateActionForm = () => {
-    if (!createActionForm.action_name) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionNameValid: false,
-      }));
-      setFormError(true);
+      //render success message
+      setSubmitActionSuccess(true);
     } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionNameValid: true,
-      }));
-    }
-
-    if (actionItems.length < 1) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItemsValid: false,
-      }));
       setFormError(true);
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItemsValid: true,
-      }));
     }
   };
 
-  const submitAction = async () => {
-    //create the action and get its id
-    const createActionRes = await API.graphql({
-      query: createAction,
-      variables: createActionForm,
-    });
-    const actionId = createActionRes.data.createAction.action_id;
-    //create the corresponding items for the action
-    await API.graphql({
-      query: createActionItems,
-      variables: { action_id: actionId, action_items: actionItems },
-    });
-    //clear form and related states
-    setCreateActionForm(emptyCreateActionForm);
-    setActionItems([]);
-    //render success message
-    setSubmitActionSuccess(true);
-  };
+  //once action has been successfully submitted, set loading state to false to remove progress bar
+  useEffect(() => {
+    submitActionSuccess && setIsLoading(false);
+  }, [submitActionSuccess]);
 
   const renderAddedActionItems = () => {
     return actionItems.map((item, index) => (
@@ -320,33 +368,88 @@ const CreateAction = () => {
           minHeight: '50vh',
           backgroundColor: '#DBE2EF',
           borderRadius: '8px',
-          padding: '1.5em',
+          padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',
         }}
       >
         <FormControl>
-          <Typography variant="h3">Action Name</Typography>
-          <TextField
-            required
-            id="outlined-required"
-            label="Action Name"
-            name="action_name"
-            InputLabelProps={{ shrink: true }}
-            value={createActionForm.action_name}
-            error={formError && !isValid.actionNameValid}
-            helperText={
-              formError &&
-              !isValid.actionNameValid &&
-              'Action Name field must be completed'
-            }
-            onChange={updateForm}
-          />
+          <Grid
+            container
+            spacing={{ xs: 2, md: 12 }}
+            direction={{ xs: 'column', md: 'row' }}
+          >
+            <Grid item xs={6}>
+              <Typography variant="h3">Action Name</Typography>
+              <TextField
+                required
+                id="outlined-required"
+                label="Action Name"
+                name="action_name"
+                InputLabelProps={{ shrink: true }}
+                value={createActionForm.action_name}
+                error={formError && !isValid.actionNameValid}
+                helperText={
+                  formError &&
+                  !isValid.actionNameValid &&
+                  'Action Name field must be completed'
+                }
+                onChange={updateForm}
+                sx={{ width: '100%' }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="h3">Action Icon</Typography>
+              <Box
+                component="div"
+                display="flex"
+                alignItems="center"
+                sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+              >
+                {actionIconPreviewLink ? (
+                  <Box
+                    component="img"
+                    sx={{
+                      height: 70,
+                      width: 70,
+                    }}
+                    alt="Uploaded Action Icon"
+                    src={actionIconPreviewLink}
+                  />
+                ) : (
+                  <Box
+                    component="div"
+                    sx={{
+                      height: 70,
+                      width: 70,
+                      backgroundColor: '#A9A9A9',
+                    }}
+                  />
+                )}
+                <label htmlFor="action-icon-image">
+                  <Input
+                    accept="image/*"
+                    id="action-icon-image"
+                    type="file"
+                    onChange={handleIconUpload}
+                  />
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{ m: { xs: '1.5em 0 0', md: '0 0 0 1.5em' } }}
+                  >
+                    Upload Icon Image
+                  </Button>
+                </label>
+              </Box>
+            </Grid>
+          </Grid>
           <Typography variant="h3">Action Items</Typography>
           <Typography
             variant="subtitle1"
             component="span"
             sx={{
               color: '#d32f2f',
+              mb: '2em',
               display:
                 formError && !isValid.actionItemsValid ? 'inline' : 'none',
             }}
@@ -355,7 +458,6 @@ const CreateAction = () => {
           </Typography>
           <FormGroup
             sx={{
-              mt: '1.5em',
               gap: '1.5em',
               flexDirection: { xs: 'column', md: 'row' },
             }}
@@ -406,7 +508,7 @@ const CreateAction = () => {
               sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
             />
-            <Button variant="outlined" onClick={validateActionItem}>
+            <Button variant="outlined" onClick={addActionItem}>
               Add Action Item
             </Button>
           </FormGroup>
@@ -419,6 +521,13 @@ const CreateAction = () => {
             value={createActionForm.fallback_quiz_media}
             onChange={updateForm}
           />
+          {isLoading && (
+            <LinearProgress
+              sx={{ width: '100%', mt: '1.5em' }}
+              color="primary"
+              variant="indeterminate"
+            />
+          )}
           <Button
             sx={{
               mt: '4em',
@@ -428,12 +537,11 @@ const CreateAction = () => {
             }}
             variant="contained"
             type="submit"
-            onClick={validateCreateActionForm}
+            onClick={submitAction}
           >
             Submit New Action
           </Button>
         </FormControl>
-
         <Snackbar
           open={submitActionSuccess}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
