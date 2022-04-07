@@ -130,11 +130,75 @@ const CreateAction = () => {
         ...prev,
         [e.target.name]: e.target.value,
       }));
+
+      switch (e.target.name) {
+        case 'item_name':
+          //checks to see if user input for item name field is null
+          if (!e.target.value) {
+            setIsValid((prev) => ({
+              ...prev,
+              itemNameValid: false,
+            }));
+            setActionItemFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              itemNameValid: true,
+            }));
+          }
+          break;
+        case 'item_description':
+          //checks to see if user input for item description field is null
+          if (!e.target.value) {
+            setIsValid((prev) => ({
+              ...prev,
+              itemDescriptionValid: false,
+            }));
+            setActionItemFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              itemDescriptionValid: true,
+            }));
+          }
+          break;
+        default:
+          //checks to see if user input for co2 saved per unit field is a positive numerical value
+          if (!e.target.value.match(/[0-9]*[.,]?[0-9]+/)) {
+            setIsValid((prev) => ({
+              ...prev,
+              co2Valid: false,
+            }));
+            setActionItemFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              co2Valid: true,
+            }));
+          }
+      }
     } else {
       setCreateActionForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
+      switch (e.target.name) {
+        //checks to see if action_name field is null
+        default:
+          if (!e.target.value) {
+            setIsValid((prev) => ({
+              ...prev,
+              actionNameValid: false,
+            }));
+            setFormError(true);
+          } else {
+            setIsValid((prev) => ({
+              ...prev,
+              actionNameValid: true,
+            }));
+          }
+          break;
+      }
     }
   };
 
@@ -153,159 +217,94 @@ const CreateAction = () => {
 
   /** functions for validating and adding the actionItems */
 
+  //checks to see if actionItems are valid for submission (if there is more than 1 item in the array)
   useEffect(() => {
-    //if the required inputs are valid and there is no error, continue and add the item
+    if (actionItems.length < 1) {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: false,
+      }));
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItemsValid: true,
+      }));
+    }
+  }, [actionItems]);
+
+  const addActionItem = () => {
     if (
       isValid.co2Valid &&
       isValid.itemNameValid &&
       isValid.itemDescriptionValid
     ) {
-      addActionItem();
+      //adds the item from the form into actionItems array
+      setActionItems((actionItems) => [...actionItems, actionItemsForm]);
+      //clears the actionItemsForm so user can enter in a new action item
+      setActionItemsForm(emptyActionItemForm);
       setIsValid((prev) => ({
         ...prev,
         co2Valid: false,
         itemNameValid: false,
-        actionItemsValid: true,
+        itemDescriptionValid: false,
       }));
       setActionItemFormError(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValid.co2Valid, isValid.itemNameValid, isValid.itemDescriptionValid]);
-
-  const validateActionItem = () => {
-    // //checks to see if user input for co2 saved per unit field is a positive numerical value
-    if (!actionItemsForm.co2_saved_per_unit.match(/[0-9]*[.,]?[0-9]+/)) {
-      setIsValid((prev) => ({
-        ...prev,
-        co2Valid: false,
-      }));
-      setActionItemFormError(true);
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        co2Valid: true,
-      }));
-    }
-
-    //checks to see if user input for item name field is not null
-    if (!actionItemsForm.item_name) {
-      setIsValid((prev) => ({
-        ...prev,
-        itemNameValid: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        itemNameValid: true,
-      }));
-    }
-
-    if (!actionItemsForm.item_description) {
-      setIsValid((prev) => ({
-        ...prev,
-        itemDescriptionValid: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        itemDescriptionValid: true,
-      }));
-    }
-  };
-
-  const addActionItem = () => {
-    //adds the item from the form into actionItems array
-    setActionItems((actionItems) => [...actionItems, actionItemsForm]);
-    //clears the actionItemsForm so user can enter in a new action item
-    setActionItemsForm(emptyActionItemForm);
   };
 
   const handleRemoveActionItem = (name) => {
     setActionItems(actionItems.filter((item) => item.item_name !== name));
   };
 
-  /** functions for validating and adding the action itself */
+  /** functions adding the action itself */
 
-  useEffect(() => {
-    //if the required inputs are valid and there is no error, continue and add the item
+  const submitAction = async () => {
     if (isValid.actionItemsValid && isValid.actionNameValid) {
-      submitAction();
+      setIsLoading(true);
+
+      //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
+      let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
+      let iconLink =
+        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      if (actionIconFile) {
+        let imageType = actionIconFile.type;
+        try {
+          await Storage.put(imageKey, actionIconFile, {
+            contentType: imageType,
+          });
+        } catch (error) {
+          console.log('Error uploading file', error);
+        }
+      }
+      //create the action and get its id
+      const createActionRes = await API.graphql({
+        query: createAction,
+        variables: {
+          action_name: createActionForm.action_name,
+          action_icon: iconLink,
+          fallback_quiz_media: createActionForm.fallback_quiz_media,
+        },
+      });
+      const actionId = createActionRes.data.createAction.action_id;
+      //create the corresponding items for the action
+      await API.graphql({
+        query: createActionItems,
+        variables: { action_id: actionId, action_items: actionItems },
+      });
+      //clear form and related states
+      setCreateActionForm(emptyCreateActionForm);
+      setActionItems([]);
+      setActionIconPreviewLink();
       setIsValid((prev) => ({
         ...prev,
-        actionItemsValid: false,
         actionNameValid: false,
       }));
       setFormError(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValid.actionItemsValid, isValid.actionNameValid]);
-
-  const validateCreateActionForm = () => {
-    if (!createActionForm.action_name) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionNameValid: false,
-      }));
-      setFormError(true);
+      //render success message
+      setSubmitActionSuccess(true);
     } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionNameValid: true,
-      }));
-    }
-
-    if (actionItems.length < 1) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItemsValid: false,
-      }));
       setFormError(true);
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItemsValid: true,
-      }));
     }
-  };
-
-  const submitAction = async () => {
-    setIsLoading(true);
-
-    //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
-    let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
-    let iconLink =
-      process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-    if (actionIconFile) {
-      let imageType = actionIconFile.type;
-      try {
-        await Storage.put(imageKey, actionIconFile, {
-          contentType: imageType,
-        });
-      } catch (error) {
-        console.log('Error uploading file', error);
-      }
-    }
-    //create the action and get its id
-    const createActionRes = await API.graphql({
-      query: createAction,
-      variables: {
-        action_name: createActionForm.action_name,
-        action_icon: iconLink,
-        fallback_quiz_media: createActionForm.fallback_quiz_media,
-      },
-    });
-    const actionId = createActionRes.data.createAction.action_id;
-    //create the corresponding items for the action
-    await API.graphql({
-      query: createActionItems,
-      variables: { action_id: actionId, action_items: actionItems },
-    });
-    //clear form and related states
-    setCreateActionForm(emptyCreateActionForm);
-    setActionItems([]);
-    setActionIconPreviewLink();
-    //render success message
-    setSubmitActionSuccess(true);
   };
 
   //once action has been successfully submitted, set loading state to false to remove progress bar
@@ -410,8 +409,8 @@ const CreateAction = () => {
                   <Box
                     component="img"
                     sx={{
-                      height: 80,
-                      width: 80,
+                      height: 70,
+                      width: 70,
                     }}
                     alt="Uploaded Action Icon"
                     src={actionIconPreviewLink}
@@ -420,8 +419,8 @@ const CreateAction = () => {
                   <Box
                     component="div"
                     sx={{
-                      height: 80,
-                      width: 80,
+                      height: 70,
+                      width: 70,
                       backgroundColor: '#A9A9A9',
                     }}
                   />
@@ -450,6 +449,7 @@ const CreateAction = () => {
             component="span"
             sx={{
               color: '#d32f2f',
+              mb: '2em',
               display:
                 formError && !isValid.actionItemsValid ? 'inline' : 'none',
             }}
@@ -458,7 +458,6 @@ const CreateAction = () => {
           </Typography>
           <FormGroup
             sx={{
-              mt: '1.5em',
               gap: '1.5em',
               flexDirection: { xs: 'column', md: 'row' },
             }}
@@ -509,7 +508,7 @@ const CreateAction = () => {
               sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
             />
-            <Button variant="outlined" onClick={validateActionItem}>
+            <Button variant="outlined" onClick={addActionItem}>
               Add Action Item
             </Button>
           </FormGroup>
@@ -538,7 +537,7 @@ const CreateAction = () => {
             }}
             variant="contained"
             type="submit"
-            onClick={validateCreateActionForm}
+            onClick={submitAction}
           >
             Submit New Action
           </Button>
