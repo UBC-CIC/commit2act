@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Typography,
+  Box,
+  Tab,
   Button,
   Grid,
   Card,
@@ -8,6 +10,7 @@ import {
   CardContent,
   Avatar,
 } from '@mui/material';
+import { TabPanel, TabContext, TabList } from '@mui/lab';
 import { AutoGraphOutlined } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { useParams } from 'react-router-dom';
@@ -73,6 +76,7 @@ const theme = createTheme({
 
 const GroupProfile = () => {
   const { groupName } = useParams();
+  const [selectedTab, setSelectedTab] = useState('Group Members');
 
   let description =
     'UBC’s CIC is a public-private collaboration between UBC and Amazon. A CIC identifies digital transformation challenges, the problems or opportunities that matter to the community, and provides subject matter expertise and CIC leadership.';
@@ -126,16 +130,46 @@ const GroupProfile = () => {
     }
   };
 
+  const handleTabChange = (e, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const renderGroupMemberPanel = () => {
+    return (
+      <Grid item xs={12} sx={{ textAlign: { xs: 'center', lg: 'left' } }}>
+        <Typography variant="h2" sx={{ mt: '1em' }}>
+          Group Members
+        </Typography>
+        <Grid
+          container
+          columnSpacing={{ xs: 0, md: 1 }}
+          sx={{
+            width: '100%',
+            height: '50vh',
+            backgroundColor: '#DBE2EF',
+            borderRadius: '8px',
+            padding: '1.5em',
+            mt: '2em',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            overflow: 'auto',
+          }}
+        >
+          {renderGroupMembers()}
+        </Grid>
+      </Grid>
+    );
+  };
   return (
     <ThemeProvider theme={theme}>
       <Grid container>
         <Grid
-          columnSpacing={10}
+          columnSpacing={8}
           container
           alignItems="flex-start"
           sx={{ mt: '2em' }}
         >
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <Grid
               container
               direction="row"
@@ -146,10 +180,10 @@ const GroupProfile = () => {
                 variant="rounded"
                 sx={{
                   width: {
-                    xs: '10vw',
+                    xs: 100,
                   },
                   height: {
-                    xs: '16vh',
+                    xs: 100,
                   },
                   mr: '1em',
                 }}
@@ -170,7 +204,7 @@ const GroupProfile = () => {
           </Grid>
           <Grid
             item
-            xs={8}
+            xs={7}
             sx={{
               textAlign: { xs: 'center', lg: 'left' },
             }}
@@ -213,27 +247,32 @@ const GroupProfile = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} sx={{ textAlign: { xs: 'center', lg: 'left' } }}>
-            <Typography variant="h2" sx={{ mt: '3em' }}>
-              Group Members
-            </Typography>
-            <Grid
-              container
-              columnSpacing={{ xs: 0, md: 1 }}
-              sx={{
-                width: '100%',
-                height: '50vh',
-                backgroundColor: '#DBE2EF',
-                borderRadius: '8px',
-                padding: '1.5em',
-                mt: '2em',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                overflow: 'auto',
-              }}
-            >
-              {renderGroupMembers()}
-            </Grid>
+
+          <Grid item xs={12}>
+            <TabContext value={selectedTab}>
+              <Box
+                sx={{
+                  mt: '3em',
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  width: '100%',
+                }}
+              >
+                <TabList
+                  onChange={handleTabChange}
+                  aria-label="group profile tabs"
+                >
+                  <Tab label="Group Members" value="Group Members" />
+                  <Tab label="Member Actions" value="Member Actions" />
+                  <Tab label="Group Info" value="Group Info" />
+                </TabList>
+              </Box>
+              <TabPanel value="Group Members">
+                {renderGroupMemberPanel()}
+              </TabPanel>
+              <TabPanel value="Member Actions">Member Actions</TabPanel>
+              <TabPanel value="Group Info">Group Info</TabPanel>
+            </TabContext>
           </Grid>
         </Grid>
       </Grid>
