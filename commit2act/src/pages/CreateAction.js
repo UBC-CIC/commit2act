@@ -10,6 +10,7 @@ import {
   Card,
   Snackbar,
   Alert,
+  LinearProgress,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
@@ -100,7 +101,6 @@ const CreateAction = () => {
   };
   const emptyCreateActionForm = {
     action_name: '',
-    action_icon: '',
     page_media: '',
     fallback_quiz_media: '',
   };
@@ -121,6 +121,7 @@ const CreateAction = () => {
   const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
   const updateForm = (e) => {
@@ -268,16 +269,14 @@ const CreateAction = () => {
   };
 
   const submitAction = async () => {
-    //get the action name to upload the action icon image to s3/cloudfront
+    setIsLoading(true);
+
+    //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
+    let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
+    let iconLink =
+      process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
     if (actionIconFile) {
-      let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
       let imageType = actionIconFile.type;
-      let iconLink =
-        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-      setCreateActionForm((prev) => ({
-        ...prev,
-        action_icon: iconLink,
-      }));
       try {
         await Storage.put(imageKey, actionIconFile, {
           contentType: imageType,
@@ -289,7 +288,11 @@ const CreateAction = () => {
     //create the action and get its id
     const createActionRes = await API.graphql({
       query: createAction,
-      variables: createActionForm,
+      variables: {
+        action_name: createActionForm.action_name,
+        action_icon: iconLink,
+        fallback_quiz_media: createActionForm.fallback_quiz_media,
+      },
     });
     const actionId = createActionRes.data.createAction.action_id;
     //create the corresponding items for the action
@@ -304,6 +307,11 @@ const CreateAction = () => {
     //render success message
     setSubmitActionSuccess(true);
   };
+
+  //once action has been successfully submitted, set loading state to false to remove progress bar
+  useEffect(() => {
+    submitActionSuccess && setIsLoading(false);
+  }, [submitActionSuccess]);
 
   const renderAddedActionItems = () => {
     return actionItems.map((item, index) => (
@@ -514,6 +522,13 @@ const CreateAction = () => {
             value={createActionForm.fallback_quiz_media}
             onChange={updateForm}
           />
+          {isLoading && (
+            <LinearProgress
+              sx={{ width: '100%', mt: '1.5em' }}
+              color="primary"
+              variant="indeterminate"
+            />
+          )}
           <Button
             sx={{
               mt: '4em',
@@ -528,7 +543,6 @@ const CreateAction = () => {
             Submit New Action
           </Button>
         </FormControl>
-
         <Snackbar
           open={submitActionSuccess}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
