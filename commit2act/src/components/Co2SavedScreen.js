@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { API } from 'aws-amplify';
+import {
+  createSubmittedAction,
+  createSubmittedActionItems,
+} from '../graphql/mutations';
 
 const theme = createTheme({
   components: {
@@ -41,7 +46,49 @@ const theme = createTheme({
   },
 });
 
-const Co2SavedScreen = ({ totalCo2Saved, changeStep }) => {
+const Co2SavedScreen = ({
+  actionId,
+  actionDate,
+  totalCo2Saved,
+  changeStep,
+  id,
+  quizAnswered,
+  firstQuizAnswerCorrect,
+  user,
+  actionItemValues,
+}) => {
+  useEffect(() => {
+    submitAction();
+  }, []);
+
+  const submitAction = async () => {
+    //creates and submits the action, returns the submitted action id that is stored in database
+    const points = firstQuizAnswerCorrect ? 10 : 0;
+    const res = await API.graphql({
+      query: createSubmittedAction,
+      variables: {
+        action_id: actionId,
+        date_of_action: actionDate,
+        first_quiz_answer_correct: firstQuizAnswerCorrect,
+        g_co2_saved: totalCo2Saved,
+        is_validated: false,
+        points_earned: points,
+        quiz_answered: quizAnswered,
+        user_id: user.user_id,
+      },
+    });
+    const submittedActionId = res.data.createSubmittedAction.sa_id;
+
+    //creates the submitted action items for the action
+    await API.graphql({
+      query: createSubmittedActionItems,
+      variables: {
+        sa_id: submittedActionId,
+        submitted_action_items: actionItemValues,
+      },
+    });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box

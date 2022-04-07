@@ -15,7 +15,7 @@
     "@testing-library/user-event": "^13.5.0",
     "apollo-link-http": "^1.5.17",
     "aws-amplify": "^4.3.14",
-    "moment": "^2.29.1",
+    "date-fns": "^2.28.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",

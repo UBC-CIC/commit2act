@@ -97,6 +97,21 @@ export const createSubmittedActionItem = /* GraphQL */ `
     }
   }
 `;
+export const createSubmittedActionItems = /* GraphQL */ `
+  mutation CreateSubmittedActionItems(
+    $sa_id: Int!
+    $submitted_action_items: [SubmittedActionItemInput!]!
+  ) {
+    createSubmittedActionItems(
+      sa_id: $sa_id
+      submitted_action_items: $submitted_action_items
+    ) {
+      item_name
+      sa_id
+      input_value
+    }
+  }
+`;
 export const createAction = /* GraphQL */ `
   mutation CreateAction(
     $action_name: String!
