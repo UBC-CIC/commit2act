@@ -80,6 +80,7 @@ const AccountSettings = ({ user }) => {
 
   useEffect(() => {
     getUserActions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getUserActions = async () => {
@@ -87,7 +88,6 @@ const AccountSettings = ({ user }) => {
       query: getAllSubmittedActionsForUser,
       variables: { user_id: user.user_id },
     });
-    console.log(res.data.getAllSubmittedActionsForUser);
     setUserActions(res.data.getAllSubmittedActionsForUser);
   };
 

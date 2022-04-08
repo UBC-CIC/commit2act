@@ -76,7 +76,7 @@ const theme = createTheme({
 
 const GroupProfile = () => {
   const { groupName } = useParams();
-  const [selectedTab, setSelectedTab] = useState('Group Members');
+  const [selectedTab, setSelectedTab] = useState('0');
 
   let description =
     'UBC’s CIC is a public-private collaboration between UBC and Amazon. A CIC identifies digital transformation challenges, the problems or opportunities that matter to the community, and provides subject matter expertise and CIC leadership.';
@@ -98,7 +98,7 @@ const GroupProfile = () => {
         <Grid
           container
           xs={6}
-          sm={6}
+          sm={4}
           md={2}
           lg={2}
           xl={2}
@@ -109,16 +109,10 @@ const GroupProfile = () => {
             variant="rounded"
             sx={{
               width: {
-                xs: '28vw',
-                sm: '22vw',
-                md: '10vw',
-                lg: '10vw',
-                xl: '10vw',
+                xs: 100,
               },
               height: {
-                xs: '12vh',
-                md: '22vh',
-                lg: '18vh',
+                xs: 100,
               },
               mb: { xs: '1.5em' },
             }}
@@ -136,144 +130,155 @@ const GroupProfile = () => {
 
   const renderGroupMemberPanel = () => {
     return (
-      <Grid item xs={12} sx={{ textAlign: { xs: 'center', lg: 'left' } }}>
-        <Typography variant="h2" sx={{ mt: '1em' }}>
-          Group Members
-        </Typography>
-        <Grid
-          container
-          columnSpacing={{ xs: 0, md: 1 }}
-          sx={{
-            width: '100%',
-            height: '50vh',
-            backgroundColor: '#DBE2EF',
-            borderRadius: '8px',
-            padding: '1.5em',
-            mt: '2em',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            overflow: 'auto',
-          }}
-        >
-          {renderGroupMembers()}
-        </Grid>
+      <Grid
+        item
+        container
+        columnSpacing={{ xs: 0, md: 1 }}
+        sx={{
+          width: '100%',
+          height: '50vh',
+          backgroundColor: '#DBE2EF',
+          borderRadius: '8px',
+          padding: '1.5em',
+          mt: '2em',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          overflow: 'auto',
+        }}
+      >
+        {renderGroupMembers()}
       </Grid>
     );
   };
+
   return (
     <ThemeProvider theme={theme}>
-      <Grid container>
+      <Grid
+        container
+        columnSpacing={{ xs: 0, md: 8 }}
+        alignItems={{ xs: 'center', md: 'flex-start' }}
+        direction={{ xs: 'column', md: 'row' }}
+        sx={{ mt: '2em' }}
+        gap={{ xs: '2em', md: '0' }}
+        textAlign={{ xs: 'center', md: 'justify' }}
+      >
         <Grid
-          columnSpacing={8}
           container
-          alignItems="flex-start"
-          sx={{ mt: '2em' }}
+          item
+          xs={5}
+          width={{ xs: '70%', sm: '100%' }}
+          direction={{ xs: 'column', md: 'row' }}
+          gap={{ xs: '2em' }}
+          alignItems="center"
+          sx={{ mb: '1.5em' }}
         >
-          <Grid item xs={5}>
-            <Grid
-              container
-              direction="row"
-              alignItems="center"
-              sx={{ mb: '1.5em' }}
-            >
-              <Avatar
-                variant="rounded"
-                sx={{
-                  width: {
-                    xs: 100,
-                  },
-                  height: {
-                    xs: 100,
-                  },
-                  mr: '1em',
-                }}
-              >
-                {groupName.charAt(0)}
-              </Avatar>
-              {/* <Button
-                variant="outlined"
-                sx={{ mt: '2em', mb: { xs: '2em', lg: '0em' } }}
-              >
-                Leave Group
-              </Button> */}
-              <Typography component="div" variant="h1">
-                {groupName}
-              </Typography>
-            </Grid>
-            <Typography variant="subtitle1">{description}</Typography>
-          </Grid>
-          <Grid
-            item
-            xs={7}
+          <Avatar
+            variant="rounded"
             sx={{
-              textAlign: { xs: 'center', lg: 'left' },
+              width: {
+                xs: 100,
+              },
+              height: {
+                xs: 100,
+              },
+              mr: { xs: 0, md: '1em' },
             }}
           >
-            <Grid
-              container
-              rowSpacing={1}
-              columnSpacing={{ xs: 0, md: 1 }}
-              direction={{ xs: 'column', lg: 'row' }}
-              sx={{
-                width: '100%',
-                minHeight: '50vh',
-                backgroundColor: '#DBE2EF',
-                borderRadius: '8px',
-                padding: '1.5em',
-              }}
-            >
-              <Grid item xs={6}>
-                <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
-                  <CardActionArea sx={{ textAlign: 'center' }}>
-                    <Typography variant="h4">CO2 Saved This Week</Typography>
-                    <CardContent>
-                      <Typography variant="h5">
-                        <AutoGraphOutlined fontSize="large" />
-                        800g
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
-                  <CardActionArea sx={{ textAlign: 'center' }}>
-                    <Typography variant="h4">Total CO2 Saved</Typography>
-                    <CardContent>
-                      <Typography variant="h5">1600g</Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
+            {groupName.charAt(0)}
+          </Avatar>
+          <Typography component="div" variant="h1">
+            {groupName}
+          </Typography>
+          <Typography component="div" variant="subtitle1">
+            {description}
+          </Typography>
+        </Grid>
+
+        <Grid item xs={7}>
+          <Grid
+            container
+            rowSpacing={1}
+            columnSpacing={{ xs: 0, sm: 1 }}
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+            sx={{
+              width: '100%',
+              backgroundColor: '#DBE2EF',
+              borderRadius: '8px',
+              padding: '1.5em',
+              minHeight: '50vh',
+            }}
+          >
+            <Grid item xs={6}>
+              <Card raised={true} sx={{ p: '1em', height: { md: '25vh' } }}>
+                <CardActionArea sx={{ textAlign: 'center' }}>
+                  <Typography variant="h4">CO2 Saved This Week</Typography>
+                  <CardContent>
+                    <Typography variant="h5">
+                      <AutoGraphOutlined fontSize="large" />
+                      800g
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid item xs={6}>
+              <Card raised={true} sx={{ p: '1em', height: { md: '25vh' } }}>
+                <CardActionArea sx={{ textAlign: 'center' }}>
+                  <Typography variant="h4">Total CO2 Saved</Typography>
+                  <CardContent>
+                    <Typography variant="h5">1600g</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
             </Grid>
           </Grid>
+        </Grid>
 
-          <Grid item xs={12}>
-            <TabContext value={selectedTab}>
-              <Box
-                sx={{
-                  mt: '3em',
-                  borderBottom: 1,
-                  borderColor: 'divider',
-                  width: '100%',
-                }}
+        <Grid
+          container
+          item
+          sx={{
+            mt: { xs: '2em', md: '5em' },
+            width: { xs: '70%', sm: '100%' },
+          }}
+        >
+          <TabContext value={selectedTab}>
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: 'divider',
+                width: '100%',
+                display: 'flex',
+              }}
+            >
+              <TabList
+                onChange={handleTabChange}
+                aria-label="group profile tabs"
+                scrollButtons
+                allowScrollButtonsMobile
+                variant="scrollable"
               >
-                <TabList
-                  onChange={handleTabChange}
-                  aria-label="group profile tabs"
-                >
-                  <Tab label="Group Members" value="Group Members" />
-                  <Tab label="Member Actions" value="Member Actions" />
-                  <Tab label="Group Info" value="Group Info" />
-                </TabList>
-              </Box>
-              <TabPanel value="Group Members">
-                {renderGroupMemberPanel()}
-              </TabPanel>
-              <TabPanel value="Member Actions">Member Actions</TabPanel>
-              <TabPanel value="Group Info">Group Info</TabPanel>
-            </TabContext>
-          </Grid>
+                <Tab label="Group Members" value="0" />
+                <Tab label="Member Actions" value="1" />
+                <Tab label="Group Info" value="2" />
+              </TabList>
+              <Button variant="outlined" sx={{ ml: 'auto', mb: '0.5em' }}>
+                Join Group
+              </Button>
+            </Box>
+            <TabPanel
+              sx={{
+                padding: { xs: '0' },
+                width: '100%',
+              }}
+              value="0"
+            >
+              {renderGroupMemberPanel()}
+            </TabPanel>
+            <TabPanel value="1">Member Actions</TabPanel>
+            <TabPanel value="2">Group Info</TabPanel>
+          </TabContext>
         </Grid>
       </Grid>
     </ThemeProvider>
