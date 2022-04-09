@@ -7,14 +7,21 @@ import {
   CardActionArea,
   CardContent,
 } from '@mui/material';
-import { AutoGraphOutlined } from '@mui/icons-material';
+import {
+  AutoGraphOutlined,
+  SettingsBackupRestoreOutlined,
+} from '@mui/icons-material';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import GroupCard from '../components/GroupCard';
 import { API, graphqlOperation } from 'aws-amplify';
-import { getTotalGlobalCO2 } from '../graphql/queries';
+import {
+  getTotalGlobalCO2,
+  getUsersTotalCO2,
+  getUsersWeekCO2,
+} from '../graphql/queries';
 
 const theme = createTheme({
   components: {
@@ -75,24 +82,45 @@ const theme = createTheme({
   },
 });
 
-const Landing = () => {
-  const [user, setUser] = useState();
+const Landing = ({ user }) => {
   const navigate = useNavigate();
-  const [collectiveImpact, setCollectiveImpact] = useState();
+  const [progressStats, setProgressStats] = useState({
+    globalCo2: '',
+    totalCo2: '',
+    weeklyCo2: '',
+  });
 
-  const getUserInfo = async () => {
-    const userInfo = await Auth.currentUserInfo();
-    setUser(userInfo);
+  //gets currently authenticated cognito user for the first time the page loads after sign in
+  const getCognitoUser = async () => {
+    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
+    const id = cognitoUserEntry.attributes['custom:id'];
+    getProgressStats(id);
   };
 
   useEffect(() => {
-    getUserInfo();
-    getTotalCo2();
+    getCognitoUser();
   }, []);
 
-  const getTotalCo2 = async () => {
-    const res = await API.graphql(graphqlOperation(getTotalGlobalCO2));
-    setCollectiveImpact(res.data.getTotalGlobalCO2);
+  const getProgressStats = async (id) => {
+    const userId = user ? user.user_id : id;
+    console.log(id);
+    const [globalCo2Res, totalCo2Res, weeklyCo2Res] = await Promise.all([
+      API.graphql({ query: getTotalGlobalCO2 }),
+      API.graphql({
+        query: getUsersTotalCO2,
+        variables: { user_id: userId },
+      }),
+      API.graphql({
+        query: getUsersWeekCO2,
+        variables: { user_id: userId },
+      }),
+    ]);
+    setProgressStats((prev) => ({
+      ...prev,
+      globalCo2: globalCo2Res.data.getTotalGlobalCO2,
+      totalCo2: totalCo2Res.data.getUsersTotalCO2,
+      weeklyCo2: weeklyCo2Res.data.getUsersWeekCO2,
+    }));
   };
 
   //filler content for groups(will replace once database is set up)
@@ -122,7 +150,7 @@ const Landing = () => {
         <>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
             <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-              Welcome {user.attributes.name}!
+              Welcome {user.name}!
             </Typography>
             <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
               Recent Progress
@@ -148,7 +176,7 @@ const Landing = () => {
                   <CardContent>
                     <Typography variant="h5">
                       <AutoGraphOutlined fontSize="large" />
-                      150g
+                      {progressStats.weeklyCo2}g
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -159,7 +187,9 @@ const Landing = () => {
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Total CO2 Saved</Typography>
                   <CardContent>
-                    <Typography variant="h5">800g</Typography>
+                    <Typography variant="h5">
+                      {progressStats.totalCo2}g
+                    </Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>
@@ -169,7 +199,9 @@ const Landing = () => {
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Collective Impact</Typography>
                   <CardContent>
-                    <Typography variant="h5">{collectiveImpact}g</Typography>
+                    <Typography variant="h5">
+                      {progressStats.globalCo2}g
+                    </Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>

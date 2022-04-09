@@ -97,6 +97,7 @@ const GroupProfile = () => {
       return members.map((member, index) => (
         <Grid
           container
+          item
           xs={6}
           sm={4}
           md={2}
@@ -160,12 +161,12 @@ const GroupProfile = () => {
         direction={{ xs: 'column', md: 'row' }}
         sx={{ mt: '2em' }}
         gap={{ xs: '2em', md: '0' }}
-        textAlign={{ xs: 'center', md: 'justify' }}
+        textAlign={{ xs: 'center', md: 'left' }}
       >
         <Grid
           container
           item
-          xs={5}
+          xs={4.5}
           width={{ xs: '70%', sm: '100%' }}
           direction={{ xs: 'column', md: 'row' }}
           gap={{ xs: '2em' }}
@@ -194,7 +195,7 @@ const GroupProfile = () => {
           </Typography>
         </Grid>
 
-        <Grid item xs={7}>
+        <Grid item xs={7.5}>
           <Grid
             container
             rowSpacing={1}
@@ -239,7 +240,7 @@ const GroupProfile = () => {
           container
           item
           sx={{
-            mt: { xs: '2em', md: '5em' },
+            mt: { xs: '2em', md: '3em' },
             width: { xs: '70%', sm: '100%' },
           }}
         >
@@ -250,6 +251,7 @@ const GroupProfile = () => {
                 borderColor: 'divider',
                 width: '100%',
                 display: 'flex',
+                padding: '0.5em',
               }}
             >
               <TabList

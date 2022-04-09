@@ -151,3 +151,142 @@ export const deleteAction = /* GraphQL */ `
     deleteAction(action_id: $action_id)
   }
 `;
+export const createGroup = /* GraphQL */ `
+  mutation CreateGroup(
+    $group_name: String!
+    $group_description: String
+    $group_image: String
+    $is_public: Boolean!
+    $private_password: String
+  ) {
+    createGroup(
+      group_name: $group_name
+      group_description: $group_description
+      group_image: $group_image
+      is_public: $is_public
+      private_password: $private_password
+    ) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const createGroupAndOwner = /* GraphQL */ `
+  mutation CreateGroupAndOwner(
+    $owner_user_id: Int!
+    $group_name: String!
+    $group_description: String
+    $group_image: String
+    $is_public: Boolean!
+    $private_password: String
+  ) {
+    createGroupAndOwner(
+      owner_user_id: $owner_user_id
+      group_name: $group_name
+      group_description: $group_description
+      group_image: $group_image
+      is_public: $is_public
+      private_password: $private_password
+    ) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const updateGroup = /* GraphQL */ `
+  mutation UpdateGroup(
+    $group_id: Int!
+    $group_name: String
+    $group_description: String
+    $group_image: String
+    $is_public: Boolean
+    $private_password: String
+  ) {
+    updateGroup(
+      group_id: $group_id
+      group_name: $group_name
+      group_description: $group_description
+      group_image: $group_image
+      is_public: $is_public
+      private_password: $private_password
+    ) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const deleteGroup = /* GraphQL */ `
+  mutation DeleteGroup($group_id: Int!) {
+    deleteGroup(group_id: $group_id)
+  }
+`;
+export const addGroupUser = /* GraphQL */ `
+  mutation AddGroupUser(
+    $group_id: Int!
+    $user_id: Int!
+    $user_role: UserRoleInGroup!
+  ) {
+    addGroupUser(
+      group_id: $group_id
+      user_id: $user_id
+      user_role: $user_role
+    ) {
+      group_id
+      user_id
+      user_role
+    }
+  }
+`;
+export const addGroupOwner = /* GraphQL */ `
+  mutation AddGroupOwner($group_id: Int!, $user_id: Int!) {
+    addGroupOwner(group_id: $group_id, user_id: $user_id) {
+      group_id
+      user_id
+      user_role
+    }
+  }
+`;
+export const addGroupMember = /* GraphQL */ `
+  mutation AddGroupMember($group_id: Int!, $user_id: Int!) {
+    addGroupMember(group_id: $group_id, user_id: $user_id) {
+      group_id
+      user_id
+      user_role
+    }
+  }
+`;
+export const demoteGroupOwner = /* GraphQL */ `
+  mutation DemoteGroupOwner($group_id: Int!, $user_id: Int!) {
+    demoteGroupOwner(group_id: $group_id, user_id: $user_id) {
+      group_id
+      user_id
+      user_role
+    }
+  }
+`;
+export const promoteGroupMember = /* GraphQL */ `
+  mutation PromoteGroupMember($group_id: Int!, $user_id: Int!) {
+    promoteGroupMember(group_id: $group_id, user_id: $user_id) {
+      group_id
+      user_id
+      user_role
+    }
+  }
+`;
+export const removeGroupMember = /* GraphQL */ `
+  mutation RemoveGroupMember($group_id: Int!, $user_id: Int!) {
+    removeGroupMember(group_id: $group_id, user_id: $user_id)
+  }
+`;

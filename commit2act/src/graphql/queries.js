@@ -67,6 +67,16 @@ export const getTotalGlobalCO2 = /* GraphQL */ `
     getTotalGlobalCO2
   }
 `;
+export const getUsersTotalCO2 = /* GraphQL */ `
+  query GetUsersTotalCO2($user_id: Int!) {
+    getUsersTotalCO2(user_id: $user_id)
+  }
+`;
+export const getUsersWeekCO2 = /* GraphQL */ `
+  query GetUsersWeekCO2($user_id: Int!) {
+    getUsersWeekCO2(user_id: $user_id)
+  }
+`;
 export const getAllUsers = /* GraphQL */ `
   query GetAllUsers {
     getAllUsers {
@@ -142,6 +152,111 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
       points_earned
       submitted_action_items
       action_name
+    }
+  }
+`;
+export const getAllGroups = /* GraphQL */ `
+  query GetAllGroups {
+    getAllGroups {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const getSingleGroup = /* GraphQL */ `
+  query GetSingleGroup($group_id: Int!) {
+    getSingleGroup(group_id: $group_id) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const getSingleGroupByName = /* GraphQL */ `
+  query GetSingleGroupByName($group_name: String!) {
+    getSingleGroupByName(group_name: $group_name) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const getAllUsersInGroup = /* GraphQL */ `
+  query GetAllUsersInGroup($group_id: Int) {
+    getAllUsersInGroup(group_id: $group_id) {
+      user_id
+      username
+      name
+      email
+      avatar
+    }
+  }
+`;
+export const getAllOwnersInGroup = /* GraphQL */ `
+  query GetAllOwnersInGroup($group_id: Int) {
+    getAllOwnersInGroup(group_id: $group_id) {
+      user_id
+      username
+      name
+      email
+      avatar
+    }
+  }
+`;
+export const getAllMembersInGroup = /* GraphQL */ `
+  query GetAllMembersInGroup($group_id: Int) {
+    getAllMembersInGroup(group_id: $group_id) {
+      user_id
+      username
+      name
+      email
+      avatar
+    }
+  }
+`;
+export const getAllGroupsForUser = /* GraphQL */ `
+  query GetAllGroupsForUser($user_id: Int) {
+    getAllGroupsForUser(user_id: $user_id) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const getAllGroupsUserOwns = /* GraphQL */ `
+  query GetAllGroupsUserOwns($user_id: Int) {
+    getAllGroupsUserOwns(user_id: $user_id) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
+    }
+  }
+`;
+export const getAllGroupsUserIsAMember = /* GraphQL */ `
+  query GetAllGroupsUserIsAMember($user_id: Int) {
+    getAllGroupsUserIsAMember(user_id: $user_id) {
+      group_id
+      group_name
+      description
+      image
+      is_public
+      private_password
     }
   }
 `;
