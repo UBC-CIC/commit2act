@@ -7,16 +7,13 @@ import {
   CardActionArea,
   CardContent,
 } from '@mui/material';
-import {
-  AutoGraphOutlined,
-  SettingsBackupRestoreOutlined,
-} from '@mui/icons-material';
+import { AutoGraphOutlined } from '@mui/icons-material';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import GroupCard from '../components/GroupCard';
-import { API, graphqlOperation } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import {
   getTotalGlobalCO2,
   getUsersTotalCO2,
