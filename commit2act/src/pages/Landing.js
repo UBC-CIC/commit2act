@@ -100,7 +100,6 @@ const Landing = ({ user }) => {
 
   const getProgressStats = async (id) => {
     const userId = user ? user.user_id : id;
-    console.log(id);
     const [globalCo2Res, totalCo2Res, weeklyCo2Res] = await Promise.all([
       API.graphql({ query: getTotalGlobalCO2 }),
       API.graphql({

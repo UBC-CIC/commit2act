@@ -20,6 +20,7 @@ import BonusPointQuiz from './BonusPointQuiz';
 import Co2SavedScreen from './Co2SavedScreen';
 import { API } from 'aws-amplify';
 import { getAllActions } from '../graphql/queries';
+import { styled } from '@mui/material/styles';
 
 const theme = createTheme({
   components: {
@@ -49,6 +50,21 @@ const theme = createTheme({
     },
   },
 });
+
+const StyledImageListItemBar = styled(ImageListItemBar)`
+  .MuiImageListItemBar-title {
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+`;
+
+const StyledImageListItem = styled(ImageListItem)`
+  .MuiImageListItem-img {
+    border-radius: 7px;
+    height: 100px;
+  }
+`;
 
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
@@ -98,6 +114,7 @@ const SelfReportMenu = ({ user }) => {
               xs: 'repeat(2, 1fr)',
               md: 'repeat(4, 1fr)',
             },
+            rowGap: 2,
             [`& .${imageListItemClasses.root}`]: {
               display: 'flex',
               flexDirection: 'column',
@@ -106,10 +123,11 @@ const SelfReportMenu = ({ user }) => {
           }}
         >
           {actionOptions.map((action, index) => (
-            <ImageListItem
+            <StyledImageListItem
               key={index}
               sx={{
                 width: '100px',
+                height: '100px',
                 cursor: 'pointer',
                 '&:hover': {
                   opacity: '0.7',
@@ -132,8 +150,11 @@ const SelfReportMenu = ({ user }) => {
                   }}
                 ></Box>
               )}
-              <ImageListItemBar title={action.action_name} position="below" />
-            </ImageListItem>
+              <StyledImageListItemBar
+                title={action.action_name}
+                position="below"
+              />
+            </StyledImageListItem>
           ))}
         </Box>
       )
