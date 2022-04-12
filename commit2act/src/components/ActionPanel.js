@@ -5,7 +5,7 @@ import { getActionItemsForAction } from '../graphql/queries';
 
 const ActionPanel = ({
   selectedAction,
-  changeStep,
+  setStep,
   totalCo2Saved,
   setTotalCo2Saved,
   actionItemValues,
@@ -79,7 +79,7 @@ const ActionPanel = ({
       </Box>
       <Button
         onClick={() => {
-          changeStep(3);
+          setStep(4);
         }}
         variant="contained"
       >

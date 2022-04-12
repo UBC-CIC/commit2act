@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, TextField, Typography, Grid } from '@mui/material';
+import {
+  TextField,
+  Box,
+  Typography,
+  Grid,
+  Button,
+  ImageListItemBar,
+} from '@mui/material';
+import ImageListItem, {
+  imageListItemClasses,
+} from '@mui/material/ImageListItem';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format } from 'date-fns';
 import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
-import { styled } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import BonusPointQuiz from './BonusPointQuiz';
 import Co2SavedScreen from './Co2SavedScreen';
@@ -41,19 +50,13 @@ const theme = createTheme({
   },
 });
 
-const StyledGrid = styled(Grid)(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
-    gap: '50px 0px',
-  },
-}));
-
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
   const [selectedAction, setSelectedAction] = useState();
   const [fact, setFact] = useState();
-  const [stepNumber, setStepNumber] = useState(0);
+  const [step, setStep] = useState(0);
   const [actionOptions, setActionOptions] = useState();
   const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCo2Saved, setTotalCo2Saved] = useState(0);
@@ -70,80 +73,168 @@ const SelfReportMenu = ({ user }) => {
     setActionOptions(actions);
   };
 
-  const handleChangeStep = (stepNumber) => {
-    setStepNumber(stepNumber);
-  };
-
   //resets the form everytime a new action is selected
   useEffect(() => {
     if (selectedAction) {
-      setStepNumber(1);
+      setStep(1);
     } else {
-      setStepNumber(0);
+      setStep(0);
     }
   }, [selectedAction]);
 
   useEffect(() => {
-    if (stepNumber === 1) {
+    if (step === 0) {
       setTotalCo2Saved(0);
     }
-  }, [stepNumber]);
+  }, [step]);
+
+  const renderActions = () => {
+    return (
+      actionOptions && (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
+            [`& .${imageListItemClasses.root}`]: {
+              display: 'flex',
+              flexDirection: 'column',
+            },
+            justifyItems: 'center',
+          }}
+        >
+          {actionOptions.map((action, index) => (
+            <ImageListItem
+              key={index}
+              sx={{
+                width: '100px',
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: '0.7',
+                },
+              }}
+              onClick={() => setSelectedAction(action)}
+            >
+              {action.action_icon ? (
+                <img
+                  src={`${action.action_icon}?w=248&fit=crop&auto=format`}
+                  alt={action.action_name}
+                  loading="lazy"
+                />
+              ) : (
+                <Box
+                  sx={{
+                    backgroundColor: 'white',
+                    width: '100px',
+                    height: '100px',
+                  }}
+                ></Box>
+              )}
+              <ImageListItemBar title={action.action_name} position="below" />
+            </ImageListItem>
+          ))}
+        </Box>
+      )
+    );
+  };
 
   const renderFormStep = () => {
     return (
-      selectedAction && (
-        <Grid
-          container
-          direction="column"
-          gap="30px"
-          justifyContent="center"
-          sx={{
-            width: 400,
-            minHeight: '40vh',
-            backgroundColor: '#e8f4f8',
-            padding: '50px',
-          }}
-        >
-          {stepNumber === 1 && (
-            <ActionFact
-              fact={fact}
-              setFact={setFact}
-              changeStep={handleChangeStep}
-            />
-          )}
-          {selectedAction && stepNumber === 2 && (
-            <ActionPanel
-              selectedAction={selectedAction}
-              setTotalCo2Saved={setTotalCo2Saved}
-              totalCo2Saved={totalCo2Saved}
-              actionItemValues={actionItemValues}
-              setActionItemValues={setActionItemValues}
-              changeStep={handleChangeStep}
-            />
-          )}
-          {stepNumber === 3 && (
-            <BonusPointQuiz
-              fact={fact}
-              setQuizAnswered={setQuizAnswered}
-              setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-              changeStep={handleChangeStep}
-            />
-          )}
-          {stepNumber === 4 && (
-            <Co2SavedScreen
-              actionId={selectedAction.action_id}
-              actionDate={selectedDate}
-              totalCo2Saved={totalCo2Saved}
-              setTotalCo2Saved={setTotalCo2Saved}
-              quizAnswered={quizAnswered}
-              firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-              user={user}
-              actionItemValues={actionItemValues}
-              changeStep={handleChangeStep}
-            />
-          )}
-        </Grid>
-      )
+      // selectedAction && (
+      // <Grid
+      //   container
+      //   direction="column"
+      //   gap="30px"
+      //   justifyContent="center"
+      //   sx={{
+      //     width: 400,
+      //     minHeight: '40vh',
+      //     backgroundColor: '#e8f4f8',
+      //     padding: '50px',
+      //   }}
+      // >
+      <>
+        {step === 0 && (
+          <>
+            <Typography variant="h2" sx={{ pb: '1.5em' }}>
+              Select Action
+            </Typography>
+            {renderActions()}
+          </>
+        )}
+        {step === 1 && (
+          <Grid
+            item
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography variant="h2" sx={{ pb: '1.5em' }}>
+              Select Date
+            </Typography>
+            <LocalizationProvider
+              dateAdapter={AdapterDateFns}
+              sx={{ minWidth: 300 }}
+            >
+              <DatePicker
+                label="Choose Date"
+                value={selectedDate}
+                onChange={(newDate) => {
+                  setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
+                }}
+                renderInput={(selectedDate) => <TextField {...selectedDate} />}
+              />
+            </LocalizationProvider>
+            <Button
+              onClick={() => {
+                setStep(2);
+              }}
+              variant="contained"
+            >
+              Next
+            </Button>
+          </Grid>
+        )}
+        {selectedAction && step === 2 && (
+          <ActionFact fact={fact} setFact={setFact} setStep={setStep} />
+        )}
+        {step === 3 && (
+          <ActionPanel
+            selectedAction={selectedAction}
+            setTotalCo2Saved={setTotalCo2Saved}
+            totalCo2Saved={totalCo2Saved}
+            actionItemValues={actionItemValues}
+            setActionItemValues={setActionItemValues}
+            setStep={setStep}
+          />
+        )}
+        {step === 4 && (
+          <BonusPointQuiz
+            fact={fact}
+            setQuizAnswered={setQuizAnswered}
+            setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+            setStep={setStep}
+          />
+        )}
+        {step === 5 && (
+          <Co2SavedScreen
+            actionId={selectedAction.action_id}
+            actionDate={selectedDate}
+            totalCo2Saved={totalCo2Saved}
+            setTotalCo2Saved={setTotalCo2Saved}
+            quizAnswered={quizAnswered}
+            firstQuizAnswerCorrect={firstQuizAnswerCorrect}
+            user={user}
+            actionItemValues={actionItemValues}
+            setStep={setStep}
+          />
+        )}
+      </>
     );
   };
 
@@ -154,48 +245,23 @@ const SelfReportMenu = ({ user }) => {
         justifyContent="center"
         alignItems="center"
         textAlign="center"
+        flexDirection="column"
       >
         <Typography variant="h1" sx={{ py: 5 }}>
           Log Action
         </Typography>
-        <StyledGrid
-          container
-          justifyContent="center"
-          columnSpacing={selectedAction ? 6 : 0}
+        <Grid
+          item
+          sx={{
+            backgroundColor: '#e8f4f8',
+            width: { xs: '100%', md: '70%' },
+            minHeight: '50vh',
+            padding: '2em',
+            borderRadius: '7px',
+          }}
         >
-          <Grid item>
-            <Grid container direction="column" gap="20px">
-              <LocalizationProvider
-                dateAdapter={AdapterDateFns}
-                sx={{ minWidth: 300 }}
-              >
-                <DatePicker
-                  label="Choose Date"
-                  value={selectedDate}
-                  onChange={(newDate) => {
-                    setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
-                  }}
-                  renderInput={(selectedDate) => (
-                    <TextField {...selectedDate} />
-                  )}
-                />
-              </LocalizationProvider>
-              <Autocomplete
-                disablePortal
-                options={actionOptions}
-                getOptionLabel={(option) => option.action_name}
-                sx={{ minWidth: 300 }}
-                onChange={(event, newAction) => {
-                  setSelectedAction(newAction);
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Choose Action" />
-                )}
-              />
-            </Grid>
-          </Grid>
-          <Grid item>{renderFormStep()}</Grid>
-        </StyledGrid>
+          {renderFormStep()}
+        </Grid>
       </Grid>
     </ThemeProvider>
   );

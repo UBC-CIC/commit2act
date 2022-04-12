@@ -50,7 +50,7 @@ const Co2SavedScreen = ({
   actionId,
   actionDate,
   totalCo2Saved,
-  changeStep,
+  setStep,
   id,
   quizAnswered,
   firstQuizAnswerCorrect,
@@ -109,7 +109,7 @@ const Co2SavedScreen = ({
         </Typography>
         <Button
           onClick={() => {
-            changeStep(1);
+            setStep(0);
           }}
           variant="contained"
         >

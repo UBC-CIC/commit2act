@@ -42,7 +42,7 @@ const theme = createTheme({
 
 const BonusPointQuiz = ({
   fact,
-  changeStep,
+  setStep,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
 }) => {
@@ -94,7 +94,7 @@ const BonusPointQuiz = ({
           ) : (
             <Button
               onClick={() => {
-                changeStep(4);
+                setStep(5);
               }}
               variant="contained"
               sx={{ marginY: 5 }}
@@ -122,7 +122,7 @@ const BonusPointQuiz = ({
             <Button
               onClick={() => {
                 setFirstQuizAnswerCorrect(true);
-                changeStep(4);
+                setStep(5);
               }}
               variant="contained"
             >

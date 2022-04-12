@@ -3,7 +3,7 @@ import { Box, Button, Typography, CircularProgress } from '@mui/material';
 // import { API, graphqlOperation } from 'aws-amplify';
 // import { listQuizID, getFactBonusPointQuiz } from '../graphql/queries';
 
-const ActionFact = ({ changeStep, setFact, fact }) => {
+const ActionFact = ({ setStep, setFact, fact }) => {
   const [factText, setFactText] = useState(
     'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production'
   );
@@ -57,7 +57,7 @@ const ActionFact = ({ changeStep, setFact, fact }) => {
       </Box>
       <Button
         onClick={() => {
-          changeStep(2);
+          setStep(3);
         }}
         variant="contained"
       >
