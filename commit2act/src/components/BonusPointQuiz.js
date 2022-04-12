@@ -42,7 +42,7 @@ const theme = createTheme({
 
 const BonusPointQuiz = ({
   fact,
-  setStep,
+  setActiveStep,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
 }) => {
@@ -80,29 +80,29 @@ const BonusPointQuiz = ({
               );
             })}
           </RadioGroup>
-          {userAnswer ? (
-            <Button
-              onClick={() => {
-                setIsAnswerSelected(true);
-                setQuizAnswered(true);
-              }}
-              variant="contained"
-              sx={{ marginY: 5 }}
-            >
-              Submit Quiz
-            </Button>
-          ) : (
-            <Button
-              onClick={() => {
-                setStep(5);
-              }}
-              variant="contained"
-              sx={{ marginY: 5 }}
-            >
-              Skip Quiz
-            </Button>
-          )}
         </FormControl>
+        {userAnswer ? (
+          <Button
+            onClick={() => {
+              setIsAnswerSelected(true);
+              setQuizAnswered(true);
+            }}
+            variant="contained"
+            sx={{ mt: '5em', width: '80%' }}
+          >
+            Submit Quiz
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              setActiveStep(5);
+            }}
+            variant="contained"
+            sx={{ mt: '5em', width: '80%' }}
+          >
+            Skip Quiz
+          </Button>
+        )}
       </>
     );
   };
@@ -122,9 +122,10 @@ const BonusPointQuiz = ({
             <Button
               onClick={() => {
                 setFirstQuizAnswerCorrect(true);
-                setStep(5);
+                setActiveStep(5);
               }}
               variant="contained"
+              sx={{ mt: '5em', width: '80%' }}
             >
               Finish
             </Button>
@@ -139,6 +140,7 @@ const BonusPointQuiz = ({
                 setIsAnswerSelected(false);
               }}
               variant="contained"
+              sx={{ mt: '5em', width: '80%' }}
             >
               Try Again
             </Button>
@@ -159,7 +161,6 @@ const BonusPointQuiz = ({
           textAlign: 'center',
         }}
       >
-        <Typography variant="h2">Bonus Point Question</Typography>
         {isAnswerSelected ? displayAnswer() : displayQuiz()}
       </Box>
     </ThemeProvider>

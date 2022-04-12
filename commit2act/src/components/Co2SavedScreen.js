@@ -50,12 +50,14 @@ const Co2SavedScreen = ({
   actionId,
   actionDate,
   totalCo2Saved,
-  setStep,
+  setActiveStep,
   id,
   quizAnswered,
   firstQuizAnswerCorrect,
   user,
   actionItemValues,
+  setActionItemValues,
+  setSelectedAction,
 }) => {
   useEffect(() => {
     submitAction();
@@ -97,6 +99,7 @@ const Co2SavedScreen = ({
           flexDirection: 'column',
           gap: '20px',
           minHeight: '20vh',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h2">Thank you!</Typography>
@@ -109,8 +112,11 @@ const Co2SavedScreen = ({
         </Typography>
         <Button
           onClick={() => {
-            setStep(0);
+            setActiveStep(0);
+            setSelectedAction(null);
+            setActionItemValues([]);
           }}
+          sx={{ mt: '5em', width: '80%' }}
           variant="contained"
         >
           Add Another Action

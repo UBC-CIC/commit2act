@@ -6,13 +6,17 @@ import {
   Grid,
   Button,
   ImageListItemBar,
+  Stepper,
+  Step,
+  StepLabel,
+  MobileStepper,
 } from '@mui/material';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import { createTheme, ThemeProvider } from '@mui/material';
@@ -72,12 +76,22 @@ const SelfReportMenu = ({ user }) => {
   );
   const [selectedAction, setSelectedAction] = useState();
   const [fact, setFact] = useState();
-  const [step, setStep] = useState(0);
+  // const [step, setStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const [actionOptions, setActionOptions] = useState();
   const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCo2Saved, setTotalCo2Saved] = useState(0);
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
+
+  const steps = [
+    'Select Action',
+    'Select Date',
+    'Action Fact',
+    'Action Items',
+    'Bonus Question',
+    'CO2 Saved',
+  ];
 
   useEffect(() => {
     getActions();
@@ -92,17 +106,17 @@ const SelfReportMenu = ({ user }) => {
   //resets the form everytime a new action is selected
   useEffect(() => {
     if (selectedAction) {
-      setStep(1);
+      setActiveStep(1);
     } else {
-      setStep(0);
+      setActiveStep(0);
     }
   }, [selectedAction]);
 
   useEffect(() => {
-    if (step === 0) {
+    if (activeStep === 0) {
       setTotalCo2Saved(0);
     }
-  }, [step]);
+  }, [activeStep]);
 
   const renderActions = () => {
     return (
@@ -144,9 +158,10 @@ const SelfReportMenu = ({ user }) => {
               ) : (
                 <Box
                   sx={{
-                    backgroundColor: 'white',
+                    backgroundColor: '#B4EEB4	',
                     width: '100px',
                     height: '100px',
+                    borderRadius: '7px',
                   }}
                 ></Box>
               )}
@@ -161,31 +176,25 @@ const SelfReportMenu = ({ user }) => {
     );
   };
 
+  const handleDateChange = (newDate) => {
+    setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
+  };
+
   const renderFormStep = () => {
     return (
-      // selectedAction && (
-      // <Grid
-      //   container
-      //   direction="column"
-      //   gap="30px"
-      //   justifyContent="center"
-      //   sx={{
-      //     width: 400,
-      //     minHeight: '40vh',
-      //     backgroundColor: '#e8f4f8',
-      //     padding: '50px',
-      //   }}
-      // >
       <>
-        {step === 0 && (
-          <>
-            <Typography variant="h2" sx={{ pb: '1.5em' }}>
-              Select Action
-            </Typography>
+        {activeStep === 0 && (
+          <Grid
+            item
+            sx={{
+              height: '50vh',
+              overflow: 'auto',
+            }}
+          >
             {renderActions()}
-          </>
+          </Grid>
         )}
-        {step === 1 && (
+        {activeStep === 1 && (
           <Grid
             item
             sx={{
@@ -195,54 +204,54 @@ const SelfReportMenu = ({ user }) => {
               flexDirection: 'column',
             }}
           >
-            <Typography variant="h2" sx={{ pb: '1.5em' }}>
-              Select Date
-            </Typography>
-            <LocalizationProvider
-              dateAdapter={AdapterDateFns}
-              sx={{ minWidth: 300 }}
-            >
-              <DatePicker
-                label="Choose Date"
-                value={selectedDate}
-                onChange={(newDate) => {
-                  setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
-                }}
-                renderInput={(selectedDate) => <TextField {...selectedDate} />}
-              />
-            </LocalizationProvider>
-            <Button
-              onClick={() => {
-                setStep(2);
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '20px',
+                width: '80%',
               }}
-              variant="contained"
             >
-              Next
-            </Button>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Choose Date"
+                  value={parseISO(selectedDate)}
+                  onChange={handleDateChange}
+                  renderInput={(selectedDate) => (
+                    <TextField {...selectedDate} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
           </Grid>
         )}
-        {selectedAction && step === 2 && (
-          <ActionFact fact={fact} setFact={setFact} setStep={setStep} />
+        {selectedAction && activeStep === 2 && (
+          <ActionFact
+            fact={fact}
+            setFact={setFact}
+            setActiveStep={setActiveStep}
+          />
         )}
-        {step === 3 && (
+        {activeStep === 3 && (
           <ActionPanel
             selectedAction={selectedAction}
             setTotalCo2Saved={setTotalCo2Saved}
             totalCo2Saved={totalCo2Saved}
             actionItemValues={actionItemValues}
             setActionItemValues={setActionItemValues}
-            setStep={setStep}
+            setActiveStep={setActiveStep}
           />
         )}
-        {step === 4 && (
+        {activeStep === 4 && (
           <BonusPointQuiz
             fact={fact}
             setQuizAnswered={setQuizAnswered}
             setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-            setStep={setStep}
+            setActiveStep={setActiveStep}
           />
         )}
-        {step === 5 && (
+        {activeStep === 5 && (
           <Co2SavedScreen
             actionId={selectedAction.action_id}
             actionDate={selectedDate}
@@ -252,7 +261,9 @@ const SelfReportMenu = ({ user }) => {
             firstQuizAnswerCorrect={firstQuizAnswerCorrect}
             user={user}
             actionItemValues={actionItemValues}
-            setStep={setStep}
+            setActionItemValues={setActionItemValues}
+            setActiveStep={setActiveStep}
+            setSelectedAction={setSelectedAction}
           />
         )}
       </>
@@ -269,19 +280,57 @@ const SelfReportMenu = ({ user }) => {
         flexDirection="column"
       >
         <Typography variant="h1" sx={{ py: 5 }}>
-          Log Action
+          Log New Action
         </Typography>
         <Grid
           item
           sx={{
             backgroundColor: '#e8f4f8',
-            width: { xs: '100%', md: '70%' },
-            minHeight: '50vh',
-            padding: '2em',
+            width: { xs: '100%', md: '80%' },
+            padding: '2em 2em 5em',
             borderRadius: '7px',
           }}
         >
+          {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
+          <Stepper
+            activeStep={activeStep}
+            sx={{ mb: '2em', display: { xs: 'none', md: 'flex' } }}
+          >
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepLabel>{step}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <MobileStepper
+            variant="dots"
+            steps={6}
+            position="static"
+            activeStep={activeStep}
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              justifyContent: 'center',
+              background: 'none',
+            }}
+          />{' '}
+          <Typography
+            variant="h2"
+            sx={{ m: { xs: '2em 0 2em 0', md: '3.5em 0 3em 0' } }}
+          >
+            {steps[activeStep]}
+          </Typography>
           {renderFormStep()}
+          {![0, 4, 5].includes(activeStep) && (
+            <Button
+              onClick={() => {
+                setActiveStep(activeStep + 1);
+              }}
+              variant="contained"
+              sx={{ mt: '5em', width: '80%' }}
+            >
+              Next
+            </Button>
+          )}
         </Grid>
       </Grid>
     </ThemeProvider>

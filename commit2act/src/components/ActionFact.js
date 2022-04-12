@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Typography, CircularProgress } from '@mui/material';
+import { Grid, Box, Typography, CircularProgress } from '@mui/material';
 // import { API, graphqlOperation } from 'aws-amplify';
 // import { listQuizID, getFactBonusPointQuiz } from '../graphql/queries';
 
-const ActionFact = ({ setStep, setFact, fact }) => {
+const ActionFact = ({ setFact, fact }) => {
   const [factText, setFactText] = useState(
     'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production'
   );
@@ -32,11 +32,13 @@ const ActionFact = ({ setStep, setFact, fact }) => {
   // }, []);
 
   return (
-    <Box
+    <Grid
+      item
       sx={{
         display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         flexDirection: 'column',
-        gap: '20px',
       }}
     >
       <Box
@@ -44,8 +46,12 @@ const ActionFact = ({ setStep, setFact, fact }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          padding: '20px',
+          justifyContent: 'center',
+          padding: '1em',
           backgroundColor: '#FFFFFF',
+          width: '80%',
+          height: '20vh',
+          overflow: 'auto',
         }}
       >
         {/* {factLoaded ? (
@@ -55,15 +61,7 @@ const ActionFact = ({ setStep, setFact, fact }) => {
         )} */}
         <Typography variant="body1">{factText}</Typography>
       </Box>
-      <Button
-        onClick={() => {
-          setStep(3);
-        }}
-        variant="contained"
-      >
-        Get Started
-      </Button>
-    </Box>
+    </Grid>
   );
 };
 
