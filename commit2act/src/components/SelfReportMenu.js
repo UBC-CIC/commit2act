@@ -60,6 +60,7 @@ const StyledImageListItemBar = styled(ImageListItemBar)`
     overflow: visible;
     white-space: normal;
     overflow-wrap: break-word;
+    font-size: 0.9rem;
   }
 `;
 
