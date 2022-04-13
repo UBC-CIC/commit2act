@@ -77,7 +77,6 @@ const SelfReportMenu = ({ user }) => {
   );
   const [selectedAction, setSelectedAction] = useState();
   const [fact, setFact] = useState();
-  // const [step, setStep] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
   const [actionOptions, setActionOptions] = useState();
   const [actionItemValues, setActionItemValues] = useState([]);

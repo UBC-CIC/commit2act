@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const theme = createTheme({
   components: {
@@ -40,13 +41,17 @@ const theme = createTheme({
   },
 });
 
+const StyledButton = styled(Button)`
+  margin-top: 5em;
+  width: 80%;
+`;
+
 const BonusPointQuiz = ({
   fact,
   setActiveStep,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
 }) => {
-  // const { question_text, answers, correct_answer } = fact;
   let question_text =
     'What percentage of an average Canadian’s total CO2 production is due to transportation?';
   let answers = ['55%', '20%', '35%', '70%'];
@@ -82,26 +87,24 @@ const BonusPointQuiz = ({
           </RadioGroup>
         </FormControl>
         {userAnswer ? (
-          <Button
+          <StyledButton
             onClick={() => {
               setIsAnswerSelected(true);
               setQuizAnswered(true);
             }}
             variant="contained"
-            sx={{ mt: '5em', width: '80%' }}
           >
             Submit Quiz
-          </Button>
+          </StyledButton>
         ) : (
-          <Button
+          <StyledButton
             onClick={() => {
               setActiveStep(5);
             }}
             variant="contained"
-            sx={{ mt: '5em', width: '80%' }}
           >
             Skip Quiz
-          </Button>
+          </StyledButton>
         )}
       </>
     );
@@ -119,31 +122,29 @@ const BonusPointQuiz = ({
                 ? '0 bonus points will be added to your entry'
                 : '10 bonus points will be added to your entry'}
             </Typography>
-            <Button
+            <StyledButton
               onClick={() => {
                 setFirstQuizAnswerCorrect(true);
                 setActiveStep(5);
               }}
               variant="contained"
-              sx={{ mt: '5em', width: '80%' }}
             >
               Finish
-            </Button>
+            </StyledButton>
           </>
         ) : (
           <>
             <Typography variant="h6">Incorrect!</Typography>
             <Cancel sx={{ fontSize: 80 }} />
-            <Button
+            <StyledButton
               onClick={() => {
                 setNumTries(numTries + 1);
                 setIsAnswerSelected(false);
               }}
               variant="contained"
-              sx={{ mt: '5em', width: '80%' }}
             >
               Try Again
-            </Button>
+            </StyledButton>
           </>
         )}
       </>

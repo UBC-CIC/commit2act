@@ -51,7 +51,6 @@ const Co2SavedScreen = ({
   actionDate,
   totalCo2Saved,
   setActiveStep,
-  id,
   quizAnswered,
   firstQuizAnswerCorrect,
   user,
@@ -61,6 +60,8 @@ const Co2SavedScreen = ({
 }) => {
   useEffect(() => {
     submitAction();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submitAction = async () => {
