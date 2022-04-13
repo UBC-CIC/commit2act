@@ -50,15 +50,18 @@ const Co2SavedScreen = ({
   actionId,
   actionDate,
   totalCo2Saved,
-  changeStep,
-  id,
+  setActiveStep,
   quizAnswered,
   firstQuizAnswerCorrect,
   user,
   actionItemValues,
+  setActionItemValues,
+  setSelectedAction,
 }) => {
   useEffect(() => {
     submitAction();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submitAction = async () => {
@@ -97,6 +100,7 @@ const Co2SavedScreen = ({
           flexDirection: 'column',
           gap: '20px',
           minHeight: '20vh',
+          alignItems: 'center',
         }}
       >
         <Typography variant="h2">Thank you!</Typography>
@@ -109,8 +113,11 @@ const Co2SavedScreen = ({
         </Typography>
         <Button
           onClick={() => {
-            changeStep(1);
+            setActiveStep(0);
+            setSelectedAction(null);
+            setActionItemValues([]);
           }}
+          sx={{ mt: '5em', width: '80%' }}
           variant="contained"
         >
           Add Another Action

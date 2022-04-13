@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Box, TextField } from '@mui/material';
+import { Typography, Box, Grid, TextField } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getActionItemsForAction } from '../graphql/queries';
 
 const ActionPanel = ({
   selectedAction,
-  changeStep,
   totalCo2Saved,
   setTotalCo2Saved,
   actionItemValues,
@@ -66,26 +65,28 @@ const ActionPanel = ({
   };
 
   return (
-    <>
-      <Typography variant="h2">{action_name}</Typography>
+    <Grid
+      item
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           gap: '2em',
+          alignContent: 'center',
+          width: '80%',
         }}
       >
+        <Typography variant="h2">{action_name}</Typography>
         {renderActionForm()}
       </Box>
-      <Button
-        onClick={() => {
-          changeStep(3);
-        }}
-        variant="contained"
-      >
-        Next
-      </Button>
-    </>
+    </Grid>
   );
 };
 

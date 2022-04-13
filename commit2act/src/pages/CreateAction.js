@@ -264,10 +264,11 @@ const CreateAction = () => {
 
       //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
       let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
-      let iconLink =
-        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      let iconLink = null;
       if (actionIconFile) {
         let imageType = actionIconFile.type;
+        iconLink =
+          process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
         try {
           await Storage.put(imageKey, actionIconFile, {
             contentType: imageType,
