@@ -72,7 +72,7 @@ const theme = createTheme({
             variant: 'h5',
           },
           style: {
-            fontSize: 50,
+            fontSize: 'calc(2vw + 2vh)',
             color: 'black',
             fontWeight: 400,
           },
@@ -170,7 +170,7 @@ const Landing = ({ user }) => {
             }}
           >
             <Grid item xs={4}>
-              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">CO2 Saved This Week</Typography>
                   <CardContent>
@@ -183,7 +183,7 @@ const Landing = ({ user }) => {
               </Card>
             </Grid>
             <Grid item xs={3}>
-              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Total CO2 Saved</Typography>
                   <CardContent>
@@ -194,8 +194,8 @@ const Landing = ({ user }) => {
                 </CardActionArea>
               </Card>
             </Grid>
-            <Grid item xs>
-              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
+            <Grid item xs={5}>
+              <Card raised={true} sx={{ p: '1em' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Collective Impact</Typography>
                   <CardContent>

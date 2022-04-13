@@ -382,7 +382,6 @@ const CreateAction = () => {
               <Typography variant="h3">Action Name</Typography>
               <TextField
                 required
-                id="outlined-required"
                 label="Action Name"
                 name="action_name"
                 InputLabelProps={{ shrink: true }}
@@ -464,7 +463,6 @@ const CreateAction = () => {
           >
             <TextField
               required
-              id="outlined-required"
               label="Item Name"
               name="item_name"
               InputLabelProps={{ shrink: true }}
@@ -493,7 +491,6 @@ const CreateAction = () => {
             />
             <TextField
               required
-              id="outlined-required"
               label="CO2 Per Unit Saved"
               name="co2_saved_per_unit"
               inputMode="decimal"

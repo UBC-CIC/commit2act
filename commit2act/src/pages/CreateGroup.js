@@ -8,6 +8,9 @@ import {
   FormControl,
   FormGroup,
   Card,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
   Snackbar,
   Alert,
   LinearProgress,
@@ -247,14 +250,13 @@ const CreateGroup = () => {
         <FormControl>
           <Grid
             container
-            columnSpacing={{ xs: 2, md: 12 }}
+            columnSpacing={{ xs: 2, md: 10 }}
             direction={{ xs: 'column', md: 'row' }}
           >
             <Grid item xs={6}>
               <Typography variant="h3">Group Name</Typography>
               <TextField
                 required
-                id="outlined-required"
                 label="Group Name"
                 name="group_name"
                 InputLabelProps={{ shrink: true }}
@@ -319,8 +321,6 @@ const CreateGroup = () => {
               <TextField
                 multiline
                 rows={4}
-                required
-                id="outlined-required"
                 label="Group description"
                 name="group_description"
                 InputLabelProps={{ shrink: true }}
@@ -334,6 +334,25 @@ const CreateGroup = () => {
                 onChange={updateForm}
                 sx={{ width: '100%' }}
               />
+            </Grid>
+            <Grid item xs={5}>
+              <Typography variant="h3">Group Privacy Level</Typography>
+              <RadioGroup
+                aria-labelledby="group-privacy-level-label"
+                defaultValue="public"
+                name="group-privacy-level-options"
+              >
+                <FormControlLabel
+                  value="public"
+                  control={<Radio />}
+                  label="Public"
+                />
+                <FormControlLabel
+                  value="private"
+                  control={<Radio />}
+                  label="Private"
+                />
+              </RadioGroup>
             </Grid>
           </Grid>
           {isLoading && (
