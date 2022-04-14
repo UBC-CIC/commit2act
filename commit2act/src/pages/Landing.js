@@ -18,6 +18,7 @@ import {
   getTotalGlobalCO2,
   getUsersTotalCO2,
   getUsersWeekCO2,
+  getAllGroupsForUser,
 } from '../graphql/queries';
 
 const theme = createTheme({
@@ -86,12 +87,14 @@ const Landing = ({ user }) => {
     totalCo2: '',
     weeklyCo2: '',
   });
+  const [userGroups, setUserGroups] = useState([]);
 
   //gets currently authenticated cognito user for the first time the page loads after sign in
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
     getProgressStats(id);
+    getGroups(id);
   };
 
   useEffect(() => {
@@ -119,22 +122,18 @@ const Landing = ({ user }) => {
     }));
   };
 
-  //filler content for groups(will replace once database is set up)
-  let group1 = {
-    name: 'UBC CIC',
-    description:
-      'UBC’s CIC is a public-private collaboration between UBC and Amazon. A CIC identifies digital transformation challenges, the problems or opportunities that matter to the community, and provides subject matter expertise and CIC leadership.',
+  const getGroups = async (id) => {
+    const userId = user ? user.user_id : id;
+    const res = await API.graphql({
+      query: getAllGroupsForUser,
+      variables: { user_id: userId },
+    });
+    setUserGroups(res.data.getAllGroupsForUser);
   };
-  let group2 = {
-    name: 'AWS',
-    description:
-      'AWS brings Amazon’s innovation process, skilled cloud expertise, and global solution reach-back to assist UBC in identifying their best solutions for the challenges presented by their end user community.',
-  };
-  let groups = [group1, group2];
 
   const renderGroupCards = () => {
-    if (groups) {
-      return groups.map((group, index) => (
+    if (userGroups) {
+      return userGroups.map((group, index) => (
         <GroupCard key={index} group={group} />
       ));
     }

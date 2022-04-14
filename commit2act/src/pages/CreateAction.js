@@ -544,6 +544,7 @@ const CreateAction = () => {
           open={submitActionSuccess}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           autoHideDuration={2000}
+          onClose={() => setSubmitActionSuccess(false)}
         >
           <Alert
             onClose={() => setSubmitActionSuccess(false)}

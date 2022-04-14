@@ -114,7 +114,6 @@ const CreateGroup = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState(false);
   const [createGroupSuccess, setCreateGroupSuccess] = useState(false);
-  // const [publicGroup, setPublicGroup] = useState(true);
 
   const updateForm = (e) => {
     setCreateGroupForm((prev) => ({
@@ -170,10 +169,11 @@ const CreateGroup = ({ user }) => {
 
       //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
       let imageKey = 'groupIcons/'.concat(createGroupForm.group_name);
-      let iconLink =
-        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      let iconLink = null;
       if (groupIconFile) {
         let imageType = groupIconFile.type;
+        iconLink =
+          process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
         try {
           await Storage.put(imageKey, groupIconFile, {
             contentType: imageType,
@@ -183,7 +183,7 @@ const CreateGroup = ({ user }) => {
         }
       }
       //create the action and get its id
-      const createGroupRes = await API.graphql({
+      await API.graphql({
         query: createGroupAndOwner,
         variables: {
           owner_user_id: user.user_id,
@@ -194,8 +194,6 @@ const CreateGroup = ({ user }) => {
           private_password: createGroupForm.private_password,
         },
       });
-
-      console.log(createGroupRes);
 
       //clear form and related states
       setCreateGroupForm(emptyCreateGroupForm);
@@ -234,9 +232,9 @@ const CreateGroup = ({ user }) => {
         <FormControl>
           <Grid
             container
-            // columnSpacing={{ xs: 2, md: 10 }}
+            columnSpacing={{ xs: 2, md: 10 }}
             direction={{ xs: 'column', md: 'row' }}
-            columnSpacing={8}
+            sx={{ pl: { xs: '0em', md: '4em' } }}
           >
             <Grid item xs={6}>
               <Typography variant="h3">Group Name</Typography>
@@ -314,18 +312,19 @@ const CreateGroup = ({ user }) => {
                 sx={{ width: '100%' }}
               />
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <Typography variant="h3">Group Privacy</Typography>
               <RadioGroup
                 aria-labelledby="group-privacy-label"
-                defaultValue="public"
+                defaultValue={createGroupForm.is_public}
                 name="group-privacy-options"
                 required
               >
                 <FormControlLabel
-                  value="public"
+                  value={true}
                   control={<Radio />}
                   label="Public"
+                  checked={createGroupForm.is_public === true}
                   onClick={() =>
                     setCreateGroupForm({
                       ...createGroupForm,
@@ -334,9 +333,10 @@ const CreateGroup = ({ user }) => {
                   }
                 />
                 <FormControlLabel
-                  value="private"
+                  value={false}
                   control={<Radio />}
                   label="Private"
+                  checked={createGroupForm.is_public === false}
                   onClick={() =>
                     setCreateGroupForm({
                       ...createGroupForm,
@@ -354,7 +354,7 @@ const CreateGroup = ({ user }) => {
                   InputLabelProps={{ shrink: true }}
                   onChange={updateForm}
                   sx={{ mt: '1.5em' }}
-                  type={createGroupForm.showPassword ? 'password' : 'text'}
+                  type={createGroupForm.showPassword ? 'text' : 'password'}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -365,9 +365,9 @@ const CreateGroup = ({ user }) => {
                           edge="end"
                         >
                           {createGroupForm.showPassword ? (
-                            <VisibilityOff />
-                          ) : (
                             <Visibility />
+                          ) : (
+                            <VisibilityOff />
                           )}
                         </IconButton>
                       </InputAdornment>
@@ -402,6 +402,7 @@ const CreateGroup = ({ user }) => {
           open={createGroupSuccess}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           autoHideDuration={2000}
+          onClose={() => setCreateGroupSuccess(false)}
         >
           <Alert
             onClose={() => setCreateGroupSuccess(false)}
