@@ -160,8 +160,8 @@ export const getAllGroups = /* GraphQL */ `
     getAllGroups {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -172,8 +172,8 @@ export const getSingleGroup = /* GraphQL */ `
     getSingleGroup(group_id: $group_id) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -184,8 +184,8 @@ export const getSingleGroupByName = /* GraphQL */ `
     getSingleGroupByName(group_name: $group_name) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -229,8 +229,8 @@ export const getAllGroupsForUser = /* GraphQL */ `
     getAllGroupsForUser(user_id: $user_id) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -241,8 +241,8 @@ export const getAllGroupsUserOwns = /* GraphQL */ `
     getAllGroupsUserOwns(user_id: $user_id) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -253,8 +253,8 @@ export const getAllGroupsUserIsAMember = /* GraphQL */ `
     getAllGroupsUserIsAMember(user_id: $user_id) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }

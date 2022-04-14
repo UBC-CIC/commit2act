@@ -168,8 +168,8 @@ export const createGroup = /* GraphQL */ `
     ) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -194,8 +194,8 @@ export const createGroupAndOwner = /* GraphQL */ `
     ) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }
@@ -220,8 +220,8 @@ export const updateGroup = /* GraphQL */ `
     ) {
       group_id
       group_name
-      description
-      image
+      group_description
+      group_image
       is_public
       private_password
     }

@@ -6,17 +6,17 @@ import {
   TextField,
   Grid,
   FormControl,
-  FormGroup,
-  Card,
   RadioGroup,
   Radio,
   FormControlLabel,
   Snackbar,
   Alert,
   LinearProgress,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { HighlightOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { Storage, API } from 'aws-amplify';
 import { createGroupAndOwner } from '../graphql/mutations';
@@ -96,75 +96,57 @@ const Input = styled('input')({
   display: 'none',
 });
 
-const CreateGroup = () => {
+const CreateGroup = ({ user }) => {
   const emptyCreateGroupForm = {
-    owner_user_id: '',
     group_name: '',
     group_description: '',
     group_image: '',
-    is_public: '',
+    is_public: true,
     private_password: '',
+    showPassword: false,
   };
   const [createGroupForm, setCreateGroupForm] = useState(emptyCreateGroupForm);
-  const [isValid, setIsValid] = useState({});
+  const [isValid, setIsValid] = useState({
+    groupNameValid: false,
+  });
   const [groupIconFile, setGroupIconFile] = useState();
   const [groupIconPreviewLink, setGroupIconPreviewLink] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState(false);
   const [createGroupSuccess, setCreateGroupSuccess] = useState(false);
+  // const [publicGroup, setPublicGroup] = useState(true);
 
-  //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
   const updateForm = (e) => {
     setCreateGroupForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
 
-    // switch (e.target.name) {
-    //   case 'item_name':
-    //     //checks to see if user input for item name field is null
-    //     if (!e.target.value) {
-    //       setIsValid((prev) => ({
-    //         ...prev,
-    //         itemNameValid: false,
-    //       }));
-    //       setActionItemFormError(true);
-    //     } else {
-    //       setIsValid((prev) => ({
-    //         ...prev,
-    //         itemNameValid: true,
-    //       }));
-    //     }
-    //     break;
-    //   case 'item_description':
-    //     //checks to see if user input for item description field is null
-    //     if (!e.target.value) {
-    //       setIsValid((prev) => ({
-    //         ...prev,
-    //         itemDescriptionValid: false,
-    //       }));
-    //       setActionItemFormError(true);
-    //     } else {
-    //       setIsValid((prev) => ({
-    //         ...prev,
-    //         itemDescriptionValid: true,
-    //       }));
-    //     }
-    //     break;
-    //   default:
-    //     //checks to see if user input for co2 saved per unit field is a positive numerical value
-    //     if (!e.target.value.match(/[0-9]*[.,]?[0-9]+/)) {
-    //       setIsValid((prev) => ({
-    //         ...prev,
-    //         co2Valid: false,
-    //       }));
-    //       setActionItemFormError(true);
-    //     } else {
-    //       setIsValid((prev) => ({
-    //         ...prev,
-    //         co2Valid: true,
-    //       }));
-    //     }
+    if (e.target.name === 'group_name') {
+      if (!e.target.value) {
+        setIsValid((prev) => ({
+          ...prev,
+          groupNameValid: false,
+        }));
+        setFormError(true);
+      } else {
+        setIsValid((prev) => ({
+          ...prev,
+          groupNameValid: true,
+        }));
+      }
+    }
+  };
+
+  const handleClickShowPassword = () => {
+    setCreateGroupForm({
+      ...createGroupForm,
+      showPassword: !createGroupForm.showPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   /** functions for uploading an icon */
@@ -183,7 +165,7 @@ const CreateGroup = () => {
   /** functions adding the group */
 
   const submitGroup = async () => {
-    if (isValid.actionItemsValid && isValid.actionNameValid) {
+    if (isValid.groupNameValid) {
       setIsLoading(true);
 
       //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
@@ -204,14 +186,16 @@ const CreateGroup = () => {
       const createGroupRes = await API.graphql({
         query: createGroupAndOwner,
         variables: {
-          owner_user_id: createGroupForm.owner_user_id,
+          owner_user_id: user.user_id,
           group_name: createGroupForm.group_name,
-          group_description: createGroupForm.action_name,
+          group_description: createGroupForm.group_description,
           group_image: iconLink,
           is_public: createGroupForm.is_public,
           private_password: createGroupForm.private_password,
         },
       });
+
+      console.log(createGroupRes);
 
       //clear form and related states
       setCreateGroupForm(emptyCreateGroupForm);
@@ -241,7 +225,7 @@ const CreateGroup = () => {
         direction={{ xs: 'column', md: 'row' }}
         sx={{
           minHeight: '50vh',
-          backgroundColor: '#DBE2EF',
+          backgroundColor: '#e8f4f8',
           borderRadius: '8px',
           padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',
@@ -250,8 +234,9 @@ const CreateGroup = () => {
         <FormControl>
           <Grid
             container
-            columnSpacing={{ xs: 2, md: 10 }}
+            // columnSpacing={{ xs: 2, md: 10 }}
             direction={{ xs: 'column', md: 'row' }}
+            columnSpacing={8}
           >
             <Grid item xs={6}>
               <Typography variant="h3">Group Name</Typography>
@@ -260,13 +245,13 @@ const CreateGroup = () => {
                 label="Group Name"
                 name="group_name"
                 InputLabelProps={{ shrink: true }}
-                // value={createActionForm.action_name}
-                // error={formError && !isValid.actionNameValid}
-                // helperText={
-                //   formError &&
-                //   !isValid.actionNameValid &&
-                //   'Action Name field must be completed'
-                // }
+                value={createGroupForm.group_name}
+                error={formError && !isValid.groupNameValid}
+                helperText={
+                  formError &&
+                  !isValid.groupNameValid &&
+                  'Group Name field must be completed'
+                }
                 onChange={updateForm}
                 sx={{ width: '100%' }}
               />
@@ -323,36 +308,73 @@ const CreateGroup = () => {
                 rows={4}
                 label="Group description"
                 name="group_description"
+                value={createGroupForm.group_description}
                 InputLabelProps={{ shrink: true }}
-                // value={createActionForm.action_name}
-                // error={formError && !isValid.actionNameValid}
-                // helperText={
-                //   formError &&
-                //   !isValid.actionNameValid &&
-                //   'Action Name field must be completed'
-                // }
                 onChange={updateForm}
                 sx={{ width: '100%' }}
               />
             </Grid>
             <Grid item xs={5}>
-              <Typography variant="h3">Group Privacy Level</Typography>
+              <Typography variant="h3">Group Privacy</Typography>
               <RadioGroup
-                aria-labelledby="group-privacy-level-label"
+                aria-labelledby="group-privacy-label"
                 defaultValue="public"
-                name="group-privacy-level-options"
+                name="group-privacy-options"
+                required
               >
                 <FormControlLabel
                   value="public"
                   control={<Radio />}
                   label="Public"
+                  onClick={() =>
+                    setCreateGroupForm({
+                      ...createGroupForm,
+                      is_public: true,
+                    })
+                  }
                 />
                 <FormControlLabel
                   value="private"
                   control={<Radio />}
                   label="Private"
+                  onClick={() =>
+                    setCreateGroupForm({
+                      ...createGroupForm,
+                      is_public: false,
+                    })
+                  }
                 />
               </RadioGroup>
+              {/* only show private password text field if user selects private group */}
+              {!createGroupForm.is_public && (
+                <TextField
+                  label="password"
+                  name="private_password"
+                  value={createGroupForm.private_password}
+                  InputLabelProps={{ shrink: true }}
+                  onChange={updateForm}
+                  sx={{ mt: '1.5em' }}
+                  type={createGroupForm.showPassword ? 'password' : 'text'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {createGroupForm.showPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                ></TextField>
+              )}
             </Grid>
           </Grid>
           {isLoading && (

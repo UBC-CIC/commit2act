@@ -248,6 +248,7 @@ const GroupProfile = () => {
             <Box
               sx={{
                 borderBottom: 1,
+                borderTop: 1,
                 borderColor: 'divider',
                 width: '100%',
                 display: 'flex',
