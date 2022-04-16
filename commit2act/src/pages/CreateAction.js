@@ -11,6 +11,7 @@ import {
   Snackbar,
   Alert,
   LinearProgress,
+  Chip,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
@@ -103,6 +104,8 @@ const CreateAction = () => {
     action_name: '',
     page_media: '',
     fallback_quiz_media: '',
+    curr_label: '',
+    labels: [],
   };
   const [createActionForm, setCreateActionForm] = useState(
     emptyCreateActionForm
@@ -252,8 +255,24 @@ const CreateAction = () => {
     }
   };
 
-  const handleRemoveActionItem = (name) => {
+  const removeActionItem = (name) => {
     setActionItems(actionItems.filter((item) => item.item_name !== name));
+  };
+
+  const addValidationLabel = () => {
+    //create array that contains the current label input from the form along with all previous inputted labels
+    let labelsCopy = createActionForm.labels;
+    labelsCopy.push(createActionForm.curr_label);
+    setCreateActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+    //clear current label
+    setCreateActionForm((prev) => ({ ...prev, curr_label: '' }));
+  };
+
+  const removeValidationLabel = (label) => {
+    let labelsCopy = createActionForm.labels;
+    const index = labelsCopy.indexOf(label);
+    labelsCopy.splice(index, 1);
+    setCreateActionForm((prev) => ({ ...prev, labels: labelsCopy }));
   };
 
   /** functions adding the action itself */
@@ -348,10 +367,22 @@ const CreateAction = () => {
             {item.co2_saved_per_unit}
           </Typography>
         </Box>
-        <Button onClick={() => handleRemoveActionItem(item.item_name)}>
+        <Button onClick={() => removeActionItem(item.item_name)}>
           <HighlightOff fontSize="large" />
         </Button>
       </Card>
+    ));
+  };
+
+  const renderAddedLabels = () => {
+    return createActionForm.labels.map((label, index) => (
+      <Chip
+        label={label}
+        variant="outlined"
+        key={index}
+        onDelete={() => removeValidationLabel(label)}
+        sx={{ mr: '0.5em' }}
+      />
     ));
   };
 
@@ -522,6 +553,45 @@ const CreateAction = () => {
             value={createActionForm.fallback_quiz_media}
             onChange={updateForm}
           />
+          <Typography variant="h3">Image Validation Labels</Typography>
+          {createActionForm.labels.length !== 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                mb: '1.5em',
+                width: { xs: '30%', sm: '80%' },
+              }}
+            >
+              {renderAddedLabels()}
+            </Box>
+          )}
+          <FormGroup
+            sx={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <TextField
+              required
+              label="Label"
+              name="curr_label"
+              value={createActionForm.curr_label}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: { xs: '100%', md: '80%' } }}
+              onChange={updateForm}
+            />
+            <Button
+              variant="outlined"
+              sx={{
+                width: { xs: '100%', md: '17%' },
+                mt: { xs: '1.5em', sm: '0em' },
+              }}
+              onClick={addValidationLabel}
+            >
+              Add Label
+            </Button>
+          </FormGroup>
           {isLoading && (
             <LinearProgress
               sx={{ width: '100%', mt: '1.5em' }}
