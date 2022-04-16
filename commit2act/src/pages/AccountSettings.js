@@ -191,10 +191,10 @@ const AccountSettings = ({ user }) => {
                       },
                     }}
                   ></Avatar>
-                  <label htmlFor="contained-button-file">
+                  <label htmlFor="user-avatar">
                     <Input
                       accept="image/*"
-                      id="contained-button-file"
+                      id="user-avatar"
                       multiple
                       type="file"
                       onChange={handleAvatarChange}

@@ -51,6 +51,7 @@ const BonusPointQuiz = ({
   setActiveStep,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
+  activeStep,
 }) => {
   let question_text =
     'What percentage of an average Canadian’s total CO2 production is due to transportation?';
@@ -99,7 +100,7 @@ const BonusPointQuiz = ({
         ) : (
           <StyledButton
             onClick={() => {
-              setActiveStep(5);
+              setActiveStep(activeStep + 1);
             }}
             variant="contained"
           >

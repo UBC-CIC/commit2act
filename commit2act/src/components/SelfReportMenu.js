@@ -25,6 +25,7 @@ import Co2SavedScreen from './Co2SavedScreen';
 import { API } from 'aws-amplify';
 import { getAllActions } from '../graphql/queries';
 import { styled } from '@mui/material/styles';
+import ImageValidationPanel from './ImageValidationPanel';
 
 const theme = createTheme({
   components: {
@@ -89,6 +90,7 @@ const SelfReportMenu = ({ user }) => {
     'Select Date',
     'Action Fact',
     'Action Items',
+    'Validation',
     'Bonus Question',
     'CO2 Saved',
   ];
@@ -243,15 +245,17 @@ const SelfReportMenu = ({ user }) => {
             setActiveStep={setActiveStep}
           />
         )}
-        {activeStep === 4 && (
+        {activeStep === 4 && <ImageValidationPanel />}
+        {activeStep === 5 && (
           <BonusPointQuiz
             fact={fact}
             setQuizAnswered={setQuizAnswered}
             setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
             setActiveStep={setActiveStep}
+            activeStep={activeStep}
           />
         )}
-        {activeStep === 5 && (
+        {activeStep === 6 && (
           <Co2SavedScreen
             actionId={selectedAction.action_id}
             actionDate={selectedDate}
@@ -286,7 +290,7 @@ const SelfReportMenu = ({ user }) => {
           item
           sx={{
             backgroundColor: '#e8f4f8',
-            width: { xs: '100%', md: '80%' },
+            width: { xs: '100%', md: '85%' },
             padding: '2em 2em 5em',
             borderRadius: '7px',
           }}
@@ -304,7 +308,7 @@ const SelfReportMenu = ({ user }) => {
           </Stepper>
           <MobileStepper
             variant="dots"
-            steps={6}
+            steps={7}
             position="static"
             activeStep={activeStep}
             sx={{
@@ -320,7 +324,7 @@ const SelfReportMenu = ({ user }) => {
             {steps[activeStep]}
           </Typography>
           {renderFormStep()}
-          {![0, 4, 5].includes(activeStep) && (
+          {![0, 5, 6].includes(activeStep) && (
             <Button
               onClick={() => {
                 setActiveStep(activeStep + 1);
