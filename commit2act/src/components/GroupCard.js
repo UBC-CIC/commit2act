@@ -36,7 +36,9 @@ const GroupCard = ({ group }) => {
           mb: { xs: '1.25em' },
         }}
         src={group_image ? group_image : null}
-      ></Avatar>
+      >
+        {group_name.charAt(0)}
+      </Avatar>
       <Box
         component="div"
         sx={{
@@ -50,7 +52,7 @@ const GroupCard = ({ group }) => {
         <Box
           component="div"
           sx={{
-            height: '5vh',
+            minHeight: '5vh',
             borderBottom: '3px solid #3F72AF',
             mb: '0.625em',
           }}
