@@ -5,11 +5,13 @@ DROP TABLE IF EXISTS `Role`;
 DROP TABLE IF EXISTS GroupUser;
 DROP TABLE IF EXISTS `User`;
 DROP TABLE IF EXISTS `Group`;
+DROP TABLE IF EXISTS SubmittedActionItem;
 DROP TABLE IF EXISTS SubmittedAction;
 DROP TABLE IF EXISTS `Action`;
 DROP TABLE IF EXISTS ActionQuiz;
 DROP TABLE IF EXISTS ActionItem;
 DROP TABLE IF EXISTS ActionQuizAnswer;
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -41,7 +43,7 @@ CREATE TABLE `ActionItem` (
   `item_name` varchar(255) NOT NULL COMMENT 'ex. ["Distance walked (km)", "Distance biked (km)", "Distance transited (km)"] ',
   `item_description` text NOT NULL COMMENT 'ex. ["How far you walked", "How far you cycled", "How far you took public transit"]',
   `co2_saved_per_unit` float8 NOT NULL COMMENT 'ex, [180.0, 180.0, 100.0]',
-  PRIMARY KEY (`action_id`, `item_name`)
+  PRIMARY KEY ( `item_name`, `action_id`)
 );
 
 CREATE TABLE `ActionQuiz` (
@@ -68,13 +70,21 @@ CREATE TABLE `SubmittedAction` (
   `time_submitted` datetime,
   `first_quiz_answer_correct` boolean NOT NULL,
   `quiz_answered` boolean NOT NULL,
-  `is_validated` boolean NOT NULL
+  `is_validated` boolean NOT NULL,
+  `points_earned` int DEFAULT 0
+);
+
+CREATE TABLE `SubmittedActionItem` (
+	`item_name` varchar(255),
+    `sa_id` int,
+    `input_value` float8,
+    PRIMARY KEY (`item_name`, `sa_id`)
 );
 
 CREATE TABLE `Group` (
   `group_id` int PRIMARY KEY AUTO_INCREMENT,
-  `group_name` text NOT NULL,
-  `group_description` text NOT NULL,
+  `group_name` varchar(255) NOT NULL UNIQUE,
+  `group_description` text,
   `group_image` text,
   `is_public` boolean DEFAULT true,
   `private_password` text DEFAULT null
@@ -105,6 +115,10 @@ ALTER TABLE `SubmittedAction` ADD FOREIGN KEY (`quiz_id`) REFERENCES `ActionQuiz
 ALTER TABLE `GroupUser` ADD FOREIGN KEY (`group_id`) REFERENCES `Group` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `GroupUser` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `SubmittedActionItem` ADD FOREIGN KEY (`sa_id`) REFERENCES `SubmittedAction` (`sa_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `SubmittedActionItem` ADD FOREIGN KEY (`item_name`) REFERENCES `ActionItem` (`item_name`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 INSERT INTO `User` VALUES
@@ -258,7 +272,8 @@ current_date() - interval floor(rand() * 14) day, -- generates random date
 current_timestamp() - interval floor(rand() * 10000) second,
 true,
 true, 
-true
+true, 
+110
 ),
 (
 null,
@@ -270,7 +285,8 @@ current_date() - interval floor(rand() * 14) day, -- generates random date
 current_timestamp() - interval floor(rand() * 10000) second,
 false,
 true, 
-false
+false,
+40
 ),
 (
 null,
@@ -282,7 +298,8 @@ current_date() - interval floor(rand() * 14) day, -- generates random date
 current_timestamp() - interval floor(rand() * 10000) second,
 false,
 true, 
-false
+false,
+60
 ),
 (
 null,
@@ -294,7 +311,8 @@ current_date() - interval floor(rand() * 14) day, -- generates random date
 current_timestamp() - interval floor(rand() * 10000) second,
 false,
 true, 
-false
+false,
+260
 ),
 (
 null,
@@ -306,7 +324,8 @@ current_date() - interval floor(rand() * 143) day, -- generates random date
 current_timestamp() - interval floor(rand() * 10000000) second,
 false,
 true, 
-false
+false,
+20
 ),
 (
 null,
@@ -318,13 +337,20 @@ current_date() - interval floor(rand() * 14) day, -- generates random date
 current_timestamp() - interval floor(rand() * 10000) second,
 false,
 true, 
-false
+false,
+200
 );
 
-
+INSERT INTO SubmittedActionItem VALUES ('Distance cycled (km)', 1, 5);
+INSERT INTO SubmittedActionItem VALUES ('Distance walked (km)', 1, 2);
 
 select * from `User`;
-SELECT * FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id;
+SELECT * FROM `User` 
+INNER JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id 
+INNER JOIN `Action` ON `SubmittedAction`.action_id = `Action`.action_id
+INNER JOIN `ActionItem` ON `Action`.action_id = `ActionItem`.action_id;
+
+
 
 -- delete from `User` where username='teststudent' ;
 -- SELECT * FROM `User` JOIN `SubmittedAction` ON `User`.user_id = SubmittedAction.user_id;
@@ -396,6 +422,21 @@ INNER JOIN
 where SubmittedAction.user_id = user_id_in_group and is_validated = false
 order by SubmittedAction.time_submitted ASC;
     
-select SUM(SubmittedAction.g_co2_saved) from SubmittedAction -- get total CO2 saved for all users
+select SUM(SubmittedAction.g_co2_saved) from SubmittedAction;
 
 
+
+INSERT INTO `SubmittedAction` ( user_id, action_id, quiz_id, g_co2_saved, date_of_action, first_quiz_answer_correct, quiz_answered, is_validated, points_earned ) VALUES (3, 1, null, 10822.5, '2022-03-25', false, false, false, 1042);
+
+SELECT * FROM `SubmittedAction` WHERE user_id=4 AND action_id=3;
+
+SELECT * from `User`;
+
+SELECT * FROM `ActionItem`;
+
+
+SELECT SUM(g_co2_saved) AS total_g_co2_saved FROM (SELECT SubmittedAction.g_co2_saved FROM `Group` INNER JOIN `GroupUser` on `Group`.group_id = GroupUser.group_id INNER JOIN `User` on `User`.user_id = GroupUser.user_id inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id and `Group`.group_id = 1 GROUP BY `User`.user_id ) result
+
+;
+
+SELECT SubmittedAction.g_co2_saved FROM `Group` INNER JOIN `GroupUser` on `Group`.group_id = GroupUser.group_id INNER JOIN `User` on `User`.user_id = GroupUser.user_id inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id and `Group`.group_id = 1 GROUP BY `User`.user_id
