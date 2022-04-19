@@ -120,17 +120,35 @@ const GroupProfile = () => {
     return (
       <Grid container sx={{ pt: '1.5em' }} columnSpacing={12} rowSpacing={4}>
         <Grid item xs={12} sm={6}>
-          <Typography component="div" variant="h2">
+          <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             About
           </Typography>
-          <Typography component="div" variant="subtitle1" sx={{ mt: '1em' }}>
+          <Typography component="div" variant="subtitle1">
             {groupInfo.group_description}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <Typography component="div" variant="h2">
+          <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             Group Organizers
           </Typography>
+          <Box display="flex" alignItems="center">
+            <Avatar
+              variant="rounded"
+              sx={{
+                width: {
+                  xs: 100,
+                },
+                height: {
+                  xs: 100,
+                },
+              }}
+            >
+              C
+            </Avatar>
+            <Typography component="div" variant="h3" sx={{ ml: '1em' }}>
+              Christy Lam
+            </Typography>
+          </Box>
         </Grid>
       </Grid>
     );
@@ -245,9 +263,7 @@ const GroupProfile = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
                 gap: '0.5em',
-                alignItems: 'center',
               }}
             >
               <Typography component="div" variant="h1" sx={{ mb: '0.5em' }}>
