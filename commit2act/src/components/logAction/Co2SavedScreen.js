@@ -5,7 +5,7 @@ import { API, Storage } from 'aws-amplify';
 import {
   createSubmittedAction,
   createSubmittedActionItems,
-} from '../graphql/mutations';
+} from '../../graphql/mutations';
 
 const theme = createTheme({
   components: {

@@ -25,7 +25,7 @@ import { updateMenuState } from '../../actions/menuActions';
 import Landing from '../../pages/Landing';
 import FindGroup from '../../pages/FindGroup';
 import AccountSettings from '../../pages/AccountSettings';
-import SelfReportMenu from '../../components/SelfReportMenu';
+import SelfReportMenu from '../../components/logAction/SelfReportMenu';
 import ValidateActions from '../../pages/ValidateActions';
 import { Auth } from 'aws-amplify';
 import CreateGroup from '../../pages/CreateGroup';

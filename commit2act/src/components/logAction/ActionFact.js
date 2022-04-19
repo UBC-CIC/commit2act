@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Box, Typography, CircularProgress } from '@mui/material';
 // import { API, graphqlOperation } from 'aws-amplify';
-// import { listQuizID, getFactBonusPointQuiz } from '../graphql/queries';
+// import { listQuizID, getFactBonusPointQuiz } from '../../graphql/queries';
 
 const ActionFact = ({ setFact, fact }) => {
   const [factText, setFactText] = useState(

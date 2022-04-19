@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Box, Grid, TextField } from '@mui/material';
 import { API } from 'aws-amplify';
-import { getActionItemsForAction } from '../graphql/queries';
+import { getActionItemsForAction } from '../../graphql/queries';
 
 const ActionPanel = ({
   selectedAction,

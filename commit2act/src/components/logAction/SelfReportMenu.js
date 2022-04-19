@@ -17,15 +17,15 @@ import ImageListItem, {
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format, parseISO } from 'date-fns';
+import { createTheme, ThemeProvider } from '@mui/material';
+import { API } from 'aws-amplify';
+import { getAllActions } from '../../graphql/queries';
+import { styled } from '@mui/material/styles';
 import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
-import { createTheme, ThemeProvider } from '@mui/material';
+import ImageValidationPanel from './ImageValidationPanel';
 import BonusPointQuiz from './BonusPointQuiz';
 import Co2SavedScreen from './Co2SavedScreen';
-import { API } from 'aws-amplify';
-import { getAllActions } from '../graphql/queries';
-import { styled } from '@mui/material/styles';
-import ImageValidationPanel from './ImageValidationPanel';
 
 const theme = createTheme({
   components: {
