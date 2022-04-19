@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
-import { API } from 'aws-amplify';
+import { API, Storage } from 'aws-amplify';
 import {
   createSubmittedAction,
   createSubmittedActionItems,
@@ -57,10 +57,11 @@ const Co2SavedScreen = ({
   actionItemValues,
   setActionItemValues,
   setSelectedAction,
+  selectedImage,
+  setSelectedImage,
 }) => {
   useEffect(() => {
     submitAction();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,7 +82,6 @@ const Co2SavedScreen = ({
       },
     });
     const submittedActionId = res.data.createSubmittedAction.sa_id;
-
     //creates the submitted action items for the action
     await API.graphql({
       query: createSubmittedActionItems,
@@ -90,6 +90,18 @@ const Co2SavedScreen = ({
         submitted_action_items: actionItemValues,
       },
     });
+
+    if (selectedImage) {
+      let imageKey = 'validation/input/'.concat(submittedActionId, '.png');
+      let imageType = selectedImage.type;
+      try {
+        await Storage.put(imageKey, selectedImage, {
+          contentType: imageType,
+        });
+      } catch (error) {
+        console.log('Error uploading file', error);
+      }
+    }
   };
 
   return (
@@ -116,8 +128,9 @@ const Co2SavedScreen = ({
             setActiveStep(0);
             setSelectedAction(null);
             setActionItemValues([]);
+            setSelectedImage(null);
           }}
-          sx={{ mt: '5em', width: '80%' }}
+          sx={{ mt: '3em', width: '80%' }}
           variant="contained"
         >
           Add Another Action

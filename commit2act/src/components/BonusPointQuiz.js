@@ -126,7 +126,7 @@ const BonusPointQuiz = ({
             <StyledButton
               onClick={() => {
                 setFirstQuizAnswerCorrect(true);
-                setActiveStep(5);
+                setActiveStep(activeStep + 1);
               }}
               variant="contained"
             >

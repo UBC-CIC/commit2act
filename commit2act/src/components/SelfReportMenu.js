@@ -84,6 +84,7 @@ const SelfReportMenu = ({ user }) => {
   const [totalCo2Saved, setTotalCo2Saved] = useState(0);
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
+  const [selectedImage, setSelectedImage] = useState();
 
   const steps = [
     'Select Action',
@@ -245,7 +246,14 @@ const SelfReportMenu = ({ user }) => {
             setActiveStep={setActiveStep}
           />
         )}
-        {activeStep === 4 && <ImageValidationPanel />}
+        {activeStep === 4 && (
+          <ImageValidationPanel
+            setActiveStep={setActiveStep}
+            activeStep={activeStep}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+          />
+        )}
         {activeStep === 5 && (
           <BonusPointQuiz
             fact={fact}
@@ -268,6 +276,8 @@ const SelfReportMenu = ({ user }) => {
             setActionItemValues={setActionItemValues}
             setActiveStep={setActiveStep}
             setSelectedAction={setSelectedAction}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
           />
         )}
       </>
@@ -324,7 +334,7 @@ const SelfReportMenu = ({ user }) => {
             {steps[activeStep]}
           </Typography>
           {renderFormStep()}
-          {![0, 5, 6].includes(activeStep) && (
+          {![0, 4, 5, 6].includes(activeStep) && (
             <Button
               onClick={() => {
                 setActiveStep(activeStep + 1);
