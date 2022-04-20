@@ -232,7 +232,7 @@ const CreateGroup = ({ user }) => {
         <FormControl>
           <Grid
             container
-            columnSpacing={{ xs: 2, md: 10 }}
+            columnSpacing={{ xs: 2, md: 12 }}
             direction={{ xs: 'column', md: 'row' }}
             sx={{ pl: { xs: '0em', md: '4em' } }}
           >

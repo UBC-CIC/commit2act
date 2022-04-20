@@ -3,13 +3,14 @@ import {
   Typography,
   Box,
   Tab,
-  Button,
+  Tooltip,
   Grid,
   Card,
   CardActionArea,
   CardContent,
   Avatar,
   Stack,
+  IconButton,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
 import {
@@ -112,6 +113,17 @@ const GroupProfile = () => {
     setGroupMembers(res.data.getAllMembersInGroup);
   };
 
+  const groupLink =
+    groupInfo &&
+    (groupInfo.is_public
+      ? window.location.href.concat('id:', groupInfo.group_id)
+      : window.location.href.concat(
+          'id:',
+          groupInfo.group_id,
+          'password:',
+          groupInfo.private_password
+        ));
+
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
   };
@@ -204,22 +216,46 @@ const GroupProfile = () => {
     }
   };
 
+  const copyText = (text) => {
+    navigator.clipboard.writeText(text);
+  };
+
   const renderAddMemberPanel = () => {
     //add check to only show this panel if user is owner
     return (
-      <Grid container>
+      <Box display="flex" justifyContent="center" flexDirection="column">
         <Typography component="div" variant="h3">
-          Add users to the group by sending them your group link
+          Add Users To This Group By Sending Them Your Group Link
         </Typography>
-        <Typography component="div" variant="subtitle1">
+        <Typography component="div" variant="subtitle1" sx={{ mt: '2em' }}>
           Your Group Link is:{' '}
-          {groupInfo.is_public
-            ? window.location.href
-            : window.location.href.concat(groupInfo.private_password)}
         </Typography>
-        <ContentCopy />
-        <Button variant="contained">Copy Link</Button>
-      </Grid>
+        <Typography
+          component="div"
+          variant="subtitle1"
+          sx={{
+            border: '1px black solid',
+            borderRadius: '2px',
+            pl: '1em',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: { xs: '100%', md: '50%' },
+          }}
+        >
+          {groupLink}
+          <Tooltip title="Copy">
+            <IconButton aria-label="copy" onClick={() => copyText(groupLink)}>
+              <ContentCopy
+                sx={{
+                  alignSelf: 'center',
+                  ':hover': { cursor: 'pointer', opacity: '0.5' },
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        </Typography>
+      </Box>
     );
   };
 
@@ -229,11 +265,11 @@ const GroupProfile = () => {
         <Grid
           container
           columnSpacing={{ xs: 0, md: 8 }}
-          alignItems={{ xs: 'center', md: 'flex-start' }}
-          direction={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'center', lg: 'flex-start' }}
+          direction={{ xs: 'column', lg: 'row' }}
           sx={{ mt: '2em' }}
-          gap={{ xs: '2em', md: '0' }}
-          textAlign={{ xs: 'center', md: 'left' }}
+          gap={{ xs: '2em', lg: '0' }}
+          textAlign={{ xs: 'center', lg: 'left' }}
         >
           <Grid
             container
@@ -373,7 +409,15 @@ const GroupProfile = () => {
               >
                 {renderGroupMemberPanel()}
               </TabPanel>
-              <TabPanel value="3">{renderAddMemberPanel()}</TabPanel>
+              <TabPanel
+                value="3"
+                sx={{
+                  padding: { xs: '1.5em 0' },
+                  width: '100%',
+                }}
+              >
+                {renderAddMemberPanel()}
+              </TabPanel>
             </TabContext>
           </Grid>
         </Grid>
