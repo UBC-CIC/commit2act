@@ -90,9 +90,9 @@ const theme = createTheme({
   },
 });
 
-const Input = styled('input')({
-  display: 'none',
-});
+const Input = styled('input')`
+  display: none;
+`;
 
 const CreateAction = () => {
   const emptyActionItemForm = {
@@ -398,7 +398,7 @@ const CreateAction = () => {
         direction={{ xs: 'column', md: 'row' }}
         sx={{
           minHeight: '50vh',
-          backgroundColor: '#DBE2EF',
+          backgroundColor: '#e8f4f8',
           borderRadius: '8px',
           padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',

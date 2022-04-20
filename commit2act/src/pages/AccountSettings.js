@@ -68,9 +68,9 @@ const theme = createTheme({
   },
 });
 
-const Input = styled('input')({
-  display: 'none',
-});
+const Input = styled('input')`
+  display: none;
+`;
 
 const AccountSettings = ({ user }) => {
   const [showMore, setShowMore] = useState(false);

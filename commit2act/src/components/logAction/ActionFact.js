@@ -47,7 +47,7 @@ const ActionFact = ({ setFact, fact }) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '1em',
+          padding: '2em',
           backgroundColor: '#FFFFFF',
           width: '80%',
           height: '20vh',

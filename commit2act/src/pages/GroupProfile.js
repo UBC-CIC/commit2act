@@ -11,6 +11,7 @@ import {
   Avatar,
   Stack,
   IconButton,
+  Alert,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
 import {
@@ -86,13 +87,15 @@ const theme = createTheme({
 });
 
 const GroupProfile = () => {
-  const { groupName } = useParams();
+  const { groupName, addUserLink } = useParams();
   const [selectedTab, setSelectedTab] = useState('0');
   const [groupInfo, setGroupInfo] = useState();
   const [groupMembers, setGroupMembers] = useState();
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     getGroupInfo();
+    console.log(addUserLink, groupName);
   }, []);
 
   const getGroupInfo = async () => {
@@ -113,15 +116,19 @@ const GroupProfile = () => {
     setGroupMembers(res.data.getAllMembersInGroup);
   };
 
+  //if the url params include the addUserLink, do not create a group link
   const groupLink =
     groupInfo &&
+    !addUserLink &&
     (groupInfo.is_public
       ? window.location.href.concat(
+          '/',
           Math.random().toString(36).slice(2),
           '-id:',
           groupInfo.group_id
         )
       : window.location.href.concat(
+          '/',
           Math.random().toString(36).slice(2),
           '-id:',
           groupInfo.group_id,
@@ -163,7 +170,7 @@ const GroupProfile = () => {
               C
             </Avatar>
             <Typography component="div" variant="h3" sx={{ ml: '1em' }}>
-              Christy Lam
+              Christy
             </Typography>
           </Box>
         </Grid>
@@ -223,43 +230,59 @@ const GroupProfile = () => {
 
   const copyText = (text) => {
     navigator.clipboard.writeText(text);
+    setCopySuccess(true);
   };
 
   const renderAddMemberPanel = () => {
     //add check to only show this panel if user is owner
     return (
-      <Box display="flex" justifyContent="center" flexDirection="column">
+      <Box
+        display="flex"
+        justifyContent="center"
+        flexDirection="column"
+        alignItems={{ xs: 'center', lg: 'flex-start' }}
+      >
         <Typography component="div" variant="h3">
           Add Users To This Group By Sending Them Your Group Link
         </Typography>
         <Typography component="div" variant="subtitle1" sx={{ mt: '2em' }}>
           Your Group Link is:{' '}
         </Typography>
-        <Typography
-          component="div"
-          variant="subtitle1"
-          sx={{
-            border: '1px black solid',
-            borderRadius: '2px',
-            pl: '1em',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: { xs: '100%', md: '50%' },
-          }}
-        >
-          {groupLink}
-          <Tooltip title="Copy">
-            <IconButton aria-label="copy" onClick={() => copyText(groupLink)}>
-              <ContentCopy
-                sx={{
-                  alignSelf: 'center',
-                  ':hover': { cursor: 'pointer', opacity: '0.5' },
-                }}
-              />
-            </IconButton>
-          </Tooltip>
-        </Typography>
+        <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
+          <Typography
+            component="div"
+            variant="subtitle1"
+            sx={{
+              border: '1px black solid',
+              borderRadius: '2px',
+              pl: '1em',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            {groupLink}
+            <Tooltip title="Copy">
+              <IconButton aria-label="copy" onClick={() => copyText(groupLink)}>
+                <ContentCopy
+                  sx={{
+                    alignSelf: 'center',
+                    ':hover': { cursor: 'pointer', opacity: '0.5' },
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          </Typography>
+          {copySuccess && (
+            <Alert
+              severity="success"
+              onClose={() => setCopySuccess(false)}
+              sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
+            >
+              Link Copied!
+            </Alert>
+          )}
+        </Box>
       </Box>
     );
   };
@@ -280,7 +303,7 @@ const GroupProfile = () => {
             container
             item
             xs={4.5}
-            direction={{ xs: 'column', md: 'row' }}
+            direction={{ xs: 'column', lg: 'row' }}
             gap={{ xs: '2.5em' }}
             alignItems="center"
             sx={{ mb: '1.5em' }}
