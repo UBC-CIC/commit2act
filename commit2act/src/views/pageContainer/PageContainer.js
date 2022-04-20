@@ -225,9 +225,17 @@ function PageContainer(props) {
               path={'/log-action'}
               element={<SelfReportMenu user={user} />}
             />
-            <Route exact path={'/create-group'} element={<CreateGroup />} />
+            <Route
+              exact
+              path={'/create-group'}
+              element={<CreateGroup user={user} />}
+            />
             <Route
               path="/group-profile/:groupName"
+              element={<GroupProfile />}
+            />
+            <Route
+              path="/group-profile/:groupName/:addUserLink"
               element={<GroupProfile />}
             />
 

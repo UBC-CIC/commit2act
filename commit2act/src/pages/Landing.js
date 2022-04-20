@@ -18,6 +18,7 @@ import {
   getTotalGlobalCO2,
   getUsersTotalCO2,
   getUsersWeekCO2,
+  getAllGroupsForUser,
 } from '../graphql/queries';
 
 const theme = createTheme({
@@ -69,7 +70,7 @@ const theme = createTheme({
             variant: 'h5',
           },
           style: {
-            fontSize: 50,
+            fontSize: 'calc(2vw + 2vh)',
             color: 'black',
             fontWeight: 400,
           },
@@ -86,16 +87,19 @@ const Landing = ({ user }) => {
     totalCo2: '',
     weeklyCo2: '',
   });
+  const [userGroups, setUserGroups] = useState([]);
 
   //gets currently authenticated cognito user for the first time the page loads after sign in
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
     getProgressStats(id);
+    getGroups(id);
   };
 
   useEffect(() => {
     getCognitoUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getProgressStats = async (id) => {
@@ -119,22 +123,18 @@ const Landing = ({ user }) => {
     }));
   };
 
-  //filler content for groups(will replace once database is set up)
-  let group1 = {
-    name: 'UBC CIC',
-    description:
-      'UBC’s CIC is a public-private collaboration between UBC and Amazon. A CIC identifies digital transformation challenges, the problems or opportunities that matter to the community, and provides subject matter expertise and CIC leadership.',
+  const getGroups = async (id) => {
+    const userId = user ? user.user_id : id;
+    const res = await API.graphql({
+      query: getAllGroupsForUser,
+      variables: { user_id: userId },
+    });
+    setUserGroups(res.data.getAllGroupsForUser);
   };
-  let group2 = {
-    name: 'AWS',
-    description:
-      'AWS brings Amazon’s innovation process, skilled cloud expertise, and global solution reach-back to assist UBC in identifying their best solutions for the challenges presented by their end user community.',
-  };
-  let groups = [group1, group2];
 
   const renderGroupCards = () => {
-    if (groups) {
-      return groups.map((group, index) => (
+    if (userGroups) {
+      return userGroups.map((group, index) => (
         <GroupCard key={index} group={group} />
       ));
     }
@@ -166,7 +166,7 @@ const Landing = ({ user }) => {
             }}
           >
             <Grid item xs={4}>
-              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">CO2 Saved This Week</Typography>
                   <CardContent>
@@ -179,7 +179,7 @@ const Landing = ({ user }) => {
               </Card>
             </Grid>
             <Grid item xs={3}>
-              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
+              <Card raised={true} sx={{ p: '1em' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Total CO2 Saved</Typography>
                   <CardContent>
@@ -190,8 +190,8 @@ const Landing = ({ user }) => {
                 </CardActionArea>
               </Card>
             </Grid>
-            <Grid item xs>
-              <Card raised={true} sx={{ p: '1em', height: '28vh' }}>
+            <Grid item xs={5}>
+              <Card raised={true} sx={{ p: '1em' }}>
                 <CardActionArea sx={{ textAlign: 'center' }}>
                   <Typography variant="h4">Collective Impact</Typography>
                   <CardContent>

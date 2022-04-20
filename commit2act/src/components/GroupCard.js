@@ -18,7 +18,7 @@ const Card = styled(Grid)(({ theme }) => ({
 }));
 
 const GroupCard = ({ group }) => {
-  const { name, description } = group;
+  const { group_name, group_description, group_image, is_public } = group;
   const navigate = useNavigate();
 
   return (
@@ -27,22 +27,17 @@ const GroupCard = ({ group }) => {
         variant="rounded"
         sx={{
           width: {
-            xs: '19vw',
-            sm: '22vw',
-            md: '9vw',
-            xl: '9vw',
+            xs: 100,
           },
           height: {
-            xs: '10vh',
-            sm: '12vh',
-            md: '18vh',
-            xl: '18vh',
+            xs: 100,
           },
           alignSelf: { xs: 'center' },
           mb: { xs: '1.25em' },
         }}
+        src={group_image ? group_image : null}
       >
-        {name.charAt(0)}
+        {group_name.charAt(0)}
       </Avatar>
       <Box
         component="div"
@@ -57,7 +52,7 @@ const GroupCard = ({ group }) => {
         <Box
           component="div"
           sx={{
-            height: '5vh',
+            minHeight: '5vh',
             borderBottom: '3px solid #3F72AF',
             mb: '0.625em',
           }}
@@ -65,14 +60,14 @@ const GroupCard = ({ group }) => {
           <Typography
             variant="h3"
             onClick={() => {
-              navigate(`/group-profile/${name}`);
+              navigate(`/group-profile/${group_name}`);
             }}
             sx={{ ':hover': { opacity: '0.6', cursor: 'pointer' } }}
           >
-            {name}
+            {group_name}
           </Typography>
         </Box>
-        <Typography variant="body2">{description}</Typography>
+        <Typography variant="body2">{group_description}</Typography>
       </Box>
     </Card>
   );
