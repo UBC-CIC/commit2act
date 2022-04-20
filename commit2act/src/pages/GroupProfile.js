@@ -116,11 +116,16 @@ const GroupProfile = () => {
   const groupLink =
     groupInfo &&
     (groupInfo.is_public
-      ? window.location.href.concat('id:', groupInfo.group_id)
+      ? window.location.href.concat(
+          Math.random().toString(36).slice(2),
+          '-id:',
+          groupInfo.group_id
+        )
       : window.location.href.concat(
-          'id:',
+          Math.random().toString(36).slice(2),
+          '-id:',
           groupInfo.group_id,
-          'password:',
+          '-password:',
           groupInfo.private_password
         ));
 
