@@ -134,9 +134,7 @@ const GroupProfile = () => {
           '/add/',
           uuidv4(),
           '-',
-          groupInfo.group_id ** 2,
-          '-password:',
-          groupInfo.private_password
+          groupInfo.group_id ** 2
         ));
 
   const handleTabChange = (e, newValue) => {
