@@ -144,8 +144,8 @@ const CreateGroup = ({ user }) => {
     });
   };
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
+  const handleMouseDownPassword = (e) => {
+    e.preventDefault();
   };
 
   /** functions for uploading an icon */

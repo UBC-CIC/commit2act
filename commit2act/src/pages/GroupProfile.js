@@ -26,6 +26,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { API } from 'aws-amplify';
 import { getSingleGroupByName, getAllMembersInGroup } from '../graphql/queries';
+import { v4 as uuidv4 } from 'uuid';
 
 const theme = createTheme({
   components: {
@@ -105,6 +106,8 @@ const GroupProfile = () => {
     });
     setGroupInfo(res.data.getSingleGroupByName);
     const groupId = res.data.getSingleGroupByName.group_id;
+    if (addUserLink) {
+    }
     getGroupMembers(groupId);
   };
 
@@ -122,16 +125,16 @@ const GroupProfile = () => {
     !addUserLink &&
     (groupInfo.is_public
       ? window.location.href.concat(
-          '/',
-          Math.random().toString(36).slice(2),
-          '-id:',
-          groupInfo.group_id
+          '/add/',
+          uuidv4(),
+          '-',
+          groupInfo.group_id ** 2
         )
       : window.location.href.concat(
-          '/',
-          Math.random().toString(36).slice(2),
-          '-id:',
-          groupInfo.group_id,
+          '/add/',
+          uuidv4(),
+          '-',
+          groupInfo.group_id ** 2,
           '-password:',
           groupInfo.private_password
         ));
