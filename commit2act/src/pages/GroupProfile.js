@@ -96,7 +96,6 @@ const GroupProfile = () => {
 
   useEffect(() => {
     getGroupInfo();
-    console.log(addUserLink, groupName);
   }, []);
 
   const getGroupInfo = async () => {
@@ -106,8 +105,6 @@ const GroupProfile = () => {
     });
     setGroupInfo(res.data.getSingleGroupByName);
     const groupId = res.data.getSingleGroupByName.group_id;
-    if (addUserLink) {
-    }
     getGroupMembers(groupId);
   };
 

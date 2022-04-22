@@ -33,6 +33,7 @@ import GroupProfile from '../../pages/GroupProfile';
 import { API } from 'aws-amplify';
 import { getSingleUserByUsername } from '../../graphql/queries';
 import CreateAction from '../../pages/CreateAction';
+import JoinGroup from '../../pages/JoinGroup';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -234,7 +235,10 @@ function PageContainer(props) {
               path="/group-profile/:groupName"
               element={<GroupProfile />}
             />
-
+            <Route
+              path="/group-profile/:groupName/add/:addUserLink"
+              element={<JoinGroup />}
+            />
             <Route
               exact
               path={'/validate-actions'}
