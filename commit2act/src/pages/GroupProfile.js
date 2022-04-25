@@ -216,6 +216,7 @@ const GroupProfile = () => {
                   },
                   mb: { xs: '1.5em' },
                 }}
+                src={member.avatar ? member.avatar : null}
               >
                 {member.name.charAt(0)}
               </Avatar>
