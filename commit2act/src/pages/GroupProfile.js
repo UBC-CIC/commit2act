@@ -302,8 +302,9 @@ const GroupProfile = () => {
             container
             item
             xs={4.5}
-            direction={{ xs: 'column', lg: 'row' }}
+            direction={{ xs: 'column', md: 'row' }}
             gap={{ xs: '2.5em' }}
+            justifyContent={{ sm: 'center' }}
             alignItems="center"
             sx={{ mb: '1.5em' }}
             width={{ xs: '70%', md: '100%' }}
