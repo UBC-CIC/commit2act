@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { API } from 'aws-amplify';
-import { getSingleGroup, getAllMembersInGroup } from '../graphql/queries';
-import { addGroupUser } from '../graphql/mutations';
+import {
+  getSingleGroup,
+  getAllMembersInGroup,
+  isPrivateGroupPasswordCorrect,
+} from '../graphql/queries';
+import { addGroupMember } from '../graphql/mutations';
 import { Auth } from 'aws-amplify';
 import {
+  Alert,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -12,8 +17,18 @@ import {
   TextField,
   DialogActions,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+
+const StyledDialog = styled(Dialog)`
+  text-align: center;
+  .MuiDialog-paper {
+    justify-content: center;
+    align-items: center;
+  }
+`;
 
 const JoinGroup = () => {
   const { groupName, addUserLink } = useParams();
@@ -24,6 +39,7 @@ const JoinGroup = () => {
   const [addPrivateMember, setAddPrivateMember] = useState(false);
   const [userAdded, setUserAdded] = useState(false);
   const [privateGroupForm, setPrivateGroupForm] = useState({ password: '' });
+  const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
 
   const getUserInfo = async () => {
@@ -33,7 +49,7 @@ const JoinGroup = () => {
     setUserId(Number(id));
   };
 
-  const renderAddMemberPanel = async () => {
+  const renderAddMemberView = async () => {
     if (userId) {
       //decode group id
       const hashedId = addUserLink.split('-').pop();
@@ -66,7 +82,8 @@ const JoinGroup = () => {
   };
 
   useEffect(() => {
-    renderAddMemberPanel();
+    renderAddMemberView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   useEffect(() => {
@@ -80,41 +97,57 @@ const JoinGroup = () => {
     });
   };
 
-  const redirectUser = () => {
-    //if user has been successfully added to group, redirect to group profile page, otherwise redirect to landing page
-    if (userAdded) {
-      navigate(`/group-profile/${groupName}`);
-    } else {
-      navigate('/');
+  //redirect user to landing page
+  const redirectHome = () => {
+    navigate('/');
+  };
+
+  //redirect user to group profile page
+  const redirectProfile = () => {
+    navigate(`/group-profile/${groupName}`);
+  };
+
+  //if group is private, checks that user inputted password matches group private_password field
+  const checkPassword = async () => {
+    if (!group.is_public) {
+      const passwordRes = await API.graphql({
+        query: isPrivateGroupPasswordCorrect,
+        variables: {
+          group_id: group.group_id,
+          private_password: privateGroupForm.password,
+        },
+      });
+      let passwordsMatch = passwordRes.data.isPrivateGroupPasswordCorrect;
+      if (passwordsMatch) {
+        addUser();
+      } else {
+        setPasswordError(true);
+      }
     }
   };
 
   const addUser = async () => {
-    if (group.is_public) {
-      const res = await API.graphql({
-        query: addGroupUser,
+    try {
+      await API.graphql({
+        query: addGroupMember,
         variables: {
           group_id: group.group_id,
           user_id: userId,
-          user_role: 'member',
         },
       });
-      console.log(res);
-    } else {
-      //if group is private, check that user inputted password matches group private_password field
+      setUserAdded(true);
+      setTimeout(() => {
+        redirectProfile();
+      }, 3000);
+    } catch (err) {
+      console.log(err);
     }
-
-    setUserAdded(true);
   };
 
   return (
     <div>
       {alreadyInGroup && (
-        <Dialog
-          aria-labelledby="already-member-dialog"
-          open={true}
-          sx={{ textAlign: 'center' }}
-        >
+        <StyledDialog aria-labelledby="already-member-dialog" open={true}>
           <DialogTitle>You are already a member of this group!</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -122,49 +155,80 @@ const JoinGroup = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={redirectUser}>Cancel</Button>
+            <Button onClick={redirectHome}>Cancel</Button>
           </DialogActions>
-        </Dialog>
+        </StyledDialog>
       )}
       {addPublicMember && (
-        <Dialog aria-labelledby="add-public-member-dialog" open={true}>
+        <StyledDialog aria-labelledby="add-public-member-dialog" open={true}>
           <DialogTitle>You have been invited to join {groupName}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please confirm by selecting Join. Select Cancel to be redirected
-              to the home page.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={redirectUser}>Cancel</Button>
-            <Button onClick={addUser}>Join</Button>
-          </DialogActions>
-        </Dialog>
+          {userAdded ? (
+            <>
+              <DialogContent>
+                <CircularProgress />
+                <Alert severity="success" sx={{ mt: '1em' }}>
+                  Success! Redirecting to {groupName}'s profile page
+                </Alert>
+              </DialogContent>
+            </>
+          ) : (
+            <>
+              <DialogContent>
+                <DialogContentText>
+                  Please confirm by selecting Join. <br></br>Select Cancel to be
+                  redirected to the home page.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={redirectHome}>Cancel</Button>
+                <Button onClick={addUser}>Join</Button>
+              </DialogActions>
+            </>
+          )}
+        </StyledDialog>
       )}
       {addPrivateMember && (
-        <Dialog aria-labelledby="add-private-member-dialog" open={true}>
+        <StyledDialog aria-labelledby="add-private-member-dialog" open={true}>
           <DialogTitle>You have been invited to join {groupName}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              To join this group, please enter the group password and select
-              Join. Select Cancel to be redirected to the home page.
-            </DialogContentText>
-            <TextField
-              autoFocus
-              id="group-password"
-              label="Group Password"
-              name="password"
-              fullWidth
-              variant="standard"
-              value={privateGroupForm.password}
-              onChange={updateForm}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={redirectUser}>Cancel</Button>
-            <Button onClick={addUser}>Join</Button>
-          </DialogActions>
-        </Dialog>
+          {userAdded ? (
+            <>
+              <DialogContent>
+                <CircularProgress />
+                <Alert severity="success" sx={{ mt: '1em' }}>
+                  Success! Redirecting to {groupName}'s profile page
+                </Alert>
+              </DialogContent>
+            </>
+          ) : (
+            <>
+              <DialogContent>
+                <DialogContentText>
+                  To join this group, please enter the group password and select
+                  Join. <br></br> Select Cancel to be redirected to the home
+                  page.
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  id="group-password"
+                  label="Group Password"
+                  name="password"
+                  fullWidth
+                  variant="standard"
+                  value={privateGroupForm.password}
+                  onChange={updateForm}
+                  sx={{ mt: '1em' }}
+                />
+              </DialogContent>
+              {passwordError && (
+                <Alert severity="error">Incorrect Password</Alert>
+              )}
+              <DialogActions>
+                <Button onClick={redirectHome}>Cancel</Button>
+                <Button onClick={checkPassword}>Join</Button>
+              </DialogActions>
+            </>
+          )}
+        </StyledDialog>
       )}
     </div>
   );

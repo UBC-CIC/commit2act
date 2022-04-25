@@ -62,6 +62,18 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
     }
   }
 `;
+export const getSingleActionWithLabels = /* GraphQL */ `
+  query GetSingleActionWithLabels($action_id: Int!) {
+    getSingleActionWithLabels(action_id: $action_id) {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+      validation_label
+    }
+  }
+`;
 export const getTotalGlobalCO2 = /* GraphQL */ `
   query GetTotalGlobalCO2 {
     getTotalGlobalCO2
@@ -258,5 +270,21 @@ export const getAllGroupsUserIsAMember = /* GraphQL */ `
       is_public
       private_password
     }
+  }
+`;
+export const getGroupTotalCO2 = /* GraphQL */ `
+  query GetGroupTotalCO2($group_id: Int!) {
+    getGroupTotalCO2(group_id: $group_id)
+  }
+`;
+export const isPrivateGroupPasswordCorrect = /* GraphQL */ `
+  query IsPrivateGroupPasswordCorrect(
+    $group_id: Int!
+    $private_password: String!
+  ) {
+    isPrivateGroupPasswordCorrect(
+      group_id: $group_id
+      private_password: $private_password
+    )
   }
 `;
