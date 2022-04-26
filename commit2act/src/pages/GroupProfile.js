@@ -87,6 +87,16 @@ const theme = createTheme({
             fontWeight: 400,
           },
         },
+        {
+          props: {
+            variant: 'subtitle1',
+          },
+          style: {
+            fontSize: 17,
+            color: 'black',
+            fontWeight: 300,
+          },
+        },
       ],
     },
   },
@@ -97,6 +107,7 @@ const GroupProfile = () => {
   const [selectedTab, setSelectedTab] = useState('0');
   const [groupInfo, setGroupInfo] = useState();
   const [groupMembers, setGroupMembers] = useState();
+  const [groupOwners, setGroupOwners] = useState();
   const [currentUserOwner, setCurrentUserOwner] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -134,6 +145,7 @@ const GroupProfile = () => {
       variables: { group_id: groupId },
     });
     const owners = ownerRes.data.getAllOwnersInGroup;
+    setGroupOwners(owners);
     const ownerIds = owners.map((owner) => owner.user_id);
     if (ownerIds.includes(currentUserId)) {
       setCurrentUserOwner(true);
@@ -166,7 +178,7 @@ const GroupProfile = () => {
           groupInfo.group_id ** 2
         ));
 
-  const handleTabChange = (newValue) => {
+  const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
   };
 
@@ -321,8 +333,13 @@ const GroupProfile = () => {
               </Stack>
               <Stack direction="row" alignItems="center" gap={1}>
                 <Person />
-                <Typography component="div" variant="subtitle1">
-                  Created By:
+                <Typography
+                  component="div"
+                  variant="subtitle1"
+                  sx={{ wordWrap: 'break-word' }}
+                >
+                  Created By:<br></br>
+                  {groupOwners && groupOwners[0].username}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" gap={1}>
@@ -403,6 +420,7 @@ const GroupProfile = () => {
                   <Tab label="Group Info" value="0" />
                   <Tab label="Member Actions" value="1" />
                   <Tab label="Group Members" value="2" />
+                  {/* only display addMemberPanel tab if current user is a group owner */}
                   {currentUserOwner && <Tab label="Add Members" value="3" />}
                 </TabList>
               </Box>
@@ -419,20 +437,18 @@ const GroupProfile = () => {
                   groupMembers={groupMembers}
                   setGroupMembers={setGroupMembers}
                   groupInfo={groupInfo}
+                  currentUserOwner={currentUserOwner}
                 />
               </TabPanel>
-              {/* only display addMemberPanel tab if current user is a group owner */}
-              {currentUserOwner && (
-                <TabPanel
-                  value="3"
-                  sx={{
-                    padding: { xs: '1.5em 0' },
-                    width: '100%',
-                  }}
-                >
-                  {renderAddMemberPanel()}
-                </TabPanel>
-              )}
+              <TabPanel
+                value="3"
+                sx={{
+                  padding: { xs: '1.5em 0' },
+                  width: '100%',
+                }}
+              >
+                {renderAddMemberPanel()}
+              </TabPanel>
             </TabContext>
           </Grid>
         </Grid>

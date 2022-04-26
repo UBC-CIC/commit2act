@@ -30,6 +30,7 @@ const GroupMemberDialog = ({
   handleClose,
   groupInfo,
   setGroupMembers,
+  currentUserOwner,
 }) => {
   const dialogDisplayInitial = {
     promoteUserSuccess: false,
@@ -38,12 +39,6 @@ const GroupMemberDialog = ({
   };
   const [dialogDisplay, setDialogDisplay] = useState(dialogDisplayInitial);
   const [membersUpdated, setMembersUpdated] = useState(false);
-
-  // const getUserRoleInfo = async () => {
-  //   const cognitoUser = await Auth.currentAuthenticatedUser();
-  //   const id = cognitoUser.attributes['custom:id'];
-  //   setUserId(Number(id));
-  // }
 
   const promoteUser = async () => {
     try {
@@ -107,6 +102,37 @@ const GroupMemberDialog = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [membersUpdated]);
 
+  //display promote, demote and remove options only if current user is a group owner
+  const renderOwnerView = () => {
+    return (
+      currentUserOwner && (
+        <>
+          {selectedMember.user_role === 'member' ? (
+            <ListItem autoFocus button onClick={promoteUser}>
+              <ListItemIcon>
+                <PersonAddAlt1 />
+              </ListItemIcon>
+              <ListItemText>Promote User to Group Organizer</ListItemText>
+            </ListItem>
+          ) : (
+            <ListItem autoFocus button onClick={demoteOwner}>
+              <ListItemIcon>
+                <PersonRemove />
+              </ListItemIcon>
+              <ListItemText>Demote User to Group Member</ListItemText>
+            </ListItem>
+          )}
+          <ListItem autoFocus button onClick={removeUser}>
+            <ListItemIcon>
+              <GroupRemove />
+            </ListItemIcon>
+            <ListItemText>Remove User From Group</ListItemText>
+          </ListItem>
+        </>
+      )
+    );
+  };
+
   return (
     <>
       {openDialog && (
@@ -128,32 +154,8 @@ const GroupMemberDialog = ({
                   </ListItemIcon>
                   <ListItemText>View User Profile</ListItemText>
                 </ListItem>
-                {selectedMember.user_role === 'member' ? (
-                  <ListItem autoFocus button onClick={promoteUser}>
-                    <ListItemIcon>
-                      <PersonAddAlt1 />
-                    </ListItemIcon>
-                    <ListItemText>Promote User to Group Organizer</ListItemText>
-                  </ListItem>
-                ) : (
-                  <ListItem autoFocus button onClick={demoteOwner}>
-                    <ListItemIcon>
-                      <PersonRemove />
-                    </ListItemIcon>
-                    <ListItemText>Demote User to Group Member</ListItemText>
-                  </ListItem>
-                )}
-
-                <ListItem autoFocus button onClick={removeUser}>
-                  <ListItemIcon>
-                    <GroupRemove />
-                  </ListItemIcon>
-                  <ListItemText>Remove User From Group</ListItemText>
-                </ListItem>
+                {renderOwnerView()}
               </List>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-              </DialogActions>
             </>
           )}
           {dialogDisplay.promoteUserSuccess && (
@@ -162,9 +164,6 @@ const GroupMemberDialog = ({
               <DialogContent>
                 {selectedMember.name} is now a group owner
               </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Close</Button>
-              </DialogActions>
             </>
           )}
           {dialogDisplay.demoteOwnerSuccess && (
@@ -173,9 +172,6 @@ const GroupMemberDialog = ({
               <DialogContent>
                 {selectedMember.name} is now a group member
               </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Close</Button>
-              </DialogActions>
             </>
           )}
           {dialogDisplay.removeUserSuccess && (
@@ -184,13 +180,11 @@ const GroupMemberDialog = ({
               <DialogContent>
                 {selectedMember.name} has been removed from the group
               </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>
-                  Redirect to Group Profile Page
-                </Button>
-              </DialogActions>
             </>
           )}
+          <DialogActions>
+            <Button onClick={handleClose}>Close</Button>
+          </DialogActions>
         </Dialog>
       )}
     </>
