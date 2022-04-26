@@ -6,6 +6,7 @@ import { Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
 import { getAllSubmittedActionsForUser } from '../graphql/queries';
+import { useParams } from 'react-router-dom';
 
 const theme = createTheme({
   components: {
@@ -73,6 +74,7 @@ const Input = styled('input')`
 `;
 
 const AccountSettings = ({ user }) => {
+  const { profileId } = useParams();
   const [showMore, setShowMore] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);

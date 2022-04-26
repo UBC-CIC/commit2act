@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
+  Tooltip,
   Box,
   Tab,
-  Tooltip,
   Grid,
   Card,
   CardActionArea,
@@ -18,7 +18,6 @@ import { TabPanel, TabContext, TabList } from '@mui/lab';
 import {
   AutoGraphOutlined,
   PeopleAlt,
-  Person,
   Public,
   Lock,
   ContentCopy,
@@ -33,6 +32,7 @@ import {
 } from '../graphql/queries';
 import { v4 as uuidv4 } from 'uuid';
 import GroupMemberPanel from '../components/groupProfile/GroupMemberPanel';
+import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
 
 const theme = createTheme({
   components: {
@@ -110,7 +110,7 @@ const GroupProfile = () => {
   const [groupMembers, setGroupMembers] = useState();
   const [groupOwners, setGroupOwners] = useState();
   const [currentUserOwner, setCurrentUserOwner] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false);
+  // const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     getGroupAndUserInfo();
@@ -152,21 +152,14 @@ const GroupProfile = () => {
     setGroupMembers(res.data.getAllUsersInGroup);
   };
 
-  const groupLink =
-    groupInfo &&
-    (groupInfo.is_public
-      ? window.location.href.concat(
-          '/add/',
-          uuidv4(),
-          '-',
-          groupInfo.group_id ** 2
-        )
-      : window.location.href.concat(
-          '/add/',
-          uuidv4(),
-          '-',
-          groupInfo.group_id ** 2
-        ));
+  // const groupLink =
+  //   groupInfo &&
+  //   window.location.href.concat(
+  //     '/add/',
+  //     uuidv4(),
+  //     '-',
+  //     groupInfo.group_id ** 2
+  //   );
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
@@ -195,14 +188,16 @@ const GroupProfile = () => {
             <AvatarGroup max={4}>
               {groupOwners &&
                 groupOwners.map((owner, index) => (
-                  <Avatar
-                    key={index}
-                    alt={owner.name}
-                    src={owner.avatar ? owner.avatar : null}
-                    sx={{ width: 60, height: 60 }}
-                  >
-                    {owner.name.charAt(0)}
-                  </Avatar>
+                  <Tooltip title={owner.name}>
+                    <Avatar
+                      key={index}
+                      alt={owner.name}
+                      src={owner.avatar ? owner.avatar : null}
+                      sx={{ width: 60, height: 60 }}
+                    >
+                      {owner.name.charAt(0)}
+                    </Avatar>
+                  </Tooltip>
                 ))}
             </AvatarGroup>
           </Box>
@@ -211,63 +206,63 @@ const GroupProfile = () => {
     );
   };
 
-  const copyText = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopySuccess(true);
-  };
+  // const copyText = (text) => {
+  //   navigator.clipboard.writeText(text);
+  //   setCopySuccess(true);
+  // };
 
-  const renderAddMemberPanel = () => {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        flexDirection="column"
-        alignItems={{ xs: 'center', lg: 'flex-start' }}
-      >
-        <Typography component="div" variant="h3">
-          Add Users To This Group By Sending Them Your Group Link
-        </Typography>
-        <Typography component="div" variant="subtitle1" sx={{ mt: '2em' }}>
-          Your Group Link is:{' '}
-        </Typography>
-        <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
-          <Typography
-            component="div"
-            variant="subtitle1"
-            sx={{
-              border: '1px black solid',
-              borderRadius: '2px',
-              pl: '1em',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            {groupLink}
-            <Tooltip title="Copy">
-              <IconButton aria-label="copy" onClick={() => copyText(groupLink)}>
-                <ContentCopy
-                  sx={{
-                    alignSelf: 'center',
-                    ':hover': { cursor: 'pointer', opacity: '0.5' },
-                  }}
-                />
-              </IconButton>
-            </Tooltip>
-          </Typography>
-          {copySuccess && (
-            <Alert
-              severity="success"
-              onClose={() => setCopySuccess(false)}
-              sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
-            >
-              Link Copied!
-            </Alert>
-          )}
-        </Box>
-      </Box>
-    );
-  };
+  // const renderAddMemberPanel = () => {
+  //   return (
+  //     <Box
+  //       display="flex"
+  //       justifyContent="center"
+  //       flexDirection="column"
+  //       alignItems={{ xs: 'center', lg: 'flex-start' }}
+  //     >
+  //       <Typography component="div" variant="h3">
+  //         Add Users To This Group By Sending Them Your Group Link
+  //       </Typography>
+  //       <Typography component="div" variant="subtitle1" sx={{ mt: '2em' }}>
+  //         Your Group Link is:{' '}
+  //       </Typography>
+  //       <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
+  //         <Typography
+  //           component="div"
+  //           variant="subtitle1"
+  //           sx={{
+  //             border: '1px black solid',
+  //             borderRadius: '2px',
+  //             pl: '1em',
+  //             display: 'flex',
+  //             justifyContent: 'space-between',
+  //             alignItems: 'center',
+  //           }}
+  //         >
+  //           {groupLink}
+  //           <Tooltip title="Copy">
+  //             <IconButton aria-label="copy" onClick={() => copyText(groupLink)}>
+  //               <ContentCopy
+  //                 sx={{
+  //                   alignSelf: 'center',
+  //                   ':hover': { cursor: 'pointer', opacity: '0.5' },
+  //                 }}
+  //               />
+  //             </IconButton>
+  //           </Tooltip>
+  //         </Typography>
+  //         {copySuccess && (
+  //           <Alert
+  //             severity="success"
+  //             onClose={() => setCopySuccess(false)}
+  //             sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
+  //           >
+  //             Link Copied!
+  //           </Alert>
+  //         )}
+  //       </Box>
+  //     </Box>
+  //   );
+  // };
 
   return (
     <ThemeProvider theme={theme}>
@@ -427,7 +422,8 @@ const GroupProfile = () => {
                   width: '100%',
                 }}
               >
-                {renderAddMemberPanel()}
+                {/* {renderAddMemberPanel()} */}
+                <AddMemberPanel groupInfo={groupInfo} />
               </TabPanel>
             </TabContext>
           </Grid>

@@ -181,7 +181,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'myAccount'}
-          onClick={() => navigate('/account-settings')}
+          onClick={() => navigate(`/account-settings/${user.user_id}`)}
         >
           <ListItemIcon>
             <AccountCircle />
@@ -249,7 +249,7 @@ function PageContainer(props) {
             )}
             <Route
               exact
-              path={'/account-settings'}
+              path={'/account-settings/:profileId'}
               element={<AccountSettings user={user} />}
             />
           </Routes>
