@@ -9,6 +9,7 @@ import {
   CardActionArea,
   CardContent,
   Avatar,
+  AvatarGroup,
   Stack,
   IconButton,
   Alert,
@@ -103,7 +104,7 @@ const theme = createTheme({
 });
 
 const GroupProfile = () => {
-  const { groupName, addUserLink } = useParams();
+  const { groupName } = useParams();
   const [selectedTab, setSelectedTab] = useState('0');
   const [groupInfo, setGroupInfo] = useState();
   const [groupMembers, setGroupMembers] = useState();
@@ -116,7 +117,6 @@ const GroupProfile = () => {
   }, []);
 
   const getGroupAndUserInfo = async () => {
-    //get user id of current cognito user
     const [cognitoUser, groupInfoRes] = await Promise.all([
       Auth.currentAuthenticatedUser(),
       API.graphql({
@@ -129,14 +129,6 @@ const GroupProfile = () => {
     const groupId = groupInfoRes.data.getSingleGroupByName.group_id;
     isUserGroupOwner(currentUserId, groupId);
     getGroupMembers(groupId);
-
-    // const res = await API.graphql({
-    //   query: getSingleGroupByName,
-    //   variables: { group_name: groupName },
-    // });
-    // setGroupInfo(res.data.getSingleGroupByName);
-    // const groupId = res.data.getSingleGroupByName.group_id;
-    // getGroupMembers(groupId);
   };
 
   const isUserGroupOwner = async (currentUserId, groupId) => {
@@ -160,10 +152,8 @@ const GroupProfile = () => {
     setGroupMembers(res.data.getAllUsersInGroup);
   };
 
-  //if the url params include the addUserLink, do not create a group link
   const groupLink =
     groupInfo &&
-    !addUserLink &&
     (groupInfo.is_public
       ? window.location.href.concat(
           '/add/',
@@ -185,7 +175,7 @@ const GroupProfile = () => {
   const renderGroupInfoPanel = () => {
     return (
       <Grid container sx={{ pt: '1.5em' }} columnSpacing={12} rowSpacing={4}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={7}>
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             About
           </Typography>
@@ -193,27 +183,28 @@ const GroupProfile = () => {
             {groupInfo.group_description}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={5}>
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             Group Organizers
           </Typography>
-          <Box display="flex" alignItems="center">
-            <Avatar
-              variant="rounded"
-              sx={{
-                width: {
-                  xs: 100,
-                },
-                height: {
-                  xs: 100,
-                },
-              }}
-            >
-              C
-            </Avatar>
-            <Typography component="div" variant="h3" sx={{ ml: '1em' }}>
-              Christy
-            </Typography>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent={{ xs: 'center', lg: 'flex-start' }}
+          >
+            <AvatarGroup max={4}>
+              {groupOwners &&
+                groupOwners.map((owner, index) => (
+                  <Avatar
+                    key={index}
+                    alt={owner.name}
+                    src={owner.avatar ? owner.avatar : null}
+                    sx={{ width: 60, height: 60 }}
+                  >
+                    {owner.name.charAt(0)}
+                  </Avatar>
+                ))}
+            </AvatarGroup>
           </Box>
         </Grid>
       </Grid>
@@ -329,17 +320,6 @@ const GroupProfile = () => {
                 <PeopleAlt />
                 <Typography component="div" variant="subtitle1">
                   Members: {groupMembers && groupMembers.length}
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" gap={1}>
-                <Person />
-                <Typography
-                  component="div"
-                  variant="subtitle1"
-                  sx={{ wordWrap: 'break-word' }}
-                >
-                  Created By:<br></br>
-                  {groupOwners && groupOwners[0].username}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" gap={1}>
