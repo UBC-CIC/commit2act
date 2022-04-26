@@ -84,9 +84,19 @@ export const getUsersTotalCO2 = /* GraphQL */ `
     getUsersTotalCO2(user_id: $user_id)
   }
 `;
+export const getGroupsTotalCO2 = /* GraphQL */ `
+  query GetGroupsTotalCO2($group_id: Int!) {
+    getGroupsTotalCO2(group_id: $group_id)
+  }
+`;
 export const getUsersWeekCO2 = /* GraphQL */ `
   query GetUsersWeekCO2($user_id: Int!) {
     getUsersWeekCO2(user_id: $user_id)
+  }
+`;
+export const getGroupsWeekCO2 = /* GraphQL */ `
+  query GetGroupsWeekCO2($group_id: Int!) {
+    getGroupsWeekCO2(group_id: $group_id)
   }
 `;
 export const getAllUsers = /* GraphQL */ `
@@ -234,6 +244,25 @@ export const getAllMembersInGroup = /* GraphQL */ `
       name
       email
       avatar
+    }
+  }
+`;
+export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
+  query GetAllValidatedSubmittedActionsInGroup($group_id: Int) {
+    getAllValidatedSubmittedActionsInGroup(group_id: $group_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      action_name
     }
   }
 `;
