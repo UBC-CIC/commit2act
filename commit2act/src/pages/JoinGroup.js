@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { API } from 'aws-amplify';
+import { useParams, useNavigate } from 'react-router-dom';
+import { API, Auth } from 'aws-amplify';
 import {
   getSingleGroup,
   getAllMembersInGroup,
   isPrivateGroupPasswordCorrect,
 } from '../graphql/queries';
 import { addGroupMember } from '../graphql/mutations';
-import { Auth } from 'aws-amplify';
 import {
   Alert,
   Dialog,
@@ -19,7 +18,6 @@ import {
   Button,
   CircularProgress,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 
 const StyledDialog = styled(Dialog)`

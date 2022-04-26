@@ -211,6 +211,7 @@ export const getAllUsersInGroup = /* GraphQL */ `
       name
       email
       avatar
+      user_role
     }
   }
 `;

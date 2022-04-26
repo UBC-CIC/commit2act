@@ -24,9 +24,14 @@ import {
 } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { API } from 'aws-amplify';
-import { getSingleGroupByName, getAllMembersInGroup } from '../graphql/queries';
+import { Auth, API } from 'aws-amplify';
+import {
+  getSingleGroupByName,
+  getAllUsersInGroup,
+  getAllOwnersInGroup,
+} from '../graphql/queries';
 import { v4 as uuidv4 } from 'uuid';
+import GroupMemberPanel from '../components/groupProfile/GroupMemberPanel';
 
 const theme = createTheme({
   components: {
@@ -92,28 +97,55 @@ const GroupProfile = () => {
   const [selectedTab, setSelectedTab] = useState('0');
   const [groupInfo, setGroupInfo] = useState();
   const [groupMembers, setGroupMembers] = useState();
+  const [currentUserOwner, setCurrentUserOwner] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
-    getGroupInfo();
+    getGroupAndUserInfo();
   }, []);
 
-  const getGroupInfo = async () => {
-    const res = await API.graphql({
-      query: getSingleGroupByName,
-      variables: { group_name: groupName },
-    });
-    setGroupInfo(res.data.getSingleGroupByName);
-    const groupId = res.data.getSingleGroupByName.group_id;
+  const getGroupAndUserInfo = async () => {
+    //get user id of current cognito user
+    const [cognitoUser, groupInfoRes] = await Promise.all([
+      Auth.currentAuthenticatedUser(),
+      API.graphql({
+        query: getSingleGroupByName,
+        variables: { group_name: groupName },
+      }),
+    ]);
+    const currentUserId = Number(cognitoUser.attributes['custom:id']);
+    setGroupInfo(groupInfoRes.data.getSingleGroupByName);
+    const groupId = groupInfoRes.data.getSingleGroupByName.group_id;
+    isUserGroupOwner(currentUserId, groupId);
     getGroupMembers(groupId);
+
+    // const res = await API.graphql({
+    //   query: getSingleGroupByName,
+    //   variables: { group_name: groupName },
+    // });
+    // setGroupInfo(res.data.getSingleGroupByName);
+    // const groupId = res.data.getSingleGroupByName.group_id;
+    // getGroupMembers(groupId);
+  };
+
+  const isUserGroupOwner = async (currentUserId, groupId) => {
+    const ownerRes = await API.graphql({
+      query: getAllOwnersInGroup,
+      variables: { group_id: groupId },
+    });
+    const owners = ownerRes.data.getAllOwnersInGroup;
+    const ownerIds = owners.map((owner) => owner.user_id);
+    if (ownerIds.includes(currentUserId)) {
+      setCurrentUserOwner(true);
+    }
   };
 
   const getGroupMembers = async (groupId) => {
     const res = await API.graphql({
-      query: getAllMembersInGroup,
+      query: getAllUsersInGroup,
       variables: { group_id: groupId },
     });
-    setGroupMembers(res.data.getAllMembersInGroup);
+    setGroupMembers(res.data.getAllUsersInGroup);
   };
 
   //if the url params include the addUserLink, do not create a group link
@@ -134,7 +166,7 @@ const GroupProfile = () => {
           groupInfo.group_id ** 2
         ));
 
-  const handleTabChange = (e, newValue) => {
+  const handleTabChange = (newValue) => {
     setSelectedTab(newValue);
   };
 
@@ -176,64 +208,12 @@ const GroupProfile = () => {
     );
   };
 
-  const renderGroupMemberPanel = () => {
-    if (groupMembers) {
-      return (
-        <Grid
-          item
-          container
-          columnSpacing={{ xs: 0, md: 1 }}
-          sx={{
-            width: '100%',
-            height: '50vh',
-            backgroundColor: '#DBE2EF',
-            borderRadius: '8px',
-            padding: '1.5em',
-            mt: '2em',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            overflow: 'auto',
-          }}
-        >
-          {groupMembers.map((member, index) => (
-            <Grid
-              container
-              item
-              xs={6}
-              sm={4}
-              md={2}
-              sx={{ justifyContent: 'center' }}
-            >
-              <Avatar
-                key={index}
-                variant="rounded"
-                sx={{
-                  width: {
-                    xs: 100,
-                  },
-                  height: {
-                    xs: 100,
-                  },
-                  mb: { xs: '1.5em' },
-                }}
-                src={member.avatar ? member.avatar : null}
-              >
-                {member.name.charAt(0)}
-              </Avatar>
-            </Grid>
-          ))}
-        </Grid>
-      );
-    }
-  };
-
   const copyText = (text) => {
     navigator.clipboard.writeText(text);
     setCopySuccess(true);
   };
 
   const renderAddMemberPanel = () => {
-    //add check to only show this panel if user is owner
     return (
       <Box
         display="flex"
@@ -423,7 +403,7 @@ const GroupProfile = () => {
                   <Tab label="Group Info" value="0" />
                   <Tab label="Member Actions" value="1" />
                   <Tab label="Group Members" value="2" />
-                  <Tab label="Add Members" value="3" />
+                  {currentUserOwner && <Tab label="Add Members" value="3" />}
                 </TabList>
               </Box>
               <TabPanel value="0">{renderGroupInfoPanel()}</TabPanel>
@@ -435,17 +415,24 @@ const GroupProfile = () => {
                   width: '100%',
                 }}
               >
-                {renderGroupMemberPanel()}
+                <GroupMemberPanel
+                  groupMembers={groupMembers}
+                  setGroupMembers={setGroupMembers}
+                  groupInfo={groupInfo}
+                />
               </TabPanel>
-              <TabPanel
-                value="3"
-                sx={{
-                  padding: { xs: '1.5em 0' },
-                  width: '100%',
-                }}
-              >
-                {renderAddMemberPanel()}
-              </TabPanel>
+              {/* only display addMemberPanel tab if current user is a group owner */}
+              {currentUserOwner && (
+                <TabPanel
+                  value="3"
+                  sx={{
+                    padding: { xs: '1.5em 0' },
+                    width: '100%',
+                  }}
+                >
+                  {renderAddMemberPanel()}
+                </TabPanel>
+              )}
             </TabContext>
           </Grid>
         </Grid>
