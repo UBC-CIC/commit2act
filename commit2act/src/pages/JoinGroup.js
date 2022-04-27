@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { API, Auth } from 'aws-amplify';
 import {
   getSingleGroup,
-  getAllMembersInGroup,
+  getAllUsersInGroup,
   isPrivateGroupPasswordCorrect,
 } from '../graphql/queries';
 import { addGroupMember } from '../graphql/mutations';
@@ -59,13 +59,13 @@ const JoinGroup = () => {
           variables: { group_id: groupId },
         }),
         await API.graphql({
-          query: getAllMembersInGroup,
+          query: getAllUsersInGroup,
           variables: { group_id: groupId },
         }),
       ]);
       const groupInfo = groupInfoRes.data.getSingleGroup;
       setGroup(groupInfo);
-      const groupMemberData = groupMemberRes.data.getAllMembersInGroup;
+      const groupMemberData = groupMemberRes.data.getAllUsersInGroup;
       const groupMemberIds = groupMemberData.map((member) => member.user_id);
       if (groupMemberIds.includes(userId)) {
         setAlreadyInGroup(true);
