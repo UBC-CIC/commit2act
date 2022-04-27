@@ -4,7 +4,10 @@ import { ContentCopy } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
 const AddMemberPanel = ({ groupInfo }) => {
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [copySuccess, setCopySuccess] = useState({
+    link: false,
+    password: false,
+  });
 
   const groupLink =
     groupInfo &&
@@ -14,9 +17,14 @@ const AddMemberPanel = ({ groupInfo }) => {
       '-',
       groupInfo.group_id ** 2
     );
+
   const copyText = (text) => {
     navigator.clipboard.writeText(text);
-    setCopySuccess(true);
+    if (text === groupLink) {
+      setCopySuccess((prev) => ({ ...prev, link: true }));
+    } else {
+      setCopySuccess((prev) => ({ ...prev, password: true }));
+    }
   };
 
   return (
@@ -27,9 +35,10 @@ const AddMemberPanel = ({ groupInfo }) => {
       alignItems={{ xs: 'center', lg: 'flex-start' }}
     >
       <Typography component="div" variant="h3">
-        Add Users To This Group By Sending Them Your Group Link
+        Add Users To This Group By Sending Them Your Group Link{' '}
+        {!groupInfo.is_public && 'And Password'}
       </Typography>
-      <Typography component="div" variant="subtitle1" sx={{ mt: '2em' }}>
+      <Typography component="div" variant="subtitle1" sx={{ m: '2em 0 1em 0' }}>
         Your Group Link is:{' '}
       </Typography>
       <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
@@ -46,8 +55,11 @@ const AddMemberPanel = ({ groupInfo }) => {
           }}
         >
           {groupLink}
-          <Tooltip title="Copy">
-            <IconButton aria-label="copy" onClick={() => copyText(groupLink)}>
+          <Tooltip title="Copy Link">
+            <IconButton
+              aria-label="copy link"
+              onClick={() => copyText(groupLink)}
+            >
               <ContentCopy
                 sx={{
                   alignSelf: 'center',
@@ -57,16 +69,70 @@ const AddMemberPanel = ({ groupInfo }) => {
             </IconButton>
           </Tooltip>
         </Typography>
-        {copySuccess && (
+        {copySuccess.link && (
           <Alert
             severity="success"
-            onClose={() => setCopySuccess(false)}
+            onClose={() => setCopySuccess((prev) => ({ ...prev, link: false }))}
             sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
           >
             Link Copied!
           </Alert>
         )}
       </Box>
+      {!groupInfo.is_public && (
+        <>
+          <Typography
+            component="div"
+            variant="subtitle1"
+            sx={{ m: '2em 0 1em 0' }}
+          >
+            Your Group Password is:{' '}
+          </Typography>
+          <Box
+            display="flex"
+            sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+          >
+            <Typography
+              component="div"
+              variant="subtitle1"
+              sx={{
+                border: '1px black solid',
+                borderRadius: '2px',
+                pl: '1em',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              {groupInfo.private_password}
+              <Tooltip title="Copy Password">
+                <IconButton
+                  aria-label="copy password"
+                  onClick={() => copyText(groupInfo.private_password)}
+                >
+                  <ContentCopy
+                    sx={{
+                      alignSelf: 'center',
+                      ':hover': { cursor: 'pointer', opacity: '0.5' },
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            </Typography>
+            {copySuccess.password && (
+              <Alert
+                severity="success"
+                onClose={() =>
+                  setCopySuccess((prev) => ({ ...prev, password: false }))
+                }
+                sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
+              >
+                Password Copied!
+              </Alert>
+            )}
+          </Box>
+        </>
+      )}
     </Box>
   );
 };
