@@ -26,6 +26,8 @@ import {
   getSingleGroupByName,
   getAllUsersInGroup,
   getAllOwnersInGroup,
+  getGroupsTotalCO2,
+  getGroupsWeekCO2,
 } from '../graphql/queries';
 import GroupMemberPanel from '../components/groupProfile/GroupMemberPanel';
 import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
@@ -107,6 +109,10 @@ const GroupProfile = () => {
   const [groupMembers, setGroupMembers] = useState();
   const [groupOwners, setGroupOwners] = useState();
   const [currentUserOwner, setCurrentUserOwner] = useState(false);
+  const [progressStats, setProgressStats] = useState({
+    totalCO2: '',
+    weekCO2: '',
+  });
 
   useEffect(() => {
     getGroupAndUserInfo();
@@ -125,9 +131,10 @@ const GroupProfile = () => {
     setGroupInfo(groupInfoRes.data.getSingleGroupByName);
     const groupId = groupInfoRes.data.getSingleGroupByName.group_id;
     isUserGroupOwner(currentUserId, groupId);
-    getGroupMembers(groupId);
+    getGroupStats(groupId);
   };
 
+  //gets array of all group owners and checks if the current user is a owner
   const isUserGroupOwner = async (currentUserId, groupId) => {
     const ownerRes = await API.graphql({
       query: getAllOwnersInGroup,
@@ -141,12 +148,28 @@ const GroupProfile = () => {
     }
   };
 
-  const getGroupMembers = async (groupId) => {
-    const res = await API.graphql({
-      query: getAllUsersInGroup,
-      variables: { group_id: groupId },
-    });
-    setGroupMembers(res.data.getAllUsersInGroup);
+  //gets list of all users and group stats
+  const getGroupStats = async (groupId) => {
+    const [memberRes, totalCO2Res, weeklyCO2Res] = await Promise.all([
+      API.graphql({
+        query: getAllUsersInGroup,
+        variables: { group_id: groupId },
+      }),
+      API.graphql({
+        query: getGroupsTotalCO2,
+        variables: { group_id: groupId },
+      }),
+      API.graphql({
+        query: getGroupsWeekCO2,
+        variables: { group_id: groupId },
+      }),
+    ]);
+    setGroupMembers(memberRes.data.getAllUsersInGroup);
+    setProgressStats((prev) => ({
+      ...prev,
+      totalCO2: totalCO2Res.data.getGroupsTotalCO2,
+      weekCO2: weeklyCO2Res.data.getGroupsWeekCO2,
+    }));
   };
 
   const handleTabChange = (e, newValue) => {
@@ -277,7 +300,7 @@ const GroupProfile = () => {
                     <CardContent>
                       <Typography variant="h5">
                         <AutoGraphOutlined fontSize="large" />
-                        800g
+                        {progressStats.weekCO2}g
                       </Typography>
                     </CardContent>
                   </CardActionArea>
@@ -288,7 +311,9 @@ const GroupProfile = () => {
                   <CardActionArea sx={{ textAlign: 'center' }}>
                     <Typography variant="h4">Total CO2 Saved</Typography>
                     <CardContent>
-                      <Typography variant="h5">1600g</Typography>
+                      <Typography variant="h5">
+                        {progressStats.totalCO2}g
+                      </Typography>
                     </CardContent>
                   </CardActionArea>
                 </Card>

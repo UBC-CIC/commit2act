@@ -83,9 +83,9 @@ const theme = createTheme({
 const Landing = ({ user }) => {
   const navigate = useNavigate();
   const [progressStats, setProgressStats] = useState({
-    globalCo2: '',
-    totalCo2: '',
-    weeklyCo2: '',
+    globalCO2: '',
+    totalCO2: '',
+    weekCO2: '',
   });
   const [userGroups, setUserGroups] = useState([]);
 
@@ -117,9 +117,9 @@ const Landing = ({ user }) => {
     ]);
     setProgressStats((prev) => ({
       ...prev,
-      globalCo2: globalCo2Res.data.getTotalGlobalCO2,
-      totalCo2: totalCo2Res.data.getUsersTotalCO2,
-      weeklyCo2: weeklyCo2Res.data.getUsersWeekCO2,
+      globalCO2: globalCo2Res.data.getTotalGlobalCO2,
+      totalCO2: totalCo2Res.data.getUsersTotalCO2,
+      weekCO2: weeklyCo2Res.data.getUsersWeekCO2,
     }));
   };
 
@@ -172,7 +172,7 @@ const Landing = ({ user }) => {
                   <CardContent>
                     <Typography variant="h5">
                       <AutoGraphOutlined fontSize="large" />
-                      {progressStats.weeklyCo2}g
+                      {progressStats.weekCO2}g
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -184,7 +184,7 @@ const Landing = ({ user }) => {
                   <Typography variant="h4">Total CO2 Saved</Typography>
                   <CardContent>
                     <Typography variant="h5">
-                      {progressStats.totalCo2}g
+                      {progressStats.totalCO2}g
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -196,7 +196,7 @@ const Landing = ({ user }) => {
                   <Typography variant="h4">Collective Impact</Typography>
                   <CardContent>
                     <Typography variant="h5">
-                      {progressStats.globalCo2}g
+                      {progressStats.globalCO2}g
                     </Typography>
                   </CardContent>
                 </CardActionArea>
