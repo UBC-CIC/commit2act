@@ -1,73 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
 import { getAllSubmittedActionsForUser } from '../graphql/queries';
 import { useParams } from 'react-router-dom';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h1',
-          },
-          style: {
-            fontSize: 40,
-            color: 'black',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 500,
-            marginRight: '1em',
-          },
-        },
-        {
-          props: {
-            variant: 'h4',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 100,
-            marginBottom: '0.5em',
-          },
-        },
-        {
-          props: {
-            variant: 'h5',
-          },
-          style: {
-            fontSize: 50,
-            color: 'black',
-            fontWeight: 400,
-          },
-        },
-      ],
-    },
-  },
-});
 
 const Input = styled('input')`
   display: none;
@@ -145,7 +83,7 @@ const AccountSettings = ({ user }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       {user && (
         <>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
@@ -229,20 +167,32 @@ const AccountSettings = ({ user }) => {
                 }}
               >
                 <Box>
-                  <Typography variant="h4">
-                    <Typography variant="h3" component="span">
+                  <Typography variant="h7" component="div">
+                    <Typography
+                      variant="h3"
+                      component="span"
+                      sx={{ mr: '1em' }}
+                    >
                       Name:
                     </Typography>
                     {user.name}
                   </Typography>
-                  <Typography variant="h4">
-                    <Typography variant="h3" component="span">
+                  <Typography variant="h7" component="div">
+                    <Typography
+                      variant="h3"
+                      component="span"
+                      sx={{ mr: '1em' }}
+                    >
                       Username:
                     </Typography>
                     {user.username}
                   </Typography>
-                  <Typography variant="h4">
-                    <Typography variant="h3" component="span">
+                  <Typography variant="h7" component="div">
+                    <Typography
+                      variant="h3"
+                      component="span"
+                      sx={{ mr: '1em' }}
+                    >
                       Email:
                     </Typography>
                     {user.email}
@@ -272,7 +222,7 @@ const AccountSettings = ({ user }) => {
           </Box>
         </>
       )}
-    </ThemeProvider>
+    </>
   );
 };
 

@@ -13,7 +13,6 @@ import {
   LinearProgress,
   Chip,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { Storage, API } from 'aws-amplify';
@@ -23,79 +22,17 @@ import {
   createActionValidationLabels,
 } from '../graphql/mutations';
 
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h1',
-          },
-          style: {
-            fontSize: 40,
-            color: '#112D4E',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 400,
-            margin: '1.5em 0',
-          },
-        },
-        {
-          props: {
-            variant: 'h4',
-          },
-          style: {
-            fontSize: 18,
-            color: '#112D4E',
-            fontWeight: 400,
-            margin: '1em 1em 0 0',
-          },
-        },
-        {
-          props: {
-            variant: 'h5',
-          },
-          style: {
-            fontSize: 18,
-            color: 'black',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'subtitle1',
-          },
-          style: {
-            fontSize: '0.75rem',
-            color: 'black',
-            fontWeight: 400,
-          },
-        },
-      ],
-    },
-  },
-});
-
 const Input = styled('input')`
   display: none;
+`;
+
+const SectionTitle = styled(Typography)`
+  margin: 1.5em 0;
+`;
+
+const ActionItemCategory = styled(Typography)`
+  margin: 1em 1em 0 0;
+  font-weight: 500;
 `;
 
 const CreateAction = () => {
@@ -362,22 +299,22 @@ const CreateAction = () => {
         }}
       >
         <Box>
-          <Typography variant="h5">
-            <Typography variant="h4" component="span">
+          <Typography variant="h8" component="div">
+            <ActionItemCategory variant="h8" component="span">
               Item Name:
-            </Typography>
+            </ActionItemCategory>
             {item.item_name}
           </Typography>
-          <Typography variant="h5">
-            <Typography variant="h4" component="span">
+          <Typography variant="h8" component="div">
+            <ActionItemCategory variant="h8" component="span">
               Item Description:
-            </Typography>
+            </ActionItemCategory>
             {item.item_description}
           </Typography>
-          <Typography variant="h5">
-            <Typography variant="h4" component="span">
+          <Typography variant="h8" component="div">
+            <ActionItemCategory variant="h8" component="span">
               CO2 Per Unit Saved:
-            </Typography>
+            </ActionItemCategory>
             {item.co2_saved_per_unit}
           </Typography>
         </Box>
@@ -401,7 +338,7 @@ const CreateAction = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
         <Typography variant="h1" sx={{ my: { xs: '1.5em' } }}>
           Create New Action Type
@@ -425,7 +362,7 @@ const CreateAction = () => {
             direction={{ xs: 'column', md: 'row' }}
           >
             <Grid item xs={6}>
-              <Typography variant="h3">Action Name</Typography>
+              <SectionTitle variant="h3">Action Name</SectionTitle>
               <TextField
                 required
                 label="Action Name"
@@ -443,7 +380,7 @@ const CreateAction = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="h3">Action Icon</Typography>
+              <SectionTitle variant="h3">Action Icon</SectionTitle>
               <Box
                 component="div"
                 display="flex"
@@ -488,7 +425,7 @@ const CreateAction = () => {
               </Box>
             </Grid>
           </Grid>
-          <Typography variant="h3">Action Items</Typography>
+          <SectionTitle variant="h3">Action Items</SectionTitle>
           <Typography
             variant="subtitle1"
             component="span"
@@ -556,7 +493,7 @@ const CreateAction = () => {
             </Button>
           </FormGroup>
           {renderAddedActionItems()}
-          <Typography variant="h3">Fallback Text</Typography>
+          <SectionTitle variant="h3">Fallback Text</SectionTitle>
           <TextField
             label="Text"
             name="fallback_quiz_media"
@@ -564,7 +501,7 @@ const CreateAction = () => {
             value={createActionForm.fallback_quiz_media}
             onChange={updateForm}
           />
-          <Typography variant="h3">Image Validation Labels</Typography>
+          <SectionTitle variant="h3">Image Validation Labels</SectionTitle>
           {createActionForm.labels.length !== 0 && (
             <Box
               sx={{
@@ -639,7 +576,7 @@ const CreateAction = () => {
           </Alert>
         </Snackbar>
       </Grid>
-    </ThemeProvider>
+    </>
   );
 };
 

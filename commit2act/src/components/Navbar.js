@@ -190,7 +190,7 @@ function Navbar(props) {
           <img
             className={classes.logo}
             style={{ width: '270px', height: '30px' }}
-            src={process.env.PUBLIC_URL + './assets/images/logo_inverse.png'}
+            src="../assets/images/logo_inverse.png"
             alt="..."
           />
           <div className={classes.grow} />

@@ -19,7 +19,6 @@ import {
   Public,
   Lock,
 } from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { Auth, API } from 'aws-amplify';
 import {
@@ -32,75 +31,6 @@ import {
 import GroupMemberPanel from '../components/groupProfile/GroupMemberPanel';
 import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
 import MemberActionsPanel from '../components/groupProfile/MemberActionsPanel';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h1',
-          },
-          style: {
-            fontSize: 40,
-            color: '#112D4E',
-            fontWeight: 'bold',
-          },
-        },
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 500,
-          },
-        },
-        {
-          props: {
-            variant: 'h4',
-          },
-          style: {
-            fontSize: 25,
-            color: 'black',
-            fontWeight: 100,
-          },
-        },
-        {
-          props: {
-            variant: 'h5',
-          },
-          style: {
-            fontSize: 50,
-            color: 'black',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'subtitle1',
-          },
-          style: {
-            fontSize: 17,
-            color: 'black',
-            fontWeight: 300,
-          },
-        },
-      ],
-    },
-  },
-});
 
 const GroupProfile = () => {
   const { groupName } = useParams();
@@ -183,7 +113,7 @@ const GroupProfile = () => {
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             About
           </Typography>
-          <Typography component="div" variant="subtitle1">
+          <Typography component="div" variant="subtitle2">
             {groupInfo.group_description}
           </Typography>
         </Grid>
@@ -218,7 +148,7 @@ const GroupProfile = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       {groupInfo && (
         <Grid
           container
@@ -266,13 +196,13 @@ const GroupProfile = () => {
               </Typography>
               <Stack direction="row" alignItems="center" gap={1}>
                 <PeopleAlt />
-                <Typography component="div" variant="subtitle1">
+                <Typography component="div" variant="subtitle2">
                   Members: {groupMembers && groupMembers.length}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" gap={1}>
                 {groupInfo.is_public ? <Public /> : <Lock />}
-                <Typography component="div" variant="subtitle1">
+                <Typography component="div" variant="subtitle2">
                   {groupInfo.is_public ? 'Public' : 'Private'}
                 </Typography>
               </Stack>
@@ -391,7 +321,7 @@ const GroupProfile = () => {
           </Grid>
         </Grid>
       )}
-    </ThemeProvider>
+    </>
   );
 };
 

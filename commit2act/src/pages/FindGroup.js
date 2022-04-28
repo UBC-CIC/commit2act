@@ -1,7 +1,87 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, TextField, IconButton } from '@mui/material';
+import { Search } from '@mui/icons-material';
+import { getAllGroups } from '../graphql/queries';
+import { API } from 'aws-amplify';
+import GroupCard from '../components/GroupCard';
 
 const FindGroup = () => {
-  return <div>This is the find group page</div>;
+  const [groups, setGroups] = useState();
+  const [input, setInput] = useState('');
+  const [filteredGroups, setFilteredGroups] = useState();
+  const [error, setError] = useState();
+
+  const getGroups = async () => {
+    const res = await API.graphql({
+      query: getAllGroups,
+    });
+    setGroups(res.data.getAllGroups);
+  };
+
+  useEffect(() => {
+    getGroups();
+  }, []);
+
+  useEffect(() => {
+    renderFilteredGroups();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input]);
+
+  const renderFilteredGroups = () => {
+    if (groups) {
+      if (input === '') {
+        setError(false);
+        setFilteredGroups([]);
+      } else {
+        const filtered = groups.filter((group) => {
+          return (
+            group.is_public &&
+            group.group_name.toLowerCase().includes(input.toLowerCase())
+          );
+        });
+        setFilteredGroups(filtered);
+      }
+    }
+  };
+
+  const checkGroup = () => {
+    if (!filteredGroups || !filteredGroups.length) {
+      setError(true);
+    }
+  };
+
+  return (
+    <Box sx={{ textAlign: { xs: 'center' } }}>
+      <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+        Search For A Group
+      </Typography>
+      <TextField
+        id="outlined-basic"
+        variant="outlined"
+        fullWidth
+        label="Search"
+        value={input}
+        sx={{ my: '2em' }}
+        onChange={(e) => setInput(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <IconButton onClick={checkGroup}>
+              <Search />
+            </IconButton>
+          ),
+        }}
+      />
+      {filteredGroups &&
+        filteredGroups.map((group, index) => (
+          <GroupCard key={index} group={group} />
+        ))}
+      {error && (
+        <Typography variant="subtitle2">
+          Your search for "{input}" did not match any public groups
+        </Typography>
+      )}
+    </Box>
+  );
 };
 
 export default FindGroup;

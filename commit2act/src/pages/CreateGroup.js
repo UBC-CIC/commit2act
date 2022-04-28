@@ -15,85 +15,17 @@ import {
   InputAdornment,
   IconButton,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { Storage, API } from 'aws-amplify';
 import { createGroupAndOwner } from '../graphql/mutations';
 
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h1',
-          },
-          style: {
-            fontSize: 40,
-            color: '#112D4E',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 400,
-            margin: '1.5em 0',
-          },
-        },
-        {
-          props: {
-            variant: 'h4',
-          },
-          style: {
-            fontSize: 18,
-            color: '#112D4E',
-            fontWeight: 400,
-            margin: '1em 1em 0 0',
-          },
-        },
-        {
-          props: {
-            variant: 'h5',
-          },
-          style: {
-            fontSize: 18,
-            color: 'black',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'subtitle1',
-          },
-          style: {
-            fontSize: '0.75rem',
-            color: 'black',
-            fontWeight: 400,
-          },
-        },
-      ],
-    },
-  },
-});
-
 const Input = styled('input')`
   display: none;
+`;
+
+const SectionTitle = styled(Typography)`
+  margin: 1.5em 0;
 `;
 
 const CreateGroup = ({ user }) => {
@@ -212,7 +144,7 @@ const CreateGroup = ({ user }) => {
   }, [createGroupSuccess]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
         <Typography variant="h1" sx={{ my: { xs: '1.5em' } }}>
           Create New Group
@@ -237,7 +169,7 @@ const CreateGroup = ({ user }) => {
             sx={{ pl: { xs: '0em', md: '4em' } }}
           >
             <Grid item xs={6}>
-              <Typography variant="h3">Group Name</Typography>
+              <SectionTitle variant="h3">Group Name</SectionTitle>
               <TextField
                 required
                 label="Group Name"
@@ -255,7 +187,7 @@ const CreateGroup = ({ user }) => {
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="h3">Group Icon</Typography>
+              <SectionTitle variant="h3">Group Icon</SectionTitle>
               <Box
                 component="div"
                 display="flex"
@@ -300,7 +232,7 @@ const CreateGroup = ({ user }) => {
               </Box>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="h3">Group Description</Typography>
+              <SectionTitle variant="h3">Group Description</SectionTitle>
               <TextField
                 multiline
                 rows={4}
@@ -313,7 +245,7 @@ const CreateGroup = ({ user }) => {
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="h3">Group Privacy</Typography>
+              <SectionTitle variant="h3">Group Privacy</SectionTitle>
               <RadioGroup
                 aria-labelledby="group-privacy-label"
                 defaultValue={createGroupForm.is_public}
@@ -413,7 +345,7 @@ const CreateGroup = ({ user }) => {
           </Alert>
         </Snackbar>
       </Grid>
-    </ThemeProvider>
+    </>
   );
 };
 

@@ -17,7 +17,6 @@ import ImageListItem, {
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format, parseISO } from 'date-fns';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getAllActions } from '../../graphql/queries';
 import { styled } from '@mui/material/styles';
@@ -26,35 +25,6 @@ import ActionPanel from './ActionPanel';
 import ImageValidationPanel from './ImageValidationPanel';
 import BonusPointQuiz from './BonusPointQuiz';
 import Co2SavedScreen from './Co2SavedScreen';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h1',
-          },
-          style: {
-            fontSize: 40,
-            color: 'black',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 25,
-            color: 'black',
-            fontWeight: 300,
-          },
-        },
-      ],
-    },
-  },
-});
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -285,69 +255,67 @@ const SelfReportMenu = ({ user }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      textAlign="center"
+      flexDirection="column"
+    >
+      <Typography variant="h1" sx={{ py: 5 }}>
+        Log New Action
+      </Typography>
       <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        textAlign="center"
-        flexDirection="column"
+        item
+        sx={{
+          backgroundColor: '#e8f4f8',
+          width: { xs: '100%', md: '85%' },
+          padding: '2em 2em 5em',
+          borderRadius: '7px',
+        }}
       >
-        <Typography variant="h1" sx={{ py: 5 }}>
-          Log New Action
-        </Typography>
-        <Grid
-          item
-          sx={{
-            backgroundColor: '#e8f4f8',
-            width: { xs: '100%', md: '85%' },
-            padding: '2em 2em 5em',
-            borderRadius: '7px',
-          }}
+        {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
+        <Stepper
+          activeStep={activeStep}
+          sx={{ mb: '2em', display: { xs: 'none', md: 'flex' } }}
         >
-          {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
-          <Stepper
-            activeStep={activeStep}
-            sx={{ mb: '2em', display: { xs: 'none', md: 'flex' } }}
-          >
-            {steps.map((step, index) => (
-              <Step key={index}>
-                <StepLabel>{step}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <MobileStepper
-            variant="dots"
-            steps={7}
-            position="static"
-            activeStep={activeStep}
-            sx={{
-              display: { xs: 'flex', md: 'none' },
-              justifyContent: 'center',
-              background: 'none',
+          {steps.map((step, index) => (
+            <Step key={index}>
+              <StepLabel>{step}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <MobileStepper
+          variant="dots"
+          steps={7}
+          position="static"
+          activeStep={activeStep}
+          sx={{
+            display: { xs: 'flex', md: 'none' },
+            justifyContent: 'center',
+            background: 'none',
+          }}
+        />{' '}
+        <Typography
+          variant="h2"
+          sx={{ m: { xs: '2em 0 2em 0', md: '3.5em 0 3em 0' } }}
+        >
+          {steps[activeStep]}
+        </Typography>
+        {renderFormStep()}
+        {![0, 4, 5, 6].includes(activeStep) && (
+          <Button
+            onClick={() => {
+              setActiveStep(activeStep + 1);
             }}
-          />{' '}
-          <Typography
-            variant="h2"
-            sx={{ m: { xs: '2em 0 2em 0', md: '3.5em 0 3em 0' } }}
+            variant="contained"
+            sx={{ mt: '5em', width: '80%' }}
           >
-            {steps[activeStep]}
-          </Typography>
-          {renderFormStep()}
-          {![0, 4, 5, 6].includes(activeStep) && (
-            <Button
-              onClick={() => {
-                setActiveStep(activeStep + 1);
-              }}
-              variant="contained"
-              sx={{ mt: '5em', width: '80%' }}
-            >
-              Next
-            </Button>
-          )}
-        </Grid>
+            Next
+          </Button>
+        )}
       </Grid>
-    </ThemeProvider>
+    </Grid>
   );
 };
 
