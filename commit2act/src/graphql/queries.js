@@ -37,6 +37,7 @@ export const getSingleSubmittedAction = /* GraphQL */ `
       quiz_answered
       is_validated
       points_earned
+      submitted_image
     }
   }
 `;
@@ -54,6 +55,7 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
       quiz_answered
       is_validated
       points_earned
+      submitted_image
       submitted_action_items {
         item_name
         sa_id
@@ -136,6 +138,7 @@ export const getAllSubmittedActions = /* GraphQL */ `
       quiz_answered
       is_validated
       points_earned
+      submitted_image
     }
   }
 `;
@@ -175,6 +178,7 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
       points_earned
       submitted_action_items
       action_name
+      submitted_image
     }
   }
 `;
@@ -264,6 +268,7 @@ export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
       points_earned
       submitted_action_items
       action_name
+      submitted_image
     }
   }
 `;

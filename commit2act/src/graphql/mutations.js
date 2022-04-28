@@ -77,6 +77,7 @@ export const createSubmittedAction = /* GraphQL */ `
       quiz_answered
       is_validated
       points_earned
+      submitted_image
     }
   }
 `;

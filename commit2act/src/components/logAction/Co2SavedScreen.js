@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { API, Storage } from 'aws-amplify';
 import {
   createSubmittedAction,
   createSubmittedActionItems,
 } from '../../graphql/mutations';
+import { getSingleSubmittedAction } from '../../graphql/queries';
 
 const Co2SavedScreen = ({
   actionId,
@@ -20,6 +21,10 @@ const Co2SavedScreen = ({
   selectedImage,
   setSelectedImage,
 }) => {
+  const [loading, setLoading] = useState(true);
+  const [actionSubmitting, setActionSubmitting] = useState(true);
+  const [validationSuccess, setValidationSuccess] = useState(false);
+
   useEffect(() => {
     submitAction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,10 +63,28 @@ const Co2SavedScreen = ({
         await Storage.put(imageKey, selectedImage, {
           contentType: imageType,
         });
+        //update state when action and action items have finished submitting
+        setActionSubmitting(false);
       } catch (error) {
         console.log('Error uploading file', error);
       }
     }
+    //set timeout of 8s so that image has time to be transferred by lambda and processed by rekognition
+    setTimeout(() => {
+      checkImageValidation(submittedActionId);
+    }, 8000);
+  };
+
+  const checkImageValidation = async (submittedActionId) => {
+    const res = await API.graphql({
+      query: getSingleSubmittedAction,
+      variables: { sa_id: submittedActionId },
+    });
+    const passedValidation = res.data.getSingleSubmittedAction.is_validated;
+    if (passedValidation) {
+      setValidationSuccess(true);
+    }
+    setLoading(false);
   };
 
   return (
@@ -74,26 +97,55 @@ const Co2SavedScreen = ({
         alignItems: 'center',
       }}
     >
-      <Typography variant="h2">Thank you!</Typography>
-      <Typography variant="h3">
-        You have saved {totalCo2Saved} g of CO2!
-      </Typography>
-      <Typography variant="subtitle1">
-        An admin will now review your entry and your points will be added
-        shortly
-      </Typography>
-      <Button
-        onClick={() => {
-          setActiveStep(0);
-          setSelectedAction(null);
-          setActionItemValues([]);
-          setSelectedImage(null);
-        }}
-        sx={{ mt: '3em', width: '80%' }}
-        variant="contained"
-      >
-        Add Another Action
-      </Button>
+      {/* display while image validation and action submission are occuring */}
+      {loading && (
+        <>
+          <Typography variant="h3">
+            Your action is currently being{' '}
+            {actionSubmitting ? 'submitted' : 'validated'}
+          </Typography>
+          {!actionSubmitting && (
+            <Typography variant="subtitle2">
+              Press skip to view validation results at a later time
+            </Typography>
+          )}
+          <CircularProgress />
+        </>
+      )}
+      {/* display after image validation and action submission have completed */}
+      {!loading && (
+        <>
+          <Typography variant="h2">Thank you!</Typography>
+          {validationSuccess ? (
+            <Typography variant="h3">
+              Your action has been validated
+              <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
+                You have saved {totalCo2Saved} g of CO2
+              </Typography>
+            </Typography>
+          ) : (
+            <Typography variant="h3">
+              Your action is awaiting admin approval
+            </Typography>
+          )}
+        </>
+      )}
+      {/* display Skip if action has finished submitting but not validating
+      display Add Another Action if action submission and validation are complete*/}
+      {((loading && !actionSubmitting) || !loading) && (
+        <Button
+          onClick={() => {
+            setActiveStep(0);
+            setSelectedAction(null);
+            setActionItemValues([]);
+            setSelectedImage(null);
+          }}
+          sx={{ mt: '3em', width: '80%' }}
+          variant="contained"
+        >
+          {!loading ? 'Add Another Action' : 'Skip'}
+        </Button>
+      )}
     </Box>
   );
 };
