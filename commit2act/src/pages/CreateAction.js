@@ -17,7 +17,11 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { Storage, API } from 'aws-amplify';
-import { createActionItems, createAction } from '../graphql/mutations';
+import {
+  createActionItems,
+  createAction,
+  createActionValidationLabels,
+} from '../graphql/mutations';
 
 const theme = createTheme({
   components: {
@@ -306,11 +310,21 @@ const CreateAction = () => {
         },
       });
       const actionId = createActionRes.data.createAction.action_id;
-      //create the corresponding items for the action
-      await API.graphql({
-        query: createActionItems,
-        variables: { action_id: actionId, action_items: actionItems },
-      });
+      //create the corresponding items and labels for the action
+      await Promise.all([
+        API.graphql({
+          query: createActionItems,
+          variables: { action_id: actionId, action_items: actionItems },
+        }),
+        API.graphql({
+          query: createActionValidationLabels,
+          variables: {
+            action_id: actionId,
+            validation_labels: createActionForm.labels,
+          },
+        }),
+      ]);
+
       //clear form and related states
       setCreateActionForm(emptyCreateActionForm);
       setActionItems([]);

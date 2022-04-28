@@ -62,15 +62,15 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
     }
   }
 `;
-export const getSingleActionWithLabels = /* GraphQL */ `
-  query GetSingleActionWithLabels($action_id: Int!) {
-    getSingleActionWithLabels(action_id: $action_id) {
+export const getSingleAction = /* GraphQL */ `
+  query GetSingleAction($action_id: Int!) {
+    getSingleAction(action_id: $action_id) {
       action_id
       action_name
       page_media
       action_icon
       fallback_quiz_media
-      validation_label
+      validation_labels
     }
   }
 `;
@@ -118,6 +118,7 @@ export const getAllActions = /* GraphQL */ `
       page_media
       action_icon
       fallback_quiz_media
+      validation_labels
     }
   }
 `;

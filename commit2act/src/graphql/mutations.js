@@ -146,6 +146,20 @@ export const createActionItems = /* GraphQL */ `
     }
   }
 `;
+export const createActionValidationLabels = /* GraphQL */ `
+  mutation CreateActionValidationLabels(
+    $action_id: Int!
+    $validation_labels: [String!]!
+  ) {
+    createActionValidationLabels(
+      action_id: $action_id
+      validation_labels: $validation_labels
+    ) {
+      action_id
+      validation_label
+    }
+  }
+`;
 export const deleteAction = /* GraphQL */ `
   mutation DeleteAction($action_id: Int!) {
     deleteAction(action_id: $action_id)
