@@ -10,7 +10,6 @@ import {
 import { AutoGraphOutlined } from '@mui/icons-material';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import GroupCard from '../components/GroupCard';
 import { API } from 'aws-amplify';
@@ -20,65 +19,6 @@ import {
   getUsersWeekCO2,
   getAllGroupsForUser,
 } from '../graphql/queries';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h1',
-          },
-          style: {
-            fontSize: 40,
-            color: '#112D4E',
-            fontWeight: 300,
-          },
-        },
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 500,
-          },
-        },
-        {
-          props: {
-            variant: 'h4',
-          },
-          style: {
-            fontSize: 25,
-            color: 'black',
-            fontWeight: 100,
-          },
-        },
-        {
-          props: {
-            variant: 'h5',
-          },
-          style: {
-            fontSize: 'calc(2vw + 2vh)',
-            color: 'black',
-            fontWeight: 400,
-          },
-        },
-      ],
-    },
-  },
-});
 
 const Landing = ({ user }) => {
   const navigate = useNavigate();
@@ -141,7 +81,7 @@ const Landing = ({ user }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       {user && (
         <>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
@@ -227,7 +167,7 @@ const Landing = ({ user }) => {
           {renderGroupCards()}
         </>
       )}
-    </ThemeProvider>
+    </>
   );
 };
 

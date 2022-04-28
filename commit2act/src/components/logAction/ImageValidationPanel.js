@@ -1,47 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Alert, Button } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloudUpload, Delete } from '@mui/icons-material';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 22,
-            color: 'black',
-            fontWeight: 200,
-          },
-        },
-        {
-          props: {
-            variant: 'subtitle1',
-          },
-          style: {
-            fontSize: 16,
-            color: 'black',
-            fontWeight: 100,
-          },
-        },
-      ],
-    },
-  },
-});
 
 const Dropbox = styled('div')`
   display: flex;
@@ -141,101 +101,99 @@ const ImageValidationPanel = ({
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           flexDirection: 'column',
+          gap: '20px',
           alignItems: 'center',
+          backgroundColor: 'white',
+          padding: '3em',
+          width: '65%',
+          borderRadius: '5px',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            gap: '20px',
-            alignItems: 'center',
-            backgroundColor: 'white',
-            padding: '3em',
-            width: '65%',
-            borderRadius: '5px',
-          }}
-        >
-          <Typography component="div" variant="subtitle1" sx={{ my: '0.5em' }}>
-            Please upload an image related to your action item for verification
-          </Typography>
-          {fileTypeError && (
-            <Alert severity="error" onClose={() => setFileTypeError(false)}>
-              This Is Not An Image File
-            </Alert>
-          )}
-          <Dropbox
-            onDragOver={dragOverHandler}
-            onDragLeave={dragLeaveHandler}
-            onDrop={dropHandler}
-            itemDraggedOver={itemDrag}
-          >
-            {selectedImage ? (
-              <>
-                <Typography component="div" variant="h3" sx={{ my: '0.5em' }}>
-                  Image Selected!
-                </Typography>
-                <Box id="image-preview" sx={{ width: '100%' }}>
-                  <Box
-                    component="img"
-                    sx={{
-                      height: { xs: 110, md: 170 },
-                      width: { xs: 110, md: 170 },
-                      mt: '1em',
-                    }}
-                    alt="Uploaded Action Icon"
-                    src={selectedImagePreview}
-                  ></Box>
-                  <button id="delete" onClick={() => setSelectedImage(null)}>
-                    <Delete />
-                    Delete
-                  </button>
-                </Box>
-              </>
-            ) : (
-              <>
-                <CloudUpload fontSize="large" />
-                <Typography component="div" variant="h3" sx={{ my: '0.5em' }}>
-                  Drop Your Image Here, Or{' '}
-                </Typography>
-
-                <label htmlFor="image-upload" id="browse">
-                  Browse
-                </label>
-                <input
-                  accept="image/*"
-                  id="image-upload"
-                  type="file"
-                  onChange={dropHandler}
-                />
-              </>
-            )}
-          </Dropbox>
-        </Box>
-        {selectedImage ? (
-          <StyledButton
-            onClick={() => setActiveStep(activeStep + 1)}
-            variant="contained"
-          >
-            Upload Image
-          </StyledButton>
-        ) : (
-          <StyledButton
-            onClick={() => setActiveStep(activeStep + 1)}
-            variant="contained"
-          >
-            Skip
-          </StyledButton>
+        <Typography component="div" variant="subtitle1" sx={{ my: '0.5em' }}>
+          Please upload an image related to your action item for verification
+        </Typography>
+        {fileTypeError && (
+          <Alert severity="error" onClose={() => setFileTypeError(false)}>
+            This Is Not An Image File
+          </Alert>
         )}
+        <Dropbox
+          onDragOver={dragOverHandler}
+          onDragLeave={dragLeaveHandler}
+          onDrop={dropHandler}
+          itemDraggedOver={itemDrag}
+        >
+          {selectedImage ? (
+            <>
+              <Typography component="div" variant="h3" sx={{ my: '0.5em' }}>
+                Image Selected!
+              </Typography>
+              <Box id="image-preview" sx={{ width: '100%' }}>
+                <Box
+                  component="img"
+                  sx={{
+                    height: { xs: 110, md: 170 },
+                    width: { xs: 110, md: 170 },
+                    mt: '1em',
+                  }}
+                  alt="Uploaded Action Icon"
+                  src={selectedImagePreview}
+                ></Box>
+                <button id="delete" onClick={() => setSelectedImage(null)}>
+                  <Delete />
+                  Delete
+                </button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <CloudUpload fontSize="large" />
+              <Typography component="div" variant="h3" sx={{ my: '0.5em' }}>
+                Drop Your Image Here, Or{' '}
+              </Typography>
+
+              <label htmlFor="image-upload" id="browse">
+                Browse
+              </label>
+              <input
+                accept="image/*"
+                id="image-upload"
+                type="file"
+                onChange={dropHandler}
+              />
+            </>
+          )}
+        </Dropbox>
       </Box>
-    </ThemeProvider>
+      {selectedImage ? (
+        <StyledButton
+          onClick={() => setActiveStep(activeStep + 1)}
+          variant="contained"
+        >
+          Upload Image
+        </StyledButton>
+      ) : (
+        <StyledButton
+          onClick={() => setActiveStep(activeStep + 1)}
+          variant="contained"
+        >
+          Skip
+        </StyledButton>
+      )}
+    </Box>
   );
 };
 

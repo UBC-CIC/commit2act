@@ -10,36 +10,7 @@ import {
   Radio,
 } from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { styled } from '@mui/material/styles';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: 'black',
-            fontWeight: 100,
-          },
-        },
-        {
-          props: {
-            variant: 'h6',
-          },
-          style: {
-            fontSize: 25,
-            color: 'black',
-          },
-        },
-      ],
-    },
-  },
-});
 
 const StyledButton = styled(Button)`
   margin-top: 5em;
@@ -153,19 +124,17 @@ const BonusPointQuiz = ({
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          alignItems: 'center',
-          textAlign: 'center',
-        }}
-      >
-        {isAnswerSelected ? displayAnswer() : displayQuiz()}
-      </Box>
-    </ThemeProvider>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}
+    >
+      {isAnswerSelected ? displayAnswer() : displayQuiz()}
+    </Box>
   );
 };
 

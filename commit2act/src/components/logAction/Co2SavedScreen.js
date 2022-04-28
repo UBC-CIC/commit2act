@@ -1,50 +1,10 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { API, Storage } from 'aws-amplify';
 import {
   createSubmittedAction,
   createSubmittedActionItems,
 } from '../../graphql/mutations';
-
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: '#112D4E',
-            fontWeight: 400,
-          },
-        },
-        {
-          props: {
-            variant: 'h3',
-          },
-          style: {
-            fontSize: 20,
-            color: 'black',
-            fontWeight: 500,
-          },
-        },
-        {
-          props: {
-            variant: 'subtitle1',
-          },
-          style: {
-            fontSize: 15,
-            color: 'black',
-            fontWeight: 100,
-          },
-        },
-      ],
-    },
-  },
-});
 
 const Co2SavedScreen = ({
   actionId,
@@ -105,38 +65,36 @@ const Co2SavedScreen = ({
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          minHeight: '20vh',
-          alignItems: 'center',
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        minHeight: '20vh',
+        alignItems: 'center',
+      }}
+    >
+      <Typography variant="h2">Thank you!</Typography>
+      <Typography variant="h3">
+        You have saved {totalCo2Saved} g of CO2!
+      </Typography>
+      <Typography variant="subtitle1">
+        An admin will now review your entry and your points will be added
+        shortly
+      </Typography>
+      <Button
+        onClick={() => {
+          setActiveStep(0);
+          setSelectedAction(null);
+          setActionItemValues([]);
+          setSelectedImage(null);
         }}
+        sx={{ mt: '3em', width: '80%' }}
+        variant="contained"
       >
-        <Typography variant="h2">Thank you!</Typography>
-        <Typography variant="h3">
-          You have saved {totalCo2Saved} g of CO2!
-        </Typography>
-        <Typography variant="subtitle1">
-          An admin will now review your entry and your points will be added
-          shortly
-        </Typography>
-        <Button
-          onClick={() => {
-            setActiveStep(0);
-            setSelectedAction(null);
-            setActionItemValues([]);
-            setSelectedImage(null);
-          }}
-          sx={{ mt: '3em', width: '80%' }}
-          variant="contained"
-        >
-          Add Another Action
-        </Button>
-      </Box>
-    </ThemeProvider>
+        Add Another Action
+      </Button>
+    </Box>
   );
 };
 

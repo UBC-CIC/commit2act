@@ -38,13 +38,13 @@ const AddMemberPanel = ({ groupInfo }) => {
         Add Users To This Group By Sending Them Your Group Link{' '}
         {!groupInfo.is_public && 'And Password'}
       </Typography>
-      <Typography component="div" variant="subtitle1" sx={{ m: '2em 0 1em 0' }}>
+      <Typography component="div" variant="subtitle2" sx={{ m: '2em 0 1em 0' }}>
         Your Group Link is:{' '}
       </Typography>
       <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
         <Typography
           component="div"
-          variant="subtitle1"
+          variant="subtitle2"
           sx={{
             border: '1px black solid',
             borderRadius: '2px',
@@ -83,7 +83,7 @@ const AddMemberPanel = ({ groupInfo }) => {
         <>
           <Typography
             component="div"
-            variant="subtitle1"
+            variant="subtitle2"
             sx={{ m: '2em 0 1em 0' }}
           >
             Your Group Password is:{' '}
@@ -94,7 +94,7 @@ const AddMemberPanel = ({ groupInfo }) => {
           >
             <Typography
               component="div"
-              variant="subtitle1"
+              variant="subtitle2"
               sx={{
                 border: '1px black solid',
                 borderRadius: '2px',
