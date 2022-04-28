@@ -9,6 +9,7 @@ const FindGroup = () => {
   const [groups, setGroups] = useState();
   const [input, setInput] = useState('');
   const [filteredGroups, setFilteredGroups] = useState();
+  const [error, setError] = useState();
 
   const getGroups = async () => {
     const res = await API.graphql({
@@ -29,18 +30,28 @@ const FindGroup = () => {
   const renderFilteredGroups = () => {
     if (groups) {
       if (input === '') {
+        setError(false);
         setFilteredGroups([]);
       } else {
         const filtered = groups.filter((group) => {
-          return group.group_name.toLowerCase().includes(input.toLowerCase());
+          return (
+            group.is_public &&
+            group.group_name.toLowerCase().includes(input.toLowerCase())
+          );
         });
         setFilteredGroups(filtered);
       }
     }
   };
 
+  const checkGroup = () => {
+    if (!filteredGroups || !filteredGroups.length) {
+      setError(true);
+    }
+  };
+
   return (
-    <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+    <Box sx={{ textAlign: { xs: 'center' } }}>
       <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
         Search For A Group
       </Typography>
@@ -54,7 +65,7 @@ const FindGroup = () => {
         onChange={(e) => setInput(e.target.value)}
         InputProps={{
           endAdornment: (
-            <IconButton>
+            <IconButton onClick={checkGroup}>
               <Search />
             </IconButton>
           ),
@@ -64,6 +75,11 @@ const FindGroup = () => {
         filteredGroups.map((group, index) => (
           <GroupCard key={index} group={group} />
         ))}
+      {error && (
+        <Typography variant="subtitle2">
+          Your search for "{input}" did not match any public groups
+        </Typography>
+      )}
     </Box>
   );
 };
