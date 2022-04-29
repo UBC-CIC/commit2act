@@ -93,7 +93,7 @@ const ActionPanel = ({
     //so that actionItemValues will be in proper format to be used in CO2SavedScreen mutation
     let removedCO2 = actionItemValues.map(({ co2, ...value }) => value);
     setActionItemValues(removedCO2);
-    //advances menu to next step
+    //advances log action form to next step
     setActiveStep(activeStep + 1);
   };
 
