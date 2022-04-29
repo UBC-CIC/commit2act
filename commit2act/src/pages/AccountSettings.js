@@ -13,32 +13,61 @@ import { TabPanel, TabContext, TabList } from '@mui/lab';
 import { Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
-import { getAllSubmittedActionsForUser } from '../graphql/queries';
+import {
+  getAllSubmittedActionsForUser,
+  getSingleUser,
+} from '../graphql/queries';
 import { useParams } from 'react-router-dom';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Input = styled('input')`
   display: none;
 `;
 
-const AccountSettings = ({ user }) => {
+const AccountSettings = () => {
   const { profileId } = useParams();
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, setShowMore] = useState({
+    validated: false,
+    unvalidated: false,
+  });
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
-  const [userActions, setUserActions] = useState();
+  const [user, setUser] = useState();
+  // const [userActions, setUserActions] = useState();
+  const [validatedActions, setValidatedActions] = useState();
+  const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [selectedTab, setSelectedTab] = useState('0');
 
+  const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+
   useEffect(() => {
+    getCurrentUser();
     getUserActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getCurrentUser = async () => {
+    const res = await API.graphql({
+      query: getSingleUser,
+      variables: { user_id: profileId },
+    });
+    setUser(res.data.getSingleUser);
+  };
+
   const getUserActions = async () => {
     const res = await API.graphql({
       query: getAllSubmittedActionsForUser,
-      variables: { user_id: user.user_id },
+      variables: { user_id: profileId },
     });
-    setUserActions(res.data.getAllSubmittedActionsForUser);
+    let allActions = res.data.getAllSubmittedActionsForUser;
+    //filter for all validated actions
+    let validated = allActions.filter((action) => action.is_validated === true);
+    setValidatedActions(validated);
+    //filter for all unvalidated actions
+    let unvalidated = allActions.filter(
+      (action) => action.is_validated === false
+    );
+    setUnvalidatedActions(unvalidated);
   };
 
   //updates user avatar field in database
@@ -51,44 +80,96 @@ const AccountSettings = ({ user }) => {
 
   //sends selected image to s3 storage
   async function handleAvatarChange(e) {
-    if (!e.target.files || e.target.files.length === 0) {
-      setAvatarPreview(null);
-      return;
-    }
-    let imageFile = e.target.files[0];
-    let imageKey = 'avatars/'.concat(user.username, 'avatar');
-    let imageType = imageFile.type;
-    let userAvatarLink =
-      process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-    //avatarPreview will display right after avatar is changed, since cloudfront url stays the same so changes in the avatar src aren't detected until page refresh
-    let previewLink = URL.createObjectURL(imageFile);
-    setAvatarPreview(previewLink);
-    try {
-      await Storage.put(imageKey, imageFile, {
-        contentType: imageType,
-        contentDisposition: 'inline',
-      });
-      setNewAvatarUploaded(true);
-    } catch (error) {
-      console.log('Error uploading file', error);
-    }
-    //if user avatar field was previously null, update field with new link
-    if (user.avatar === null) {
-      updateUserAvatar(userAvatarLink);
+    if (user) {
+      if (!e.target.files || e.target.files.length === 0) {
+        setAvatarPreview(null);
+        return;
+      }
+      let imageFile = e.target.files[0];
+      let imageKey = 'avatars/'.concat(user.username, 'avatar');
+      let imageType = imageFile.type;
+      let userAvatarLink =
+        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+      //avatarPreview will display right after avatar is changed, since cloudfront url stays the same so changes in the avatar src aren't detected until page refresh
+      let previewLink = URL.createObjectURL(imageFile);
+      setAvatarPreview(previewLink);
+      try {
+        await Storage.put(imageKey, imageFile, {
+          contentType: imageType,
+          contentDisposition: 'inline',
+        });
+        setNewAvatarUploaded(true);
+      } catch (error) {
+        console.log('Error uploading file', error);
+      }
+      //if user avatar field was previously null, update field with new link
+      if (user.avatar === null) {
+        updateUserAvatar(userAvatarLink);
+      }
     }
   }
 
-  const renderActionCards = () => {
-    if (userActions) {
-      return showMore
-        ? userActions.map((action, index) => (
-            <SubmittedActionCard key={index} action={action} />
-          ))
-        : userActions
-            .slice(0, 3)
-            .map((action, index) => (
-              <SubmittedActionCard key={index} action={action} />
-            ));
+  const renderValidatedActionCards = () => {
+    if (validatedActions) {
+      return (
+        <Box sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}>
+          <Stack spacing={2}>
+            {showMore.validated
+              ? validatedActions.map((action, index) => (
+                  <SubmittedActionCard key={index} action={action} />
+                ))
+              : validatedActions
+                  .slice(0, 3)
+                  .map((action, index) => (
+                    <SubmittedActionCard key={index} action={action} />
+                  ))}
+            <Button
+              sx={{ mt: '3em' }}
+              variant="outlined"
+              onClick={() =>
+                setShowMore((prev) => ({
+                  ...prev,
+                  validated: !showMore.validated,
+                }))
+              }
+            >
+              View {showMore.validated ? 'Less' : 'More'}
+            </Button>
+          </Stack>
+        </Box>
+      );
+    }
+  };
+
+  const renderUnvalidatedActionCards = () => {
+    if (unvalidatedActions) {
+      return (
+        <Box sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}>
+          <Stack spacing={2}>
+            {showMore.unvalidated
+              ? unvalidatedActions.map((action, index) => (
+                  <SubmittedActionCard key={index} action={action} />
+                ))
+              : unvalidatedActions
+                  .slice(0, 3)
+                  .map((action, index) => (
+                    <SubmittedActionCard key={index} action={action} />
+                  ))}
+            <Button
+              sx={{ mt: '3em' }}
+              variant="outlined"
+              onClick={() =>
+                setShowMore((prev) => ({
+                  ...prev,
+                  unvalidated: !showMore.unvalidated,
+                }))
+              }
+            >
+              View {showMore.unvalidated ? 'Less' : 'More'}
+            </Button>
+          </Stack>
+        </Box>
+      );
     }
   };
 
@@ -105,7 +186,7 @@ const AccountSettings = ({ user }) => {
               variant="h1"
               sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
             >
-              My Account
+              Account Information
             </Typography>
             <Grid
               container
@@ -219,7 +300,7 @@ const AccountSettings = ({ user }) => {
             </Grid>
 
             <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
-              My Actions
+              Logged Actions
             </Typography>
             <TabContext value={selectedTab}>
               <Box
@@ -232,33 +313,19 @@ const AccountSettings = ({ user }) => {
                 }}
               >
                 <TabList
-                  centered={true}
                   onChange={handleTabChange}
                   aria-label="view user action tabs"
                   scrollButtons
                   allowScrollButtonsMobile
-                  variant="scrollable"
+                  variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
+                  centered={!scrollableTabs}
                 >
                   <Tab label="Validated Actions" value="0" />
                   <Tab label="Actions Awaiting Validation" value="1" />
                 </TabList>
               </Box>
-              <TabPanel value="0">
-                <Box
-                  sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}
-                >
-                  <Stack spacing={2}>
-                    {renderActionCards()}
-                    <Button
-                      sx={{ mt: '3em' }}
-                      variant="outlined"
-                      onClick={() => setShowMore(!showMore)}
-                    >
-                      View {showMore ? 'Less' : 'More'}
-                    </Button>
-                  </Stack>
-                </Box>
-              </TabPanel>
+              <TabPanel value="0">{renderValidatedActionCards()}</TabPanel>
+              <TabPanel value="1">{renderUnvalidatedActionCards()}</TabPanel>
             </TabContext>
           </Box>
         </>

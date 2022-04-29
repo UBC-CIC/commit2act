@@ -182,6 +182,46 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
     }
   }
 `;
+export const getAllValidatedSubmittedActionsForUser = /* GraphQL */ `
+  query GetAllValidatedSubmittedActionsForUser($user_id: Int!) {
+    getAllValidatedSubmittedActionsForUser(user_id: $user_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      action_name
+      submitted_image
+    }
+  }
+`;
+export const getAllUnvalidatedSubmittedActionsForUser = /* GraphQL */ `
+  query GetAllUnvalidatedSubmittedActionsForUser($user_id: Int!) {
+    getAllUnvalidatedSubmittedActionsForUser(user_id: $user_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      action_name
+      submitted_image
+    }
+  }
+`;
 export const getAllGroups = /* GraphQL */ `
   query GetAllGroups {
     getAllGroups {

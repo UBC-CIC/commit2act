@@ -250,7 +250,7 @@ function PageContainer(props) {
             <Route
               exact
               path={'/account-settings/:profileId'}
-              element={<AccountSettings user={user} />}
+              element={<AccountSettings />}
             />
           </Routes>
         </main>

@@ -32,7 +32,7 @@ const CO2SavedScreen = ({
 
   const submitAction = async () => {
     //creates and submits the action, returns the submitted action id that is stored in database
-    const points = firstQuizAnswerCorrect ? 10 : 0;
+    const points = firstQuizAnswerCorrect ? totalCO2Saved + 10 : totalCO2Saved;
     const res = await API.graphql({
       query: createSubmittedAction,
       variables: {
