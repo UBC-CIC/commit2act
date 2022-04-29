@@ -107,6 +107,16 @@ const theme = createTheme({
             fontWeight: 300,
           },
         },
+        {
+          props: {
+            variant: 'body1',
+          },
+          style: {
+            fontSize: 15,
+            color: 'black',
+            fontWeight: 100,
+          },
+        },
       ],
     },
   },

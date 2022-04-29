@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
-import { Box, Button, Stack, Typography, Grid, Avatar } from '@mui/material';
+import {
+  Box,
+  Button,
+  Stack,
+  Typography,
+  Grid,
+  Avatar,
+  Tab,
+} from '@mui/material';
+import { TabPanel, TabContext, TabList } from '@mui/lab';
 import { Storage, API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
@@ -17,6 +26,7 @@ const AccountSettings = ({ user }) => {
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
   const [userActions, setUserActions] = useState();
+  const [selectedTab, setSelectedTab] = useState('0');
 
   useEffect(() => {
     getUserActions();
@@ -80,6 +90,10 @@ const AccountSettings = ({ user }) => {
               <SubmittedActionCard key={index} action={action} />
             ));
     }
+  };
+
+  const handleTabChange = (e, newValue) => {
+    setSelectedTab(newValue);
   };
 
   return (
@@ -207,18 +221,45 @@ const AccountSettings = ({ user }) => {
             <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
               My Actions
             </Typography>
-            <Box sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}>
-              <Stack spacing={2}>
-                {renderActionCards()}
-                <Button
-                  sx={{ mt: '3em' }}
-                  variant="outlined"
-                  onClick={() => setShowMore(!showMore)}
+            <TabContext value={selectedTab}>
+              <Box
+                sx={{
+                  borderBottom: 1,
+                  borderTop: 1,
+                  borderColor: 'divider',
+                  width: '100%',
+                  padding: '0.5em',
+                }}
+              >
+                <TabList
+                  centered={true}
+                  onChange={handleTabChange}
+                  aria-label="view user action tabs"
+                  scrollButtons
+                  allowScrollButtonsMobile
+                  variant="scrollable"
                 >
-                  View {showMore ? 'Less' : 'More'}
-                </Button>
-              </Stack>
-            </Box>
+                  <Tab label="Validated Actions" value="0" />
+                  <Tab label="Actions Awaiting Validation" value="1" />
+                </TabList>
+              </Box>
+              <TabPanel value="0">
+                <Box
+                  sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}
+                >
+                  <Stack spacing={2}>
+                    {renderActionCards()}
+                    <Button
+                      sx={{ mt: '3em' }}
+                      variant="outlined"
+                      onClick={() => setShowMore(!showMore)}
+                    >
+                      View {showMore ? 'Less' : 'More'}
+                    </Button>
+                  </Stack>
+                </Box>
+              </TabPanel>
+            </TabContext>
           </Box>
         </>
       )}
