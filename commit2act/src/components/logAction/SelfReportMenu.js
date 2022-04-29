@@ -24,7 +24,7 @@ import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import ImageValidationPanel from './ImageValidationPanel';
 import BonusPointQuiz from './BonusPointQuiz';
-import Co2SavedScreen from './Co2SavedScreen';
+import CO2SavedScreen from './CO2SavedScreen';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -51,7 +51,7 @@ const SelfReportMenu = ({ user }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [actionOptions, setActionOptions] = useState();
   const [actionItemValues, setActionItemValues] = useState([]);
-  const [totalCo2Saved, setTotalCo2Saved] = useState(0);
+  const [totalCO2Saved, setTotalCO2Saved] = useState(0);
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
@@ -87,7 +87,7 @@ const SelfReportMenu = ({ user }) => {
 
   useEffect(() => {
     if (activeStep === 0) {
-      setTotalCo2Saved(0);
+      setTotalCO2Saved(0);
     }
   }, [activeStep]);
 
@@ -99,7 +99,7 @@ const SelfReportMenu = ({ user }) => {
             display: 'grid',
             gridTemplateColumns: {
               xs: 'repeat(2, 1fr)',
-              md: 'repeat(4, 1fr)',
+              md: 'repeat(3, 1fr)',
             },
             rowGap: 2,
             [`& .${imageListItemClasses.root}`]: {
@@ -209,10 +209,10 @@ const SelfReportMenu = ({ user }) => {
         {activeStep === 3 && (
           <ActionPanel
             selectedAction={selectedAction}
-            setTotalCo2Saved={setTotalCo2Saved}
-            totalCo2Saved={totalCo2Saved}
+            setTotalCO2Saved={setTotalCO2Saved}
             actionItemValues={actionItemValues}
             setActionItemValues={setActionItemValues}
+            activeStep={activeStep}
             setActiveStep={setActiveStep}
           />
         )}
@@ -234,11 +234,11 @@ const SelfReportMenu = ({ user }) => {
           />
         )}
         {activeStep === 6 && (
-          <Co2SavedScreen
+          <CO2SavedScreen
             actionId={selectedAction.action_id}
             actionDate={selectedDate}
-            totalCo2Saved={totalCo2Saved}
-            setTotalCo2Saved={setTotalCo2Saved}
+            totalCO2Saved={totalCO2Saved}
+            setTotalCO2Saved={setTotalCO2Saved}
             quizAnswered={quizAnswered}
             firstQuizAnswerCorrect={firstQuizAnswerCorrect}
             user={user}
@@ -303,7 +303,7 @@ const SelfReportMenu = ({ user }) => {
           {steps[activeStep]}
         </Typography>
         {renderFormStep()}
-        {![0, 4, 5, 6].includes(activeStep) && (
+        {![0, 3, 4, 5, 6].includes(activeStep) && (
           <Button
             onClick={() => {
               setActiveStep(activeStep + 1);

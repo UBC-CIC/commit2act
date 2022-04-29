@@ -7,10 +7,10 @@ import {
 } from '../../graphql/mutations';
 import { getSingleSubmittedAction } from '../../graphql/queries';
 
-const Co2SavedScreen = ({
+const CO2SavedScreen = ({
   actionId,
   actionDate,
-  totalCo2Saved,
+  totalCO2Saved,
   setActiveStep,
   quizAnswered,
   firstQuizAnswerCorrect,
@@ -39,7 +39,7 @@ const Co2SavedScreen = ({
         action_id: actionId,
         date_of_action: actionDate,
         first_quiz_answer_correct: firstQuizAnswerCorrect,
-        g_co2_saved: totalCo2Saved,
+        g_co2_saved: totalCO2Saved,
         is_validated: false,
         points_earned: points,
         quiz_answered: quizAnswered,
@@ -120,7 +120,7 @@ const Co2SavedScreen = ({
             <Typography variant="h3">
               Your action has been validated
               <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
-                You have saved {totalCo2Saved} g of CO2
+                You have saved {totalCO2Saved} g of CO2
               </Typography>
             </Typography>
           ) : (
@@ -150,4 +150,4 @@ const Co2SavedScreen = ({
   );
 };
 
-export default Co2SavedScreen;
+export default CO2SavedScreen;
