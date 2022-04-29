@@ -33,7 +33,6 @@ const AccountSettings = () => {
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
   const [user, setUser] = useState();
-  // const [userActions, setUserActions] = useState();
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [selectedTab, setSelectedTab] = useState('0');
