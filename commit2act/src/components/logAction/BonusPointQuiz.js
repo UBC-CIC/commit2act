@@ -36,7 +36,7 @@ const BonusPointQuiz = ({
   const displayQuiz = () => {
     return (
       <>
-        <Typography variant="subtitle1">{question_text}</Typography>
+        <Typography variant="subtitle2">{question_text}</Typography>
         <FormControl>
           <FormLabel id="bonus-quiz-answer-choices">Answer Choices</FormLabel>
           <RadioGroup
