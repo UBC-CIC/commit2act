@@ -24,7 +24,7 @@ import ActionFact from './ActionFact';
 import ActionPanel from './ActionPanel';
 import ImageValidationPanel from './ImageValidationPanel';
 import BonusPointQuiz from './BonusPointQuiz';
-import CO2SavedScreen from './CO2SavedScreen';
+import CO2SavedScreen from './Co2SavedScreen';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
