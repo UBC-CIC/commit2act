@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, IconButton } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Search, Clear } from '@mui/icons-material';
 import { getAllGroups } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import GroupCard from '../components/GroupCard';
@@ -63,12 +63,20 @@ const FindGroup = () => {
         value={input}
         sx={{ my: '2em' }}
         onChange={(e) => setInput(e.target.value)}
+        InputLabelProps={{ shrink: true }}
         InputProps={{
-          endAdornment: (
-            <IconButton onClick={checkGroup}>
-              <Search />
+          startAdornment: <Search sx={{ mr: '1em' }} />,
+          endAdornment: input && (
+            <IconButton onClick={(e) => setInput('')}>
+              <Clear />
             </IconButton>
           ),
+        }}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            checkGroup();
+            e.preventDefault();
+          }
         }}
       />
       {filteredGroups &&

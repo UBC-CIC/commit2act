@@ -4,7 +4,7 @@ import { Typography, Box, Avatar, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const Card = styled(Grid)(({ theme }) => ({
-  backgroundColor: '#DBE2EF',
+  backgroundColor: '#e8f4f8',
   width: '100%',
   minHeight: '25vh',
   marginBottom: '1.25em',

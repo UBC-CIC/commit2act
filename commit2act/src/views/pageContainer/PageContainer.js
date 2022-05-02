@@ -157,7 +157,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'validateActions'}
-          onClick={() => navigate('/validate-actions')}
+          onClick={() => navigate(`/validate-actions/${user.user_id}`)}
         >
           <ListItemIcon>
             <AssignmentTurnedIn />
@@ -241,7 +241,7 @@ function PageContainer(props) {
             />
             <Route
               exact
-              path={'/validate-actions'}
+              path={'/validate-actions/:userId'}
               element={<ValidateActions />}
             />
             {userType === 'Admin' && (
