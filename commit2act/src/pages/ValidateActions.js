@@ -1,31 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Autocomplete, TextField, Stack } from '@mui/material';
-import { API } from 'aws-amplify';
+import { API, Auth } from 'aws-amplify';
 import { Search } from '@mui/icons-material';
 import {
   getAllGroupsUserOwns,
   getAllSubmittedActionsToValidate,
 } from '../graphql/queries';
-import { useParams } from 'react-router-dom';
 import ValidationNeededCard from '../components/ValidationNeededCard';
 
 const ValidateActions = () => {
-  const { userId } = useParams();
   const [groups, setGroups] = useState();
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
   const [allActions, setAllActions] = useState();
 
-  const getGroupsAndAllActions = async () => {
+  const getCognitoUser = async () => {
+    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
+    const id = cognitoUserEntry.attributes['custom:id'];
+    getGroupsAndAllActions(id);
+  };
+
+  const getGroupsAndAllActions = async (id) => {
     const [groupRes, allActionRes] = await Promise.all([
       API.graphql({
         query: getAllGroupsUserOwns,
-        variables: { user_id: userId },
+        variables: { user_id: id },
       }),
       await API.graphql({
         query: getAllSubmittedActionsToValidate,
-        variables: { user_id: Number(userId) },
+        variables: { user_id: id },
       }),
     ]);
 
@@ -34,7 +38,7 @@ const ValidateActions = () => {
   };
 
   useEffect(() => {
-    getGroupsAndAllActions();
+    getCognitoUser();
   }, []);
 
   const checkGroup = () => {
