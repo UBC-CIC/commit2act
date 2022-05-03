@@ -55,6 +55,9 @@ const FindGroup = () => {
       <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
         Search For A Group
       </Typography>
+      <Typography variant="subtitle2" sx={{ mt: { xs: '3em' } }}>
+        Enter the group name of any public group
+      </Typography>
       <TextField
         id="outlined-basic"
         variant="outlined"

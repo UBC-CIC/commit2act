@@ -12,20 +12,22 @@ const SubmittedActionCard = ({ action }) => {
           alignItems: { xs: 'center', md: 'flex-start' },
         }}
       >
-        <CardMedia
-          component="img"
-          sx={{ width: 150, height: '100%', mr: { xs: '0em', md: '2em' } }}
-          image={action.submitted_image}
-          alt="user submitted image"
-        />
-        <CardContent>
+        {action.submitted_image && (
+          <CardMedia
+            component="img"
+            sx={{ width: 150, height: '100%' }}
+            image={action.submitted_image}
+            alt="user submitted image"
+          />
+        )}
+        <CardContent sx={{ ml: { xs: '0em', md: '2em' } }}>
           <Typography variant="subtitle2">
             {action.date_of_action.split('T')[0]}
           </Typography>
           <Typography variant="h2" sx={{ mt: { xs: '0.5em', md: '0' } }}>
             {action.action_name}
           </Typography>
-          <Typography sx={{ my: 1.5 }} color="text.secondary">
+          <Typography sx={{ my: 1.5 }}>
             {action.submitted_action_items}
           </Typography>
           <Typography variant="body1">

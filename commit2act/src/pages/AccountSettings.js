@@ -210,19 +210,8 @@ const AccountSettings = () => {
                         : avatarPreview
                     }
                     sx={{
-                      width: {
-                        xs: '24vw',
-                        sm: '22vw',
-                        md: '20vw',
-                        lg: '15vw',
-                        xl: '15vw',
-                      },
-                      height: {
-                        xs: '12vh',
-                        md: '22vh',
-                        lg: '24vh',
-                        xl: '26vh',
-                      },
+                      width: 100,
+                      height: 100,
                     }}
                   ></Avatar>
                   <label htmlFor="user-avatar">

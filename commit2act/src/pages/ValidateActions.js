@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Autocomplete, TextField } from '@mui/material';
+import { Box, Typography, Autocomplete, TextField, Stack } from '@mui/material';
 import { API } from 'aws-amplify';
 import { Search } from '@mui/icons-material';
-import { getAllGroupsUserOwns } from '../graphql/queries';
+import {
+  getAllGroupsUserOwns,
+  getAllSubmittedActionsToValidate,
+} from '../graphql/queries';
 import { useParams } from 'react-router-dom';
+import ValidationNeededCard from '../components/ValidationNeededCard';
 
 const ValidateActions = () => {
   const { userId } = useParams();
@@ -11,17 +15,26 @@ const ValidateActions = () => {
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
+  const [allActions, setAllActions] = useState();
 
-  const getGroups = async () => {
-    const res = await API.graphql({
-      query: getAllGroupsUserOwns,
-      variables: { user_id: userId },
-    });
-    setGroups(res.data.getAllGroupsUserOwns);
+  const getGroupsAndAllActions = async () => {
+    const [groupRes, allActionRes] = await Promise.all([
+      API.graphql({
+        query: getAllGroupsUserOwns,
+        variables: { user_id: userId },
+      }),
+      await API.graphql({
+        query: getAllSubmittedActionsToValidate,
+        variables: { user_id: Number(userId) },
+      }),
+    ]);
+
+    setGroups(groupRes.data.getAllGroupsUserOwns);
+    setAllActions(allActionRes.data.getAllSubmittedActionsToValidate);
   };
 
   useEffect(() => {
-    getGroups();
+    getGroupsAndAllActions();
   }, []);
 
   const checkGroup = () => {
@@ -37,57 +50,75 @@ const ValidateActions = () => {
     setInput(value);
   };
 
+  //every time a group is selected, get all the actions in need of validation from users in that group
+  // useEffect(() => {
+  //   if (selectedGroup) {
+  //   }
+  // }, [selectedGroup]);
+
   return (
-    <Box sx={{ textAlign: { xs: 'center' } }}>
-      <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-        Validate Actions
-      </Typography>
-      <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
-        Search for one of your groups to begin validating group member actions
-      </Typography>
-      {groups && (
-        <Autocomplete
-          freeSolo
-          options={groups.map((group) => group.group_name)}
-          value={selectedGroup}
-          onChange={(e, newValue) => {
-            setSelectedGroup(newValue);
-          }}
-          inputValue={input}
-          onInputChange={(e, newInputValue) => handleInputChange(newInputValue)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              fullWidth
-              label="Search"
-              sx={{ my: '2em' }}
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                  <>
-                    <Search sx={{ mr: '1em' }} />
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  checkGroup();
-                  e.preventDefault();
-                }
-              }}
-            />
-          )}
-        />
-      )}
-      {error && (
-        <Typography variant="subtitle2">
-          Your search for "{input}" did not match any of your groups
+    <>
+      <Box sx={{ textAlign: { xs: 'center' } }}>
+        <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+          Validate Actions
         </Typography>
-      )}
-    </Box>
+        <Typography variant="subtitle2" sx={{ mt: '2.5em' }}>
+          Search for one of your groups to filter for specific actions
+        </Typography>
+        {groups && (
+          <Autocomplete
+            freeSolo
+            options={groups.map((group) => group.group_name)}
+            value={selectedGroup}
+            onChange={(e, newValue) => {
+              setSelectedGroup(newValue);
+            }}
+            inputValue={input}
+            onInputChange={(e, newInputValue) =>
+              handleInputChange(newInputValue)
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                fullWidth
+                label="Search"
+                sx={{ my: '2em' }}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <>
+                      <Search sx={{ mr: '1em' }} />
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    checkGroup();
+                    e.preventDefault();
+                  }
+                }}
+              />
+            )}
+          />
+        )}
+        {error && (
+          <Typography variant="subtitle2">
+            Your search for "{input}" did not match any of your groups
+          </Typography>
+        )}
+      </Box>
+      <Box sx={{ mt: '3em' }}>
+        <Stack spacing={2}>
+          {allActions &&
+            allActions.map((action, index) => (
+              <ValidationNeededCard action={action} key={index} />
+            ))}
+        </Stack>
+      </Box>
+    </>
   );
 };
 

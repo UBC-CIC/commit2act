@@ -305,3 +305,26 @@ export const removeGroupMember = /* GraphQL */ `
     removeGroupMember(group_id: $group_id, user_id: $user_id)
   }
 `;
+export const approveSubmittedAction = /* GraphQL */ `
+  mutation ApproveSubmittedAction($sa_id: Int!) {
+    approveSubmittedAction(sa_id: $sa_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_image
+    }
+  }
+`;
+export const rejectSubmittedAction = /* GraphQL */ `
+  mutation RejectSubmittedAction($sa_id: Int!) {
+    rejectSubmittedAction(sa_id: $sa_id)
+  }
+`;

@@ -33,7 +33,7 @@ const theme = createTheme({
           },
           style: {
             fontSize: 30,
-            color: '#112D4E',
+            color: '#455A7F',
             fontWeight: 300,
           },
         },
