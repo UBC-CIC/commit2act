@@ -459,10 +459,6 @@ function Login(props) {
     updateLoginState(state);
   }
 
-  let logoType = darkMode
-    ? '/assets/images/logo_inverse.png'
-    : '/assets/images/logo.png';
-
   return (
     <>
       {/*  An example image is provided. Please use a royalty-free photo, a photo owned by you, or a photo owned by the CIC */}
@@ -529,17 +525,6 @@ function Login(props) {
               >
                 {title}
               </p>
-            </Grid>
-            <Grid container item xs={12} justify={'center'}>
-              <Grid item xs={10}>
-                {logo !== 'none' ? (
-                  <img
-                    src={process.env.PUBLIC_URL + logoType}
-                    style={{ width: '100%', height: '100%' }}
-                    alt="logo"
-                  />
-                ) : null}
-              </Grid>
             </Grid>
           </Grid>
         </Grid>
