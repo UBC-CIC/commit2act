@@ -10,14 +10,13 @@ import {
   Tab,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
-import { Storage, API } from 'aws-amplify';
+import { Storage, API, Auth } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { updateUser } from '../graphql/mutations';
 import {
   getAllSubmittedActionsForUser,
   getSingleUser,
 } from '../graphql/queries';
-import { useParams } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Input = styled('input')`
@@ -25,7 +24,6 @@ const Input = styled('input')`
 `;
 
 const AccountSettings = () => {
-  const { profileId } = useParams();
   const [showMore, setShowMore] = useState({
     validated: false,
     unvalidated: false,
@@ -41,22 +39,25 @@ const AccountSettings = () => {
 
   useEffect(() => {
     getCurrentUser();
-    getUserActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getCurrentUser = async () => {
+    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
+    const id = cognitoUserEntry.attributes['custom:id'];
+
     const res = await API.graphql({
       query: getSingleUser,
-      variables: { user_id: profileId },
+      variables: { user_id: id },
     });
     setUser(res.data.getSingleUser);
+    getUserActions(id);
   };
 
-  const getUserActions = async () => {
+  const getUserActions = async (id) => {
     const res = await API.graphql({
       query: getAllSubmittedActionsForUser,
-      variables: { user_id: profileId },
+      variables: { user_id: id },
     });
     let allActions = res.data.getAllSubmittedActionsForUser;
     //filter for all validated actions
@@ -109,9 +110,16 @@ const AccountSettings = () => {
   }
 
   const renderValidatedActionCards = () => {
-    if (validatedActions) {
+    //return if validatedActions is not null or undefined and contains at least 1 item
+    if (Array.isArray(validatedActions) && validatedActions.length !== 0) {
       return (
-        <Box sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}>
+        <Box
+          sx={{
+            height: '110vh',
+            overflow: 'auto',
+            padding: '0.25em',
+          }}
+        >
           <Stack spacing={2}>
             {showMore.validated
               ? validatedActions.map((action, index) => (
@@ -137,13 +145,26 @@ const AccountSettings = () => {
           </Stack>
         </Box>
       );
+    } else {
+      return (
+        <Typography variant="subtitle2">
+          There are no validated actions to show
+        </Typography>
+      );
     }
   };
 
   const renderUnvalidatedActionCards = () => {
-    if (unvalidatedActions) {
+    //return if unvalidatedActions is not null or undefined and contains at least 1 item
+    if (Array.isArray(unvalidatedActions) && unvalidatedActions.length !== 0) {
       return (
-        <Box sx={{ height: '110vh', overflow: 'auto', padding: '0.25em' }}>
+        <Box
+          sx={{
+            height: '110vh',
+            overflow: 'auto',
+            padding: '0.25em',
+          }}
+        >
           <Stack spacing={2}>
             {showMore.unvalidated
               ? unvalidatedActions.map((action, index) => (
@@ -167,6 +188,14 @@ const AccountSettings = () => {
               View {showMore.unvalidated ? 'Less' : 'More'}
             </Button>
           </Stack>
+        </Box>
+      );
+    } else {
+      return (
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="subtitle2">
+            There are no unvalidated actions to show
+          </Typography>
         </Box>
       );
     }

@@ -33,6 +33,7 @@ import GroupProfile from '../../pages/GroupProfile';
 import { getSingleUserByUsername } from '../../graphql/queries';
 import CreateAction from '../../pages/CreateAction';
 import JoinGroup from '../../pages/JoinGroup';
+import UserProfile from '../../pages/UserProfile';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -180,7 +181,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'myAccount'}
-          onClick={() => navigate(`/account-settings/${user.user_id}`)}
+          onClick={() => navigate(`/account-settings`)}
         >
           <ListItemIcon>
             <AccountCircle />
@@ -248,8 +249,13 @@ function PageContainer(props) {
             )}
             <Route
               exact
-              path={'/account-settings/:profileId'}
+              path={'/account-settings'}
               element={<AccountSettings />}
+            />
+            <Route
+              exact
+              path={'/user-profile/:userId'}
+              element={<UserProfile />}
             />
           </Routes>
         </main>

@@ -23,6 +23,7 @@ import {
 } from '../../graphql/mutations';
 import { getAllUsersInGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
+import { useNavigate } from 'react-router-dom';
 
 const GroupMemberDialog = ({
   selectedMember,
@@ -39,6 +40,7 @@ const GroupMemberDialog = ({
   };
   const [dialogDisplay, setDialogDisplay] = useState(dialogDisplayInitial);
   const [membersUpdated, setMembersUpdated] = useState(false);
+  const navigate = useNavigate();
 
   const promoteUser = async () => {
     try {
@@ -148,7 +150,13 @@ const GroupMemberDialog = ({
               <DialogTitle>{selectedMember.name}</DialogTitle>
               <DialogContent>Role: {selectedMember.user_role}</DialogContent>
               <List sx={{ pt: 0 }}>
-                <ListItem autoFocus button>
+                <ListItem
+                  autoFocus
+                  button
+                  onClick={() =>
+                    navigate(`/user-profile/${selectedMember.user_id}`)
+                  }
+                >
                   <ListItemIcon>
                     <AccountCircle />
                   </ListItemIcon>
