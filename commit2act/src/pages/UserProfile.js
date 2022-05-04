@@ -17,43 +17,38 @@ const UserProfile = () => {
   const [showMore, setShowMore] = useState();
   const navigate = useNavigate();
 
-  const getCurrentUser = async () => {
+  const getCurrentUserInfo = async () => {
     //if currently logged in user has the same id as the user profile link id, redirect user to their account settings page
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
     if (id === userId) {
       navigate(`/account-settings`);
     }
-    const res = await API.graphql({
-      query: getSingleUser,
-      variables: { user_id: userId },
-    });
-    setUser(res.data.getSingleUser);
-  };
 
-  const getUserActions = async () => {
-    const res = await API.graphql({
-      query: getAllSubmittedActionsForUser,
-      variables: { user_id: userId },
-    });
-    let allActions = res.data.getAllSubmittedActionsForUser;
+    const [userRes, userActionRes, userGroupRes] = await Promise.all([
+      API.graphql({
+        query: getSingleUser,
+        variables: { user_id: userId },
+      }),
+      API.graphql({
+        query: getAllSubmittedActionsForUser,
+        variables: { user_id: userId },
+      }),
+      API.graphql({
+        query: getAllGroupsForUser,
+        variables: { user_id: userId },
+      }),
+    ]);
+    setUser(userRes.data.getSingleUser);
+    let allActions = userActionRes.data.getAllSubmittedActionsForUser;
     //filter for all validated actions
     let validated = allActions.filter((action) => action.is_validated === true);
     setValidatedActions(validated);
-  };
-
-  const getUserGroups = async () => {
-    const res = await API.graphql({
-      query: getAllGroupsForUser,
-      variables: { user_id: userId },
-    });
-    setGroups(res.data.getAllGroupsForUser);
+    setGroups(userGroupRes.data.getAllGroupsForUser);
   };
 
   useEffect(() => {
-    getCurrentUser();
-    getUserActions();
-    getUserGroups();
+    getCurrentUserInfo();
   }, []);
 
   const renderValidatedActionCards = () => {
