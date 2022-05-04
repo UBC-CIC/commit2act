@@ -2,12 +2,15 @@ import {
   Typography,
   Box,
   Button,
-  Grid,
-  Card,
-  CardActionArea,
-  CardContent,
+  Paper,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
-import { AutoGraphOutlined } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+import {
+  AutoGraphOutlined,
+  CircleNotificationsOutlined,
+} from '@mui/icons-material';
 import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +21,16 @@ import {
   getUsersTotalCO2,
   getUsersWeekCO2,
   getAllGroupsForUser,
+  getAllSubmittedActionsToValidate,
 } from '../graphql/queries';
+
+const StyledPaper = styled(Paper)`
+  padding: 1em 2em;
+  text-align: center;
+  .statValue {
+    margin-top: 0.5em;
+  }
+`;
 
 const Landing = ({ user }) => {
   const navigate = useNavigate();
@@ -28,6 +40,7 @@ const Landing = ({ user }) => {
     weekCO2: '',
   });
   const [userGroups, setUserGroups] = useState([]);
+  const [numActionsToValidate, setNumActionsToValidate] = useState();
 
   //gets currently authenticated cognito user for the first time the page loads after sign in
   const getCognitoUser = async () => {
@@ -35,6 +48,7 @@ const Landing = ({ user }) => {
     const id = cognitoUserEntry.attributes['custom:id'];
     getProgressStats(id);
     getGroups(id);
+    getNumActionsToValidate(id);
   };
 
   useEffect(() => {
@@ -72,6 +86,15 @@ const Landing = ({ user }) => {
     setUserGroups(res.data.getAllGroupsForUser);
   };
 
+  const getNumActionsToValidate = async (id) => {
+    const userId = user ? user.user_id : id;
+    const res = await API.graphql({
+      query: getAllSubmittedActionsToValidate,
+      variables: { user_id: userId },
+    });
+    setNumActionsToValidate(res.data.getAllSubmittedActionsToValidate.length);
+  };
+
   const renderGroupCards = () => {
     if (userGroups) {
       return userGroups.map((group, index) => (
@@ -88,61 +111,68 @@ const Landing = ({ user }) => {
             <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
               Welcome {user.name}!
             </Typography>
+            {numActionsToValidate && (
+              <Alert
+                icon={<CircleNotificationsOutlined />}
+                variant="outlined"
+                sx={{
+                  mt: '3em',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                  alignItems: { xs: 'center', sm: 'flex-start' },
+                }}
+                color="info"
+                action={
+                  <Button
+                    color="inherit"
+                    size="small"
+                    sx={{ alignSelf: 'center' }}
+                    onClick={() => navigate('/validate-actions')}
+                  >
+                    Start Validating
+                  </Button>
+                }
+              >
+                <AlertTitle>New Actions In Need of Validation</AlertTitle>
+                You have <strong>{numActionsToValidate}</strong> actions to
+                validate!
+              </Alert>
+            )}
             <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
               Recent Progress
             </Typography>
           </Box>
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 0, md: 1 }}
-            direction={{ xs: 'column', md: 'row' }}
+          <Box
             sx={{
-              width: '100%',
-              minHeight: '50vh',
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              justifyContent: 'space-evenly',
               backgroundColor: '#DBE2EF',
               borderRadius: '8px',
               padding: '1.5em',
+              gap: { xs: '0.5em', md: '0' },
             }}
           >
-            <Grid item xs={4}>
-              <Card raised={true} sx={{ p: '1em' }}>
-                <CardActionArea sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4">CO2 Saved This Week</Typography>
-                  <CardContent>
-                    <Typography variant="h5">
-                      <AutoGraphOutlined fontSize="large" />
-                      {progressStats.weekCO2}g
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-            <Grid item xs={3}>
-              <Card raised={true} sx={{ p: '1em' }}>
-                <CardActionArea sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4">Total CO2 Saved</Typography>
-                  <CardContent>
-                    <Typography variant="h5">
-                      {progressStats.totalCO2}g
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-            <Grid item xs={5}>
-              <Card raised={true} sx={{ p: '1em' }}>
-                <CardActionArea sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4">Collective Impact</Typography>
-                  <CardContent>
-                    <Typography variant="h5">
-                      {progressStats.globalCO2}g
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          </Grid>
+            <StyledPaper elevation={6}>
+              <Typography variant="h4">CO2 Saved This Week</Typography>
+              <Typography variant="h5" className="statValue">
+                <AutoGraphOutlined fontSize="large" />
+                {progressStats.weekCO2}g
+              </Typography>
+            </StyledPaper>
+            <StyledPaper elevation={6}>
+              <Typography variant="h4">Total CO2 Saved</Typography>
+              <Typography variant="h5" className="statValue">
+                {progressStats.totalCO2}g
+              </Typography>
+            </StyledPaper>
+            <StyledPaper elevation={6}>
+              <Typography variant="h4">Collective Impact</Typography>
+              <Typography variant="h5" className="statValue">
+                {progressStats.globalCO2}g
+              </Typography>
+            </StyledPaper>
+          </Box>
           <Box
             component="div"
             sx={{

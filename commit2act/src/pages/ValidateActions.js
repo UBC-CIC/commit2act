@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Autocomplete, TextField, Stack } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Autocomplete,
+  TextField,
+  Stack,
+  CircularProgress,
+} from '@mui/material';
 import { API, Auth } from 'aws-amplify';
 import { Search } from '@mui/icons-material';
 import {
@@ -69,6 +76,7 @@ const ValidateActions = () => {
         <Typography variant="subtitle2" sx={{ mt: '2.5em' }}>
           Search for one of your groups to filter for specific actions
         </Typography>
+        {!groups && <CircularProgress sx={{ mt: '1em' }} />}
         {groups && (
           <Autocomplete
             freeSolo
