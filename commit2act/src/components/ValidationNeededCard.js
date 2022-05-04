@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Done, Clear, ErrorOutline } from '@mui/icons-material';
+import { Done, Clear } from '@mui/icons-material';
 
 const ValidationNeededCard = ({ action }) => {
   return (
