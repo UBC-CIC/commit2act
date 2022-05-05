@@ -93,56 +93,67 @@ const UserProfile = () => {
 
   const renderUserGroups = () => {
     return (
-      <Grid
-        item
-        container
-        columnSpacing={{ xs: 0, md: 1 }}
-        sx={{
-          width: '100%',
-          borderRadius: '8px',
-          padding: '1.5em',
-          mt: '2em',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          overflow: 'auto',
-        }}
-      >
-        {groups &&
-          groups.map((group, index) => (
-            <Grid
-              container
-              item
-              xs={6}
-              sm={4}
-              md={2}
-              sx={{
-                justifyContent: 'center',
-                wordBreak: 'break-word',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-              key={index}
-            >
-              <>
-                <Avatar
-                  alt={group.group_name}
-                  src={group.group_image ? group.group_image : null}
-                  sx={{
-                    width: 100,
-                    height: 100,
-                    ':hover': { opacity: '0.8', cursor: 'pointer' },
-                  }}
-                  onClick={() => navigate(`/group-profile/${group.group_name}`)}
-                >
-                  {group.group_name.charAt(0)}
-                </Avatar>
-                <Typography variant="subtitle2" sx={{ mt: '0.5em' }}>
-                  {group.group_name}
-                </Typography>
-              </>
-            </Grid>
-          ))}
-      </Grid>
+      <>
+        {/* show error message if user is not in any groups */}
+        {groups && groups.length === 0 && (
+          <Typography component="div" variant="subtitle2">
+            {user.name} is not a member in any groups
+          </Typography>
+        )}
+        {/* else display all of the user's groups */}
+        {groups && groups.length !== 0 && (
+          <Grid
+            item
+            container
+            columnSpacing={{ xs: 0, md: 1 }}
+            sx={{
+              width: '100%',
+              padding: '1.5em',
+              mt: '2em',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              overflow: 'auto',
+            }}
+          >
+            {groups.map((group, index) => (
+              <Grid
+                container
+                item
+                xs={6}
+                sm={4}
+                md={2}
+                sx={{
+                  justifyContent: 'center',
+                  wordBreak: 'break-word',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+                key={index}
+              >
+                <>
+                  <Avatar
+                    alt={group.group_name}
+                    src={group.group_image ? group.group_image : null}
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      ':hover': { opacity: '0.8', cursor: 'pointer' },
+                    }}
+                    onClick={() =>
+                      navigate(`/group-profile/${group.group_name}`)
+                    }
+                  >
+                    {group.group_name.charAt(0)}
+                  </Avatar>
+                  <Typography variant="subtitle2" sx={{ mt: '0.5em' }}>
+                    {group.group_name}
+                  </Typography>
+                </>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </>
     );
   };
 
