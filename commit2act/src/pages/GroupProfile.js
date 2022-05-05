@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
-  Tooltip,
   Box,
   Tab,
   Grid,
@@ -9,7 +8,6 @@ import {
   CardActionArea,
   CardContent,
   Avatar,
-  AvatarGroup,
   Stack,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
@@ -31,6 +29,7 @@ import {
 import GroupMemberPanel from '../components/groupProfile/GroupMemberPanel';
 import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
 import MemberActionsPanel from '../components/groupProfile/MemberActionsPanel';
+import GroupInfoPanel from '../components/groupProfile/GroupInfoPanel';
 
 const GroupProfile = () => {
   const { groupName } = useParams();
@@ -104,47 +103,6 @@ const GroupProfile = () => {
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
-  };
-
-  const renderGroupInfoPanel = () => {
-    return (
-      <Grid container sx={{ pt: '1.5em' }} columnSpacing={12} rowSpacing={4}>
-        <Grid item xs={12} sm={7}>
-          <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
-            About
-          </Typography>
-          <Typography component="div" variant="subtitle2">
-            {groupInfo.group_description}
-          </Typography>
-        </Grid>
-        <Grid item xs={12} sm={5}>
-          <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
-            Group Organizers
-          </Typography>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent={{ xs: 'center', lg: 'flex-start' }}
-          >
-            <AvatarGroup max={4}>
-              {groupOwners &&
-                groupOwners.map((owner, index) => (
-                  <Tooltip title={owner.name}>
-                    <Avatar
-                      key={index}
-                      alt={owner.name}
-                      src={owner.avatar ? owner.avatar : null}
-                      sx={{ width: 60, height: 60 }}
-                    >
-                      {owner.name.charAt(0)}
-                    </Avatar>
-                  </Tooltip>
-                ))}
-            </AvatarGroup>
-          </Box>
-        </Grid>
-      </Grid>
-    );
   };
 
   return (
@@ -284,7 +242,12 @@ const GroupProfile = () => {
                   {currentUserOwner && <Tab label="Add Members" value="3" />}
                 </TabList>
               </Box>
-              <TabPanel value="0">{renderGroupInfoPanel()}</TabPanel>
+              <TabPanel value="0">
+                <GroupInfoPanel
+                  groupOwners={groupOwners}
+                  groupInfo={groupInfo}
+                />
+              </TabPanel>
               <TabPanel
                 value="1"
                 sx={{
