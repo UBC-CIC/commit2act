@@ -21,10 +21,13 @@ const ValidateActions = () => {
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
   const [allActions, setAllActions] = useState();
+  const [changed, setChanged] = useState();
+  const [userId, setUserId] = useState();
 
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     const id = cognitoUserEntry.attributes['custom:id'];
+    setUserId(id);
     getGroupsAndAllActions(id);
   };
 
@@ -34,7 +37,7 @@ const ValidateActions = () => {
         query: getAllGroupsUserOwns,
         variables: { user_id: id },
       }),
-      await API.graphql({
+      API.graphql({
         query: getAllSubmittedActionsToValidate,
         variables: { user_id: id },
       }),
@@ -47,6 +50,20 @@ const ValidateActions = () => {
   useEffect(() => {
     getCognitoUser();
   }, []);
+
+  const getAllActions = async () => {
+    const res = await API.graphql({
+      query: getAllSubmittedActionsToValidate,
+      variables: { user_id: userId },
+    });
+    setAllActions(res.data.getAllSubmittedActionsToValidate);
+  };
+
+  useEffect(() => {
+    if (userId) {
+      getAllActions();
+    }
+  }, [changed]);
 
   const checkGroup = () => {
     if (!groups.some((group) => group.group_name === input)) {
@@ -126,7 +143,12 @@ const ValidateActions = () => {
         <Stack spacing={2}>
           {allActions &&
             allActions.map((action, index) => (
-              <ValidationNeededCard action={action} key={index} />
+              <ValidationNeededCard
+                action={action}
+                key={index}
+                changed={changed}
+                setChanged={setChanged}
+              />
             ))}
         </Stack>
       </Box>

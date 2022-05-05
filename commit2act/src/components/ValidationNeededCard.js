@@ -10,8 +10,29 @@ import {
   Typography,
 } from '@mui/material';
 import { Done, Clear } from '@mui/icons-material';
+import {
+  approveSubmittedAction,
+  rejectSubmittedAction,
+} from '../graphql/mutations';
+import { API } from 'aws-amplify';
 
-const ValidationNeededCard = ({ action }) => {
+const ValidationNeededCard = ({ action, setChanged, changed }) => {
+  const approveAction = async () => {
+    await API.graphql({
+      query: approveSubmittedAction,
+      variables: { sa_id: action.sa_id },
+    });
+    setChanged(!changed);
+  };
+
+  const rejectAction = async () => {
+    await API.graphql({
+      query: rejectSubmittedAction,
+      variables: { sa_id: action.sa_id },
+    });
+    setChanged(!changed);
+  };
+
   return (
     <Card sx={{ display: 'flex' }}>
       <Box
@@ -71,8 +92,12 @@ const ValidationNeededCard = ({ action }) => {
           }}
         >
           <Stack spacing={2} direction={{ xs: 'row', sm: 'column' }}>
-            <Button startIcon={<Done />}>Accept</Button>
-            <Button startIcon={<Clear />}>Reject</Button>
+            <Button startIcon={<Done />} onClick={approveAction}>
+              Accept
+            </Button>
+            <Button startIcon={<Clear />} onClick={rejectAction}>
+              Reject
+            </Button>
           </Stack>
         </CardActions>
       </Box>
