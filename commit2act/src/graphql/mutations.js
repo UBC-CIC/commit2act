@@ -187,6 +187,10 @@ export const createGroup = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -213,6 +217,10 @@ export const createGroupAndOwner = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -239,6 +247,10 @@ export const updateGroup = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;

@@ -231,6 +231,10 @@ export const getAllGroups = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -243,6 +247,10 @@ export const getSingleGroup = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -255,6 +263,10 @@ export const getSingleGroupByName = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -321,6 +333,10 @@ export const getAllGroupsForUser = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -333,6 +349,10 @@ export const getAllGroupsUserOwns = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -345,6 +365,10 @@ export const getAllGroupsUserIsAMember = /* GraphQL */ `
       group_image
       is_public
       private_password
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;

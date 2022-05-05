@@ -4,11 +4,9 @@ import {
   Box,
   Tab,
   Grid,
-  Card,
-  CardActionArea,
-  CardContent,
   Avatar,
   Stack,
+  Paper,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
 import {
@@ -23,13 +21,20 @@ import {
   getSingleGroupByName,
   getAllUsersInGroup,
   getAllOwnersInGroup,
-  getGroupsTotalCO2,
-  getGroupsWeekCO2,
 } from '../graphql/queries';
 import GroupMemberPanel from '../components/groupProfile/GroupMemberPanel';
 import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
 import MemberActionsPanel from '../components/groupProfile/MemberActionsPanel';
 import GroupInfoPanel from '../components/groupProfile/GroupInfoPanel';
+import { styled } from '@mui/material/styles';
+
+const StyledPaper = styled(Paper)`
+  padding: 1em 2em;
+  text-align: center;
+  .statValue {
+    margin-top: 0.5em;
+  }
+`;
 
 const GroupProfile = () => {
   const { groupName } = useParams();
@@ -38,10 +43,6 @@ const GroupProfile = () => {
   const [groupMembers, setGroupMembers] = useState();
   const [groupOwners, setGroupOwners] = useState();
   const [currentUserOwner, setCurrentUserOwner] = useState(false);
-  const [progressStats, setProgressStats] = useState({
-    totalCO2: '',
-    weekCO2: '',
-  });
 
   useEffect(() => {
     getGroupAndUserInfo();
@@ -56,11 +57,11 @@ const GroupProfile = () => {
         variables: { group_name: groupName },
       }),
     ]);
-    const currentUserId = Number(cognitoUser.attributes['custom:id']);
     setGroupInfo(groupInfoRes.data.getSingleGroupByName);
+    const currentUserId = Number(cognitoUser.attributes['custom:id']);
     const groupId = groupInfoRes.data.getSingleGroupByName.group_id;
     isUserGroupOwner(currentUserId, groupId);
-    getGroupStats(groupId);
+    getGroupUsers(groupId);
   };
 
   //gets array of all group owners and checks if the current user is a owner
@@ -77,28 +78,13 @@ const GroupProfile = () => {
     }
   };
 
-  //gets list of all users and group stats
-  const getGroupStats = async (groupId) => {
-    const [memberRes, totalCO2Res, weeklyCO2Res] = await Promise.all([
-      API.graphql({
-        query: getAllUsersInGroup,
-        variables: { group_id: groupId },
-      }),
-      API.graphql({
-        query: getGroupsTotalCO2,
-        variables: { group_id: groupId },
-      }),
-      API.graphql({
-        query: getGroupsWeekCO2,
-        variables: { group_id: groupId },
-      }),
-    ]);
+  //gets list of all users
+  const getGroupUsers = async (groupId) => {
+    const memberRes = await API.graphql({
+      query: getAllUsersInGroup,
+      variables: { group_id: groupId },
+    });
     setGroupMembers(memberRes.data.getAllUsersInGroup);
-    setProgressStats((prev) => ({
-      ...prev,
-      totalCO2: totalCO2Res.data.getGroupsTotalCO2,
-      weekCO2: weeklyCO2Res.data.getGroupsWeekCO2,
-    }));
   };
 
   const handleTabChange = (e, newValue) => {
@@ -115,7 +101,7 @@ const GroupProfile = () => {
           direction={{ xs: 'column', lg: 'row' }}
           sx={{ mt: '2em' }}
           gap={{ xs: '2em', lg: '0' }}
-          textAlign={{ xs: 'center', lg: 'left' }}
+          textAlign={{ xs: 'center', md: 'left' }}
         >
           <Grid
             container
@@ -166,49 +152,33 @@ const GroupProfile = () => {
               </Stack>
             </Box>
           </Grid>
-
           <Grid item xs={7.5}>
-            <Grid
-              container
-              rowSpacing={1}
-              columnSpacing={{ xs: 0, sm: 1 }}
-              direction={{ xs: 'column', sm: 'row' }}
-              alignItems={{ xs: 'stretch', sm: 'center' }}
+            <Box
               sx={{
-                width: '100%',
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-evenly',
                 backgroundColor: '#DBE2EF',
                 borderRadius: '8px',
                 padding: '1.5em',
+                gap: { xs: '0.5em', md: '2' },
               }}
             >
-              <Grid item xs={6}>
-                <Card raised={true} sx={{ p: '1em', height: { md: '25vh' } }}>
-                  <CardActionArea sx={{ textAlign: 'center' }}>
-                    <Typography variant="h4">CO2 Saved This Week</Typography>
-                    <CardContent>
-                      <Typography variant="h5">
-                        <AutoGraphOutlined fontSize="large" />
-                        {progressStats.weekCO2}g
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card raised={true} sx={{ p: '1em', height: { md: '25vh' } }}>
-                  <CardActionArea sx={{ textAlign: 'center' }}>
-                    <Typography variant="h4">Total CO2 Saved</Typography>
-                    <CardContent>
-                      <Typography variant="h5">
-                        {progressStats.totalCO2}g
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            </Grid>
+              <StyledPaper elevation={6}>
+                <Typography variant="h4">CO2 Saved This Week</Typography>
+                <Typography variant="h5" className="statValue">
+                  <AutoGraphOutlined fontSize="large" />
+                  {groupInfo.weekly_co2}g
+                </Typography>
+              </StyledPaper>
+              <StyledPaper elevation={6}>
+                <Typography variant="h4">Total CO2 Saved</Typography>
+                <Typography variant="h5" className="statValue">
+                  {groupInfo.total_co2}g
+                </Typography>
+              </StyledPaper>
+            </Box>
           </Grid>
-
           <Grid
             container
             item

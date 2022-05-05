@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, LinearProgress, Stack } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getAllValidatedSubmittedActionsInGroup } from '../../graphql/queries';
 import SubmittedActionCard from '../SubmittedActionCard';
@@ -32,6 +32,8 @@ const MemberActionsPanel = ({ groupInfo }) => {
             .map((action, index) => (
               <SubmittedActionCard key={index} action={action} />
             ));
+    } else {
+      return <LinearProgress />;
     }
   };
 

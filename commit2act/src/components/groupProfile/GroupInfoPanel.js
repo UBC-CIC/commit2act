@@ -52,9 +52,8 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
             >
               {groupOwners &&
                 groupOwners.map((owner, index) => (
-                  <Tooltip title={owner.name}>
+                  <Tooltip title={owner.name} key={index}>
                     <Avatar
-                      key={index}
                       alt={owner.name}
                       src={owner.avatar ? owner.avatar : null}
                       sx={{ width: 60, height: 60 }}
