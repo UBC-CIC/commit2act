@@ -21,7 +21,6 @@ const ValidateActions = () => {
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
   const [allActions, setAllActions] = useState();
-  const [changed, setChanged] = useState();
   const [userId, setUserId] = useState();
 
   const getCognitoUser = async () => {
@@ -58,12 +57,6 @@ const ValidateActions = () => {
     });
     setAllActions(res.data.getAllSubmittedActionsToValidate);
   };
-
-  useEffect(() => {
-    if (userId) {
-      getAllActions();
-    }
-  }, [changed]);
 
   const checkGroup = () => {
     if (!groups.some((group) => group.group_name === input)) {
@@ -146,8 +139,7 @@ const ValidateActions = () => {
               <ValidationNeededCard
                 action={action}
                 key={index}
-                changed={changed}
-                setChanged={setChanged}
+                getAllActions={getAllActions}
               />
             ))}
         </Stack>

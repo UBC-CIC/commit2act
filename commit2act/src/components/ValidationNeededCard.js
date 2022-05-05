@@ -16,13 +16,18 @@ import {
 } from '../graphql/mutations';
 import { API } from 'aws-amplify';
 
-const ValidationNeededCard = ({ action, setChanged, changed }) => {
+const ValidationNeededCard = ({
+  action,
+  setChanged,
+  changed,
+  getAllActions,
+}) => {
   const approveAction = async () => {
     await API.graphql({
       query: approveSubmittedAction,
       variables: { sa_id: action.sa_id },
     });
-    setChanged(!changed);
+    getAllActions();
   };
 
   const rejectAction = async () => {
@@ -30,7 +35,7 @@ const ValidationNeededCard = ({ action, setChanged, changed }) => {
       query: rejectSubmittedAction,
       variables: { sa_id: action.sa_id },
     });
-    setChanged(!changed);
+    getAllActions();
   };
 
   return (
