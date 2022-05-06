@@ -27,6 +27,7 @@ import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
 import MemberActionsPanel from '../components/groupProfile/MemberActionsPanel';
 import GroupInfoPanel from '../components/groupProfile/GroupInfoPanel';
 import { styled } from '@mui/material/styles';
+import Leaderboard from '../components/Leaderboard';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -178,6 +179,9 @@ const GroupProfile = () => {
                 </Typography>
               </StyledPaper>
             </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Leaderboard />
           </Grid>
           <Grid
             container
