@@ -78,32 +78,12 @@ const Leaderboard = () => {
   const renderGroupTable = () => {
     return (
       <>
-        <Tooltip title="Filter list">
-          <IconButton onClick={handleClick}>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-        <Menu
-          id="filter-menu"
-          open={openFilterMenu}
-          anchorEl={filterMenuAnchor}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          {filters.map((filter, index) => (
-            <MenuItem key={index} onClick={() => handleFilterSelection(filter)}>
-              {filter.name}
-            </MenuItem>
-          ))}
-        </Menu>
         <TableContainer component={Paper}>
           <Table stickyHeader aria-label="group leaderboard">
             <TableHead>
               <TableRow>
                 <TableCell>Rank</TableCell>
-                <TableCell align="right">Group Name</TableCell>
+                <TableCell align="left">Group Name</TableCell>
                 <TableCell align="right">Total CO2</TableCell>
                 <TableCell align="right">Total Points</TableCell>
                 <TableCell align="right">Weekly CO2</TableCell>
@@ -149,9 +129,40 @@ const Leaderboard = () => {
     <>
       {groups && (
         <Box sx={{ mt: '2.5em' }}>
-          <Typography variant="h2" sx={{ mb: '1em' }}>
-            Leaderboard
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h2" sx={{ mb: '1em' }}>
+              Leaderboard
+            </Typography>
+            <Tooltip title="Apply Filter">
+              <IconButton onClick={handleClick}>
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              id="filter-menu"
+              open={openFilterMenu}
+              anchorEl={filterMenuAnchor}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              {filters.map((filter, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={() => handleFilterSelection(filter)}
+                >
+                  {filter.name}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
           <TabContext value={selectedTab}>
             <Box
               sx={{
