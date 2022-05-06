@@ -44,6 +44,7 @@ const GroupProfile = () => {
   const [groupMembers, setGroupMembers] = useState();
   const [groupOwners, setGroupOwners] = useState();
   const [currentUserOwner, setCurrentUserOwner] = useState(false);
+  const [userId, setUserId] = useState();
 
   useEffect(() => {
     getGroupAndUserInfo();
@@ -60,6 +61,7 @@ const GroupProfile = () => {
     ]);
     setGroupInfo(groupInfoRes.data.getSingleGroupByName);
     const currentUserId = Number(cognitoUser.attributes['custom:id']);
+    setUserId(currentUserId);
     const groupId = groupInfoRes.data.getSingleGroupByName.group_id;
     isUserGroupOwner(currentUserId, groupId);
     getGroupUsers(groupId);
@@ -181,7 +183,11 @@ const GroupProfile = () => {
             </Box>
           </Grid>
           <Grid item xs={12}>
-            <Leaderboard />
+            <Leaderboard
+              currentGroup={groupInfo}
+              groupMembers={groupMembers}
+              userId={userId}
+            />
           </Grid>
           <Grid
             container

@@ -279,6 +279,10 @@ export const getAllUsersInGroup = /* GraphQL */ `
       email
       avatar
       user_role
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
     }
   }
 `;
@@ -406,6 +410,7 @@ export const getAllSubmittedActionsToValidate = /* GraphQL */ `
       action_name
       submitted_image
       name_of_user
+      group_names
     }
   }
 `;
