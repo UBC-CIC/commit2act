@@ -23,7 +23,6 @@ import { getAllGroups } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-// import theme from '../themes';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -47,15 +46,15 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
-  // avoid a layout jump in the table when reaching the last page with empty rows
-  const emptyGroupRows =
-    page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - filteredGroups.length)
-      : 0;
 
-  const emptyMemberRows =
-    page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - filteredMembers.length)
+  // avoid a layout jump in the table when reaching the last page with empty rows
+  let emptyRows =
+    page <= 0
+      ? 0
+      : selectedTab === tabs[0]
+      ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
+      : selectedTab === tabs[1]
+      ? Math.max(0, (1 + page) * rowsPerPage - groupMembers.length)
       : 0;
 
   useEffect(() => {
@@ -75,13 +74,11 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     }
   }, [groups, groupMembers, selectedFilter]);
 
-  //sets filter back to default (total co2) on tab change
-  useEffect(() => {
-    setSelectedFilter(filters[0]);
-  }, [selectedTab]);
-
+  //sets filter back to default (total co2) and sets page back to first page on tab change
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
+    setSelectedFilter(filters[0]);
+    setPage(0);
   };
 
   /** functions for filter menu */
@@ -160,7 +157,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
               </Typography>
             </Typography>
           )}
-          {/* if Group Members tab is selected, check if user is a group member, then render user's current place */}
+          {/* if Group Members tab is selected, check if user is a group member, then render user's current place. If user doesn't belong to the group, don't render current place */}
           {filteredMembers &&
             selectedTab === tabs[1] &&
             groupMembers.findIndex((member) => member.user_id === userId) !==
@@ -234,31 +231,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                   </TableRow>
                 ))}
 
-              {/* {selectedTab === tabs[0] &&
-                filteredGroups &&
-                filteredGroups.map((group, index) => (
-                  <TableRow
-                    key={group.group_id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ color: theme.palette.secondary.main }}
-                    >
-                      {index + 1}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      {group.group_name}
-                    </TableCell>
-                    <TableCell align="right">{group.total_co2}</TableCell>
-                    <TableCell align="right">{group.total_points}</TableCell>
-                    <TableCell align="right">{group.weekly_co2}</TableCell>
-                    <TableCell align="right">{group.weekly_points}</TableCell>
-                  </TableRow>
-                ))} */}
               {/* if Group Members tab is selected, display all member data in table body*/}
-
               {selectedTab === tabs[1] &&
                 filteredMembers &&
                 (rowsPerPage > 0
@@ -288,43 +261,15 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                     <TableCell align="right">{member.weekly_points}</TableCell>
                   </TableRow>
                 ))}
-
-              {/* //   {selectedTab === tabs[1] &&
-            //     filteredMembers &&
-            //     filteredMembers.map((member, index) => (
-            //       <TableRow
-            //         key={member.user_id}
-            //         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            //       >
-            //         <TableCell
-            //           component="th"
-            //           scope="row"
-            //           sx={{ color: theme.palette.secondary.main }}
-            //         >
-            //           {index + 1}
-            //         </TableCell>
-            //         <TableCell component="th" scope="row">
-            //           {member.name}
-            //         </TableCell>
-            //         <TableCell align="right">{member.total_co2}</TableCell>
-            //         <TableCell align="right">{member.total_points}</TableCell>
-            //         <TableCell align="right">{member.weekly_co2}</TableCell>
-            //         <TableCell align="right">{member.weekly_points}</TableCell>
-            //       </TableRow>
-            //     ))} */}
-              {selectedTab === tabs[0] && emptyGroupRows > 0 && (
-                <TableRow style={{ height: 53 * emptyGroupRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-              {selectedTab === tabs[1] && emptyMemberRows > 0 && (
-                <TableRow style={{ height: 53 * emptyMemberRows }}>
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
+        {/* render the correct pagination options for each table */}
         {selectedTab === tabs[0] && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
