@@ -25,6 +25,13 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { styled } from '@mui/material/styles';
+
+const StyledTableBody = styled(TableBody)`
+  .currentGroupOrUser {
+    background-color: #f6f6f6;
+  }
+`;
 
 const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   const tabs = ['Global Groups', 'Group Members'];
@@ -72,6 +79,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     if (groups && groupMembers) {
       handleFilterSelection();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groups, groupMembers, selectedFilter]);
 
   //sets filter back to default (total co2) and sets page back to first page on tab change
@@ -198,7 +206,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 <TableCell align="right">Weekly Points</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <StyledTableBody>
               {/* if Global Groups tab is selected, display all groups data in table body*/}
               {selectedTab === tabs[0] &&
                 filteredGroups &&
@@ -211,7 +219,13 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 ).map((group, index) => (
                   <TableRow
                     key={group.group_id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    className={
+                      currentGroup.group_name === group.group_name &&
+                      'currentGroupOrUser'
+                    }
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 },
+                    }}
                   >
                     <TableCell
                       component="th"
@@ -244,6 +258,9 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                   <TableRow
                     key={member.user_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    className={
+                      userId === member.user_id && 'currentGroupOrUser'
+                    }
                   >
                     <TableCell
                       component="th"
@@ -266,7 +283,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
-            </TableBody>
+            </StyledTableBody>
           </Table>
         </TableContainer>
         {/* render the correct pagination options for each table */}
