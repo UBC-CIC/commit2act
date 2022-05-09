@@ -35,10 +35,24 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   ];
   const [groups, setGroups] = useState();
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [filteredGroups, setFilteredGroups] = useState();
   const [filteredMembers, setFilteredMembers] = useState();
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // avoid a layout jump in the table when reaching the last page with empty rows
+  const emptyGroupRows =
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - filteredGroups.length)
+      : 0;
+
+  const emptyMemberRows =
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - filteredMembers.length)
+      : 0;
 
   useEffect(() => {
     const getGroups = async () => {
@@ -50,12 +64,17 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     getGroups();
   }, []);
 
+  //filters groups when group state is initially set, filters groups and group members every time a new filter is selected
   useEffect(() => {
-    //filter groups and users by total co2 as default view
     if (groups && groupMembers) {
-      handleFilterSelection(filters[0]);
+      handleFilterSelection();
     }
-  }, [groups, groupMembers, selectedTab]);
+  }, [groups, groupMembers, selectedFilter]);
+
+  //sets filter back to default (total co2) on tab change
+  useEffect(() => {
+    setSelectedFilter(filters[0]);
+  }, [selectedTab]);
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
@@ -72,17 +91,17 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     setOpenFilterMenu(false);
   };
 
-  const handleFilterSelection = (filter) => {
-    const propertySelected = filter.property;
+  const handleFilterSelection = () => {
+    const propertySelected = selectedFilter.property;
     //if Global Group tab is selected, apply the selected filter to all groups
-    if (selectedTab === tabs[0]) {
+    if (selectedTab === tabs[0] && groups) {
       const sortedByFilter = groups.sort(
         (a, b) => b[propertySelected] - a[propertySelected]
       );
       setFilteredGroups(sortedByFilter);
     }
     //if Group Members tab is selected, apply the selected filter to all users
-    if (selectedTab === tabs[1]) {
+    if (selectedTab === tabs[1] && groupMembers) {
       const sortedByFilter = groupMembers.sort(
         (a, b) => b[propertySelected] - a[propertySelected]
       );
@@ -91,16 +110,38 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     handleClose();
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   /** function for displaying the leaderboard tables */
 
   const renderTable = () => {
     return (
       <>
         {/* if Global Groups tab is selected, render group current place */}
-        <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           {filteredGroups && selectedTab === tabs[0] && (
-            <>
-              <Typography variant="h3">Current Place</Typography>
+            <Typography
+              variant="h3"
+              component="div"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              Current Place
               <Typography variant="h1" sx={{ mt: '0.2em' }}>
                 <AutoGraphIcon />
                 {filteredGroups.findIndex(
@@ -108,27 +149,39 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 ) + 1}{' '}
                 / {filteredGroups.length}
               </Typography>
-            </>
+            </Typography>
           )}
           {/* if Group Members tab is selected, check if user is a group member, then render user's current place */}
-          {groupMembers &&
+          {filteredMembers &&
             selectedTab === tabs[1] &&
             groupMembers.findIndex((member) => member.user_id === userId) !==
               -1 && (
-              <>
-                <Typography variant="h3">Current Place</Typography>
+              <Typography
+                variant="h3"
+                component="div"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
+                Current Place
                 <Typography variant="h1" sx={{ mt: '0.2em' }}>
                   <AutoGraphIcon />
-                  {groupMembers.findIndex(
+                  {filteredMembers.findIndex(
                     (member) => member.user_id === userId
                   ) + 1}{' '}
                   / {groupMembers.length}
                 </Typography>
-              </>
+              </Typography>
             )}
         </Box>
         <TableContainer component={Paper} sx={{ mt: '1em' }}>
           <Table stickyHeader aria-label="group leaderboard">
+            <caption>
+              Leaderboard displaying {selectedTab} ranked by{' '}
+              {selectedFilter.name}
+            </caption>
             <TableHead>
               <TableRow>
                 <TableCell>Rank</TableCell>
@@ -142,6 +195,37 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
             <TableBody>
               {/* if Global Groups tab is selected, display all groups data in table body*/}
               {selectedTab === tabs[0] &&
+                filteredGroups &&
+                (rowsPerPage > 0
+                  ? filteredGroups.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : filteredGroups
+                ).map((group, index) => (
+                  <TableRow
+                    key={group.group_id}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ color: theme.palette.secondary.main }}
+                    >
+                      {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking  */}
+                      {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {group.group_name}
+                    </TableCell>
+                    <TableCell align="right">{group.total_co2}</TableCell>
+                    <TableCell align="right">{group.total_points}</TableCell>
+                    <TableCell align="right">{group.weekly_co2}</TableCell>
+                    <TableCell align="right">{group.weekly_points}</TableCell>
+                  </TableRow>
+                ))}
+
+              {/* {selectedTab === tabs[0] &&
                 filteredGroups &&
                 filteredGroups.map((group, index) => (
                   <TableRow
@@ -163,11 +247,18 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                     <TableCell align="right">{group.weekly_co2}</TableCell>
                     <TableCell align="right">{group.weekly_points}</TableCell>
                   </TableRow>
-                ))}
+                ))} */}
               {/* if Group Members tab is selected, display all member data in table body*/}
+
               {selectedTab === tabs[1] &&
                 filteredMembers &&
-                filteredMembers.map((member, index) => (
+                (rowsPerPage > 0
+                  ? filteredMembers.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : filteredMembers
+                ).map((member, index) => (
                   <TableRow
                     key={member.user_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -177,7 +268,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                       scope="row"
                       sx={{ color: theme.palette.secondary.main }}
                     >
-                      {index + 1}
+                      {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {member.name}
@@ -188,18 +279,69 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                     <TableCell align="right">{member.weekly_points}</TableCell>
                   </TableRow>
                 ))}
+
+              {/* //   {selectedTab === tabs[1] &&
+            //     filteredMembers &&
+            //     filteredMembers.map((member, index) => (
+            //       <TableRow
+            //         key={member.user_id}
+            //         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            //       >
+            //         <TableCell
+            //           component="th"
+            //           scope="row"
+            //           sx={{ color: theme.palette.secondary.main }}
+            //         >
+            //           {index + 1}
+            //         </TableCell>
+            //         <TableCell component="th" scope="row">
+            //           {member.name}
+            //         </TableCell>
+            //         <TableCell align="right">{member.total_co2}</TableCell>
+            //         <TableCell align="right">{member.total_points}</TableCell>
+            //         <TableCell align="right">{member.weekly_co2}</TableCell>
+            //         <TableCell align="right">{member.weekly_points}</TableCell>
+            //       </TableRow>
+            //     ))} */}
+              {selectedTab === tabs[0] && emptyGroupRows > 0 && (
+                <TableRow style={{ height: 53 * emptyGroupRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+              {selectedTab === tabs[1] && emptyMemberRows > 0 && (
+                <TableRow style={{ height: 53 * emptyMemberRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
-        {/* <TablePagination
-          rowsPerPageOptions={[5, 10]}
-          component="div"
-          count={groups.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        /> */}
+        {selectedTab === tabs[0] && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10]}
+            component="div"
+            count={groups.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            showFirstButton
+            showLastButton
+          />
+        )}
+        {selectedTab === tabs[1] && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10]}
+            component="div"
+            count={groupMembers.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            showFirstButton
+            showLastButton
+          />
+        )}
       </>
     );
   };
@@ -213,34 +355,44 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              mb: '1em',
             }}
           >
-            <Typography variant="h2" sx={{ mb: '1em' }}>
-              Leaderboard
-            </Typography>
-            <Tooltip title="Apply Filter">
-              <IconButton onClick={handleClick}>
-                <FilterListIcon />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              id="filter-menu"
-              open={openFilterMenu}
-              anchorEl={filterMenuAnchor}
-              onClose={handleClose}
-              MenuListProps={{
-                'aria-labelledby': 'basic-button',
+            <Typography variant="h2">Leaderboard</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              {filters.map((filter, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={() => handleFilterSelection(filter)}
-                >
-                  {filter.name}
-                </MenuItem>
-              ))}
-            </Menu>
+              <Typography variant="subtitle2" component="div">
+                {selectedFilter.name}
+              </Typography>
+              <Tooltip title="Apply Filter">
+                <IconButton onClick={handleClick}>
+                  <FilterListIcon />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                id="filter-menu"
+                open={openFilterMenu}
+                anchorEl={filterMenuAnchor}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                {filters.map((filter, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => setSelectedFilter(filter)}
+                  >
+                    {filter.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
           </Box>
           <TabContext value={selectedTab}>
             <Box
