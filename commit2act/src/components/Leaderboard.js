@@ -9,7 +9,6 @@ import {
   TableRow,
   TablePagination,
   Tab,
-  Tabs,
   Paper,
   Typography,
   Tooltip,
@@ -19,11 +18,14 @@ import {
 } from '@mui/material';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
 import { getAllGroups } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-import theme from '../themes';
+// import theme from '../themes';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   const tabs = ['Global Groups', 'Group Members'];
@@ -43,6 +45,8 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const theme = useTheme();
+  const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
   // avoid a layout jump in the table when reaching the last page with empty rows
   const emptyGroupRows =
     page > 0
@@ -129,6 +133,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
           sx={{
             display: 'flex',
             flexDirection: 'column',
+            mt: { xs: '1.5em', sm: '0' },
           }}
         >
           {filteredGroups && selectedTab === tabs[0] && (
@@ -349,13 +354,16 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   return (
     <>
       {groups && (
-        <Box sx={{ mt: '2.5em' }}>
+        <>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              flexDirection: { xs: 'column', sm: 'row' },
+              justifyContent: { xs: 'center', sm: 'space-between' },
               alignItems: 'center',
+              gap: { xs: '1em', sm: '0' },
               mb: '1em',
+              width: '100%',
             }}
           >
             <Typography variant="h2">Leaderboard</Typography>
@@ -400,30 +408,40 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 borderTop: 1,
                 borderColor: 'divider',
                 width: '100%',
-                display: 'flex',
+                display: { xs: 'block', sm: 'flex' },
                 padding: '0.5em',
               }}
             >
-              <Tabs
-                orientation="vertical"
+              <TabList
+                orientation={mobileView ? 'horizontal' : 'vertical'}
                 variant="scrollable"
-                value={selectedTab}
+                scrollButtons
+                allowScrollButtonsMobile
                 onChange={handleTabChange}
-                aria-label="Leaderboard tab options"
-                sx={{ borderRight: 1, borderColor: 'divider' }}
+                aria-label="Leaderboard tabs"
+                sx={{
+                  borderRight: { xs: 0, sm: 1 },
+                  borderColor: { xs: 'none', sm: 'divider' },
+                }}
               >
                 <Tab label="Global Groups" value={tabs[0]} />
                 <Tab label="Group Members" value={tabs[1]} />
-              </Tabs>
-              <TabPanel value={tabs[0]} sx={{ width: '100%' }}>
+              </TabList>
+              <TabPanel
+                value={tabs[0]}
+                sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
+              >
                 {renderTable()}
               </TabPanel>
-              <TabPanel value={tabs[1]} sx={{ width: '100%' }}>
+              <TabPanel
+                value={tabs[1]}
+                sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
+              >
                 {renderTable()}
               </TabPanel>
             </Box>
           </TabContext>
-        </Box>
+        </>
       )}
     </>
   );

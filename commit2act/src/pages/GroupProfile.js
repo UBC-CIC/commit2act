@@ -182,7 +182,14 @@ const GroupProfile = () => {
               </StyledPaper>
             </Box>
           </Grid>
-          <Grid item xs={12}>
+          <Grid
+            container
+            item
+            sx={{
+              mt: { xs: '2em', md: '3em' },
+              width: { xs: '70%', sm: '100%' },
+            }}
+          >
             <Leaderboard
               currentGroup={groupInfo}
               groupMembers={groupMembers}
