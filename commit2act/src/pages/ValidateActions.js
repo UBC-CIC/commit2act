@@ -16,11 +16,12 @@ import {
 import ValidationNeededCard from '../components/ValidationNeededCard';
 
 const ValidateActions = () => {
-  const [groups, setGroups] = useState();
+  const [groupsOwnedByUser, setGroupsOwnedByUser] = useState();
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
   const [allActions, setAllActions] = useState();
+  const [filteredActions, setFilteredActions] = useState();
   const [userId, setUserId] = useState();
 
   const getCognitoUser = async () => {
@@ -42,7 +43,7 @@ const ValidateActions = () => {
       }),
     ]);
 
-    setGroups(groupRes.data.getAllGroupsUserOwns);
+    setGroupsOwnedByUser(groupRes.data.getAllGroupsUserOwns);
     setAllActions(allActionRes.data.getAllSubmittedActionsToValidate);
   };
 
@@ -59,23 +60,31 @@ const ValidateActions = () => {
   };
 
   const checkGroup = () => {
-    if (!groups.some((group) => group.group_name === input)) {
+    if (!groupsOwnedByUser.some((group) => group.group_name === input)) {
       setError(true);
     }
   };
 
   const handleInputChange = (value) => {
-    if (value === '' || groups.some((group) => group.group_name === value)) {
+    if (
+      value === '' ||
+      groupsOwnedByUser.some((group) => group.group_name === value)
+    ) {
       setError(false);
     }
     setInput(value);
   };
 
   //every time a group is selected, get all the actions in need of validation from users in that group
-  // useEffect(() => {
-  //   if (selectedGroup) {
-  //   }
-  // }, [selectedGroup]);
+  useEffect(() => {
+    if (selectedGroup) {
+      const filteredActionArray = allActions.filter((action) =>
+        action.group_names.split(', ').includes(selectedGroup)
+      );
+      console.log(filteredActions);
+      setFilteredActions(filteredActionArray);
+    }
+  }, [selectedGroup]);
 
   return (
     <>
@@ -86,11 +95,11 @@ const ValidateActions = () => {
         <Typography variant="subtitle2" sx={{ mt: '2.5em' }}>
           Search for one of your groups to filter for specific actions
         </Typography>
-        {!groups && <CircularProgress sx={{ mt: '1em' }} />}
-        {groups && (
+        {!groupsOwnedByUser && <CircularProgress sx={{ mt: '1em' }} />}
+        {groupsOwnedByUser && (
           <Autocomplete
             freeSolo
-            options={groups.map((group) => group.group_name)}
+            options={groupsOwnedByUser.map((group) => group.group_name)}
             value={selectedGroup}
             onChange={(e, newValue) => {
               setSelectedGroup(newValue);
@@ -134,12 +143,26 @@ const ValidateActions = () => {
       </Box>
       <Box sx={{ mt: '3em' }}>
         <Stack spacing={2}>
-          {allActions &&
+          {/* if group has not been selected, display all actions */}
+          {!selectedGroup &&
+            allActions &&
             allActions.map((action, index) => (
               <ValidationNeededCard
                 action={action}
                 key={index}
                 getAllActions={getAllActions}
+                groupsOwnedByUser={groupsOwnedByUser}
+              />
+            ))}
+          {/* if group has been selected, display only actions from that group */}
+          {selectedGroup &&
+            filteredActions &&
+            filteredActions.map((action, index) => (
+              <ValidationNeededCard
+                action={action}
+                key={index}
+                getAllActions={getAllActions}
+                groupsOwnedByUser={groupsOwnedByUser}
               />
             ))}
         </Stack>

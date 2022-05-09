@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,12 +16,8 @@ import {
 } from '../graphql/mutations';
 import { API } from 'aws-amplify';
 
-const ValidationNeededCard = ({
-  action,
-  setChanged,
-  changed,
-  getAllActions,
-}) => {
+const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
+  console.log(action);
   const approveAction = async () => {
     await API.graphql({
       query: approveSubmittedAction,
@@ -38,8 +34,10 @@ const ValidationNeededCard = ({
     getAllActions();
   };
 
+  //filter group names from each action to show the groups that match groupsOwnedByUsers
+
   return (
-    <Card sx={{ display: 'flex' }}>
+    <Card sx={{ display: 'flex', overflow: 'scroll' }}>
       <Box
         sx={{
           display: 'flex',
@@ -70,13 +68,13 @@ const ValidationNeededCard = ({
               textAlign: { xs: 'center', md: 'left' },
             }}
           >
-            <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
+            <Typography variant="subtitle2" sx={{ mb: '1.5em' }}>
               {action.date_of_action.split('T')[0]} - {action.name_of_user}
             </Typography>
             <Typography variant="h2" sx={{ mt: { xs: '0.5em', md: '0' } }}>
               {action.action_name}
             </Typography>
-            <Typography sx={{ my: 1.5 }}>
+            <Typography sx={{ my: 1.5, color: '#7e7e7e' }}>
               {action.submitted_action_items}
             </Typography>
             <Typography variant="body1">
@@ -84,6 +82,9 @@ const ValidationNeededCard = ({
             </Typography>
             <Typography variant="body1">
               Total Points Earned: {action.points_earned}
+            </Typography>
+            <Typography variant="body1">
+              Submitted in: {action.group_names}{' '}
             </Typography>
           </CardContent>
         </Box>
