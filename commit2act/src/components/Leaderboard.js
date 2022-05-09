@@ -99,14 +99,18 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     const propertySelected = selectedFilter.property;
     //if Global Group tab is selected, apply the selected filter to all groups
     if (selectedTab === tabs[0] && groups) {
-      const sortedByFilter = groups.sort(
+      //make a mutable copy of the groups array, sort that array and update the in state version of groups
+      let groupsArrayCopy = [...groups];
+      let sortedByFilter = groupsArrayCopy.sort(
         (a, b) => b[propertySelected] - a[propertySelected]
       );
       setFilteredGroups(sortedByFilter);
     }
     //if Group Members tab is selected, apply the selected filter to all users
     if (selectedTab === tabs[1] && groupMembers) {
-      const sortedByFilter = groupMembers.sort(
+      //make a mutable copy of the groupMembers array, sort that array and update the in state version of groupMembers
+      let groupMemberArrayCopy = [...groupMembers];
+      let sortedByFilter = groupMemberArrayCopy.sort(
         (a, b) => b[propertySelected] - a[propertySelected]
       );
       setFilteredMembers(sortedByFilter);
@@ -133,7 +137,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            mt: { xs: '1.5em', sm: '0' },
+            mt: { xs: '2em', sm: '0' },
           }}
         >
           {filteredGroups && selectedTab === tabs[0] && (
@@ -408,7 +412,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 borderTop: 1,
                 borderColor: 'divider',
                 width: '100%',
-                display: { xs: 'block', sm: 'flex' },
+                display: { xs: 'contents', sm: 'flex' },
                 padding: '0.5em',
               }}
             >
