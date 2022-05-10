@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Grid, Avatar, Tooltip, IconButton } from '@mui/material';
+import { Grid, Avatar, Tooltip, IconButton, Paper, Badge } from '@mui/material';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import GroupMemberPanelDialog from './GroupMemberPanelDialog';
 
 const GroupMemberPanel = ({
@@ -23,14 +24,15 @@ const GroupMemberPanel = ({
   return (
     <>
       {groupMembers && (
-        <Grid
+        <Paper
+          component={Grid}
           item
           container
           columnSpacing={{ xs: 0, md: 1 }}
           sx={{
             width: '100%',
-            height: '50vh',
             backgroundColor: '#DBE2EF',
+            height: '50vh',
             borderRadius: '8px',
             padding: '1.5em',
             mt: '2em',
@@ -54,23 +56,30 @@ const GroupMemberPanel = ({
                   aria-label="user avatar"
                   disableRipple={true}
                   onClick={() => handleOpen(member)}
+                  sx={{ mb: { xs: '1.5em' } }}
                 >
-                  <Avatar
-                    variant="rounded"
-                    sx={{
-                      width: {
-                        xs: 100,
-                      },
-                      height: {
-                        xs: 100,
-                      },
-                      mb: { xs: '1.5em' },
-                      ':hover': { cursor: 'pointer' },
-                    }}
-                    src={member.avatar ? member.avatar : null}
+                  <Badge
+                    overlap="rectangular"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    badgeContent={<VerifiedUserIcon />}
+                    invisible={member.user_role === 'member'}
                   >
-                    {member.name.charAt(0)}
-                  </Avatar>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        width: {
+                          xs: 100,
+                        },
+                        height: {
+                          xs: 100,
+                        },
+                        ':hover': { cursor: 'pointer' },
+                      }}
+                      src={member.avatar ? member.avatar : null}
+                    >
+                      {member.name.charAt(0)}
+                    </Avatar>
+                  </Badge>
                 </IconButton>
               </Tooltip>
             </Grid>
@@ -85,7 +94,7 @@ const GroupMemberPanel = ({
               currentUserOwner={currentUserOwner}
             />
           )}
-        </Grid>
+        </Paper>
       )}
     </>
   );

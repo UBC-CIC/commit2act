@@ -340,7 +340,7 @@ const CreateAction = () => {
   return (
     <>
       <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-        <Typography variant="h1" sx={{ my: { xs: '1.5em' } }}>
+        <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
           Create New Action Type
         </Typography>
       </Box>
@@ -353,6 +353,7 @@ const CreateAction = () => {
           borderRadius: '8px',
           padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',
+          mt: '3em',
         }}
       >
         <FormControl>

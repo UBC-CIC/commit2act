@@ -332,7 +332,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
               width: '100%',
             }}
           >
-            <Typography variant="h2">Leaderboard</Typography>
+            <Typography variant="h2">Leaderboards</Typography>
             <Box
               sx={{
                 display: 'flex',
