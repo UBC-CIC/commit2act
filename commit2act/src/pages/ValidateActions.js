@@ -49,6 +49,7 @@ const ValidateActions = () => {
 
   useEffect(() => {
     getCognitoUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getAllActions = async () => {
@@ -134,15 +135,6 @@ const ValidateActions = () => {
             )}
           />
         )}
-        {/* {!selectedGroup && (
-          <Typography
-            component="div"
-            variant="subtitle2"
-            sx={{ display: 'flex' }}
-          >
-            Filtering By: All
-          </Typography>
-        )} */}
         {error && (
           <Typography variant="subtitle2">
             Your search for "{input}" did not match any of your groups
