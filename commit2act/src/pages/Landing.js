@@ -150,7 +150,7 @@ const Landing = ({ user }) => {
               backgroundColor: '#DBE2EF',
               borderRadius: '8px',
               padding: '1.5em',
-              gap: { xs: '0.5em', md: '0' },
+              gap: { xs: '0.5em', lg: '0' },
             }}
           >
             <StyledPaper elevation={6}>
@@ -194,7 +194,16 @@ const Landing = ({ user }) => {
               Create New Group
             </Button>
           </Box>
-          {renderGroupCards()}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {renderGroupCards()}
+          </Box>
         </>
       )}
     </>

@@ -27,7 +27,7 @@ const SubmittedActionCard = ({ action }) => {
           <Typography variant="h2" sx={{ mt: { xs: '0.5em', md: '0' } }}>
             {action.action_name}
           </Typography>
-          <Typography sx={{ my: 1.5 }}>
+          <Typography sx={{ my: 1.5, color: '#7e7e7e' }}>
             {action.submitted_action_items}
           </Typography>
           <Typography variant="body1">

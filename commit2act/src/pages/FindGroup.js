@@ -51,47 +51,49 @@ const FindGroup = () => {
   };
 
   return (
-    <Box sx={{ textAlign: { xs: 'center' } }}>
-      <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-        Search For A Group
-      </Typography>
-      <Typography variant="subtitle2" sx={{ mt: { xs: '3em' } }}>
-        Enter the group name of any public group
-      </Typography>
-      <TextField
-        id="outlined-basic"
-        variant="outlined"
-        fullWidth
-        label="Search"
-        value={input}
-        sx={{ my: '2em' }}
-        onChange={(e) => setInput(e.target.value)}
-        InputLabelProps={{ shrink: true }}
-        InputProps={{
-          startAdornment: <Search sx={{ mr: '1em' }} />,
-          endAdornment: input && (
-            <IconButton onClick={(e) => setInput('')}>
-              <Clear />
-            </IconButton>
-          ),
-        }}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            checkGroup();
-            e.preventDefault();
-          }
-        }}
-      />
+    <>
+      <Box sx={{ textAlign: { xs: 'center' } }}>
+        <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+          Search For A Group
+        </Typography>
+        <Typography variant="subtitle2" sx={{ mt: { xs: '3em' } }}>
+          Enter the group name of any public group
+        </Typography>
+        <TextField
+          id="outlined-basic"
+          variant="outlined"
+          fullWidth
+          label="Search"
+          value={input}
+          sx={{ my: '2em' }}
+          onChange={(e) => setInput(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          InputProps={{
+            startAdornment: <Search sx={{ mr: '1em' }} />,
+            endAdornment: input && (
+              <IconButton onClick={(e) => setInput('')}>
+                <Clear />
+              </IconButton>
+            ),
+          }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              checkGroup();
+              e.preventDefault();
+            }
+          }}
+        />
+        {error && (
+          <Typography variant="subtitle2">
+            Your search for "{input}" did not match any public groups
+          </Typography>
+        )}
+      </Box>
       {filteredGroups &&
         filteredGroups.map((group, index) => (
           <GroupCard key={index} group={group} />
         ))}
-      {error && (
-        <Typography variant="subtitle2">
-          Your search for "{input}" did not match any public groups
-        </Typography>
-      )}
-    </Box>
+    </>
   );
 };
 
