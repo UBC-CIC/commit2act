@@ -194,7 +194,16 @@ const Landing = ({ user }) => {
               Create New Group
             </Button>
           </Box>
-          {renderGroupCards()}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {renderGroupCards()}
+          </Box>
         </>
       )}
     </>
