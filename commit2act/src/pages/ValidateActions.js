@@ -142,7 +142,7 @@ const ValidateActions = () => {
         )}
       </Box>
       <Box sx={{ mt: '1.5em' }}>
-        {!error && (
+        {!error && groupsOwnedByUser && (
           <Typography
             component="div"
             variant="subtitle2"
