@@ -75,16 +75,15 @@ const ValidateActions = () => {
     setInput(value);
   };
 
-  //every time a group is selected, get all the actions in need of validation from users in that group
+  //every time a group is selected, get all the actions in need of validation from users in that group only
   useEffect(() => {
     if (selectedGroup) {
       const filteredActionArray = allActions.filter((action) =>
         action.group_names.split(', ').includes(selectedGroup)
       );
-      console.log(filteredActions);
       setFilteredActions(filteredActionArray);
     }
-  }, [selectedGroup]);
+  }, [selectedGroup, allActions]);
 
   return (
     <>
@@ -135,13 +134,42 @@ const ValidateActions = () => {
             )}
           />
         )}
+        {/* {!selectedGroup && (
+          <Typography
+            component="div"
+            variant="subtitle2"
+            sx={{ display: 'flex' }}
+          >
+            Filtering By: All
+          </Typography>
+        )} */}
         {error && (
           <Typography variant="subtitle2">
             Your search for "{input}" did not match any of your groups
           </Typography>
         )}
       </Box>
-      <Box sx={{ mt: '3em' }}>
+      <Box sx={{ mt: '1.5em' }}>
+        {!error && (
+          <Typography
+            component="div"
+            variant="subtitle2"
+            sx={{
+              mb: '1.5em',
+              display: 'flex',
+              justifyContent: { xs: 'center', sm: 'flex-start' },
+            }}
+          >
+            Filtering By:&nbsp;
+            <Typography
+              component="span"
+              variant="subtitle2"
+              sx={{ color: '#7e7e7e', fontWeight: 500 }}
+            >
+              {!selectedGroup ? 'All' : selectedGroup}
+            </Typography>
+          </Typography>
+        )}
         <Stack spacing={2}>
           {/* if group has not been selected, display all actions */}
           {!selectedGroup &&
