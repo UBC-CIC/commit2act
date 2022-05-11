@@ -12,6 +12,7 @@ import {
   Alert,
   LinearProgress,
   Chip,
+  IconButton,
 } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -318,9 +319,9 @@ const CreateAction = () => {
             {item.co2_saved_per_unit}
           </Typography>
         </Box>
-        <Button onClick={() => removeActionItem(item.item_name)}>
+        <IconButton onClick={() => removeActionItem(item.item_name)}>
           <HighlightOff fontSize="large" />
-        </Button>
+        </IconButton>
       </Card>
     ));
   };
