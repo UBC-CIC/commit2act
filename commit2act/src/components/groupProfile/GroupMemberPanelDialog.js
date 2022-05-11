@@ -148,7 +148,11 @@ const GroupMemberDialog = ({
           {Object.values(dialogDisplay).every((value) => value === false) && (
             <>
               <DialogTitle>{selectedMember.name}</DialogTitle>
-              <DialogContent>Role: {selectedMember.user_role}</DialogContent>
+              <DialogContent>
+                Role:{' '}
+                {selectedMember.user_role.charAt(0).toUpperCase() +
+                  selectedMember.user_role.slice(1)}
+              </DialogContent>
               <List sx={{ pt: 0 }}>
                 <ListItem
                   autoFocus

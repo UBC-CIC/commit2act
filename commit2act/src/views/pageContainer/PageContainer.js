@@ -17,6 +17,7 @@ import {
   AccountCircle,
   AssignmentTurnedIn,
   Create,
+  AdminPanelSettings,
 } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from '../../components/Navbar';
@@ -27,13 +28,14 @@ import FindGroup from '../../pages/FindGroup';
 import AccountSettings from '../../pages/AccountSettings';
 import SelfReportMenu from '../../components/logAction/SelfReportMenu';
 import ValidateActions from '../../pages/ValidateActions';
-import { API, Auth } from 'aws-amplify';
 import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';
-import { getSingleUserByUsername } from '../../graphql/queries';
 import CreateAction from '../../pages/CreateAction';
 import JoinGroup from '../../pages/JoinGroup';
 import UserProfile from '../../pages/UserProfile';
+import AdminDashboard from '../../pages/AdminDashboard';
+import { API, Auth } from 'aws-amplify';
+import { getSingleUserByUsername } from '../../graphql/queries';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -166,16 +168,29 @@ function PageContainer(props) {
         </ListItem>
 
         {userType === 'Admin' && (
-          <ListItem
-            button
-            key={'createAction'}
-            onClick={() => navigate('/create-action')}
-          >
-            <ListItemIcon>
-              <Create />
-            </ListItemIcon>
-            <ListItemText primary={'Create Action'} />
-          </ListItem>
+          <>
+            <ListItem
+              button
+              key={'createAction'}
+              onClick={() => navigate('/create-action')}
+            >
+              <ListItemIcon>
+                <Create />
+              </ListItemIcon>
+              <ListItemText primary={'Create Action'} />
+            </ListItem>
+
+            <ListItem
+              button
+              key={'adminDashboard'}
+              onClick={() => navigate('/admin-dashboard')}
+            >
+              <ListItemIcon>
+                <AdminPanelSettings />
+              </ListItemIcon>
+              <ListItemText primary={'Admin Dashboard'} />
+            </ListItem>
+          </>
         )}
         <Divider />
         <ListItem
@@ -256,6 +271,11 @@ function PageContainer(props) {
               exact
               path={'/user-profile/:userId'}
               element={<UserProfile />}
+            />
+            <Route
+              exact
+              path={'/admin-dashboard'}
+              element={<AdminDashboard />}
             />
           </Routes>
         </main>

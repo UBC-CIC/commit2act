@@ -94,57 +94,65 @@ const SelfReportMenu = ({ user }) => {
   const renderActions = () => {
     return (
       actionOptions && (
-        <Box
+        <Grid
+          item
           sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'repeat(2, 1fr)',
-              md: 'repeat(3, 1fr)',
-            },
-            rowGap: 2,
-            [`& .${imageListItemClasses.root}`]: {
-              display: 'flex',
-              flexDirection: 'column',
-            },
-            justifyItems: 'center',
+            height: '50vh',
+            overflow: 'auto',
           }}
         >
-          {actionOptions.map((action, index) => (
-            <StyledImageListItem
-              key={index}
-              sx={{
-                width: '100px',
-                height: '100px',
-                cursor: 'pointer',
-                '&:hover': {
-                  opacity: '0.7',
-                },
-              }}
-              onClick={() => setSelectedAction(action)}
-            >
-              {action.action_icon ? (
-                <img
-                  src={`${action.action_icon}?w=248&fit=crop&auto=format`}
-                  alt={action.action_name}
-                  loading="lazy"
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+              },
+              rowGap: 2,
+              [`& .${imageListItemClasses.root}`]: {
+                display: 'flex',
+                flexDirection: 'column',
+              },
+              justifyItems: 'center',
+            }}
+          >
+            {actionOptions.map((action, index) => (
+              <StyledImageListItem
+                key={index}
+                sx={{
+                  width: '100px',
+                  height: '100px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    opacity: '0.7',
+                  },
+                }}
+                onClick={() => setSelectedAction(action)}
+              >
+                {action.action_icon ? (
+                  <img
+                    src={`${action.action_icon}?w=248&fit=crop&auto=format`}
+                    alt={action.action_name}
+                    loading="lazy"
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      backgroundColor: '#B4EEB4	',
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '7px',
+                    }}
+                  ></Box>
+                )}
+                <StyledImageListItemBar
+                  title={action.action_name}
+                  position="below"
                 />
-              ) : (
-                <Box
-                  sx={{
-                    backgroundColor: '#B4EEB4	',
-                    width: '100px',
-                    height: '100px',
-                    borderRadius: '7px',
-                  }}
-                ></Box>
-              )}
-              <StyledImageListItemBar
-                title={action.action_name}
-                position="below"
-              />
-            </StyledImageListItem>
-          ))}
-        </Box>
+              </StyledImageListItem>
+            ))}
+          </Box>
+        </Grid>
       )
     );
   };
@@ -156,17 +164,10 @@ const SelfReportMenu = ({ user }) => {
   const renderFormStep = () => {
     return (
       <>
-        {activeStep === 0 && (
-          <Grid
-            item
-            sx={{
-              height: '50vh',
-              overflow: 'auto',
-            }}
-          >
-            {renderActions()}
-          </Grid>
-        )}
+        {
+          activeStep === 0 &&
+            renderActions()
+        }
         {activeStep === 1 && (
           <Grid
             item

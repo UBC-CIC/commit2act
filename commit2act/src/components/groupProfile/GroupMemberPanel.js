@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Avatar, Tooltip, IconButton, Paper, Badge } from '@mui/material';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import StarIcon from '@mui/icons-material/Star';
 import GroupMemberPanelDialog from './GroupMemberPanelDialog';
 
 const GroupMemberPanel = ({
@@ -61,7 +61,13 @@ const GroupMemberPanel = ({
                   <Badge
                     overlap="rectangular"
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    badgeContent={<VerifiedUserIcon />}
+                    badgeContent={
+                      <StarIcon
+                        sx={{ color: '#d4b24c' }}
+                        stroke="white"
+                        strokeWidth={1}
+                      />
+                    }
                     invisible={member.user_role === 'member'}
                   >
                     <Avatar
