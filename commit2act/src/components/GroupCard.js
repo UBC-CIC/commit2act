@@ -117,8 +117,7 @@ const GroupCard = ({ group }) => {
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMore />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
+                aria-controls="group-stats-content"
               >
                 <Typography>View Group Stats</Typography>
               </AccordionSummary>
