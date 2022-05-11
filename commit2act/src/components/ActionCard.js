@@ -66,6 +66,8 @@ const ActionCard = ({
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
+  const [actionIconFile, setActionIconFile] = useState();
+  const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
 
   //get all action items for the action
   useEffect(() => {
@@ -265,6 +267,17 @@ const ActionCard = ({
     setEditActionForm((prev) => ({ ...prev, curr_label: '' }));
   };
 
+  const handleIconUpload = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setActionIconFile(null);
+      return;
+    }
+    let imageFile = e.target.files[0];
+    let previewLink = URL.createObjectURL(imageFile);
+    setActionIconFile(imageFile);
+    setActionIconPreviewLink(previewLink);
+  };
+
   const renderEditActionContent = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2em' }}>
@@ -277,7 +290,7 @@ const ActionCard = ({
             alignSelf: 'center',
           }}
         >
-          {action_icon ? (
+          {action_icon && !actionIconPreviewLink ? (
             <>
               <Box
                 component="img"
@@ -290,30 +303,46 @@ const ActionCard = ({
                   accept="image/*"
                   id="action-icon-image"
                   type="file"
-                  // onChange={handleIconUpload}
+                  onChange={handleIconUpload}
                 />
-                <Button variant="outlined">Upload Icon Image</Button>
+                <Button variant="outlined" component="span">
+                  Upload Icon Image
+                </Button>
               </label>
             </>
           ) : (
             <>
-              <Box
-                component="div"
-                sx={{
-                  height: 100,
-                  width: 100,
-                  backgroundColor: '#A9A9A9',
-                }}
-              />
+              {actionIconPreviewLink ? (
+                <Box
+                  component="img"
+                  sx={{
+                    height: 100,
+                    width: 100,
+                  }}
+                  alt="Uploaded Action Icon"
+                  src={actionIconPreviewLink}
+                />
+              ) : (
+                <Box
+                  component="div"
+                  sx={{
+                    height: 100,
+                    width: 100,
+                    backgroundColor: '#A9A9A9',
+                  }}
+                />
+              )}
 
               <label htmlFor="action-icon-image">
                 <Input
                   accept="image/*"
                   id="action-icon-image"
                   type="file"
-                  // onChange={handleIconUpload}
+                  onChange={handleIconUpload}
                 />
-                <Button variant="outlined">Upload Icon Image</Button>
+                <Button variant="outlined" component="span">
+                  Upload Icon Image
+                </Button>
               </label>
             </>
           )}
