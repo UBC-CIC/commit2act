@@ -5,42 +5,20 @@ import {
   Typography,
   Grid,
   Button,
-  ImageListItemBar,
   Stepper,
   Step,
   StepLabel,
   MobileStepper,
 } from '@mui/material';
-import ImageListItem, {
-  imageListItemClasses,
-} from '@mui/material/ImageListItem';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format, parseISO } from 'date-fns';
-import { API } from 'aws-amplify';
-import { getAllActions } from '../../graphql/queries';
-import { styled } from '@mui/material/styles';
-import ActionFact from './ActionFact';
-import ActionPanel from './ActionPanel';
-import ImageValidationPanel from './ImageValidationPanel';
-import BonusPointQuiz from './BonusPointQuiz';
-import CO2SavedScreen from './Co2SavedScreen';
-
-const StyledImageListItemBar = styled(ImageListItemBar)`
-  .MuiImageListItemBar-title {
-    overflow: visible;
-    white-space: normal;
-    overflow-wrap: break-word;
-    font-size: 0.9rem;
-  }
-`;
-
-const StyledImageListItem = styled(ImageListItem)`
-  .MuiImageListItem-img {
-    border-radius: 7px;
-    height: 100px;
-  }
-`;
+import ActionFact from '../components/logAction/ActionFact';
+import ActionPanel from '../components/logAction/ActionPanel';
+import ImageValidationPanel from '../components/logAction/ImageValidationPanel';
+import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
+import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
+import AllActions from '../components/AllActions';
 
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
@@ -49,7 +27,6 @@ const SelfReportMenu = ({ user }) => {
   const [selectedAction, setSelectedAction] = useState();
   const [fact, setFact] = useState();
   const [activeStep, setActiveStep] = useState(0);
-  const [actionOptions, setActionOptions] = useState();
   const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCO2Saved, setTotalCO2Saved] = useState(0);
   const [quizAnswered, setQuizAnswered] = useState(false);
@@ -66,16 +43,6 @@ const SelfReportMenu = ({ user }) => {
     'CO2 Saved',
   ];
 
-  useEffect(() => {
-    getActions();
-  }, []);
-
-  const getActions = async () => {
-    const res = await API.graphql({ query: getAllActions });
-    const actions = res.data.getAllActions;
-    setActionOptions(actions);
-  };
-
   //resets the form everytime a new action is selected
   useEffect(() => {
     if (selectedAction) {
@@ -91,72 +58,6 @@ const SelfReportMenu = ({ user }) => {
     }
   }, [activeStep]);
 
-  const renderActions = () => {
-    return (
-      actionOptions && (
-        <Grid
-          item
-          sx={{
-            height: '50vh',
-            overflow: 'auto',
-          }}
-        >
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: 'repeat(2, 1fr)',
-                md: 'repeat(3, 1fr)',
-              },
-              rowGap: 2,
-              [`& .${imageListItemClasses.root}`]: {
-                display: 'flex',
-                flexDirection: 'column',
-              },
-              justifyItems: 'center',
-            }}
-          >
-            {actionOptions.map((action, index) => (
-              <StyledImageListItem
-                key={index}
-                sx={{
-                  width: '100px',
-                  height: '100px',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    opacity: '0.7',
-                  },
-                }}
-                onClick={() => setSelectedAction(action)}
-              >
-                {action.action_icon ? (
-                  <img
-                    src={`${action.action_icon}?w=248&fit=crop&auto=format`}
-                    alt={action.action_name}
-                    loading="lazy"
-                  />
-                ) : (
-                  <Box
-                    sx={{
-                      backgroundColor: '#B4EEB4	',
-                      width: '100px',
-                      height: '100px',
-                      borderRadius: '7px',
-                    }}
-                  ></Box>
-                )}
-                <StyledImageListItemBar
-                  title={action.action_name}
-                  position="below"
-                />
-              </StyledImageListItem>
-            ))}
-          </Box>
-        </Grid>
-      )
-    );
-  };
-
   const handleDateChange = (newDate) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
@@ -164,10 +65,9 @@ const SelfReportMenu = ({ user }) => {
   const renderFormStep = () => {
     return (
       <>
-        {
-          activeStep === 0 &&
-            renderActions()
-        }
+        {activeStep === 0 && (
+          <AllActions setSelectedAction={setSelectedAction} />
+        )}
         {activeStep === 1 && (
           <Grid
             item
@@ -263,7 +163,10 @@ const SelfReportMenu = ({ user }) => {
       textAlign="center"
       flexDirection="column"
     >
-      <Typography variant="h1" sx={{ py: 5 }}>
+      <Typography
+        variant="h1"
+        sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
+      >
         Log New Action
       </Typography>
       <Grid

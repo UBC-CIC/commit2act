@@ -61,8 +61,6 @@ const ActionCard = ({
     actionItemsValid: false,
   });
   const [editActionForm, setEditActionForm] = useState(initialActionForm);
-  //   const [actionItems, setActionItems] = useState();
-  //   const [addActionLabel, setAddActionLabel] = useState();
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
@@ -532,7 +530,7 @@ const ActionCard = ({
     <>
       <Dialog
         aria-labelledby="already-member-dialog"
-        PaperProps={{ sx: { p: '1em 3em', minWidth: '70%' } }}
+        PaperProps={{ sx: { minWidth: '70%' } }}
         open={open}
         onClose={handleClose}
       >
@@ -542,7 +540,7 @@ const ActionCard = ({
         <DialogTitle>
           <Typography variant="h2">{action_name}</Typography>
         </DialogTitle>
-        <DialogContent sx={{ mt: '1em', p: '1.5em' }}>
+        <DialogContent sx={{ mt: '1em', p: '3em' }}>
           {editAction ? renderEditActionContent() : renderActionContent()}
         </DialogContent>
       </Dialog>

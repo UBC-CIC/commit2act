@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  TextField,
-  Box,
-  Typography,
-  Grid,
-  Button,
-  ImageListItemBar,
-  Stepper,
-  Step,
-  StepLabel,
-  MobileStepper,
-} from '@mui/material';
+import { Box, Grid, ImageListItemBar } from '@mui/material';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';

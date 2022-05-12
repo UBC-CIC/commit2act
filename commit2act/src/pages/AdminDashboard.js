@@ -7,7 +7,12 @@ import CreateAction from './CreateAction';
 import ViewAndEditActions from './ViewAndEditActions';
 
 const AdminDashboard = () => {
-  const tabs = ['Dashboard', 'Create Action', 'View/Edit Actions'];
+  const tabs = [
+    'Dashboard',
+    'Create Action',
+    'View/Edit Actions',
+    'Add Quiz Questions',
+  ];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
   const handleTabChange = (e, newValue) => {
@@ -41,6 +46,7 @@ const AdminDashboard = () => {
             <Tab label={tabs[0]} value={tabs[0]} />
             <Tab label={tabs[1]} value={tabs[1]} />
             <Tab label={tabs[2]} value={tabs[2]} />
+            <Tab label={tabs[3]} value={tabs[3]} />
           </TabList>
         </Box>
       </Box>
@@ -54,8 +60,16 @@ const AdminDashboard = () => {
       <TabPanel value={tabs[1]}>
         <CreateAction />
       </TabPanel>
-      <TabPanel value={tabs[2]}>
+      <TabPanel value={tabs[2]} sx={{ textAlign: 'center' }}>
+        <Typography variant="h2" sx={{ mb: '2em' }}>
+          Select an action to view and edit
+        </Typography>
         <ViewAndEditActions />
+      </TabPanel>
+      <TabPanel value={tabs[3]} sx={{ textAlign: 'center' }}>
+        <Typography variant="h2" sx={{ mb: '2em' }}>
+          Select an action to view and add quiz questions
+        </Typography>
       </TabPanel>
     </TabContext>
   );

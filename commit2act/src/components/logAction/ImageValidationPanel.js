@@ -122,7 +122,7 @@ const ImageValidationPanel = ({
           borderRadius: '5px',
         }}
       >
-        <Typography component="div" variant="subtitle1" sx={{ my: '0.5em' }}>
+        <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
           Please upload an image related to your action item for verification
         </Typography>
         {fileTypeError && (
@@ -138,7 +138,7 @@ const ImageValidationPanel = ({
         >
           {selectedImage ? (
             <>
-              <Typography component="div" variant="h3" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="h4" sx={{ my: '0.5em' }}>
                 Image Selected!
               </Typography>
               <Box id="image-preview" sx={{ width: '100%' }}>
@@ -161,12 +161,12 @@ const ImageValidationPanel = ({
           ) : (
             <>
               <CloudUpload fontSize="large" />
-              <Typography component="div" variant="h3" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="h4" sx={{ my: '0.5em' }}>
                 Drop Your Image Here, Or{' '}
               </Typography>
 
               <label htmlFor="image-upload" id="browse">
-                Browse
+                <Typography variant="subtitle2">Browse</Typography>
               </label>
               <input
                 accept="image/*"

@@ -26,7 +26,7 @@ import { updateMenuState } from '../../actions/menuActions';
 import Landing from '../../pages/Landing';
 import FindGroup from '../../pages/FindGroup';
 import AccountSettings from '../../pages/AccountSettings';
-import SelfReportMenu from '../../components/logAction/SelfReportMenu';
+import SelfReportMenu from '../../pages/SelfReportMenu';
 import ValidateActions from '../../pages/ValidateActions';
 import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';

@@ -69,10 +69,10 @@ const CO2SavedScreen = ({
         console.log('Error uploading file', error);
       }
     }
-    //set timeout of 8s so that image has time to be transferred by lambda and processed by rekognition
+    //set timeout of 9s so that image has time to be transferred by lambda and processed by rekognition
     setTimeout(() => {
       checkImageValidation(submittedActionId);
-    }, 8000);
+    }, 9000);
   };
 
   const checkImageValidation = async (submittedActionId) => {
