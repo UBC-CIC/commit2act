@@ -60,6 +60,7 @@ const CreateAction = () => {
     itemDescriptionValid: false,
     actionItemsValid: false,
     actionNameValid: false,
+    validationLabels: false,
   });
   const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
@@ -84,7 +85,6 @@ const CreateAction = () => {
               ...prev,
               itemNameValid: false,
             }));
-            setActionItemFormError(true);
           } else {
             setIsValid((prev) => ({
               ...prev,
@@ -99,7 +99,6 @@ const CreateAction = () => {
               ...prev,
               itemDescriptionValid: false,
             }));
-            setActionItemFormError(true);
           } else {
             setIsValid((prev) => ({
               ...prev,
@@ -114,7 +113,6 @@ const CreateAction = () => {
               ...prev,
               co2Valid: false,
             }));
-            setActionItemFormError(true);
           } else {
             setIsValid((prev) => ({
               ...prev,
@@ -130,13 +128,13 @@ const CreateAction = () => {
       switch (e.target.name) {
         //checks to see if action_name field is null
         default:
-          if (!e.target.value) {
+          if (e.target.name === 'action_name' && !e.target.value) {
             setIsValid((prev) => ({
               ...prev,
               actionNameValid: false,
             }));
             setFormError(true);
-          } else {
+          } else if (e.target.name === 'action_name') {
             setIsValid((prev) => ({
               ...prev,
               actionNameValid: true,
@@ -177,6 +175,22 @@ const CreateAction = () => {
     }
   }, [actionItems]);
 
+  //check to see if image validation labels are valid for submission
+  useEffect(() => {
+    if (createActionForm.labels.length > 0) {
+      console.log('hi');
+      setIsValid((prev) => ({
+        ...prev,
+        validationLabels: true,
+      }));
+    } else if (createActionForm.labels.length === 0) {
+      setIsValid((prev) => ({
+        ...prev,
+        validationLabels: false,
+      }));
+    }
+  }, [createActionForm]);
+
   const addActionItem = () => {
     if (
       isValid.co2Valid &&
@@ -194,6 +208,8 @@ const CreateAction = () => {
         itemDescriptionValid: false,
       }));
       setActionItemFormError(false);
+    } else {
+      setActionItemFormError(true);
     }
   };
 
@@ -220,7 +236,11 @@ const CreateAction = () => {
   /** functions adding the action itself */
 
   const submitAction = async () => {
-    if (isValid.actionItemsValid && isValid.actionNameValid) {
+    if (
+      isValid.actionItemsValid &&
+      isValid.actionNameValid &&
+      isValid.validationLabels
+    ) {
       setIsLoading(true);
 
       //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
@@ -490,7 +510,11 @@ const CreateAction = () => {
               sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
             />
-            <Button variant="outlined" onClick={addActionItem}>
+            <Button
+              variant="outlined"
+              onClick={addActionItem}
+              sx={{ height: 'min-content' }}
+            >
               Add Action Item
             </Button>
           </FormGroup>
@@ -504,6 +528,18 @@ const CreateAction = () => {
             onChange={updateForm}
           />
           <SectionTitle variant="h3">Image Validation Labels</SectionTitle>
+          <Typography
+            variant="subtitle1"
+            component="span"
+            sx={{
+              color: '#d32f2f',
+              mb: '2em',
+              display:
+                formError && !isValid.validationLabels ? 'inline' : 'none',
+            }}
+          >
+            New Action Type must have at least 1 image validation label
+          </Typography>
           {createActionForm.labels.length !== 0 && (
             <Box
               sx={{
@@ -536,6 +572,7 @@ const CreateAction = () => {
               sx={{
                 width: { xs: '100%', md: '17%' },
                 mt: { xs: '1.5em', sm: '0em' },
+                height: 'min-content',
               }}
               onClick={addValidationLabel}
             >

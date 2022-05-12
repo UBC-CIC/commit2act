@@ -18,6 +18,7 @@ import {
   IconButton,
   TextField,
   FormGroup,
+  Skeleton,
 } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getActionItemsForAction } from '../graphql/queries';
@@ -55,17 +56,21 @@ const ActionCard = ({
   };
 
   const [isValid, setIsValid] = useState({
-    co2Valid: false,
-    itemNameValid: false,
-    itemDescriptionValid: false,
-    actionItemsValid: false,
+    co2: false,
+    itemName: false,
+    itemDescription: false,
+    actionItems: false,
+    validationLabels: false,
   });
-  const [editActionForm, setEditActionForm] = useState(initialActionForm);
+  const [actionForm, setActionForm] = useState(initialActionForm);
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
+  const [showCloseWarning, setShowCloseWarning] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
+  const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   //get all action items for the action
   useEffect(() => {
@@ -74,7 +79,7 @@ const ActionCard = ({
         query: getActionItemsForAction,
         variables: { action_id: action_id },
       });
-      setEditActionForm((prev) => ({
+      setActionForm((prev) => ({
         ...prev,
         action_items: res.data.getActionItemsForAction,
       }));
@@ -100,8 +105,9 @@ const ActionCard = ({
           <Typography variant="h3" sx={{ mb: '1em' }}>
             Action Items
           </Typography>
-          {editActionForm.action_items &&
-            editActionForm.action_items.map((item) => (
+          {actionForm.action_items.length === 0 && <Skeleton variant="text" />}
+          {actionForm.action_items &&
+            actionForm.action_items.map((item) => (
               <Accordion key={item.item_name}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -134,7 +140,7 @@ const ActionCard = ({
             ))}
         </Box>
         <Box>
-          <Typography variant="h3">Action Labels</Typography>
+          <Typography variant="h3">Image Validation Labels</Typography>
           <Box
             sx={{
               display: 'flex',
@@ -167,14 +173,12 @@ const ActionCard = ({
           if (!e.target.value) {
             setIsValid((prev) => ({
               ...prev,
-              itemNameValid: false,
+              itemName: false,
             }));
-            setActionItemFormError(true);
-            console.log('hi');
           } else {
             setIsValid((prev) => ({
               ...prev,
-              itemNameValid: true,
+              itemName: true,
             }));
           }
           break;
@@ -183,86 +187,122 @@ const ActionCard = ({
           if (!e.target.value) {
             setIsValid((prev) => ({
               ...prev,
-              itemDescriptionValid: false,
+              itemDescription: false,
             }));
-            setActionItemFormError(true);
           } else {
             setIsValid((prev) => ({
               ...prev,
-              itemDescriptionValid: true,
+              itemDescription: true,
             }));
           }
           break;
         default:
           //checks to see if user input for co2 saved per unit field is a positive numerical value
-          if (!e.target.value.match(/[0-9]*[.,]?[0-9]+/)) {
+          if (!e.target.value.match(new RegExp('[0-9]+([.][0-9]+)?$'))) {
             setIsValid((prev) => ({
               ...prev,
-              co2Valid: false,
+              co2: false,
             }));
-            setActionItemFormError(true);
           } else {
             setIsValid((prev) => ({
               ...prev,
-              co2Valid: true,
+              co2: true,
             }));
           }
       }
-    } else if (e.target.name in editActionForm) {
-      setEditActionForm((prev) => ({
+    } else if (e.target.name in actionForm) {
+      setActionForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
     }
   };
 
+  //checks to see if actionItems and image validation labels  are valid for submission (if there is more than 1 item in the array)
+  useEffect(() => {
+    if (actionForm.labels.length > 0) {
+      setIsValid((prev) => ({
+        ...prev,
+        validationLabels: true,
+      }));
+    } else if (actionForm.labels.length === 0) {
+      setIsValid((prev) => ({
+        ...prev,
+        validationLabels: false,
+      }));
+    }
+
+    if (actionForm.action_items.length < 1) {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItems: false,
+      }));
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItems: true,
+      }));
+    }
+  }, [actionForm]);
+
   const removeActionItem = (name) => {
-    let actionItemsCopy = editActionForm.action_items;
+    let actionItemsCopy = actionForm.action_items;
     let filteredActionItems = actionItemsCopy.filter(
       (item) => item.item_name !== name
     );
-    setEditActionForm((prev) => ({
+    setActionForm((prev) => ({
       ...prev,
       action_items: filteredActionItems,
     }));
   };
 
   const addActionItem = () => {
-    if (
-      isValid.co2Valid &&
-      isValid.itemNameValid &&
-      isValid.itemDescriptionValid
-    ) {
+    // if (isNaN(actionItemsForm.co2_saved_per_unit)) {
+    //   setIsValid((prev) => ({
+    //     ...prev,
+    //     co2: false,
+    //   }));
+    // } else {
+    //   if (Number(actionItemsForm.co2_saved_per_unit > 0)) {
+    //     setIsValid((prev) => ({
+    //       ...prev,
+    //       co2: true,
+    //     }));
+    //   }
+
+    if (isValid.co2 && isValid.itemName && isValid.itemDescription) {
       //adds the item from the form into actionItems array
-      let actionItemsCopy = editActionForm.action_items;
+      let actionItemsCopy = actionForm.action_items;
       actionItemsCopy.push(actionItemsForm);
-      setEditActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
+      setActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
       //clears the actionItemsForm so user can enter in a new action item
       setActionItemsForm(emptyActionItemForm);
       setIsValid((prev) => ({
         ...prev,
-        co2Valid: false,
-        itemNameValid: false,
-        itemDescriptionValid: false,
+        co2: false,
+        itemName: false,
+        itemDescription: false,
       }));
       setActionItemFormError(false);
+    } else {
+      setActionItemFormError(true);
     }
   };
 
   const removeValidationLabel = (label) => {
-    let labelsCopy = editActionForm.labels;
+    let labelsCopy = actionForm.labels;
     const index = labelsCopy.indexOf(label);
     labelsCopy.splice(index, 1);
-    setEditActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+    setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
   };
 
   const addValidationLabel = () => {
     //create array that contains the current label input from the form along with all previous inputted labels
-    let labelsCopy = editActionForm.labels;
-    labelsCopy.push(editActionForm.curr_label);
-    setEditActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+    let labelsCopy = actionForm.labels;
+    labelsCopy.push(actionForm.curr_label);
+    setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
     //clear current label
-    setEditActionForm((prev) => ({ ...prev, curr_label: '' }));
+    setActionForm((prev) => ({ ...prev, curr_label: '' }));
   };
 
   const handleIconUpload = (e) => {
@@ -274,6 +314,18 @@ const ActionCard = ({
     let previewLink = URL.createObjectURL(imageFile);
     setActionIconFile(imageFile);
     setActionIconPreviewLink(previewLink);
+  };
+
+  const submitAction = async () => {
+    if (
+      isValid.actionItemsValid &&
+      isValid.actionNameValid &&
+      isValid.validationLabels
+    ) {
+      setIsLoading(true);
+    } else {
+      setFormError(true);
+    }
   };
 
   const renderEditActionContent = () => {
@@ -350,8 +402,18 @@ const ActionCard = ({
           <Typography variant="h3" sx={{ mb: '1em' }}>
             Action Items
           </Typography>
-          {editActionForm.action_items &&
-            editActionForm.action_items.map((item) => (
+          <Typography
+            variant="subtitle1"
+            component="span"
+            sx={{
+              color: '#d32f2f',
+              display: formError && !isValid.actionItems ? 'inline' : 'none',
+            }}
+          >
+            New Action Type must have at least 1 action item
+          </Typography>
+          {actionForm.action_items &&
+            actionForm.action_items.map((item) => (
               <Accordion key={item.item_name}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -414,10 +476,10 @@ const ActionCard = ({
                 name="item_name"
                 InputLabelProps={{ shrink: true }}
                 value={actionItemsForm.item_name}
-                error={actionItemFormError && !isValid.itemNameValid}
+                error={actionItemFormError && !isValid.itemName}
                 helperText={
                   actionItemFormError &&
-                  !isValid.itemNameValid &&
+                  !isValid.itemName &&
                   'Input is required'
                 }
                 onChange={updateForm}
@@ -428,10 +490,10 @@ const ActionCard = ({
                 name="item_description"
                 InputLabelProps={{ shrink: true }}
                 value={actionItemsForm.item_description}
-                error={actionItemFormError && !isValid.itemDescriptionValid}
+                error={actionItemFormError && !isValid.itemDescription}
                 helperText={
                   actionItemFormError &&
-                  !isValid.itemDescriptionValid &&
+                  !isValid.itemDescription &&
                   'Input is required'
                 }
                 onChange={updateForm}
@@ -440,13 +502,13 @@ const ActionCard = ({
                 required
                 label="CO2 Per Unit Saved"
                 name="co2_saved_per_unit"
-                inputMode="decimal"
+                inputProps={{ inputMode: 'numeric' }}
                 InputLabelProps={{ shrink: true }}
                 value={actionItemsForm.co2_saved_per_unit}
-                error={actionItemFormError && !isValid.co2Valid}
+                error={actionItemFormError && !isValid.co2}
                 helperText={
                   actionItemFormError &&
-                  !isValid.co2Valid &&
+                  !isValid.co2 &&
                   'Input must be a number greater than 0'
                 }
                 sx={{ xs: { mt: '1.5em' } }}
@@ -458,6 +520,7 @@ const ActionCard = ({
               sx={{
                 width: { xs: '100%', md: '17%' },
                 mt: { xs: '1.5em', sm: '0em' },
+                height: 'min-content',
               }}
               onClick={addActionItem}
             >
@@ -466,23 +529,38 @@ const ActionCard = ({
           </FormGroup>
         </Box>
         <Box>
-          <Typography variant="h3">Action Labels</Typography>
-          <Box
+          <Typography variant="h3" sx={{ mb: '1em' }}>
+            Image Validation Labels
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            component="span"
             sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              my: '1.5em',
-              gap: '0.5em',
+              color: '#d32f2f',
+              display:
+                formError && !isValid.validationLabels ? 'inline' : 'none',
             }}
           >
-            {editActionForm.labels.map((label) => (
-              <Chip
-                label={label}
-                variant="outlined"
-                onDelete={() => removeValidationLabel(label)}
-              />
-            ))}
-          </Box>
+            New Action Type must have at least 1 image validation label
+          </Typography>
+          {actionForm.labels.length > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                my: '1.5em',
+                gap: '0.5em',
+              }}
+            >
+              {actionForm.labels.map((label) => (
+                <Chip
+                  label={label}
+                  variant="outlined"
+                  onDelete={() => removeValidationLabel(label)}
+                />
+              ))}
+            </Box>
+          )}
           <FormGroup
             sx={{
               flexDirection: 'row',
@@ -494,7 +572,7 @@ const ActionCard = ({
               required
               label="Label"
               name="curr_label"
-              value={editActionForm.curr_label}
+              value={actionForm.curr_label}
               InputLabelProps={{ shrink: true }}
               sx={{ width: { xs: '100%', md: '80%' } }}
               onChange={updateForm}
@@ -504,6 +582,7 @@ const ActionCard = ({
               sx={{
                 width: { xs: '100%', md: '17%' },
                 mt: { xs: '1.5em', sm: '0em' },
+                height: 'min-content',
               }}
               onClick={addValidationLabel}
             >
@@ -512,15 +591,20 @@ const ActionCard = ({
           </FormGroup>
         </Box>
         <Box
-          sx={{ display: 'flex', justifyContent: 'space-between', mt: '2em' }}
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'center',
+            my: '2em',
+            gap: '4em',
+          }}
         >
-          <Button>Cancel</Button>
-          <Box sx={{ display: 'flex', gap: '0.5em' }}>
-            <Button variant="contained">Save Action</Button>
-            <Button onClick={() => setShowDeleteWarning(true)}>
-              Delete Action
-            </Button>
-          </Box>
+          <Button variant="contained" onClick={submitAction}>
+            Save Action
+          </Button>
+          <Button onClick={() => setShowDeleteWarning(true)}>
+            Delete Action
+          </Button>
         </Box>
       </Box>
     );
@@ -532,17 +616,57 @@ const ActionCard = ({
         aria-labelledby="already-member-dialog"
         PaperProps={{ sx: { minWidth: '70%' } }}
         open={open}
-        onClose={handleClose}
+        onClose={editAction ? () => setShowCloseWarning(true) : handleClose}
       >
-        <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
+        {editAction ? (
+          <IconButton
+            sx={{ alignSelf: 'flex-end' }}
+            onClick={() => setShowCloseWarning(true)}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : (
+          <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+        )}
         <DialogTitle>
           <Typography variant="h2">{action_name}</Typography>
         </DialogTitle>
         <DialogContent sx={{ mt: '1em', p: '3em' }}>
           {editAction ? renderEditActionContent() : renderActionContent()}
         </DialogContent>
+      </Dialog>
+      {/* display warning dialog when user clicks the close button*/}
+      <Dialog
+        aria-labelledby="delete-warning-dialog"
+        PaperProps={{
+          sx: {
+            p: '1em',
+            display: 'flex',
+            justifyContent: 'center',
+            textAlign: 'center',
+            alignItems: 'center',
+          },
+        }}
+        open={showCloseWarning}
+      >
+        <DialogTitle>Exit?</DialogTitle>
+        <WarningAmberIcon fontSize="large" />
+        <DialogContent>
+          Your changes for this action will not be saved
+        </DialogContent>
+        <DialogActions sx={{ display: 'flex', gap: '2em' }}>
+          <Button
+            variant="contained"
+            onClick={() => setShowCloseWarning(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="outlined" onClick={handleClose}>
+            Exit
+          </Button>
+        </DialogActions>
       </Dialog>
       {/* display warning dialog when user clicks the delete action button*/}
       <Dialog

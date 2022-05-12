@@ -340,3 +340,64 @@ export const rejectSubmittedAction = /* GraphQL */ `
     rejectSubmittedAction(sa_id: $sa_id)
   }
 `;
+export const updateAction = /* GraphQL */ `
+  mutation UpdateAction(
+    $action_id: Int!
+    $action_name: String
+    $page_media: String
+    $action_icon: String
+    $fallback_quiz_media: String
+  ) {
+    updateAction(
+      action_id: $action_id
+      action_name: $action_name
+      page_media: $page_media
+      action_icon: $action_icon
+      fallback_quiz_media: $fallback_quiz_media
+    ) {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+    }
+  }
+`;
+export const updateActionItem = /* GraphQL */ `
+  mutation UpdateActionItem(
+    $action_id: Int!
+    $original_item_name: String
+    $item_name: String!
+    $item_description: String!
+    $co2_saved_per_unit: Float!
+  ) {
+    updateActionItem(
+      action_id: $action_id
+      original_item_name: $original_item_name
+      item_name: $item_name
+      item_description: $item_description
+      co2_saved_per_unit: $co2_saved_per_unit
+    ) {
+      action_id
+      item_name
+      item_description
+      co2_saved_per_unit
+    }
+  }
+`;
+export const deleteActionItem = /* GraphQL */ `
+  mutation DeleteActionItem($action_id: Int!, $item_name: String) {
+    deleteActionItem(action_id: $action_id, item_name: $item_name)
+  }
+`;
+export const deleteActionValidationLabel = /* GraphQL */ `
+  mutation DeleteActionValidationLabel(
+    $action_id: Int!
+    $validation_label: String!
+  ) {
+    deleteActionValidationLabel(
+      action_id: $action_id
+      validation_label: $validation_label
+    )
+  }
+`;
