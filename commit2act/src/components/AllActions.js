@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, ImageListItemBar } from '@mui/material';
+import { Box, Grid, ImageListItemBar, CircularProgress } from '@mui/material';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
@@ -45,6 +45,7 @@ const AllActions = ({ setSelectedAction }) => {
         overflow: 'auto',
       }}
     >
+      {!actionOptions && <CircularProgress />}
       <Box
         sx={{
           display: 'grid',

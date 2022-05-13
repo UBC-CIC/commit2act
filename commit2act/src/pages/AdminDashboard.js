@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, Tab, Tabs } from '@mui/material';
+import { Box, Typography, Tab } from '@mui/material';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import CreateAction from './CreateAction';
 import ViewAndEditActions from './ViewAndEditActions';
+import Dashboard from '../components/adminDashboard/Dashboard';
 
 const AdminDashboard = () => {
   const tabs = [
@@ -23,8 +24,8 @@ const AdminDashboard = () => {
     <TabContext value={selectedTab}>
       <Box
         sx={{
-          mt: { xs: 0, md: '-64px' },
-          mx: { xs: 0, md: '-64px' },
+          mt: { xs: 0, lg: '-64px' },
+          mx: { xs: 0, lg: '-64px' },
           mb: '2em',
         }}
       >
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
             maxWidth: { xs: 320, sm: '100%' },
           }}
         >
-          <Tabs
+          <TabList
             onChange={handleTabChange}
             aria-label="admin dashboard tabs"
             variant="scrollable"
@@ -46,15 +47,11 @@ const AdminDashboard = () => {
             <Tab label={tabs[1]} value={tabs[1]} />
             <Tab label={tabs[2]} value={tabs[2]} />
             <Tab label={tabs[3]} value={tabs[3]} />
-          </Tabs>
+          </TabList>
         </Box>
       </Box>
       <TabPanel value={tabs[0]}>
-        <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-          <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-            Admin Dashboard
-          </Typography>
-        </Box>
+        <Dashboard />
       </TabPanel>
       <TabPanel value={tabs[1]}>
         <CreateAction />

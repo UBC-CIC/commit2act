@@ -1,15 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
 import AllActions from '../components/AllActions';
 import ActionCard from '../components/ActionCard';
 
@@ -31,7 +20,6 @@ const ViewAndEditActions = () => {
   return (
     <>
       <AllActions setSelectedAction={setSelectedAction} />
-
       {selectedAction && (
         <ActionCard
           action={selectedAction}
@@ -39,7 +27,7 @@ const ViewAndEditActions = () => {
           handleClose={handleClose}
           editAction={editAction}
           setEditAction={setEditAction}
-        ></ActionCard>
+        />
       )}
     </>
   );
