@@ -22,6 +22,7 @@ import {
   getUsersWeekCO2,
   getAllGroupsForUser,
   getAllSubmittedActionsToValidate,
+  getSingleUser,
 } from '../graphql/queries';
 
 const StyledPaper = styled(Paper)`
@@ -58,22 +59,15 @@ const Landing = ({ user }) => {
 
   const getProgressStats = async (id) => {
     const userId = user ? user.user_id : id;
-    const [globalCo2Res, totalCo2Res, weeklyCo2Res] = await Promise.all([
+    const [userRes, globalCO2Res] = await Promise.all([
+      API.graphql({ query: getSingleUser, variables: { user_id: userId } }),
       API.graphql({ query: getTotalGlobalCO2 }),
-      API.graphql({
-        query: getUsersTotalCO2,
-        variables: { user_id: userId },
-      }),
-      API.graphql({
-        query: getUsersWeekCO2,
-        variables: { user_id: userId },
-      }),
     ]);
     setProgressStats((prev) => ({
       ...prev,
-      globalCO2: globalCo2Res.data.getTotalGlobalCO2,
-      totalCO2: totalCo2Res.data.getUsersTotalCO2,
-      weekCO2: weeklyCo2Res.data.getUsersWeekCO2,
+      globalCO2: globalCO2Res.data.getTotalGlobalCO2,
+      totalCO2: userRes.data.getSingleUser.total_co2,
+      weekCO2: userRes.data.getSingleUser.weekly_co2,
     }));
   };
 

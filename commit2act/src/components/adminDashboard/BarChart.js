@@ -169,9 +169,7 @@ const BarChart = ({ allSubmittedActions }) => {
                   displayFormats: {
                     day: 'MM/dd',
                   },
-                },
-                ticks: {
-                  source: 'data',
+                  tooltipFormat: 'MMM dd',
                 },
               },
               y: {
@@ -182,6 +180,9 @@ const BarChart = ({ allSubmittedActions }) => {
                   padding: {
                     bottom: 20,
                   },
+                },
+                ticks: {
+                  stepSize: 1,
                 },
               },
             },

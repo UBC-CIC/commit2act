@@ -95,7 +95,7 @@ const Dashboard = () => {
               </Typography>
             </StyledPaper>
           )}
-          {numUsers && (
+          {numGroups && (
             <StyledPaper
               sx={{ display: 'flex', flexDirection: 'column', mt: '1em' }}
             >
@@ -128,7 +128,7 @@ const Dashboard = () => {
       </Typography>
       <Grid container direction="row" spacing={2}>
         <Grid item xs={4} containter>
-          {numUsers && (
+          {allSubmittedActions && (
             <StyledPaper
               sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}
             >
