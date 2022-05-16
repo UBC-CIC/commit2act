@@ -1,77 +1,73 @@
 import { Box, Paper, Typography, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js/auto';
-import { Doughnut, Bar } from 'react-chartjs-2';
-import { getAllUsers, getAllSubmittedActions } from '../../graphql/queries';
-import { API } from 'aws-amplify';
+import { Doughnut } from 'react-chartjs-2';
 import {
-  startOfWeek,
-  endOfWeek,
-  format,
-  eachDayOfInterval,
-  sub,
-} from 'date-fns';
+  getAllUsers,
+  getAllSubmittedActions,
+  getAllGroups,
+} from '../../graphql/queries';
+import { API } from 'aws-amplify';
+import { styled } from '@mui/material/styles';
+import BarChart from './BarChart';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
 
+const StyledPaper = styled(Paper)`
+  padding: 1em 2em;
+  text-align: center;
+  .statValue {
+    margin-top: 0.5em;
+  }
+`;
 const Dashboard = () => {
   const [numUsers, setNumUsers] = useState();
-  const [barChartData, setBarChartData] = useState();
-
-  //get all dates in the current week
-  const startingDate = sub(new Date(), { days: 30 });
-  const endingDate = new Date();
-  const datesInInterval = eachDayOfInterval({
-    start: startingDate,
-    end: endingDate,
-  });
-  const formattedDatesInInterval = datesInInterval.map((date) =>
-    format(date, 'yyyy-MM-dd')
-  );
+  const [numGroups, setNumGroups] = useState();
+  const [donutActionImageData, setDonutActionImageData] = useState([]);
+  const [donutQuizData, setDonutQuizData] = useState();
+  const [allSubmittedActions, setAllSubmittedActions] = useState();
 
   const getStats = async () => {
-    const [totalUserRes, submittedActionRes] = await Promise.all([
-      API.graphql({ query: getAllUsers }),
-      API.graphql({ query: getAllSubmittedActions }),
-    ]);
+    const [totalUserRes, totalGroupRes, submittedActionRes] = await Promise.all(
+      [
+        API.graphql({ query: getAllUsers }),
+        API.graphql({ query: getAllGroups }),
+        API.graphql({ query: getAllSubmittedActions }),
+      ]
+    );
     setNumUsers(totalUserRes.data.getAllUsers.length);
+    setNumGroups(totalGroupRes.data.getAllGroups.length);
+    setAllSubmittedActions(submittedActionRes.data.getAllSubmittedActions);
+  };
 
-    /** getting bar chart data */
-    const allSubmittedActions = submittedActionRes.data.getAllSubmittedActions;
-    //filter all submitted actions to only get actions for the current time interval
-    const intervalSubmittedActions = allSubmittedActions.filter((action) =>
-      formattedDatesInInterval.includes(action.date_of_action.split('T')[0])
-    );
-    //create array of the # of actions submitted with an image each day for the current time interval
-    const numActionsWithImagePerDay = formattedDatesInInterval.map(
-      (date) =>
-        intervalSubmittedActions.filter(
-          (action) =>
-            action.date_of_action.split('T')[0] === date &&
-            action.submitted_image
-        ).length
-    );
-    //create array of the # of actions submitted without an image each day for the current time interval
-    const numActionsWithoutImagePerDay = formattedDatesInInterval.map(
-      (date) =>
-        intervalSubmittedActions.filter(
-          (action) =>
-            action.date_of_action.split('T')[0] === date &&
-            !action.submitted_image
-        ).length
-    );
-    //create object where keys are current time intervals's dates, values are # of actions submitted with an image that day
-    let data = {};
-    for (let i = 0; i < formattedDatesInInterval.length; i++) {
-      data[formattedDatesInInterval[i]] = {
-        actionsWithImage: numActionsWithImagePerDay[i],
-        actionsWithoutImage: numActionsWithoutImagePerDay[i],
-      };
-    }
-    setBarChartData(data);
+  const renderDonutChartData = () => {
+    /** getting total actions with/without iamge for donut chart data */
+    const totalActionsWithImage = allSubmittedActions.filter(
+      (action) => action.submitted_image
+    ).length;
+    const totalActionsWithoutImage = allSubmittedActions.filter(
+      (action) => !action.submitted_image
+    ).length;
+
+    setDonutActionImageData([totalActionsWithImage, totalActionsWithoutImage]);
+
+    /** getting total actions with/without quiz question answered correctly on first attempt iamge for donut chart data */
+    const totalActionsQuizCorrect = allSubmittedActions.filter(
+      (action) => action.first_quiz_answer_correct
+    ).length;
+    const totalActionsQuizIncorrect = allSubmittedActions.filter(
+      (action) => !action.first_quiz_answer_correct
+    ).length;
+    setDonutQuizData([totalActionsQuizCorrect, totalActionsQuizIncorrect]);
   };
 
   useEffect(() => {
     getStats();
   }, []);
+
+  useEffect(() => {
+    allSubmittedActions && renderDonutChartData();
+  }, [allSubmittedActions]);
 
   return (
     <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
@@ -79,13 +75,72 @@ const Dashboard = () => {
         Admin Dashboard
       </Typography>
       <Grid container spacing={4}>
-        <Grid item xs={4}>
+        <Grid item xs={4} containter>
           {numUsers && (
-            <Paper>
-              Total Users
-              <Typography variant="h2">{numUsers}</Typography>
-            </Paper>
+            <StyledPaper sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="h7"> Total Users</Typography>
+              <Typography
+                variant="h2"
+                sx={{
+                  alignSelf: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '0.2em',
+                }}
+                className="statValue"
+              >
+                <PersonIcon fontSize="large" />
+                <span>{numUsers}</span>
+              </Typography>
+            </StyledPaper>
           )}
+          {numUsers && (
+            <StyledPaper
+              sx={{ display: 'flex', flexDirection: 'column', mt: '1em' }}
+            >
+              <Typography variant="h7"> Total Groups</Typography>
+              <Typography
+                variant="h2"
+                sx={{
+                  alignSelf: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '0.2em',
+                }}
+                className="statValue"
+              >
+                <GroupsIcon fontSize="large" />
+                {numGroups}
+              </Typography>
+            </StyledPaper>
+          )}
+        </Grid>
+        <Grid item xs={8}>
+          {allSubmittedActions && (
+            <BarChart allSubmittedActions={allSubmittedActions} />
+          )}
+        </Grid>
+      </Grid>
+      <Typography variant="h2" sx={{ my: '2em' }}>
+        All Time Stats
+      </Typography>
+      <Grid container direction="row" spacing={2}>
+        <Grid item xs={4} containter>
+          {numUsers && (
+            <StyledPaper
+              sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}
+            >
+              <Typography variant="h7">
+                {' '}
+                Total Number of Actions Submitted
+              </Typography>
+              <Typography variant="h2">{allSubmittedActions.length}</Typography>
+            </StyledPaper>
+          )}
+        </Grid>
+        <Grid item xs={4}>
           <Paper>
             <Doughnut
               data={{
@@ -94,57 +149,53 @@ const Dashboard = () => {
                   'Actions Submitted Without Image',
                 ],
                 datasets: [
-                  { data: [1, 2], backgroundColor: ['#72b4eb', '#91C788'] },
+                  {
+                    data: donutActionImageData,
+                    backgroundColor: ['#72b4eb', '#91C788'],
+                  },
                 ],
               }}
               options={{
+                //   responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: donutActionImageData.reduce((a, b) => a + b, 0),
+                    position: 'bottom',
+                  },
+                },
               }}
-              height={200}
-              width={200}
             />
           </Paper>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={4}>
           <Paper>
-            <Typography variant="subtitle2" sx={{ mb: '1.5em' }}>
-              Actions submitted during the past 30 days
-            </Typography>
-            {barChartData && (
-              <Bar
-                data={{
-                  labels: Object.keys(barChartData),
-                  datasets: [
-                    {
-                      label: 'Number of Actions Submitted With Image',
-                      data: Object.values(barChartData).map(
-                        (data) => data.actionsWithImage
-                      ),
-                      backgroundColor: ['#72b4eb'],
-                    },
-                    {
-                      label: 'Number of Actions Submitted Without Image',
-                      data: Object.values(barChartData).map(
-                        (data) => data.actionsWithoutImage
-                      ),
-                      backgroundColor: ['#91C788'],
-                    },
-                  ],
-                }}
-                options={{
-                  scales: {
-                    x: {
-                      stacked: true,
-                    },
-                    y: {
-                      stacked: true,
-                    },
+            <Doughnut
+              data={{
+                labels: [
+                  'Actions With First Quiz Answer Correct',
+                  'Actions With First Quiz Answer Incorrect',
+                ],
+                datasets: [
+                  {
+                    data: donutQuizData,
+                    backgroundColor: ['#72b4eb', '#91C788'],
                   },
-                }}
-                height={300}
-                width={600}
-              />
-            )}
+                ],
+              }}
+              options={{
+                //   responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: donutActionImageData.reduce((a, b) => a + b, 0),
+                    position: 'bottom',
+                  },
+                },
+              }}
+            />
           </Paper>
         </Grid>
       </Grid>

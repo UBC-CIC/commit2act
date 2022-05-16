@@ -353,9 +353,6 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 open={openFilterMenu}
                 anchorEl={filterMenuAnchor}
                 onClose={handleClose}
-                MenuListProps={{
-                  'aria-labelledby': 'basic-button',
-                }}
               >
                 {filters.map((filter, index) => (
                   <MenuItem
