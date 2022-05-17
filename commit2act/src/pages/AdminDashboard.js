@@ -27,6 +27,8 @@ const AdminDashboard = () => {
           mt: { xs: 0, lg: '-64px' },
           mx: { xs: 0, lg: '-64px' },
           mb: '2em',
+          display: { xs: 'flex', sm: 'block' },
+          justifyContent: 'center',
         }}
       >
         <Box

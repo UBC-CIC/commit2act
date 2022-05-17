@@ -27,7 +27,7 @@ import AddMemberPanel from '../components/groupProfile/AddMemberPanel';
 import MemberActionsPanel from '../components/groupProfile/MemberActionsPanel';
 import GroupInfoPanel from '../components/groupProfile/GroupInfoPanel';
 import { styled } from '@mui/material/styles';
-import Leaderboard from '../components/Leaderboard';
+import GroupPageLeaderboard from '../components/groupProfile/GroupPageLeaderboard';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -115,7 +115,6 @@ const GroupProfile = () => {
             justifyContent={{ sm: 'center' }}
             alignItems="center"
             sx={{ mb: '1.5em' }}
-            width={{ xs: '70%', md: '100%' }}
           >
             <Avatar
               variant="rounded"
@@ -155,7 +154,13 @@ const GroupProfile = () => {
               </Stack>
             </Box>
           </Grid>
-          <Grid item xs={7.5}>
+          <Grid
+            item
+            xs={12}
+            sm={7.5}
+            justifyContent="center"
+            sx={{ width: '70%' }}
+          >
             <Box
               sx={{
                 display: 'flex',
@@ -190,7 +195,7 @@ const GroupProfile = () => {
               width: { xs: '70%', sm: '100%' },
             }}
           >
-            <Leaderboard
+            <GroupPageLeaderboard
               currentGroup={groupInfo}
               groupMembers={groupMembers}
               userId={userId}

@@ -5,6 +5,7 @@ import {
   Paper,
   Alert,
   AlertTitle,
+  Grid,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -18,12 +19,11 @@ import GroupCard from '../components/GroupCard';
 import { API } from 'aws-amplify';
 import {
   getTotalGlobalCO2,
-  getUsersTotalCO2,
-  getUsersWeekCO2,
   getAllGroupsForUser,
   getAllSubmittedActionsToValidate,
   getSingleUser,
 } from '../graphql/queries';
+import GlobalLeaderboard from '../components/GlobalLeaderboard';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -100,8 +100,14 @@ const Landing = ({ user }) => {
   return (
     <>
       {user && (
-        <>
-          <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+        <Grid
+          container
+          alignItems={{ xs: 'center', lg: 'flex-start' }}
+          direction={{ xs: 'column', lg: 'row' }}
+          gap={{ xs: '2em', lg: '0' }}
+          textAlign={{ xs: 'center', md: 'left' }}
+        >
+          <Grid item xs={12}>
             <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
               Welcome {user.name}!
             </Typography>
@@ -132,73 +138,78 @@ const Landing = ({ user }) => {
                 validate!
               </Alert>
             )}
-            <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
+          </Grid>
+          <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+            <Typography variant="h2" sx={{ m: '1.5em 0 1.25em' }}>
               Recent Progress
             </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              justifyContent: 'space-evenly',
-              backgroundColor: '#DBE2EF',
-              borderRadius: '8px',
-              padding: '1.5em',
-              gap: { xs: '0.5em', lg: '0' },
-            }}
-          >
-            <StyledPaper elevation={6}>
-              <Typography variant="h4">CO2 Saved This Week</Typography>
-              <Typography variant="h5" className="statValue">
-                <AutoGraphOutlined fontSize="large" />
-                {progressStats.weekCO2}g
-              </Typography>
-            </StyledPaper>
-            <StyledPaper elevation={6}>
-              <Typography variant="h4">Total CO2 Saved</Typography>
-              <Typography variant="h5" className="statValue">
-                {progressStats.totalCO2}g
-              </Typography>
-            </StyledPaper>
-            <StyledPaper elevation={6}>
-              <Typography variant="h4">Collective Impact</Typography>
-              <Typography variant="h5" className="statValue">
-                {progressStats.globalCO2}g
-              </Typography>
-            </StyledPaper>
-          </Box>
-          <Box
-            component="div"
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              m: '5em 0 1.25em',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: { xs: '1em' },
-            }}
-          >
-            <Typography variant="h2">My Groups</Typography>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                navigate('/create-group');
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-evenly',
+                backgroundColor: '#DBE2EF',
+                borderRadius: '8px',
+                padding: '1.5em',
+                gap: { xs: '0.5em', lg: '0' },
               }}
             >
-              Create New Group
-            </Button>
-          </Box>
-          <Box
+              <StyledPaper elevation={6}>
+                <Typography variant="h4">CO2 Saved This Week</Typography>
+                <Typography variant="h5" className="statValue">
+                  <AutoGraphOutlined fontSize="large" />
+                  {progressStats.weekCO2}g
+                </Typography>
+              </StyledPaper>
+              <StyledPaper elevation={6}>
+                <Typography variant="h4">Total CO2 Saved</Typography>
+                <Typography variant="h5" className="statValue">
+                  {progressStats.totalCO2}g
+                </Typography>
+              </StyledPaper>
+              <StyledPaper elevation={6}>
+                <Typography variant="h4">Collective Impact</Typography>
+                <Typography variant="h5" className="statValue">
+                  {progressStats.globalCO2}g
+                </Typography>
+              </StyledPaper>
+            </Box>
+          </Grid>
+          <Grid
+            container
+            item
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
+              mt: { xs: '2em', md: '3em' },
+              width: { xs: '70%', sm: '100%' },
             }}
           >
-            {renderGroupCards()}
-          </Box>
-        </>
+            <GlobalLeaderboard />
+            <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+              <Box
+                component="div"
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  m: '4em 0 1.25em',
+                  flexDirection: { xs: 'column', md: 'row' },
+                  gap: { xs: '1em' },
+                }}
+              >
+                <Typography variant="h2">My Groups</Typography>
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    navigate('/create-group');
+                  }}
+                >
+                  Create New Group
+                </Button>
+              </Box>
+              {renderGroupCards()}
+            </Grid>
+          </Grid>
+        </Grid>
       )}
     </>
   );

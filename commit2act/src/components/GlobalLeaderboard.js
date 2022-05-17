@@ -19,10 +19,9 @@ import {
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
-import { getAllGroups } from '../graphql/queries';
+import { getAllGroups, getAllUsers } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
@@ -33,8 +32,8 @@ const StyledTableBody = styled(TableBody)`
   }
 `;
 
-const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
-  const tabs = ['Global Groups', 'Group Members'];
+const GlobalLeaderboard = () => {
+  const tabs = ['Global Groups', 'Global Users'];
   const filters = [
     { name: 'Total CO2 Saved', property: 'total_co2' },
     { name: 'Weekly CO2 Saved', property: 'weekly_co2' },
@@ -42,10 +41,11 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
     { name: 'Weekly Points', property: 'weekly_points' },
   ];
   const [groups, setGroups] = useState();
+  const [users, setUsers] = useState();
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [filteredGroups, setFilteredGroups] = useState();
-  const [filteredMembers, setFilteredMembers] = useState();
+  const [filteredUsers, setFilteredUsers] = useState();
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
   const [page, setPage] = useState(0);
@@ -61,26 +61,29 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
       : selectedTab === tabs[0]
       ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
       : selectedTab === tabs[1]
-      ? Math.max(0, (1 + page) * rowsPerPage - groupMembers.length)
+      ? Math.max(0, (1 + page) * rowsPerPage - users.length)
       : 0;
 
   useEffect(() => {
-    const getGroups = async () => {
-      const res = await API.graphql({
-        query: getAllGroups,
-      });
-      setGroups(res.data.getAllGroups);
+    const getTableData = async () => {
+      const [userRes, groupRes] = await Promise.all([
+        API.graphql({ query: getAllUsers }),
+        API.graphql({ query: getAllGroups }),
+      ]);
+      setUsers(userRes.data.getAllUsers);
+      setGroups(groupRes.data.getAllGroups);
     };
-    getGroups();
+
+    getTableData();
   }, []);
 
   //filters groups when group state is initially set, filters groups and group members every time a new filter is selected
   useEffect(() => {
-    if (groups && groupMembers) {
+    if (groups && users) {
       handleFilterSelection();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, groupMembers, selectedFilter]);
+  }, [groups, users, selectedFilter]);
 
   //sets filter back to default (total co2) and sets page back to first page on tab change
   const handleTabChange = (e, newValue) => {
@@ -112,13 +115,13 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
       setFilteredGroups(sortedByFilter);
     }
     //if Group Members tab is selected, apply the selected filter to all users
-    if (selectedTab === tabs[1] && groupMembers) {
-      //make a mutable copy of the groupMembers array, sort that array and update the in state version of groupMembers
-      let groupMemberArrayCopy = [...groupMembers];
-      let sortedByFilter = groupMemberArrayCopy.sort(
+    if (selectedTab === tabs[1] && users) {
+      //make a mutable copy of the users array, sort that array and update the in state version of users
+      let usersArrayCopy = [...users];
+      let sortedByFilter = usersArrayCopy.sort(
         (a, b) => b[propertySelected] - a[propertySelected]
       );
-      setFilteredMembers(sortedByFilter);
+      setFilteredUsers(sortedByFilter);
     }
     handleClose();
   };
@@ -137,59 +140,13 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   const renderTable = () => {
     return (
       <>
-        {/* if Global Groups tab is selected, render group current place */}
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
             mt: { xs: '2em', sm: '0' },
           }}
-        >
-          {filteredGroups && selectedTab === tabs[0] && (
-            <Typography
-              variant="h3"
-              component="div"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              Current Place
-              <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                <AutoGraphIcon />
-                {filteredGroups.findIndex(
-                  (group) => group.group_name === currentGroup.group_name
-                ) + 1}{' '}
-                / {filteredGroups.length}
-              </Typography>
-            </Typography>
-          )}
-          {/* if Group Members tab is selected, check if user is a group member, then render user's current place. If user doesn't belong to the group, don't render current place */}
-          {filteredMembers &&
-            selectedTab === tabs[1] &&
-            groupMembers.findIndex((member) => member.user_id === userId) !==
-              -1 && (
-              <Typography
-                variant="h3"
-                component="div"
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                }}
-              >
-                Current Place
-                <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                  <AutoGraphIcon />
-                  {filteredMembers.findIndex(
-                    (member) => member.user_id === userId
-                  ) + 1}{' '}
-                  / {groupMembers.length}
-                </Typography>
-              </Typography>
-            )}
-        </Box>
+        ></Box>
         <TableContainer component={Paper} sx={{ mt: '1em' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
@@ -219,10 +176,6 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 ).map((group, index) => (
                   <TableRow
                     key={group.group_id}
-                    className={
-                      currentGroup.group_name === group.group_name &&
-                      'currentGroupOrUser'
-                    }
                     sx={{
                       '&:last-child td, &:last-child th': { border: 0 },
                     }}
@@ -245,22 +198,19 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                   </TableRow>
                 ))}
 
-              {/* if Group Members tab is selected, display all member data in table body*/}
+              {/* if Global Users tab is selected, display all user data in table body*/}
               {selectedTab === tabs[1] &&
-                filteredMembers &&
+                filteredUsers &&
                 (rowsPerPage > 0
-                  ? filteredMembers.slice(
+                  ? filteredUsers.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
                     )
-                  : filteredMembers
-                ).map((member, index) => (
+                  : filteredUsers
+                ).map((user, index) => (
                   <TableRow
-                    key={member.user_id}
+                    key={user.user_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    className={
-                      userId === member.user_id && 'currentGroupOrUser'
-                    }
                   >
                     <TableCell
                       component="th"
@@ -270,12 +220,12 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {member.name}
+                      {user.name}
                     </TableCell>
-                    <TableCell align="right">{member.total_co2}</TableCell>
-                    <TableCell align="right">{member.total_points}</TableCell>
-                    <TableCell align="right">{member.weekly_co2}</TableCell>
-                    <TableCell align="right">{member.weekly_points}</TableCell>
+                    <TableCell align="right">{user.total_co2}</TableCell>
+                    <TableCell align="right">{user.total_points}</TableCell>
+                    <TableCell align="right">{user.weekly_co2}</TableCell>
+                    <TableCell align="right">{user.weekly_points}</TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (
@@ -287,11 +237,11 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
           </Table>
         </TableContainer>
         {/* render the correct pagination options for each table */}
-        {selectedTab === tabs[0] && (
+        {selectedTab === tabs[0] && groups && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
-            count={groups.length}
+            count={groups && groups.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -300,11 +250,11 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
             showLastButton
           />
         )}
-        {selectedTab === tabs[1] && (
+        {selectedTab === tabs[1] && users && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
-            count={groupMembers.length}
+            count={users.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -388,7 +338,7 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
                 }}
               >
                 <Tab label="Global Groups" value={tabs[0]} />
-                <Tab label="Group Members" value={tabs[1]} />
+                <Tab label="Global Users" value={tabs[1]} />
               </TabList>
               <TabPanel
                 value={tabs[0]}
@@ -410,4 +360,4 @@ const Leaderboard = ({ currentGroup, groupMembers, userId }) => {
   );
 };
 
-export default Leaderboard;
+export default GlobalLeaderboard;

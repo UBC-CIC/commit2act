@@ -187,7 +187,7 @@ const BarChart = ({ allSubmittedActions }) => {
               },
             },
             plugins: {
-              //   responsive: true,
+              responsive: true,
               maintainAspectRatio: false,
             },
           }}
