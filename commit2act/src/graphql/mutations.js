@@ -78,6 +78,8 @@ export const createSubmittedAction = /* GraphQL */ `
       is_validated
       points_earned
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -131,6 +133,7 @@ export const createAction = /* GraphQL */ `
       page_media
       action_icon
       fallback_quiz_media
+      is_hidden
     }
   }
 `;
@@ -332,6 +335,8 @@ export const approveSubmittedAction = /* GraphQL */ `
       is_validated
       points_earned
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -360,6 +365,7 @@ export const updateAction = /* GraphQL */ `
       page_media
       action_icon
       fallback_quiz_media
+      is_hidden
     }
   }
 `;
@@ -399,5 +405,39 @@ export const deleteActionValidationLabel = /* GraphQL */ `
       action_id: $action_id
       validation_label: $validation_label
     )
+  }
+`;
+export const updateActionItems = /* GraphQL */ `
+  mutation UpdateActionItems($action_id: Int!) {
+    updateActionItems(action_id: $action_id) {
+      action_id
+      item_name
+      item_description
+      co2_saved_per_unit
+    }
+  }
+`;
+export const graveyardAction = /* GraphQL */ `
+  mutation GraveyardAction($action_id: Int!) {
+    graveyardAction(action_id: $action_id) {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+      is_hidden
+    }
+  }
+`;
+export const restoreAction = /* GraphQL */ `
+  mutation RestoreAction($action_id: Int!) {
+    restoreAction(action_id: $action_id) {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+      is_hidden
+    }
   }
 `;

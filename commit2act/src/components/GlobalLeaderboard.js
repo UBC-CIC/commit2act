@@ -337,8 +337,8 @@ const GlobalLeaderboard = () => {
                   borderColor: { xs: 'none', sm: 'divider' },
                 }}
               >
-                <Tab label="Global Groups" value={tabs[0]} />
-                <Tab label="Global Users" value={tabs[1]} />
+                <Tab label={tabs[0]} value={tabs[0]} />
+                <Tab label={tabs[1]} value={tabs[1]} />
               </TabList>
               <TabPanel
                 value={tabs[0]}

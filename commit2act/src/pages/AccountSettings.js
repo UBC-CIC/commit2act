@@ -27,13 +27,16 @@ const AccountSettings = () => {
   const [showMore, setShowMore] = useState({
     validated: false,
     unvalidated: false,
+    failed: false,
   });
   const [avatarPreview, setAvatarPreview] = useState();
   const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
   const [user, setUser] = useState();
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
-  const [selectedTab, setSelectedTab] = useState('0');
+  const [failedActions, setFailedActions] = useState();
+  const tabs = ['Validated', 'Awaiting Validation', 'Did Not Pass Validation'];
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
   const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
@@ -59,15 +62,15 @@ const AccountSettings = () => {
       query: getAllSubmittedActionsForUser,
       variables: { user_id: id },
     });
-    let allActions = res.data.getAllSubmittedActionsForUser;
+    const allActions = res.data.getAllSubmittedActionsForUser;
     //filter for all validated actions
-    let validated = allActions.filter((action) => action.is_validated === true);
+    const validated = allActions.filter((action) => action.is_validated);
     setValidatedActions(validated);
     //filter for all unvalidated actions
-    let unvalidated = allActions.filter(
-      (action) => action.is_validated === false
-    );
+    const unvalidated = allActions.filter((action) => !action.is_validated);
     setUnvalidatedActions(unvalidated);
+    const failed = allActions.filter((action) => action.is_rejected);
+    setFailedActions(failed);
   };
 
   //updates user avatar field in database
@@ -201,6 +204,53 @@ const AccountSettings = () => {
     }
   };
 
+  const renderFailedActionCards = () => {
+    //return if failedActions is not null or undefined and contains at least 1 item
+    if (Array.isArray(failedActions) && failedActions.length !== 0) {
+      return (
+        <Box
+          sx={{
+            height: '110vh',
+            overflow: 'auto',
+            padding: '0.25em',
+          }}
+        >
+          <Stack spacing={2}>
+            {showMore.failed
+              ? failedActions.map((action, index) => (
+                  <SubmittedActionCard key={index} action={action} />
+                ))
+              : failedActions
+                  .slice(0, 3)
+                  .map((action, index) => (
+                    <SubmittedActionCard key={index} action={action} />
+                  ))}
+            <Button
+              sx={{ mt: '3em' }}
+              variant="outlined"
+              onClick={() =>
+                setShowMore((prev) => ({
+                  ...prev,
+                  failed: !showMore.failed,
+                }))
+              }
+            >
+              View {showMore.failed ? 'Less' : 'More'}
+            </Button>
+          </Stack>
+        </Box>
+      );
+    } else {
+      return (
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="subtitle2">
+            There are no failed actions to show
+          </Typography>
+        </Box>
+      );
+    }
+  };
+
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
   };
@@ -325,8 +375,7 @@ const AccountSettings = () => {
                   borderBottom: 1,
                   borderTop: 1,
                   borderColor: 'divider',
-                  width: '100%',
-                  padding: '0.5em',
+                  maxWidth: { xs: 320, sm: '100%' },
                 }}
               >
                 <TabList
@@ -337,12 +386,18 @@ const AccountSettings = () => {
                   variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
                   centered={!scrollableTabs}
                 >
-                  <Tab label="Validated Actions" value="0" />
-                  <Tab label="Actions Awaiting Validation" value="1" />
+                  <Tab label={tabs[0]} value={tabs[0]} />
+                  <Tab label={tabs[1]} value={tabs[1]} />
+                  <Tab label={tabs[2]} value={tabs[2]} />
                 </TabList>
               </Box>
-              <TabPanel value="0">{renderValidatedActionCards()}</TabPanel>
-              <TabPanel value="1">{renderUnvalidatedActionCards()}</TabPanel>
+              <TabPanel value={tabs[0]}>
+                {renderValidatedActionCards()}
+              </TabPanel>
+              <TabPanel value={tabs[1]}>
+                {renderUnvalidatedActionCards()}
+              </TabPanel>
+              <TabPanel value={tabs[2]}>{renderFailedActionCards()}</TabPanel>
             </TabContext>
           </Box>
         </>

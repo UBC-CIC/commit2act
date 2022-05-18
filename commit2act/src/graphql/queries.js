@@ -46,6 +46,8 @@ export const getSingleSubmittedAction = /* GraphQL */ `
       is_validated
       points_earned
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -69,6 +71,8 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
         sa_id
         input_value
       }
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -81,6 +85,7 @@ export const getSingleAction = /* GraphQL */ `
       action_icon
       fallback_quiz_media
       validation_labels
+      is_hidden
     }
   }
 `;
@@ -133,6 +138,20 @@ export const getAllActions = /* GraphQL */ `
       action_icon
       fallback_quiz_media
       validation_labels
+      is_hidden
+    }
+  }
+`;
+export const getAllUngraveyardedActions = /* GraphQL */ `
+  query GetAllUngraveyardedActions {
+    getAllUngraveyardedActions {
+      action_id
+      action_name
+      page_media
+      action_icon
+      fallback_quiz_media
+      validation_labels
+      is_hidden
     }
   }
 `;
@@ -151,6 +170,8 @@ export const getAllSubmittedActions = /* GraphQL */ `
       is_validated
       points_earned
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -191,6 +212,8 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -211,6 +234,8 @@ export const getAllValidatedSubmittedActionsForUser = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -231,6 +256,30 @@ export const getAllUnvalidatedSubmittedActionsForUser = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
+      is_rejected
+      is_image_explicit
+    }
+  }
+`;
+export const getAllGraveyardedSubmittedActionsForUser = /* GraphQL */ `
+  query GetAllGraveyardedSubmittedActionsForUser($user_id: Int!) {
+    getAllGraveyardedSubmittedActionsForUser(user_id: $user_id) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_sumbitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      action_name
+      submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -337,6 +386,8 @@ export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
+      is_rejected
+      is_image_explicit
     }
   }
 `;
@@ -423,6 +474,8 @@ export const getAllSubmittedActionsToValidate = /* GraphQL */ `
       submitted_image
       name_of_user
       group_names
+      is_rejected
+      is_image_explicit
     }
   }
 `;

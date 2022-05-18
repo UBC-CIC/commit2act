@@ -13,6 +13,7 @@ const ActionPanel = ({
 }) => {
   const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
+  const [inputError, setInputError] = useState(false);
 
   useEffect(() => {
     getActionItems();
@@ -31,11 +32,12 @@ const ActionPanel = ({
 
   //updates total co2 saved value and records what user inputs for each item field on the form
   const handleActionItemInput = (value, item) => {
-    //if user input is not an int/float, do not update or set the actionItemValues
-    if (isNaN(value)) {
+    //if user input is not an int/float and is not empty, do not update or set the actionItemValues
+    if (value !== '' && !value.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
+      setInputError(true);
       return;
     }
-
+    setInputError(false);
     //create the input object
     let input = {
       item_name: item.item_name,
@@ -117,8 +119,17 @@ const ActionPanel = ({
         }}
       >
         <Typography variant="h2">{action_name}</Typography>
+        {inputError && (
+          <Typography variant="subtitle2">
+            Input must be a number or decimal greater than 0
+          </Typography>
+        )}
         {renderActionForm()}
-        <Button onClick={calculateCO2} variant="contained">
+        <Button
+          onClick={calculateCO2}
+          variant="contained"
+          disabled={inputError}
+        >
           Next
         </Button>
       </Box>

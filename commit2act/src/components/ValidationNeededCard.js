@@ -32,6 +32,7 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
       query: rejectSubmittedAction,
       variables: { sa_id: action.sa_id },
     });
+
     getAllActions();
   };
 

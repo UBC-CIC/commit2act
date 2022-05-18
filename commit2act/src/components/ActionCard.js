@@ -198,7 +198,7 @@ const ActionCard = ({
           break;
         default:
           //checks to see if user input for co2 saved per unit field is a positive numerical value
-          if (!e.target.value.match(new RegExp('[0-9]+([.][0-9]+)?$'))) {
+          if (!e.target.value.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
             setIsValid((prev) => ({
               ...prev,
               co2: false,
