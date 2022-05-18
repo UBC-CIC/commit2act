@@ -232,6 +232,7 @@ function Login(props) {
           name: name,
           preferred_username: preferred_username,
           'custom:type': 'User',
+          'custom:firstLogin': 'true',
         },
       });
 
@@ -269,22 +270,20 @@ function Login(props) {
       setNewVerification(false);
       const { email, authCode, name, preferred_username } = formState;
       setLoading(true);
-      const authConfirmation = await Auth.confirmSignUp(email, authCode);
-      //add user to database
-      const databaseUser = await API.graphql({
-        query: createUser,
-        variables: { name: name, username: preferred_username, email: email },
-      });
+      await Auth.confirmSignUp(email, authCode);
 
-      const addUserPromise = await Promise.all([
-        authConfirmation,
-        databaseUser,
-      ]);
+      // //add user to database
+      // const databaseUser = await API.graphql({
+      //   query: createUser,
+      //   variables: { name: name, username: preferred_username, email: email },
+      // });
+      // console.log(databaseUser);
 
       resetStates('signIn');
       setShowSuccessAlert(true);
       setLoading(false);
     } catch (e) {
+      console.log(e);
       setVerificationError(true);
       setLoading(false);
 
