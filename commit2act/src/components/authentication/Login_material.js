@@ -121,7 +121,6 @@ function Login(props) {
     type,
     title,
     darkMode,
-    logo,
     themeColor,
     disableSignUp,
   } = props;
@@ -268,17 +267,9 @@ function Login(props) {
     // Verify Account with confirmation code after sign up page
     try {
       setNewVerification(false);
-      const { email, authCode, name, preferred_username } = formState;
+      const { email, authCode } = formState;
       setLoading(true);
       await Auth.confirmSignUp(email, authCode);
-
-      // //add user to database
-      // const databaseUser = await API.graphql({
-      //   query: createUser,
-      //   variables: { name: name, username: preferred_username, email: email },
-      // });
-      // console.log(databaseUser);
-
       resetStates('signIn');
       setShowSuccessAlert(true);
       setLoading(false);
