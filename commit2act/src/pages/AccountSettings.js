@@ -153,9 +153,11 @@ const AccountSettings = () => {
       );
     } else {
       return (
-        <Typography variant="subtitle2">
-          There are no validated actions to show
-        </Typography>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="subtitle2">
+            There are no validated actions to show
+          </Typography>
+        </Box>
       );
     }
   };
