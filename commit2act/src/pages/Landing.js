@@ -94,6 +94,14 @@ const Landing = ({ user }) => {
       return userGroups.map((group, index) => (
         <GroupCard key={index} group={group} />
       ));
+    } else {
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '2em' }}>
+          <Typography variant="subtitle2">
+            No groups to display. Create or join a group to get started!
+          </Typography>
+        </Box>
+      );
     }
   };
 
@@ -105,10 +113,10 @@ const Landing = ({ user }) => {
           alignItems={{ xs: 'center', lg: 'flex-start' }}
           direction={{ xs: 'column', lg: 'row' }}
           gap={{ xs: '2em', lg: '0' }}
-          textAlign={{ xs: 'center', md: 'left' }}
+          textAlign={{ xs: 'center', lg: 'left' }}
         >
           <Grid item xs={12}>
-            <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+            <Typography variant="h1" sx={{ mt: { xs: '1.5em', lg: '0' } }}>
               Welcome {user.name}!
             </Typography>
             {numActionsToValidate && (
@@ -139,7 +147,12 @@ const Landing = ({ user }) => {
               </Alert>
             )}
           </Grid>
-          <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+          <Grid
+            item
+            xs={12}
+            justifyContent="center"
+            sx={{ width: { xs: '70%', sm: '100%' } }}
+          >
             <Typography variant="h2" sx={{ m: '1.5em 0 1.25em' }}>
               Recent Progress
             </Typography>

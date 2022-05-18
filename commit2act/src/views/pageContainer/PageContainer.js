@@ -171,17 +171,6 @@ function PageContainer(props) {
           <>
             <ListItem
               button
-              key={'createAction'}
-              onClick={() => navigate('/create-action')}
-            >
-              <ListItemIcon>
-                <Create />
-              </ListItemIcon>
-              <ListItemText primary={'Create Action'} />
-            </ListItem>
-
-            <ListItem
-              button
               key={'adminDashboard'}
               onClick={() => navigate('/admin-dashboard')}
             >

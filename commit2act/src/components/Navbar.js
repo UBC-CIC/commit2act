@@ -184,6 +184,7 @@ function Navbar(props) {
             variant="h6"
             component={'h1'}
             noWrap
+            sx={{ fontWeight: 200 }}
           >
             Commit2Act
           </Typography>

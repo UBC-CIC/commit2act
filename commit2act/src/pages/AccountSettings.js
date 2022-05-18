@@ -67,8 +67,11 @@ const AccountSettings = () => {
     const validated = allActions.filter((action) => action.is_validated);
     setValidatedActions(validated);
     //filter for all unvalidated actions
-    const unvalidated = allActions.filter((action) => !action.is_validated);
+    const unvalidated = allActions.filter(
+      (action) => !action.is_validated && !action.is_rejected
+    );
     setUnvalidatedActions(unvalidated);
+    //filter for all failed actions
     const failed = allActions.filter((action) => action.is_rejected);
     setFailedActions(failed);
   };

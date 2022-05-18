@@ -13,6 +13,14 @@ import {
   LinearProgress,
   Chip,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider,
+  Paper,
 } from '@mui/material';
 import { HighlightOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -22,6 +30,8 @@ import {
   createAction,
   createActionValidationLabels,
 } from '../graphql/mutations';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const Input = styled('input')`
   display: none;
@@ -31,64 +41,58 @@ const SectionTitle = styled(Typography)`
   margin: 1.5em 0;
 `;
 
-const ActionItemCategory = styled(Typography)`
-  margin: 1em 1em 0 0;
-  font-weight: 500;
-`;
-
 const CreateAction = () => {
-  const emptyActionItemForm = {
-    item_name: '',
-    item_description: '',
-    co2_saved_per_unit: '',
-  };
-  const emptyCreateActionForm = {
+  const emptyActionForm = {
     action_name: '',
     page_media: '',
     fallback_quiz_media: '',
     curr_label: '',
     labels: [],
+    action_items: [],
   };
-  const [createActionForm, setCreateActionForm] = useState(
-    emptyCreateActionForm
-  );
-  const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
-  const [actionItems, setActionItems] = useState([]);
+
+  const emptyActionItemForm = {
+    item_name: '',
+    item_description: '',
+    co2_saved_per_unit: '',
+  };
+
   const [isValid, setIsValid] = useState({
-    co2Valid: false,
-    itemNameValid: false,
-    itemDescriptionValid: false,
-    actionItemsValid: false,
-    actionNameValid: false,
+    co2: false,
+    itemName: false,
+    itemDescription: false,
+    actionName: false,
+    actionItems: false,
     validationLabels: false,
   });
+
+  const [actionForm, setActionForm] = useState(emptyActionForm);
+  const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
-  const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
 
-  //if input field names are from actionItems form, update that form. Otherwise update the createAction form.
   const updateForm = (e) => {
     if (e.target.name in actionItemsForm) {
       setActionItemsForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
-
       switch (e.target.name) {
         case 'item_name':
           //checks to see if user input for item name field is null
           if (!e.target.value) {
             setIsValid((prev) => ({
               ...prev,
-              itemNameValid: false,
+              itemName: false,
             }));
           } else {
             setIsValid((prev) => ({
               ...prev,
-              itemNameValid: true,
+              itemName: true,
             }));
           }
           break;
@@ -97,12 +101,12 @@ const CreateAction = () => {
           if (!e.target.value) {
             setIsValid((prev) => ({
               ...prev,
-              itemDescriptionValid: false,
+              itemDescription: false,
             }));
           } else {
             setIsValid((prev) => ({
               ...prev,
-              itemDescriptionValid: true,
+              itemDescription: true,
             }));
           }
           break;
@@ -111,17 +115,17 @@ const CreateAction = () => {
           if (!e.target.value.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
             setIsValid((prev) => ({
               ...prev,
-              co2Valid: false,
+              co2: false,
             }));
           } else {
             setIsValid((prev) => ({
               ...prev,
-              co2Valid: true,
+              co2: true,
             }));
           }
       }
     } else {
-      setCreateActionForm((prev) => ({
+      setActionForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
@@ -131,13 +135,13 @@ const CreateAction = () => {
           if (e.target.name === 'action_name' && !e.target.value) {
             setIsValid((prev) => ({
               ...prev,
-              actionNameValid: false,
+              actionName: false,
             }));
             setFormError(true);
           } else if (e.target.name === 'action_name') {
             setIsValid((prev) => ({
               ...prev,
-              actionNameValid: true,
+              actionName: true,
             }));
           }
           break;
@@ -145,8 +149,7 @@ const CreateAction = () => {
     }
   };
 
-  /** functions for uploading an icon */
-
+  //handle icon upload
   const handleIconUpload = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
       setActionIconFile(null);
@@ -158,54 +161,58 @@ const CreateAction = () => {
     setActionIconPreviewLink(previewLink);
   };
 
-  /** functions for validating and adding the actionItems */
-
-  //checks to see if actionItems are valid for submission (if there is more than 1 item in the array)
+  //checks to see if actionItems and image validation labels  are valid for submission (if there is more than 1 item in the array)
   useEffect(() => {
-    if (actionItems.length < 1) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItemsValid: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItemsValid: true,
-      }));
-    }
-  }, [actionItems]);
-
-  //check to see if image validation labels are valid for submission
-  useEffect(() => {
-    if (createActionForm.labels.length > 0) {
-      console.log('hi');
+    if (actionForm.labels.length > 0) {
       setIsValid((prev) => ({
         ...prev,
         validationLabels: true,
       }));
-    } else if (createActionForm.labels.length === 0) {
+    } else if (actionForm.labels.length === 0) {
       setIsValid((prev) => ({
         ...prev,
         validationLabels: false,
       }));
     }
-  }, [createActionForm]);
+
+    if (actionForm.action_items.length < 1) {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItems: false,
+      }));
+    } else {
+      setIsValid((prev) => ({
+        ...prev,
+        actionItems: true,
+      }));
+    }
+  }, [actionForm]);
+
+  /** functions for adding and removing action items */
+  const removeActionItem = (name) => {
+    let actionItemsCopy = actionForm.action_items;
+    let filteredActionItems = actionItemsCopy.filter(
+      (item) => item.item_name !== name
+    );
+    setActionForm((prev) => ({
+      ...prev,
+      action_items: filteredActionItems,
+    }));
+  };
 
   const addActionItem = () => {
-    if (
-      isValid.co2Valid &&
-      isValid.itemNameValid &&
-      isValid.itemDescriptionValid
-    ) {
+    if (isValid.co2 && isValid.itemName && isValid.itemDescription) {
       //adds the item from the form into actionItems array
-      setActionItems((actionItems) => [...actionItems, actionItemsForm]);
+      let actionItemsCopy = actionForm.action_items;
+      actionItemsCopy.push(actionItemsForm);
+      setActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
       //clears the actionItemsForm so user can enter in a new action item
       setActionItemsForm(emptyActionItemForm);
       setIsValid((prev) => ({
         ...prev,
-        co2Valid: false,
-        itemNameValid: false,
-        itemDescriptionValid: false,
+        co2: false,
+        itemName: false,
+        itemDescription: false,
       }));
       setActionItemFormError(false);
     } else {
@@ -213,38 +220,32 @@ const CreateAction = () => {
     }
   };
 
-  const removeActionItem = (name) => {
-    setActionItems(actionItems.filter((item) => item.item_name !== name));
+  /** functions for adding and removing validation labels */
+
+  const removeValidationLabel = (label) => {
+    let labelsCopy = actionForm.labels;
+    const index = labelsCopy.indexOf(label);
+    labelsCopy.splice(index, 1);
+    setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
   };
 
   const addValidationLabel = () => {
     //create array that contains the current label input from the form along with all previous inputted labels
-    let labelsCopy = createActionForm.labels;
-    labelsCopy.push(createActionForm.curr_label);
-    setCreateActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+    let labelsCopy = actionForm.labels;
+    labelsCopy.push(actionForm.curr_label);
+    setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
     //clear current label
-    setCreateActionForm((prev) => ({ ...prev, curr_label: '' }));
+    setActionForm((prev) => ({ ...prev, curr_label: '' }));
   };
 
-  const removeValidationLabel = (label) => {
-    let labelsCopy = createActionForm.labels;
-    const index = labelsCopy.indexOf(label);
-    labelsCopy.splice(index, 1);
-    setCreateActionForm((prev) => ({ ...prev, labels: labelsCopy }));
-  };
-
-  /** functions adding the action itself */
+  // /** functions adding the action itself */
 
   const submitAction = async () => {
-    if (
-      isValid.actionItemsValid &&
-      isValid.actionNameValid &&
-      isValid.validationLabels
-    ) {
+    if (isValid.actionItems && isValid.actionName && isValid.validationLabels) {
       setIsLoading(true);
 
       //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
-      let imageKey = 'actionIcons/'.concat(createActionForm.action_name);
+      let imageKey = 'actionIcons/'.concat(actionForm.action_name);
       let iconLink = null;
       if (actionIconFile) {
         let imageType = actionIconFile.type;
@@ -262,9 +263,9 @@ const CreateAction = () => {
       const createActionRes = await API.graphql({
         query: createAction,
         variables: {
-          action_name: createActionForm.action_name,
+          action_name: actionForm.action_name,
           action_icon: iconLink,
-          fallback_quiz_media: createActionForm.fallback_quiz_media,
+          fallback_quiz_media: actionForm.fallback_quiz_media,
         },
       });
       const actionId = createActionRes.data.createAction.action_id;
@@ -272,24 +273,26 @@ const CreateAction = () => {
       await Promise.all([
         API.graphql({
           query: createActionItems,
-          variables: { action_id: actionId, action_items: actionItems },
+          variables: {
+            action_id: actionId,
+            action_items: actionForm.action_items,
+          },
         }),
         API.graphql({
           query: createActionValidationLabels,
           variables: {
             action_id: actionId,
-            validation_labels: createActionForm.labels,
+            validation_labels: actionForm.labels,
           },
         }),
       ]);
 
       //clear form and related states
-      setCreateActionForm(emptyCreateActionForm);
-      setActionItems([]);
+      setActionForm(emptyActionForm);
       setActionIconPreviewLink();
       setIsValid((prev) => ({
         ...prev,
-        actionNameValid: false,
+        actionName: false,
       }));
       setFormError(false);
       //render success message
@@ -305,49 +308,54 @@ const CreateAction = () => {
   }, [submitActionSuccess]);
 
   const renderAddedActionItems = () => {
-    return actionItems.map((item, index) => (
-      <Card
-        key={index}
-        sx={{
-          backgroundColor: 'white',
-          mt: '1em',
-          borderRadius: '5px',
-          padding: '1em',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexDirection: { xs: 'column', md: 'row' },
-        }}
-      >
-        <Box>
-          <Typography variant="h8" component="div">
-            <ActionItemCategory variant="h8" component="span">
-              Item Name:
-            </ActionItemCategory>
-            {item.item_name}
-          </Typography>
-          <Typography variant="h8" component="div">
-            <ActionItemCategory variant="h8" component="span">
-              Item Description:
-            </ActionItemCategory>
-            {item.item_description}
-          </Typography>
-          <Typography variant="h8" component="div">
-            <ActionItemCategory variant="h8" component="span">
-              CO2 Per Unit Saved:
-            </ActionItemCategory>
-            {item.co2_saved_per_unit}
-          </Typography>
-        </Box>
-        <IconButton onClick={() => removeActionItem(item.item_name)}>
-          <HighlightOff fontSize="large" />
-        </IconButton>
-      </Card>
-    ));
+    return (
+      actionForm.action_items &&
+      actionForm.action_items.map((item) => (
+        <Accordion key={item.item_name}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="action-item-content"
+            sx={{
+              '.MuiAccordionSummary-content': {
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mr: '0.5em',
+              },
+            }}
+          >
+            <Typography variant="subtitle2">{item.item_name}</Typography>
+            <IconButton onClick={() => removeActionItem(item.item_name)}>
+              <DeleteOutlineOutlinedIcon />
+            </IconButton>
+          </AccordionSummary>
+          <AccordionDetails sx={{ p: 0 }}>
+            <List dense>
+              <ListItem>
+                <ListItemText primary="Name" secondary={item.item_name} />
+              </ListItem>
+              <Divider flexItem />
+              <ListItem>
+                <ListItemText
+                  primary="Description"
+                  secondary={item.item_description}
+                />
+              </ListItem>
+              <Divider flexItem />
+              <ListItem>
+                <ListItemText
+                  primary="CO2 Saved Per Unit"
+                  secondary={item.co2_saved_per_unit}
+                />
+              </ListItem>
+            </List>
+          </AccordionDetails>
+        </Accordion>
+      ))
+    );
   };
 
   const renderAddedLabels = () => {
-    return createActionForm.labels.map((label, index) => (
+    return actionForm.labels.map((label, index) => (
       <Chip
         label={label}
         variant="outlined"
@@ -361,16 +369,16 @@ const CreateAction = () => {
   return (
     <>
       <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-        <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+        <Typography variant="h2" sx={{ mt: { xs: '1.5em', md: '0' } }}>
           Create New Action Type
         </Typography>
       </Box>
       <Grid
         container
         direction={{ xs: 'column', md: 'row' }}
+        component={Paper}
         sx={{
           minHeight: '50vh',
-          backgroundColor: '#e8f4f8',
           borderRadius: '8px',
           padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',
@@ -380,41 +388,42 @@ const CreateAction = () => {
         <FormControl>
           <Grid
             container
-            spacing={{ xs: 2, md: 12 }}
+            spacing={{ xs: 2, md: 4 }}
             direction={{ xs: 'column', md: 'row' }}
           >
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <SectionTitle variant="h3">Action Name</SectionTitle>
               <TextField
                 required
                 label="Action Name"
                 name="action_name"
                 InputLabelProps={{ shrink: true }}
-                value={createActionForm.action_name}
-                error={formError && !isValid.actionNameValid}
+                value={actionForm.action_name}
+                error={formError && !isValid.actionName}
                 helperText={
                   formError &&
-                  !isValid.actionNameValid &&
+                  !isValid.actionName &&
                   'Action Name field must be completed'
                 }
                 onChange={updateForm}
                 sx={{ width: '100%' }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <SectionTitle variant="h3">Action Icon</SectionTitle>
               <Box
                 component="div"
                 display="flex"
                 alignItems="center"
-                sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+                justifyContent="center"
+                sx={{ flexDirection: 'column', gap: '1em' }}
               >
                 {actionIconPreviewLink ? (
                   <Box
                     component="img"
                     sx={{
-                      height: 70,
-                      width: 70,
+                      height: 150,
+                      width: 150,
                     }}
                     alt="Uploaded Action Icon"
                     src={actionIconPreviewLink}
@@ -423,8 +432,8 @@ const CreateAction = () => {
                   <Box
                     component="div"
                     sx={{
-                      height: 70,
-                      width: 70,
+                      height: 150,
+                      width: 150,
                       backgroundColor: '#A9A9A9',
                     }}
                   />
@@ -436,12 +445,8 @@ const CreateAction = () => {
                     type="file"
                     onChange={handleIconUpload}
                   />
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    sx={{ m: { xs: '1.5em 0 0', md: '0 0 0 1.5em' } }}
-                  >
-                    Upload Icon Image
+                  <Button variant="outlined" component="span">
+                    Upload Image
                   </Button>
                 </label>
               </Box>
@@ -454,16 +459,17 @@ const CreateAction = () => {
             sx={{
               color: '#d32f2f',
               mb: '2em',
-              display:
-                formError && !isValid.actionItemsValid ? 'inline' : 'none',
+              display: formError && !isValid.actionItems ? 'inline' : 'none',
             }}
           >
             New Action Type must have at least 1 action item
           </Typography>
+          {renderAddedActionItems()}
           <FormGroup
             sx={{
               gap: '1.5em',
               flexDirection: { xs: 'column', md: 'row' },
+              mt: actionForm.action_items.length > 0 && '1.5em',
             }}
           >
             <TextField
@@ -472,11 +478,9 @@ const CreateAction = () => {
               name="item_name"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_name}
-              error={actionItemFormError && !isValid.itemNameValid}
+              error={actionItemFormError && !isValid.itemName}
               helperText={
-                actionItemFormError &&
-                !isValid.itemNameValid &&
-                'Input is required'
+                actionItemFormError && !isValid.itemName && 'Input is required'
               }
               onChange={updateForm}
             />
@@ -486,10 +490,10 @@ const CreateAction = () => {
               name="item_description"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_description}
-              error={actionItemFormError && !isValid.itemDescriptionValid}
+              error={actionItemFormError && !isValid.itemDescription}
               helperText={
                 actionItemFormError &&
-                !isValid.itemDescriptionValid &&
+                !isValid.itemDescription &&
                 'Input is required'
               }
               onChange={updateForm}
@@ -498,13 +502,13 @@ const CreateAction = () => {
               required
               label="CO2 Per Unit Saved"
               name="co2_saved_per_unit"
-              inputMode="decimal"
+              inputProps={{ inputMode: 'numeric' }}
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.co2_saved_per_unit}
-              error={actionItemFormError && !isValid.co2Valid}
+              error={actionItemFormError && !isValid.co2}
               helperText={
                 actionItemFormError &&
-                !isValid.co2Valid &&
+                !isValid.co2 &&
                 'Input must be a number greater than 0'
               }
               sx={{ xs: { mt: '1.5em' } }}
@@ -518,13 +522,12 @@ const CreateAction = () => {
               Add Action Item
             </Button>
           </FormGroup>
-          {renderAddedActionItems()}
           <SectionTitle variant="h3">Fallback Text</SectionTitle>
           <TextField
             label="Text"
             name="fallback_quiz_media"
             InputLabelProps={{ shrink: true }}
-            value={createActionForm.fallback_quiz_media}
+            value={actionForm.fallback_quiz_media}
             onChange={updateForm}
           />
           <SectionTitle variant="h3">Image Validation Labels</SectionTitle>
@@ -540,7 +543,7 @@ const CreateAction = () => {
           >
             New Action Type must have at least 1 image validation label
           </Typography>
-          {createActionForm.labels.length !== 0 && (
+          {actionForm.labels.length !== 0 && (
             <Box
               sx={{
                 display: 'flex',
@@ -562,7 +565,7 @@ const CreateAction = () => {
               required
               label="Label"
               name="curr_label"
-              value={createActionForm.curr_label}
+              value={actionForm.curr_label}
               InputLabelProps={{ shrink: true }}
               sx={{ width: { xs: '100%', md: '80%' } }}
               onChange={updateForm}
@@ -571,7 +574,7 @@ const CreateAction = () => {
               variant="outlined"
               sx={{
                 width: { xs: '100%', md: '17%' },
-                mt: { xs: '1.5em', sm: '0em' },
+                mt: { xs: '2em', md: '0em' },
                 height: 'min-content',
               }}
               onClick={addValidationLabel}
@@ -596,6 +599,11 @@ const CreateAction = () => {
             variant="contained"
             type="submit"
             onClick={submitAction}
+            disabled={
+              !isValid.actionName ||
+              !isValid.validationLabels ||
+              !isValid.actionItems
+            }
           >
             Submit New Action
           </Button>

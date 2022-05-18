@@ -257,19 +257,6 @@ const ActionCard = ({
   };
 
   const addActionItem = () => {
-    // if (isNaN(actionItemsForm.co2_saved_per_unit)) {
-    //   setIsValid((prev) => ({
-    //     ...prev,
-    //     co2: false,
-    //   }));
-    // } else {
-    //   if (Number(actionItemsForm.co2_saved_per_unit > 0)) {
-    //     setIsValid((prev) => ({
-    //       ...prev,
-    //       co2: true,
-    //     }));
-    //   }
-
     if (isValid.co2 && isValid.itemName && isValid.itemDescription) {
       //adds the item from the form into actionItems array
       let actionItemsCopy = actionForm.action_items;
@@ -317,11 +304,7 @@ const ActionCard = ({
   };
 
   const submitAction = async () => {
-    if (
-      isValid.actionItemsValid &&
-      isValid.actionNameValid &&
-      isValid.validationLabels
-    ) {
+    if (isValid.actionItems && isValid.actionName && isValid.validationLabels) {
       setIsLoading(true);
     } else {
       setFormError(true);

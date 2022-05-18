@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, Grid } from '@mui/material';
+import { Box, Paper, Typography, Grid, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
@@ -77,13 +77,19 @@ const Dashboard = () => {
     allSubmittedActions && renderDonutChartData();
   }, [allSubmittedActions]);
 
-  return (
+  return !allSubmittedActions ? (
+    <Box
+      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+    >
+      <CircularProgress />
+    </Box>
+  ) : (
     <Grid
       container
       alignItems={{ xs: 'center', md: 'flex-start' }}
       justifyContent={{ xs: 'center', md: 'flex-start' }}
       direction={{ xs: 'column', md: 'row' }}
-      sx={{ mt: '1.5em' }}
+      sx={{ mt: '1em' }}
       gap={{ xs: '2em', md: '0' }}
       textAlign={{ xs: 'center', md: 'left' }}
     >
@@ -158,7 +164,7 @@ const Dashboard = () => {
           )}
         </Grid>
       </Grid>
-      <Grid item xs={12} sx={{ width: { xs: '70%', sm: '100%' }, mt: '2em' }}>
+      <Grid item xs={12} sx={{ width: { xs: '70%', sm: '100%' }, mt: '2.5em' }}>
         <GlobalLeaderboard />
       </Grid>
       <Grid item xs={12} sx={{ width: { xs: '70%', md: '100%' } }}>
@@ -176,7 +182,11 @@ const Dashboard = () => {
         >
           {allSubmittedActions && (
             <StyledPaper
-              sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5em',
+              }}
             >
               <Typography variant="h7">
                 {' '}
@@ -201,7 +211,6 @@ const Dashboard = () => {
                 ],
               }}
               options={{
-                //   responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                   title: {
@@ -229,7 +238,6 @@ const Dashboard = () => {
                 ],
               }}
               options={{
-                //   responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                   title: {
