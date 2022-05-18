@@ -14,6 +14,7 @@ const ActionPanel = ({
   const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
   const [inputError, setInputError] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
 
   useEffect(() => {
     getActionItems();
@@ -70,6 +71,11 @@ const ActionPanel = ({
       setActionItemValues((actionItemValues) => [...actionItemValues, input]);
     }
   };
+
+  //set disable button to true if length of actionItemValues is 0 or if there's an input error
+  useEffect(() => {
+    setDisableButton(actionItemValues.length === 0 || inputError);
+  }, [actionItemValues, inputError]);
 
   const renderActionForm = () => {
     if (actionItems) {
@@ -128,7 +134,7 @@ const ActionPanel = ({
         <Button
           onClick={calculateCO2}
           variant="contained"
-          disabled={inputError}
+          disabled={disableButton}
         >
           Next
         </Button>
