@@ -86,6 +86,7 @@ const ActionCard = ({
         query: getActionItemsForAction,
         variables: { action_id: action_id },
       });
+      console.log(res);
       setActionForm((prev) => ({
         ...prev,
         action_items: res.data.getActionItemsForAction,
@@ -311,7 +312,7 @@ const ActionCard = ({
   };
 
   const updateSelectedAction = async () => {
-    if (isValid.actionItems && isValid.actionName && isValid.validationLabels) {
+    if (isValid.actionItems && isValid.validationLabels) {
       setIsLoading(true);
       //update icon image in s3 if user uploaded a new image
       let iconLink = null;
@@ -329,22 +330,24 @@ const ActionCard = ({
         }
       }
       //update action
-      await API.graphql({
+      const updateActionRes = await API.graphql({
         query: updateAction,
         variables: {
           action_id: action_id,
-          action_icon: iconLink,
+          action_icon: actionIconFile ? iconLink : action_icon,
         },
       });
 
+      console.log(updateActionRes);
       //update the action items
-      await API.graphql({
+      const remakeActionItemsRes = await API.graphql({
         query: remakeActionItems,
         variables: {
           action_id: action_id,
           action_items: actionForm.action_items,
         },
       });
+      console.log(remakeActionItemsRes);
       //update the action validation labels
     } else {
       setFormError(true);
@@ -635,12 +638,18 @@ const ActionCard = ({
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
+            justifyContent: { xs: 'center', sm: 'space-between' },
             my: '2em',
             gap: '4em',
           }}
         >
-          <Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: '1em',
+            }}
+          >
             <Button
               variant="outlined"
               onClick={() => setShowDeleteWarning(true)}
