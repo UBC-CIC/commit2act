@@ -85,6 +85,7 @@ const ViewAndEditActions = () => {
                 '&:hover': {
                   opacity: '0.7',
                 },
+                filter: action.is_hidden && 'grayscale(100%)',
               }}
               onClick={() => setSelectedAction(action)}
             >

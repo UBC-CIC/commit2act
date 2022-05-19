@@ -27,6 +27,7 @@ import {
   updateAction,
   graveyardAction,
   remakeActionItems,
+  restoreAction,
 } from '../graphql/mutations';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
@@ -46,7 +47,8 @@ const ActionCard = ({
   setEditAction,
   getActions,
 }) => {
-  const { action_icon, action_name, action_id, validation_labels } = action;
+  const { action_icon, action_name, action_id, validation_labels, is_hidden } =
+    action;
 
   const initialActionForm = {
     action_name: action_name,
@@ -57,6 +59,7 @@ const ActionCard = ({
   };
 
   const emptyActionItemForm = {
+    action_id: action_id,
     item_name: '',
     item_description: '',
     co2_saved_per_unit: '',
@@ -73,6 +76,7 @@ const ActionCard = ({
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
+  const [showPauseWarning, setShowPauseWarning] = useState(false);
   const [formError, setFormError] = useState(false);
   const [actionItemFormError, setActionItemFormError] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
@@ -86,7 +90,6 @@ const ActionCard = ({
         query: getActionItemsForAction,
         variables: { action_id: action_id },
       });
-      console.log(res);
       setActionForm((prev) => ({
         ...prev,
         action_items: res.data.getActionItemsForAction,
@@ -95,6 +98,16 @@ const ActionCard = ({
     getActionItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  //restores a previously hidden action
+  const unPauseAction = async () => {
+    await API.graphql({
+      query: restoreAction,
+      variables: { action_id: action_id },
+    });
+    handleClose();
+    getActions();
+  };
 
   /** functions for rendering the non editable action card */
 
@@ -108,6 +121,14 @@ const ActionCard = ({
             alt={`${action_name} icon`}
             src={action_icon}
           />
+        )}
+        {is_hidden && (
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="subtitle2">
+              This action is currently paused. Restore action to allow user
+              submitted content
+            </Typography>
+          </Box>
         )}
         <Box>
           <Typography variant="h3" sx={{ mb: '1em' }}>
@@ -162,7 +183,11 @@ const ActionCard = ({
             ))}
           </Box>
         </Box>
-        <Button onClick={() => setEditAction(true)}>Edit Action</Button>
+        {is_hidden ? (
+          <Button onClick={() => unPauseAction()}>Restore Action</Button>
+        ) : (
+          <Button onClick={() => setEditAction(true)}>Edit Action</Button>
+        )}
       </Box>
     );
   };
@@ -266,6 +291,9 @@ const ActionCard = ({
 
   const addActionItem = () => {
     if (isValid.co2 && isValid.itemName && isValid.itemDescription) {
+      actionItemsForm.co2_saved_per_unit = Number(
+        actionItemsForm.co2_saved_per_unit
+      );
       //adds the item from the form into actionItems array
       let actionItemsCopy = actionForm.action_items;
       actionItemsCopy.push(actionItemsForm);
@@ -329,26 +357,25 @@ const ActionCard = ({
           console.log('Error uploading file', error);
         }
       }
-      //update action
-      const updateActionRes = await API.graphql({
-        query: updateAction,
-        variables: {
-          action_id: action_id,
-          action_icon: actionIconFile ? iconLink : action_icon,
-        },
-      });
 
-      console.log(updateActionRes);
-      //update the action items
-      const remakeActionItemsRes = await API.graphql({
-        query: remakeActionItems,
-        variables: {
-          action_id: action_id,
-          action_items: actionForm.action_items,
-        },
-      });
-      console.log(remakeActionItemsRes);
-      //update the action validation labels
+      await Promise.all([
+        API.graphql({
+          query: updateAction,
+          variables: {
+            action_id: action_id,
+            action_icon: actionIconFile ? iconLink : action_icon,
+          },
+        }),
+        API.graphql({
+          query: remakeActionItems,
+          variables: {
+            action_id: action_id,
+            action_items: actionForm.action_items,
+          },
+        }),
+        //update the action validation labels
+      ]);
+      handleClose();
     } else {
       setFormError(true);
     }
@@ -656,8 +683,11 @@ const ActionCard = ({
             >
               Delete Action
             </Button>
-            <Button variant="outlined" onClick={hideSelectedAction}>
-              Hide Action
+            <Button
+              variant="outlined"
+              onClick={() => setShowPauseWarning(true)}
+            >
+              Pause Action
             </Button>
           </Box>
           <Button variant="contained" onClick={updateSelectedAction}>
@@ -688,7 +718,7 @@ const ActionCard = ({
             <CloseIcon />
           </IconButton>
         )}
-        <DialogTitle>
+        <DialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
           <Typography variant="h2">{action_name}</Typography>
         </DialogTitle>
         <DialogContent sx={{ mt: '1em', p: '3em' }}>
@@ -697,7 +727,7 @@ const ActionCard = ({
       </Dialog>
       {/* display warning dialog when user clicks the close button*/}
       <Dialog
-        aria-labelledby="delete-warning-dialog"
+        aria-labelledby="close-warning-dialog"
         PaperProps={{
           sx: {
             p: '1em',
@@ -754,6 +784,38 @@ const ActionCard = ({
           </Button>
           <Button variant="outlined" onClick={() => deleteSelectedAction()}>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* display warning dialog when user clicks the pause action button*/}
+      <Dialog
+        aria-labelledby="pause-warning-dialog"
+        PaperProps={{
+          sx: {
+            p: '1em',
+            display: 'flex',
+            justifyContent: 'center',
+            textAlign: 'center',
+            alignItems: 'center',
+          },
+        }}
+        open={showPauseWarning}
+      >
+        <DialogTitle>Pause {action_name}?</DialogTitle>
+        <WarningAmberIcon fontSize="large" />
+        <DialogContent>
+          Users will not be able to submit content for this action until it is
+          unpaused
+        </DialogContent>
+        <DialogActions sx={{ display: 'flex', gap: '2em' }}>
+          <Button
+            variant="contained"
+            onClick={() => setShowPauseWarning(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="outlined" onClick={() => hideSelectedAction()}>
+            Pause Action
           </Button>
         </DialogActions>
       </Dialog>

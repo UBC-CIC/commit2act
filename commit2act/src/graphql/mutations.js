@@ -372,7 +372,7 @@ export const updateAction = /* GraphQL */ `
 export const remakeActionItems = /* GraphQL */ `
   mutation RemakeActionItems(
     $action_id: Int!
-    $action_items: [ActionItemInput!]!
+    $action_items: [ActionItemInputId!]!
   ) {
     remakeActionItems(action_id: $action_id, action_items: $action_items) {
       action_id
