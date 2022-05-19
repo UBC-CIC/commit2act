@@ -15,6 +15,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import GlobalLeaderboard from '../GlobalLeaderboard';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import LineChart from './LineChart';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -90,11 +91,13 @@ const Dashboard = () => {
       justifyContent={{ xs: 'center', md: 'flex-start' }}
       direction={{ xs: 'column', md: 'row' }}
       sx={{ mt: '1em' }}
-      gap={{ xs: '2em', md: '0' }}
+      gap={{ xs: '1em', md: '0' }}
       textAlign={{ xs: 'center', md: 'left' }}
     >
       <Grid item xs={12}>
-        <Typography variant="h1">Admin Dashboard</Typography>
+        <Typography variant="h2" component="h1">
+          Admin Dashboard
+        </Typography>
       </Grid>
       <Grid
         container
@@ -167,6 +170,30 @@ const Dashboard = () => {
       <Grid item xs={12} sx={{ width: { xs: '70%', sm: '100%' }, mt: '2.5em' }}>
         <GlobalLeaderboard />
       </Grid>
+      <Grid
+        container
+        item
+        sx={{
+          mt: { xs: '0.5em', md: '2em' },
+          width: { xs: '70%', md: '100%' },
+        }}
+      >
+        <Grid item xs={12}>
+          {allSubmittedActions && (
+            <Box
+              sx={
+                mobileView && {
+                  position: 'relative',
+                  height: '40vh',
+                  width: '100%',
+                }
+              }
+            >
+              <LineChart allSubmittedActions={allSubmittedActions} />
+            </Box>
+          )}
+        </Grid>
+      </Grid>
       <Grid item xs={12} sx={{ width: { xs: '70%', md: '100%' } }}>
         <Typography variant="h2" sx={{ my: '2em' }}>
           All Time Stats
@@ -186,6 +213,7 @@ const Dashboard = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.5em',
+                justifyContent: 'center',
               }}
             >
               <Typography variant="h7">

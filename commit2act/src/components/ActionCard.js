@@ -22,6 +22,12 @@ import {
 } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getActionItemsForAction } from '../graphql/queries';
+import {
+  deleteAction,
+  updateAction,
+  graveyardAction,
+  remakeActionItems,
+} from '../graphql/mutations';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -38,6 +44,7 @@ const ActionCard = ({
   handleClose,
   editAction,
   setEditAction,
+  getActions,
 }) => {
   const { action_icon, action_name, action_id, validation_labels } = action;
 
@@ -303,12 +310,63 @@ const ActionCard = ({
     setActionIconPreviewLink(previewLink);
   };
 
-  const submitAction = async () => {
+  const updateSelectedAction = async () => {
     if (isValid.actionItems && isValid.actionName && isValid.validationLabels) {
       setIsLoading(true);
+      //update icon image in s3 if user uploaded a new image
+      let iconLink = null;
+      if (actionIconFile) {
+        let imageType = actionIconFile.type;
+        let imageKey = 'actionIcons/'.concat(actionForm.action_name);
+        iconLink =
+          process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+        try {
+          await Storage.put(imageKey, actionIconFile, {
+            contentType: imageType,
+          });
+        } catch (error) {
+          console.log('Error uploading file', error);
+        }
+      }
+      //update action
+      await API.graphql({
+        query: updateAction,
+        variables: {
+          action_id: action_id,
+          action_icon: iconLink,
+        },
+      });
+
+      //update the action items
+      await API.graphql({
+        query: remakeActionItems,
+        variables: {
+          action_id: action_id,
+          action_items: actionForm.action_items,
+        },
+      });
+      //update the action validation labels
     } else {
       setFormError(true);
     }
+  };
+
+  const deleteSelectedAction = async () => {
+    await API.graphql({
+      query: deleteAction,
+      variables: { action_id: action_id },
+    });
+    handleClose();
+    getActions();
+  };
+
+  const hideSelectedAction = async () => {
+    await API.graphql({
+      query: graveyardAction,
+      variables: { action_id: action_id },
+    });
+    handleClose();
+    getActions();
   };
 
   const renderEditActionContent = () => {
@@ -577,16 +635,24 @@ const ActionCard = ({
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'center',
+            justifyContent: 'space-between',
             my: '2em',
             gap: '4em',
           }}
         >
-          <Button variant="contained" onClick={submitAction}>
+          <Box>
+            <Button
+              variant="outlined"
+              onClick={() => setShowDeleteWarning(true)}
+            >
+              Delete Action
+            </Button>
+            <Button variant="outlined" onClick={hideSelectedAction}>
+              Hide Action
+            </Button>
+          </Box>
+          <Button variant="contained" onClick={updateSelectedAction}>
             Save Action
-          </Button>
-          <Button onClick={() => setShowDeleteWarning(true)}>
-            Delete Action
           </Button>
         </Box>
       </Box>
@@ -665,7 +731,7 @@ const ActionCard = ({
         }}
         open={showDeleteWarning}
       >
-        <DialogTitle>Delete {action_name} Action?</DialogTitle>
+        <DialogTitle>Delete {action_name}</DialogTitle>
         <WarningAmberIcon fontSize="large" />
         <DialogContent>
           You will lose all user submitted content for this action.
@@ -677,7 +743,9 @@ const ActionCard = ({
           >
             Cancel
           </Button>
-          <Button variant="outlined">Delete</Button>
+          <Button variant="outlined" onClick={() => deleteSelectedAction()}>
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </>

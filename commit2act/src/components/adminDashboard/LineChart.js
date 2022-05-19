@@ -9,14 +9,14 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js/auto';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { format, eachDayOfInterval, sub } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import 'chartjs-adapter-date-fns';
 
-const BarChart = ({ allSubmittedActions }) => {
-  const [barChartData, setBarChartData] = useState();
+const LineChart = ({ allSubmittedActions }) => {
+  const [lineChartData, setLineChartData] = useState();
   const filters = ['7 Days', '30 Days'];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
@@ -34,7 +34,7 @@ const BarChart = ({ allSubmittedActions }) => {
   };
 
   /** gets actions within the set date interval for actions with/without image */
-  const getBarChartData = () => {
+  const getLineChartData = () => {
     let startingDate;
     let endingDate;
     let currentDate = new Date();
@@ -56,37 +56,26 @@ const BarChart = ({ allSubmittedActions }) => {
     const intervalSubmittedActions = allSubmittedActions.filter((action) =>
       formattedDatesInInterval.includes(action.date_of_action.split('T')[0])
     );
-    //create array of the # of actions submitted with an image each day for the current time interval
-    const numActionsWithImagePerDay = formattedDatesInInterval.map(
-      (date) =>
-        intervalSubmittedActions.filter(
-          (action) =>
-            action.date_of_action.split('T')[0] === date &&
-            action.submitted_image
-        ).length
+    //group all actions with the same date together
+    const co2ValuesPerDay = intervalSubmittedActions.reduce((prev, curr) => {
+      (prev[curr.date_of_action.split('T')[0]] =
+        prev[curr.date_of_action.split('T')[0]] || []).push(curr.g_co2_saved);
+      return prev;
+    }, {});
+
+    //add up all the co2 values for each date in groupedData
+    const totalCO2PerDay = Object.fromEntries(
+      Object.entries(co2ValuesPerDay).map(([date, values]) => [
+        date,
+        values.reduce((partialSum, a) => partialSum + a, 0),
+      ])
     );
-    //create array of the # of actions submitted without an image each day for the current time interval
-    const numActionsWithoutImagePerDay = formattedDatesInInterval.map(
-      (date) =>
-        intervalSubmittedActions.filter(
-          (action) =>
-            action.date_of_action.split('T')[0] === date &&
-            !action.submitted_image
-        ).length
-    );
-    //create object where keys are current time intervals's dates, values are # of actions submitted with an image that day
-    let data = {};
-    for (let i = 0; i < formattedDatesInInterval.length; i++) {
-      data[formattedDatesInInterval[i]] = {
-        actionsWithImage: numActionsWithImagePerDay[i],
-        actionsWithoutImage: numActionsWithoutImagePerDay[i],
-      };
-    }
-    setBarChartData(data);
+
+    setLineChartData(totalCO2PerDay);
   };
 
   useEffect(() => {
-    getBarChartData();
+    getLineChartData();
   }, [selectedFilter]);
 
   return (
@@ -99,7 +88,7 @@ const BarChart = ({ allSubmittedActions }) => {
         }}
       >
         <Typography variant="subtitle2">
-          Actions submitted during the past {selectedFilter}
+          CO2 Saved during the past {selectedFilter}
         </Typography>
         <Box
           sx={{
@@ -127,23 +116,14 @@ const BarChart = ({ allSubmittedActions }) => {
           </Menu>
         </Box>
       </Box>
-      {barChartData && (
-        <Bar
+      {lineChartData && (
+        <Line
           data={{
-            labels: Object.keys(barChartData),
+            labels: Object.keys(lineChartData),
             datasets: [
               {
-                label: 'Number of Actions Submitted With Image',
-                data: Object.values(barChartData).map(
-                  (data) => data.actionsWithImage
-                ),
-                backgroundColor: ['#72b4eb'],
-              },
-              {
-                label: 'Number of Actions Submitted Without Image',
-                data: Object.values(barChartData).map(
-                  (data) => data.actionsWithoutImage
-                ),
+                label: 'g CO2 Saved Per Day',
+                data: Object.values(lineChartData),
                 backgroundColor: ['#91C788'],
               },
             ],
@@ -151,7 +131,6 @@ const BarChart = ({ allSubmittedActions }) => {
           options={{
             scales: {
               x: {
-                stacked: true,
                 title: {
                   display: true,
                   text: 'Date',
@@ -169,16 +148,13 @@ const BarChart = ({ allSubmittedActions }) => {
                 },
               },
               y: {
-                stacked: true,
+                beginAtZero: true,
                 title: {
                   display: true,
-                  text: 'Actions Submitted',
+                  text: 'g CO2 Saved',
                   padding: {
                     bottom: 20,
                   },
-                },
-                ticks: {
-                  stepSize: 1,
                 },
               },
             },
@@ -187,12 +163,12 @@ const BarChart = ({ allSubmittedActions }) => {
               maintainAspectRatio: false,
             },
           }}
-          height={300}
-          width={600}
+          height={50}
+          width={200}
         />
       )}
     </Paper>
   );
 };
 
-export default BarChart;
+export default LineChart;

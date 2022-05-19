@@ -593,7 +593,7 @@ const CreateAction = () => {
             sx={{
               mt: '4em',
               backgroundColor: '#112D4E',
-              width: { xs: '100%', md: '40%' },
+              width: '100%',
               alignSelf: 'center',
             }}
             variant="contained"

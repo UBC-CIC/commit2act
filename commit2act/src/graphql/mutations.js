@@ -369,21 +369,12 @@ export const updateAction = /* GraphQL */ `
     }
   }
 `;
-export const updateActionItem = /* GraphQL */ `
-  mutation UpdateActionItem(
+export const remakeActionItems = /* GraphQL */ `
+  mutation RemakeActionItems(
     $action_id: Int!
-    $original_item_name: String
-    $item_name: String!
-    $item_description: String!
-    $co2_saved_per_unit: Float!
+    $action_items: [ActionItemInput!]!
   ) {
-    updateActionItem(
-      action_id: $action_id
-      original_item_name: $original_item_name
-      item_name: $item_name
-      item_description: $item_description
-      co2_saved_per_unit: $co2_saved_per_unit
-    ) {
+    remakeActionItems(action_id: $action_id, action_items: $action_items) {
       action_id
       item_name
       item_description
