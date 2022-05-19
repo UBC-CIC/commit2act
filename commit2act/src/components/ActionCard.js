@@ -125,8 +125,8 @@ const ActionCard = ({
         {is_hidden && (
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="subtitle2">
-              This action is currently paused. Restore action to allow user
-              submitted content
+              This action is currently paused. <br></br>Restore action to allow
+              user submitted content
             </Typography>
           </Box>
         )}
@@ -184,9 +184,13 @@ const ActionCard = ({
           </Box>
         </Box>
         {is_hidden ? (
-          <Button onClick={() => unPauseAction()}>Restore Action</Button>
+          <Button onClick={() => unPauseAction()} variant="outlined">
+            Restore Action
+          </Button>
         ) : (
-          <Button onClick={() => setEditAction(true)}>Edit Action</Button>
+          <Button onClick={() => setEditAction(true)} variant="outlined">
+            Edit Action
+          </Button>
         )}
       </Box>
     );

@@ -80,7 +80,6 @@ const CO2SavedScreen = ({
       query: getSingleSubmittedAction,
       variables: { sa_id: submittedActionId },
     });
-    console.log(res);
     const passedValidation = res.data.getSingleSubmittedAction.is_validated;
     if (passedValidation) {
       setValidationSuccess(true);

@@ -40,7 +40,7 @@ export const getSingleSubmittedAction = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -60,7 +60,7 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -164,7 +164,7 @@ export const getAllSubmittedActions = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -204,7 +204,7 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -226,7 +226,7 @@ export const getAllValidatedSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -248,7 +248,7 @@ export const getAllUnvalidatedSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -270,7 +270,7 @@ export const getAllGraveyardedSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -378,7 +378,7 @@ export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -464,7 +464,7 @@ export const getAllSubmittedActionsToValidate = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated

@@ -3,7 +3,7 @@ import { Box, Grid, ImageListItemBar, CircularProgress } from '@mui/material';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
-import { getAllActions } from '../graphql/queries';
+import { getAllUngraveyardedActions } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 
@@ -32,8 +32,8 @@ const AllActions = ({ setSelectedAction }) => {
   }, []);
 
   const getActions = async () => {
-    const res = await API.graphql({ query: getAllActions });
-    const actions = res.data.getAllActions;
+    const res = await API.graphql({ query: getAllUngraveyardedActions });
+    const actions = res.data.getAllUngraveyardedActions;
     setActionOptions(actions);
   };
 

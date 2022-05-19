@@ -72,7 +72,7 @@ export const createSubmittedAction = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -329,7 +329,7 @@ export const approveSubmittedAction = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_sumbitted
+      time_submitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
