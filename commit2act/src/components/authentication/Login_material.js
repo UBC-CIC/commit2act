@@ -508,7 +508,7 @@ function Login(props) {
           <Grid
             container
             item
-            justify={'space-evenly'}
+            justifyContent={'space-evenly'}
             alignItems={'center'} /*style={{height: "60vh"}}*/
           >
             <Grid xs item className={`typewriter ${classes.marginHorizontal}`}>

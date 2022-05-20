@@ -20,7 +20,7 @@ import {
   FormGroup,
   Skeleton,
 } from '@mui/material';
-import { API } from 'aws-amplify';
+import { Storage, API } from 'aws-amplify';
 import { getActionItemsForAction } from '../graphql/queries';
 import {
   deleteAction,
@@ -81,7 +81,6 @@ const ActionCard = ({
   const [actionItemFormError, setActionItemFormError] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
-  const [isLoading, setIsLoading] = useState(false);
 
   //get all action items for the action
   useEffect(() => {
@@ -345,10 +344,10 @@ const ActionCard = ({
 
   const updateSelectedAction = async () => {
     if (isValid.actionItems && isValid.validationLabels) {
-      setIsLoading(true);
       //update icon image in s3 if user uploaded a new image
       let iconLink = null;
       if (actionIconFile) {
+        console.log(actionIconFile);
         let imageType = actionIconFile.type;
         let imageKey = 'actionIcons/'.concat(actionForm.action_name);
         iconLink =

@@ -16,7 +16,6 @@ import {
   Group,
   AccountCircle,
   AssignmentTurnedIn,
-  Create,
   AdminPanelSettings,
 } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';

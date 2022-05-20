@@ -154,13 +154,11 @@ const Dashboard = () => {
         <Grid item xs={12} md={9}>
           {allSubmittedActions && (
             <Box
-              sx={
-                mobileView && {
-                  position: 'relative',
-                  height: '40vh',
-                  width: '100%',
-                }
-              }
+              sx={{
+                position: mobileView ? 'relative' : 'static',
+                height: mobileView ? '40vh' : 'auto',
+                width: '100%',
+              }}
             >
               <BarChart allSubmittedActions={allSubmittedActions} />
             </Box>
@@ -181,13 +179,11 @@ const Dashboard = () => {
         <Grid item xs={12}>
           {allSubmittedActions && (
             <Box
-              sx={
-                mobileView && {
-                  position: 'relative',
-                  height: '40vh',
-                  width: '100%',
-                }
-              }
+              sx={{
+                position: mobileView ? 'relative' : 'static',
+                height: mobileView ? '40vh' : 'auto',
+                width: '100%',
+              }}
             >
               <LineChart allSubmittedActions={allSubmittedActions} />
             </Box>
