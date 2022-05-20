@@ -52,10 +52,12 @@ const Landing = ({ user }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const getProgressStats = async (id) => {
-    const userId = user ? user.user_id : id;
+  const getProgressStats = async () => {
     const [userRes, globalCO2Res] = await Promise.all([
-      API.graphql({ query: getSingleUser, variables: { user_id: userId } }),
+      API.graphql({
+        query: getSingleUser,
+        variables: { user_id: user.user_id },
+      }),
       API.graphql({ query: getTotalGlobalCO2 }),
     ]);
     setProgressStats((prev) => ({
@@ -66,20 +68,18 @@ const Landing = ({ user }) => {
     }));
   };
 
-  const getGroups = async (id) => {
-    const userId = user ? user.user_id : id;
+  const getGroups = async () => {
     const res = await API.graphql({
       query: getAllGroupsForUser,
-      variables: { user_id: userId },
+      variables: { user_id: user.user_id },
     });
     setUserGroups(res.data.getAllGroupsForUser);
   };
 
-  const getNumActionsToValidate = async (id) => {
-    const userId = user ? user.user_id : id;
+  const getNumActionsToValidate = async () => {
     const res = await API.graphql({
       query: getAllSubmittedActionsToValidate,
-      variables: { user_id: userId },
+      variables: { user_id: user.user_id },
     });
     setNumActionsToValidate(res.data.getAllSubmittedActionsToValidate.length);
   };
@@ -110,7 +110,12 @@ const Landing = ({ user }) => {
           gap={{ xs: '2em', lg: '0' }}
           textAlign={{ xs: 'center', lg: 'left' }}
         >
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+            justifyContent="center"
+            sx={{ width: { xs: '70%', sm: '100%' } }}
+          >
             <Typography variant="h1" sx={{ mt: { xs: '1.5em', lg: '0' } }}>
               Welcome {user.name}!
             </Typography>
@@ -129,7 +134,6 @@ const Landing = ({ user }) => {
                   <Button
                     color="inherit"
                     size="small"
-                    sx={{ alignSelf: 'center' }}
                     onClick={() => navigate('/validate-actions')}
                   >
                     Start Validating
@@ -148,7 +152,10 @@ const Landing = ({ user }) => {
             justifyContent="center"
             sx={{ width: { xs: '70%', sm: '100%' } }}
           >
-            <Typography variant="h2" sx={{ m: '1.5em 0 1.25em' }}>
+            <Typography
+              variant="h2"
+              sx={{ m: { xs: '0.5em 0 1.25em', md: '1.5em 0 1.25em' } }}
+            >
               Recent Progress
             </Typography>
             <Box

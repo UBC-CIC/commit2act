@@ -420,8 +420,8 @@ const CreateAction = () => {
                   <Box
                     component="img"
                     sx={{
-                      height: 150,
-                      width: 150,
+                      height: 120,
+                      width: 120,
                     }}
                     alt="Uploaded Action Icon"
                     src={actionIconPreviewLink}
@@ -430,8 +430,8 @@ const CreateAction = () => {
                   <Box
                     component="div"
                     sx={{
-                      height: 150,
-                      width: 150,
+                      height: 120,
+                      width: 120,
                       backgroundColor: '#A9A9A9',
                     }}
                   />

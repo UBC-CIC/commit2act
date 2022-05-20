@@ -142,12 +142,13 @@ const ValidateActions = () => {
         )}
       </Box>
       <Box sx={{ mt: '1.5em' }}>
-        {!error & (groupsOwnedByUser.length === 0) && (
-          <Typography component="div" variant="subtitle2">
-            You currently do not own any groups
-          </Typography>
-        )}
-        {!error && groupsOwnedByUser.length > 0 && (
+        {!error && groupsOwnedByUser && groupsOwnedByUser.length === 0 ? (
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography component="div" variant="subtitle2">
+              You currently do not own any groups
+            </Typography>
+          </Box>
+        ) : (
           <Typography
             component="div"
             variant="subtitle2"

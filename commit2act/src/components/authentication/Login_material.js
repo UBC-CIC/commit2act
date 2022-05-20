@@ -1005,7 +1005,7 @@ const SubmitButtonWithLoading = (props) => {
 
 const BackAndSubmitButtons = ({ backAction, ...others }) => {
   return (
-    <Grid container item xs={12} justify="space-between" spacing={1}>
+    <Grid container item xs={12} justifyContent="space-between" spacing={1}>
       <Grid container item xs>
         <DefaultButton
           variant="contained"
@@ -1015,7 +1015,7 @@ const BackAndSubmitButtons = ({ backAction, ...others }) => {
           Back
         </DefaultButton>
       </Grid>
-      <Grid container item md={7} justify={'flex-end'}>
+      <Grid container item md={7} justifyContent={'flex-end'}>
         <SubmitButtonWithLoading {...others} />
       </Grid>
     </Grid>
