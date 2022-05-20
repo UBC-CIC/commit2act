@@ -35,6 +35,7 @@ import UserProfile from '../../pages/UserProfile';
 import AdminDashboard from '../../pages/AdminDashboard';
 import { API, Auth } from 'aws-amplify';
 import { getSingleUserByUsername } from '../../graphql/queries';
+import { createUser } from '../../graphql/mutations';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +76,21 @@ function PageContainer(props) {
   //gets currently authenticated cognito user
   const getCognitoUser = async () => {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
+    //on user's first login, create user entry in database, then update custom firstLogin attribute to false
+    const firstLogin = cognitoUserEntry.attributes['custom:firstLogin'];
+    if (firstLogin === 'true') {
+      await API.graphql({
+        query: createUser,
+        variables: {
+          name: cognitoUserEntry.attributes.name,
+          username: cognitoUserEntry.attributes.preferred_username,
+          email: cognitoUserEntry.attributes.email,
+        },
+      });
+      await Auth.updateUserAttributes(cognitoUserEntry, {
+        'custom:firstLogin': 'false',
+      });
+    }
     const id = cognitoUserEntry.attributes['custom:id'];
     const type = cognitoUserEntry.attributes['custom:type'];
     setUserType(type);

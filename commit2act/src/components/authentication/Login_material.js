@@ -121,7 +121,6 @@ function Login(props) {
     type,
     title,
     darkMode,
-    logo,
     themeColor,
     disableSignUp,
   } = props;
@@ -232,6 +231,7 @@ function Login(props) {
           name: name,
           preferred_username: preferred_username,
           'custom:type': 'User',
+          'custom:firstLogin': 'true',
         },
       });
 
@@ -267,24 +267,14 @@ function Login(props) {
     // Verify Account with confirmation code after sign up page
     try {
       setNewVerification(false);
-      const { email, authCode, name, preferred_username } = formState;
+      const { email, authCode } = formState;
       setLoading(true);
-      const authConfirmation = await Auth.confirmSignUp(email, authCode);
-      //add user to database
-      const databaseUser = await API.graphql({
-        query: createUser,
-        variables: { name: name, username: preferred_username, email: email },
-      });
-
-      const addUserPromise = await Promise.all([
-        authConfirmation,
-        databaseUser,
-      ]);
-
+      await Auth.confirmSignUp(email, authCode);
       resetStates('signIn');
       setShowSuccessAlert(true);
       setLoading(false);
     } catch (e) {
+      console.log(e);
       setVerificationError(true);
       setLoading(false);
 

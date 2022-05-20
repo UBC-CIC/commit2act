@@ -6,13 +6,13 @@ import {
   Alert,
   AlertTitle,
   Grid,
+  LinearProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
   AutoGraphOutlined,
   CircleNotificationsOutlined,
 } from '@mui/icons-material';
-import { Auth } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GroupCard from '../components/GroupCard';
@@ -43,19 +43,14 @@ const Landing = ({ user }) => {
   const [userGroups, setUserGroups] = useState([]);
   const [numActionsToValidate, setNumActionsToValidate] = useState();
 
-  //gets currently authenticated cognito user for the first time the page loads after sign in
-  const getCognitoUser = async () => {
-    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
-    const id = cognitoUserEntry.attributes['custom:id'];
-    getProgressStats(id);
-    getGroups(id);
-    getNumActionsToValidate(id);
-  };
-
   useEffect(() => {
-    getCognitoUser();
+    if (user) {
+      getProgressStats();
+      getGroups();
+      getNumActionsToValidate();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const getProgressStats = async (id) => {
     const userId = user ? user.user_id : id;
@@ -90,7 +85,7 @@ const Landing = ({ user }) => {
   };
 
   const renderGroupCards = () => {
-    if (userGroups) {
+    if (userGroups.length > 0) {
       return userGroups.map((group, index) => (
         <GroupCard key={index} group={group} />
       ));
@@ -107,7 +102,7 @@ const Landing = ({ user }) => {
 
   return (
     <>
-      {user && (
+      {user ? (
         <Grid
           container
           alignItems={{ xs: 'center', lg: 'flex-start' }}
@@ -119,7 +114,7 @@ const Landing = ({ user }) => {
             <Typography variant="h1" sx={{ mt: { xs: '1.5em', lg: '0' } }}>
               Welcome {user.name}!
             </Typography>
-            {numActionsToValidate && (
+            {numActionsToValidate > 0 && (
               <Alert
                 icon={<CircleNotificationsOutlined />}
                 variant="outlined"
@@ -223,6 +218,16 @@ const Landing = ({ user }) => {
             </Grid>
           </Grid>
         </Grid>
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <LinearProgress />
+        </Box>
       )}
     </>
   );
