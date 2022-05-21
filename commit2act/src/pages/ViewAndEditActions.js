@@ -50,6 +50,7 @@ const ViewAndEditActions = () => {
     const actions = res.data.getAllActions;
     setActionOptions(actions);
   };
+
   return (
     <Grid
       item
@@ -91,7 +92,11 @@ const ViewAndEditActions = () => {
             >
               {action.action_icon ? (
                 <img
-                  src={`${action.action_icon}?w=248&fit=crop&auto=format`}
+                  src={
+                    `${action.action_icon}?w=248&fit=crop&auto=format` +
+                    '?' +
+                    new Date()
+                  }
                   alt={action.action_name}
                   loading="lazy"
                 />

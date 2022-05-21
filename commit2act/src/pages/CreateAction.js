@@ -367,7 +367,7 @@ const CreateAction = () => {
   return (
     <>
       <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-        <Typography variant="h2" sx={{ mt: { xs: '1.5em', md: '0' } }}>
+        <Typography variant="h2" component="h1">
           Create New Action Type
         </Typography>
       </Box>

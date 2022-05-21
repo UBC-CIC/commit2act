@@ -59,13 +59,13 @@ const AdminDashboard = () => {
         <CreateAction />
       </TabPanel>
       <TabPanel value={tabs[2]} sx={{ textAlign: 'center' }}>
-        <Typography variant="h2" sx={{ mb: '2em' }}>
+        <Typography variant="h2" component="h1" sx={{ mb: '2em' }}>
           Select an action to view and edit
         </Typography>
         <ViewAndEditActions />
       </TabPanel>
       <TabPanel value={tabs[3]} sx={{ textAlign: 'center' }}>
-        <Typography variant="h2" sx={{ mb: '2em' }}>
+        <Typography variant="h2" component="h1" sx={{ mb: '2em' }}>
           Select an action to view and add quiz questions
         </Typography>
       </TabPanel>

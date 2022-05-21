@@ -26,8 +26,9 @@ import {
   deleteAction,
   updateAction,
   graveyardAction,
-  remakeActionItems,
   restoreAction,
+  remakeActionItems,
+  remakeActionValidationLabels,
 } from '../graphql/mutations';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
@@ -37,6 +38,12 @@ import { styled } from '@mui/material/styles';
 
 const Input = styled('input')`
   display: none;
+`;
+
+const StyledDialogTitle = styled(DialogTitle)`
+  font-size: 30;
+  color: #455a7f;
+  font-weight: 300;
 `;
 
 const ActionCard = ({
@@ -97,16 +104,6 @@ const ActionCard = ({
     getActionItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  //restores a previously hidden action
-  const unPauseAction = async () => {
-    await API.graphql({
-      query: restoreAction,
-      variables: { action_id: action_id },
-    });
-    handleClose();
-    getActions();
-  };
 
   /** functions for rendering the non editable action card */
 
@@ -178,7 +175,7 @@ const ActionCard = ({
             }}
           >
             {validation_labels.split(', ').map((label) => (
-              <Chip label={label} variant="outlined" />
+              <Chip key={label} label={label} variant="outlined" />
             ))}
           </Box>
         </Box>
@@ -347,7 +344,6 @@ const ActionCard = ({
       //update icon image in s3 if user uploaded a new image
       let iconLink = null;
       if (actionIconFile) {
-        console.log(actionIconFile);
         let imageType = actionIconFile.type;
         let imageKey = 'actionIcons/'.concat(actionForm.action_name);
         iconLink =
@@ -376,9 +372,16 @@ const ActionCard = ({
             action_items: actionForm.action_items,
           },
         }),
-        //update the action validation labels
+        API.graphql({
+          query: remakeActionValidationLabels,
+          variables: {
+            action_id: action_id,
+            validation_labels: actionForm.labels,
+          },
+        }),
       ]);
       handleClose();
+      getActions();
     } else {
       setFormError(true);
     }
@@ -393,9 +396,18 @@ const ActionCard = ({
     getActions();
   };
 
-  const hideSelectedAction = async () => {
+  const pauseSelectedAction = async () => {
     await API.graphql({
       query: graveyardAction,
+      variables: { action_id: action_id },
+    });
+    handleClose();
+    getActions();
+  };
+
+  const unPauseAction = async () => {
+    await API.graphql({
+      query: restoreAction,
       variables: { action_id: action_id },
     });
     handleClose();
@@ -628,6 +640,7 @@ const ActionCard = ({
             >
               {actionForm.labels.map((label) => (
                 <Chip
+                  key={label}
                   label={label}
                   variant="outlined"
                   onDelete={() => removeValidationLabel(label)}
@@ -721,9 +734,9 @@ const ActionCard = ({
             <CloseIcon />
           </IconButton>
         )}
-        <DialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-          <Typography variant="h2">{action_name}</Typography>
-        </DialogTitle>
+        <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+          {action_name}
+        </StyledDialogTitle>
         <DialogContent sx={{ mt: '1em', p: '3em' }}>
           {editAction ? renderEditActionContent() : renderActionContent()}
         </DialogContent>
@@ -817,7 +830,7 @@ const ActionCard = ({
           >
             Cancel
           </Button>
-          <Button variant="outlined" onClick={() => hideSelectedAction()}>
+          <Button variant="outlined" onClick={() => pauseSelectedAction()}>
             Pause Action
           </Button>
         </DialogActions>
