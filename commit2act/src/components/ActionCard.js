@@ -115,7 +115,7 @@ const ActionCard = ({
             component="img"
             sx={{ height: 100, width: 100, alignSelf: 'center' }}
             alt={`${action_name} icon`}
-            src={action_icon}
+            src={action_icon + '?' + new Date()}
           />
         )}
         {is_hidden && (
@@ -432,7 +432,7 @@ const ActionCard = ({
                 component="img"
                 sx={{ height: 100, width: 100, alignSelf: 'center' }}
                 alt={`${action_name} icon`}
-                src={action_icon}
+                src={action_icon + '?' + new Date()}
               />
               <label htmlFor="action-icon-image">
                 <Input
