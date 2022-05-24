@@ -59,7 +59,9 @@ const ActionFact = ({ setFact, fact }) => {
         ) : (
           <CircularProgress />
         )} */}
-        <Typography variant="body1">{factText}</Typography>
+        <Typography variant="body1" sx={{ mt: '1em' }}>
+          {factText}
+        </Typography>
       </Box>
     </Grid>
   );

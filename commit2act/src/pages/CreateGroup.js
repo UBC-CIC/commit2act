@@ -14,6 +14,7 @@ import {
   LinearProgress,
   InputAdornment,
   IconButton,
+  Paper,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -146,16 +147,19 @@ const CreateGroup = ({ user }) => {
   return (
     <>
       <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-        <Typography variant="h1" sx={{ my: { xs: '1.5em' } }}>
+        <Typography
+          variant="h1"
+          sx={{ mt: { xs: '1.5em', sm: '0em' }, mb: '1.5em' }}
+        >
           Create New Group
         </Typography>
       </Box>
       <Grid
         container
         direction={{ xs: 'column', md: 'row' }}
+        component={Paper}
         sx={{
           minHeight: '50vh',
-          backgroundColor: '#e8f4f8',
           borderRadius: '8px',
           padding: { xs: '1.5em 1.5em 2em', md: '1.5em 0.5em 2em' },
           justifyContent: 'center',
