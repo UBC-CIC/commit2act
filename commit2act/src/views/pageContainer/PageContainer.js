@@ -269,7 +269,9 @@ function PageContainer(props) {
             <Route
               exact
               path={'/account-settings'}
-              element={<AccountSettings />}
+              element={
+                <AccountSettings databaseUser={user} setUser={setUser} />
+              }
             />
             <Route
               exact

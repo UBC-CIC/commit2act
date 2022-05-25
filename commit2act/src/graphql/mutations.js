@@ -28,8 +28,15 @@ export const updateUser = /* GraphQL */ `
     $name: String
     $email: String
     $avatar: String
+    $username: String
   ) {
-    updateUser(user_id: $user_id, name: $name, email: $email, avatar: $avatar) {
+    updateUser(
+      user_id: $user_id
+      name: $name
+      email: $email
+      avatar: $avatar
+      username: $username
+    ) {
       user_id
       username
       name
