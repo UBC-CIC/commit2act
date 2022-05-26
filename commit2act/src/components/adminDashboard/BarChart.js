@@ -87,6 +87,7 @@ const BarChart = ({ allSubmittedActions }) => {
 
   useEffect(() => {
     getBarChartData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilter]);
 
   return (

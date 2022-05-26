@@ -109,7 +109,7 @@ const CO2SavedScreen = ({
               Press skip to view validation results at a later time
             </Typography>
           )}
-          <CircularProgress />
+          <CircularProgress sx={{ mt: '1em' }} />
         </>
       )}
       {/* display after image validation and action submission have completed */}

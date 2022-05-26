@@ -10,9 +10,7 @@ import {
   Tab,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
-import { Storage, API, Auth } from 'aws-amplify';
-import { styled } from '@mui/material/styles';
-import { updateUser } from '../graphql/mutations';
+import { API } from 'aws-amplify';
 import {
   getAllSubmittedActionsForUser,
   getSingleUser,
@@ -20,20 +18,12 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 import EditAccountInfo from '../components/EditAccountInfo';
 
-// const Input = styled('input')`
-//   display: none;
-// `;
-
 const AccountSettings = ({ databaseUser, setUser }) => {
   const [showMore, setShowMore] = useState({
     validated: false,
     unvalidated: false,
     failed: false,
   });
-  // const [avatarPreview, setAvatarPreview] = useState();
-  // const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
-  // const [user, setUser] = useState();
-  // const [cognitoUser, setCognitoUser] = useState();
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
@@ -45,7 +35,6 @@ const AccountSettings = ({ databaseUser, setUser }) => {
 
   useEffect(() => {
     if (databaseUser) {
-      // getCurrentUser();
       getUserActions(databaseUser.user_id);
     }
   }, [databaseUser]);
@@ -76,49 +65,6 @@ const AccountSettings = ({ databaseUser, setUser }) => {
     const failed = allActions.filter((action) => action.is_rejected);
     setFailedActions(failed);
   };
-
-  // //updates user avatar field in database
-  // async function updateUserAvatar(userAvatarLink) {
-  //   await API.graphql({
-  //     query: updateUser,
-  //     variables: { user_id: user.user_id, avatar: userAvatarLink },
-  //   });
-  // }
-
-  // //sends selected image to s3 storage
-  // async function handleAvatarChange(e) {
-  //   if (user) {
-  //     if (!e.target.files || e.target.files.length === 0) {
-  //       setAvatarPreview(null);
-  //       return;
-  //     }
-  //     let imageFile = e.target.files[0];
-  //     let imageKey = 'avatars/'.concat(user.username, 'avatar');
-  //     let imageType = imageFile.type;
-  //     let userAvatarLink =
-  //       process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-  //     //avatarPreview will display right after avatar is changed, since cloudfront url stays the same so changes in the avatar src aren't detected until page refresh
-  //     let previewLink = URL.createObjectURL(imageFile);
-  //     setAvatarPreview(previewLink);
-  //     try {
-  //       await Storage.put(imageKey, imageFile, {
-  //         contentType: imageType,
-  //         contentDisposition: 'inline',
-  //       });
-  //       setNewAvatarUploaded(true);
-  //     } catch (error) {
-  //       console.log('Error uploading file', error);
-  //     }
-  //     //if user avatar field was previously null, update field with new link
-  //     if (user.avatar === null) {
-  //       updateUserAvatar(userAvatarLink);
-  //     }
-  //   }
-  // }
-
-  // const handleClose = () => {
-  //   setEditUser(false);
-  // };
 
   const renderValidatedActionCards = () => {
     //return if validatedActions is not null or undefined and contains at least 1 item
@@ -274,7 +220,7 @@ const AccountSettings = ({ databaseUser, setUser }) => {
               variant="h1"
               sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
             >
-              Account Information
+              My Account
             </Typography>
             <Grid
               container
@@ -351,7 +297,7 @@ const AccountSettings = ({ databaseUser, setUser }) => {
               </Grid>
             </Grid>
 
-            <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
+            <Typography variant="h2" sx={{ m: '3.5em 0 1.25em' }}>
               Logged Actions
             </Typography>
             <TabContext value={selectedTab}>
@@ -387,8 +333,6 @@ const AccountSettings = ({ databaseUser, setUser }) => {
             <EditAccountInfo
               open={editUser}
               databaseUser={databaseUser}
-              // cognitoUser={cognitoUser}
-              // handleClose={handleClose}
               setEditUser={setEditUser}
               getCurrentDatabaseUser={getCurrentDatabaseUser}
             />

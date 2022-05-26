@@ -8,18 +8,16 @@ const MemberActionsPanel = ({ groupInfo }) => {
   const [actions, setActions] = useState();
   const [showMore, setShowMore] = useState(false);
 
-  const getActions = async () => {
-    const res = await API.graphql({
-      query: getAllValidatedSubmittedActionsInGroup,
-      variables: { group_id: groupInfo.group_id },
-    });
-    setActions(res.data.getAllValidatedSubmittedActionsInGroup);
-  };
-
   useEffect(() => {
+    const getActions = async () => {
+      const res = await API.graphql({
+        query: getAllValidatedSubmittedActionsInGroup,
+        variables: { group_id: groupInfo.group_id },
+      });
+      setActions(res.data.getAllValidatedSubmittedActionsInGroup);
+    };
     getActions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [groupInfo.group_id]);
 
   const renderActionCards = () => {
     if (actions) {

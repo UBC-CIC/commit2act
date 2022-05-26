@@ -202,7 +202,7 @@ const SelfReportMenu = ({ user }) => {
         />{' '}
         <Typography
           variant="h2"
-          sx={{ m: { xs: '2em 0 2em 0', md: '3.5em 0 3em 0' } }}
+          sx={{ m: { xs: '2em 0 2em 0', md: '3.5em 0 2em 0' } }}
         >
           {steps[activeStep]}
         </Typography>

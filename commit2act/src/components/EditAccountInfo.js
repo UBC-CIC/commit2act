@@ -9,7 +9,10 @@ import {
   Button,
   TextField,
   Avatar,
+  Typography,
   InputAdornment,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -29,13 +32,6 @@ const Input = styled('input')`
   display: none;
 `;
 
-// async function updateUser() {
-//     const user = await Auth.currentAuthenticatedUser();
-//     await Auth.updateUserAttributes(user, {
-//       'address': '105 Main St. New York, NY 10001'
-//     });
-//   }
-
 const EditAccountInfo = ({
   open,
   databaseUser,
@@ -44,7 +40,6 @@ const EditAccountInfo = ({
 }) => {
   const [avatarPreview, setAvatarPreview] = useState();
   const [avatarFile, setAvatarFile] = useState();
-  const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
@@ -54,6 +49,8 @@ const EditAccountInfo = ({
     useState(false);
   const [passwordsNotMatchError, setPasswordsNotMatchError] = useState(false);
   const [accountPasswordError, setAccountPasswordError] = useState(false);
+  const [requiredAttributeError, setRequiredAttributeError] = useState(false);
+  const [requiredPasswordError, setRequiredPasswordError] = useState(false);
   const initialUserForm = {
     name: databaseUser.name,
     email: databaseUser.email,
@@ -76,6 +73,8 @@ const EditAccountInfo = ({
       description: 'Should be less than 16 characters',
     },
   });
+  const [infoUpdateSuccess, setInfoUpdateSuccess] = useState(false);
+  const [passwordUpdateSuccess, setPasswordUpdateSuccess] = useState(false);
 
   //closes dialog, resets states
   const handleClose = () => {
@@ -93,8 +92,19 @@ const EditAccountInfo = ({
     setAccountEmailExistError(false);
     setCurrentPassIncorrectError(false);
     setAccountPasswordError(false);
+    setPasswordsNotMatchError(false);
+    setRequiredAttributeError(false);
+    setRequiredPasswordError(false);
     setUserInfoForm(initialUserForm);
     setEditUser(false);
+  };
+
+  const checkMatchingPasswords = () => {
+    if (!userInfoForm.currentPassword) {
+      throw new Error('empty');
+    } else if (passwordsNotMatchError) {
+      throw new Error('Passwords do not match');
+    }
   };
 
   const updateForm = (e) => {
@@ -118,6 +128,13 @@ const EditAccountInfo = ({
     });
 
     updateForm(e);
+
+    // check if "password" is the same as "confirm password"
+    if (e.target.name === 'confirmNewPassword') {
+      e.target.value === userInfoForm.newPassword
+        ? setPasswordsNotMatchError(false)
+        : setPasswordsNotMatchError(true);
+    }
   };
 
   //sends selected image to s3 storage
@@ -133,9 +150,12 @@ const EditAccountInfo = ({
   }
 
   const updateUserInfo = async () => {
-    const { name, email, currentPassword, newPassword, confirmNewPassword } =
-      userInfoForm;
+    const { name, email } = userInfoForm;
 
+    if (email === '') {
+      setRequiredAttributeError(true);
+      return;
+    }
     try {
       //update user in cognito
       const cognitoUser = await Auth.currentAuthenticatedUser();
@@ -143,16 +163,6 @@ const EditAccountInfo = ({
         name: name,
         email: email,
       });
-      if (
-        newPassword === confirmNewPassword &&
-        newPassword !== '' &&
-        confirmNewPassword !== ''
-      ) {
-        await Auth.changePassword(cognitoUser, currentPassword, newPassword);
-      }
-      //   } else {
-      //     setPasswordsNotMatchError(true);
-      //   }
 
       //handle updating user avatar
       let userAvatarLink;
@@ -179,16 +189,44 @@ const EditAccountInfo = ({
           avatar: userAvatarLink ? userAvatarLink : databaseUser.avatar,
         },
       });
+      setInfoUpdateSuccess(true);
       getCurrentDatabaseUser(databaseUser.user_id);
-      handleClose();
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
     } catch (e) {
-      console.log(e.message);
-      if (e.message.includes('given email already exists')) {
+      const errorMsg = e.message;
+      console.log(errorMsg);
+      if (errorMsg.includes('given email already exists')) {
         setAccountEmailExistError(true);
-      } else if (e.message.includes('Invalid email address format')) {
+      } else if (errorMsg.includes('Invalid email address format')) {
         setInvalidEmailError(true);
-      } else if (e.message.includes('Incorrect username or password')) {
+      } else if (errorMsg.includes('Required attribute cannot be deleted')) {
+        setRequiredAttributeError(true);
+      }
+    }
+  };
+
+  const updatePassword = async () => {
+    const { currentPassword, newPassword } = userInfoForm;
+    try {
+      checkMatchingPasswords();
+      const cognitoUser = await Auth.currentAuthenticatedUser();
+      await Auth.changePassword(cognitoUser, currentPassword, newPassword);
+
+      setPasswordUpdateSuccess(true);
+      getCurrentDatabaseUser(databaseUser.user_id);
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Incorrect username or password')) {
         setCurrentPassIncorrectError(true);
+      } else if (errorMsg.includes('Passwords do not match')) {
+        setPasswordsNotMatchError(true);
+      } else if (errorMsg.includes('empty')) {
+        setRequiredPasswordError(true);
       } else {
         setAccountPasswordError(true);
       }
@@ -222,7 +260,7 @@ const EditAccountInfo = ({
       >
         <FormGroup
           sx={{
-            mt: '1em',
+            mt: '2em',
             flexDirection: 'column',
             justifyContent: 'space-between',
             gap: '1em',
@@ -233,44 +271,78 @@ const EditAccountInfo = ({
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              gap: '1em',
             }}
           >
-            <Avatar
-              variant="rounded"
-              src={
-                databaseUser.avatar && !newAvatarUploaded
-                  ? databaseUser.avatar
-                  : avatarPreview
-              }
-              sx={{
-                width: 100,
-                height: 100,
-              }}
-            ></Avatar>
-            <label htmlFor="user-avatar">
-              <Input
-                accept="image/*"
-                id="user-avatar"
-                multiple
-                type="file"
-                onChange={handleAvatarChange}
-              />
-              <Button
-                variant="outlined"
-                component="span"
-                sx={{ mt: '1em', mb: { xs: '1.5em' } }}
-              >
-                Upload Photo
-              </Button>
-            </label>
+            {databaseUser.avatar && !avatarPreview ? (
+              <>
+                <Avatar
+                  variant="rounded"
+                  sx={{ height: 100, width: 100, alignSelf: 'center' }}
+                  alt={`${databaseUser.name} avatar`}
+                  src={databaseUser.avatar + '?' + new Date()}
+                />
+                <label htmlFor="action-icon-image">
+                  <Input
+                    accept="image/*"
+                    id="action-icon-image"
+                    type="file"
+                    onChange={handleAvatarChange}
+                  />
+                  <Button variant="outlined" component="span">
+                    Upload Profile Photo
+                  </Button>
+                </label>
+              </>
+            ) : (
+              <>
+                {avatarPreview ? (
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      height: 100,
+                      width: 100,
+                    }}
+                    alt="Uploaded Action Icon"
+                    src={avatarPreview}
+                  />
+                ) : (
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      height: 100,
+                      width: 100,
+                    }}
+                  />
+                )}
+
+                <label htmlFor="action-icon-image">
+                  <Input
+                    accept="image/*"
+                    id="action-icon-image"
+                    type="file"
+                    onChange={handleAvatarChange}
+                  />
+                  <Button variant="outlined" component="span">
+                    Upload Profile Photo
+                  </Button>
+                </label>
+              </>
+            )}
           </Box>
           <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
               gap: '1em',
+              mt: '1em',
             }}
           >
+            {requiredAttributeError && (
+              <Alert severity="error">
+                Please fill out all required fields
+              </Alert>
+            )}
             <TextField
               required
               label="Name"
@@ -294,113 +366,165 @@ const EditAccountInfo = ({
                 (invalidEmailError && 'Please enter a valid email.')
               }
             />
-            <TextField
-              required
-              label="Current Password"
-              name="currentPassword"
-              value={userInfoForm.password}
-              InputLabelProps={{ shrink: true }}
-              type={showCurrentPassword ? 'text' : 'password'}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() =>
-                        setShowCurrentPassword(!showCurrentPassword)
-                      }
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showCurrentPassword ? (
-                        <VisibilityIcon />
-                      ) : (
-                        <VisibilityOffIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+            <Button
+              variant="outlined"
+              sx={{
+                mt: { xs: '1.5em', sm: '0em' },
               }}
-              sx={{ xs: { mt: '1.5em' } }}
-              onChange={updateForm}
-              error={currentPassIncorrectError}
-              helperText="Current password is incorrect"
-            />
-            <TextField
-              required
-              label="New Password"
-              name="newPassword"
-              value={userInfoForm.password}
-              InputLabelProps={{ shrink: true }}
-              type={showNewPassword ? 'text' : 'password'}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showNewPassword ? (
-                        <VisibilityIcon />
-                      ) : (
-                        <VisibilityOffIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ xs: { mt: '1.5em' } }}
-              onChange={onChangePassword}
-              error={accountPasswordError}
-              helperText={'Your password must have the following:'}
-            />
-            <PasswordRequirements requirements={passwordRequirements} />
-
-            <TextField
-              required
-              label="Confirm New Password"
-              name="confirmNewPassword"
-              value={userInfoForm.confirmPassword}
-              InputLabelProps={{ shrink: true }}
-              type={showConfirmNewPassword ? 'text' : 'password'}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() =>
-                        setShowConfirmNewPassword(!showConfirmNewPassword)
-                      }
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showConfirmNewPassword ? (
-                        <VisibilityIcon />
-                      ) : (
-                        <VisibilityOffIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ xs: { mt: '1.5em' } }}
-              onChange={onChangePassword}
-              error={passwordsNotMatchError}
-              helperText={passwordsNotMatchError && 'Passwords do not match.'}
-            />
+              onClick={updateUserInfo}
+            >
+              Save Name, Email, Photo
+            </Button>
           </Box>
+        </FormGroup>
+        <FormGroup
+          sx={{
+            mt: '4em',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '1em',
+            textAlign: { xs: 'center', md: 'left' },
+          }}
+        >
+          <Typography
+            variant="h7"
+            sx={{ mb: '1em', color: '#455A7F', fontWeight: 400 }}
+          >
+            Change Password
+          </Typography>
+          {requiredPasswordError && (
+            <Alert severity="error">Please fill out all required fields</Alert>
+          )}
+          <TextField
+            required
+            label="Current Password"
+            name="currentPassword"
+            value={userInfoForm.password}
+            InputLabelProps={{ shrink: true }}
+            type={showCurrentPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle current password visibility"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showCurrentPassword ? (
+                      <VisibilityIcon />
+                    ) : (
+                      <VisibilityOffIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{ xs: { mt: '1.5em' } }}
+            onChange={updateForm}
+            error={currentPassIncorrectError}
+            helperText={
+              currentPassIncorrectError && 'Current password is incorrect'
+            }
+          />
+          <TextField
+            required
+            label="New Password"
+            name="newPassword"
+            value={userInfoForm.password}
+            InputLabelProps={{ shrink: true }}
+            type={showNewPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle new password visibility"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showNewPassword ? (
+                      <VisibilityIcon />
+                    ) : (
+                      <VisibilityOffIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{ xs: { mt: '1.5em' } }}
+            onChange={onChangePassword}
+            error={accountPasswordError}
+            helperText={'Your password must have the following:'}
+          />
+          <PasswordRequirements requirements={passwordRequirements} />
+
+          <TextField
+            required
+            label="Confirm New Password"
+            name="confirmNewPassword"
+            value={userInfoForm.confirmPassword}
+            InputLabelProps={{ shrink: true }}
+            type={showConfirmNewPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle confirm new password visibility"
+                    onClick={() =>
+                      setShowConfirmNewPassword(!showConfirmNewPassword)
+                    }
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showConfirmNewPassword ? (
+                      <VisibilityIcon />
+                    ) : (
+                      <VisibilityOffIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{ xs: { mt: '1.5em' } }}
+            onChange={onChangePassword}
+            error={passwordsNotMatchError}
+            helperText={passwordsNotMatchError && 'Passwords do not match.'}
+          />
           <Button
             variant="outlined"
             sx={{
               mt: { xs: '1.5em', sm: '0em' },
             }}
-            onClick={updateUserInfo}
+            onClick={updatePassword}
           >
-            Update User Info
+            Save Password
           </Button>
         </FormGroup>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={infoUpdateSuccess}
+          autoHideDuration={1000}
+          onClose={() => setInfoUpdateSuccess(false)}
+        >
+          <Alert onClose={() => setInfoUpdateSuccess(false)} severity="success">
+            User Info Successfully Updated
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={passwordUpdateSuccess}
+          autoHideDuration={1000}
+          onClose={() => setPasswordUpdateSuccess(false)}
+        >
+          <Alert
+            onClose={() => setPasswordUpdateSuccess(false)}
+            severity="success"
+          >
+            Pssword Successfully Changed
+          </Alert>
+        </Snackbar>
       </DialogContent>
     </Dialog>
   );
