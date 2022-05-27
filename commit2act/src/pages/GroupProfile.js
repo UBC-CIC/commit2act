@@ -28,6 +28,7 @@ import MemberActionsPanel from '../components/groupProfile/MemberActionsPanel';
 import GroupInfoPanel from '../components/groupProfile/GroupInfoPanel';
 import { styled } from '@mui/material/styles';
 import GroupPageLeaderboard from '../components/groupProfile/GroupPageLeaderboard';
+import EditGroupPanel from '../components/groupProfile/EditGroupPanel';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -39,56 +40,70 @@ const StyledPaper = styled(Paper)`
 
 const GroupProfile = () => {
   const { groupName } = useParams();
-  const [selectedTab, setSelectedTab] = useState('0');
+  const tabs = [
+    'Group Info',
+    'Member Actions',
+    'Group Members',
+    'Add Members',
+    'Edit Group Info',
+  ];
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [groupInfo, setGroupInfo] = useState();
   const [groupMembers, setGroupMembers] = useState();
   const [groupOwners, setGroupOwners] = useState();
   const [currentUserOwner, setCurrentUserOwner] = useState(false);
+  const [cognitoUser, setCognitoUser] = useState();
   const [userId, setUserId] = useState();
+  const [groupId, setGroupId] = useState();
 
   useEffect(() => {
+    const getGroupAndUserInfo = async () => {
+      const [cognitoRes, groupInfoRes] = await Promise.all([
+        Auth.currentAuthenticatedUser(),
+        API.graphql({
+          query: getSingleGroupByName,
+          variables: { group_name: groupName },
+        }),
+      ]);
+      setCognitoUser(cognitoRes);
+      setGroupInfo(groupInfoRes.data.getSingleGroupByName);
+      const currentUserId = Number(cognitoRes.attributes['custom:id']);
+      setUserId(currentUserId);
+      const currentGroupId = groupInfoRes.data.getSingleGroupByName.group_id;
+      setGroupId(currentGroupId);
+    };
     getGroupAndUserInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getGroupAndUserInfo = async () => {
-    const [cognitoUser, groupInfoRes] = await Promise.all([
-      Auth.currentAuthenticatedUser(),
-      API.graphql({
-        query: getSingleGroupByName,
-        variables: { group_name: groupName },
-      }),
-    ]);
-    setGroupInfo(groupInfoRes.data.getSingleGroupByName);
-    const currentUserId = Number(cognitoUser.attributes['custom:id']);
-    setUserId(currentUserId);
-    const groupId = groupInfoRes.data.getSingleGroupByName.group_id;
-    isUserGroupOwner(currentUserId, groupId);
-    getGroupUsers(groupId);
-  };
+  useEffect(() => {
+    //gets array of all group owners and checks if the current user is a owner
+    const isUserGroupOwner = async () => {
+      const ownerRes = await API.graphql({
+        query: getAllOwnersInGroup,
+        variables: { group_id: groupId },
+      });
+      const owners = ownerRes.data.getAllOwnersInGroup;
+      setGroupOwners(owners);
+      const ownerIds = owners.map((owner) => owner.user_id);
+      if (ownerIds.includes(userId)) {
+        setCurrentUserOwner(true);
+      }
+    };
 
-  //gets array of all group owners and checks if the current user is a owner
-  const isUserGroupOwner = async (currentUserId, groupId) => {
-    const ownerRes = await API.graphql({
-      query: getAllOwnersInGroup,
-      variables: { group_id: groupId },
-    });
-    const owners = ownerRes.data.getAllOwnersInGroup;
-    setGroupOwners(owners);
-    const ownerIds = owners.map((owner) => owner.user_id);
-    if (ownerIds.includes(currentUserId)) {
-      setCurrentUserOwner(true);
+    //gets list of all users
+    const getGroupUsers = async () => {
+      const memberRes = await API.graphql({
+        query: getAllUsersInGroup,
+        variables: { group_id: groupId },
+      });
+      setGroupMembers(memberRes.data.getAllUsersInGroup);
+    };
+    if (userId && groupId) {
+      isUserGroupOwner();
+      getGroupUsers();
     }
-  };
-
-  //gets list of all users
-  const getGroupUsers = async (groupId) => {
-    const memberRes = await API.graphql({
-      query: getAllUsersInGroup,
-      variables: { group_id: groupId },
-    });
-    setGroupMembers(memberRes.data.getAllUsersInGroup);
-  };
+  }, [userId, groupId]);
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
@@ -99,8 +114,7 @@ const GroupProfile = () => {
       {groupInfo && (
         <Grid
           container
-          columnSpacing={{ xs: 0, md: 8 }}
-          alignItems={{ xs: 'center', lg: 'flex-start' }}
+          alignItems={{ xs: 'center' }}
           direction={{ xs: 'column', lg: 'row' }}
           sx={{ mt: '2em' }}
           gap={{ xs: '2em', lg: '0' }}
@@ -108,36 +122,42 @@ const GroupProfile = () => {
         >
           <Grid
             container
-            item
-            xs={4.5}
-            direction={{ xs: 'column', md: 'row' }}
-            gap={{ xs: '2.5em' }}
-            justifyContent={{ sm: 'center' }}
-            alignItems="center"
-            sx={{ mb: '1.5em' }}
+            direction={{ xs: 'column', sm: 'row' }}
+            justifyContent={{ xs: 'center' }}
+            alignItems={{ xs: 'center', sm: 'flex-start' }}
+            spacing={{ xs: 4, sm: 8 }}
+            sx={{ mb: '1.5em', overflow: 'auto' }}
           >
-            <Avatar
-              variant="rounded"
-              sx={{
-                width: {
-                  xs: 150,
-                },
-                height: {
-                  xs: 150,
-                },
-              }}
-              src={groupInfo.group_image ? groupInfo.group_image : null}
-            >
-              {groupInfo.group_name.charAt(0)}
-            </Avatar>
-            <Box
+            <Grid item xs={2}>
+              <Avatar
+                variant="rounded"
+                sx={{
+                  width: 150,
+                  height: 150,
+                }}
+                src={groupInfo.group_image ? groupInfo.group_image : null}
+              >
+                {groupInfo.group_name.charAt(0)}
+              </Avatar>
+            </Grid>
+            <Grid
+              item
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
+                alignItems: 'center',
                 gap: '0.5em',
+                overflow: 'auto',
               }}
             >
-              <Typography component="div" variant="h1" sx={{ mb: '0.5em' }}>
+              <Typography
+                variant="h1"
+                sx={{
+                  mb: '0.5em',
+                  wordWrap: 'break-word',
+                  maxWidth: { xs: '300px', sm: '100%' },
+                }}
+              >
                 {groupName}
               </Typography>
               <Stack direction="row" alignItems="center" gap={1}>
@@ -152,41 +172,43 @@ const GroupProfile = () => {
                   {groupInfo.is_public ? 'Public' : 'Private'}
                 </Typography>
               </Stack>
-            </Box>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={7.5}
-            justifyContent="center"
-            sx={{ width: '70%' }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-                justifyContent: 'space-evenly',
-                backgroundColor: '#DBE2EF',
-                borderRadius: '8px',
-                padding: '1.5em',
-                gap: { xs: '0.5em', md: '2' },
-              }}
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={7.5}
+              justifyContent="center"
+              sx={{ width: '70%' }}
             >
-              <StyledPaper elevation={6}>
-                <Typography variant="h4">CO2 Saved This Week</Typography>
-                <Typography variant="h5" className="statValue">
-                  <AutoGraphOutlined fontSize="large" />
-                  {groupInfo.weekly_co2}g
-                </Typography>
-              </StyledPaper>
-              <StyledPaper elevation={6}>
-                <Typography variant="h4">Total CO2 Saved</Typography>
-                <Typography variant="h5" className="statValue">
-                  {groupInfo.total_co2}g
-                </Typography>
-              </StyledPaper>
-            </Box>
+              <Box
+                component={Paper}
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', md: 'row' },
+                  justifyContent: 'space-evenly',
+                  backgroundColor: '#DBE2EF',
+                  borderRadius: '8px',
+                  padding: '1.5em',
+                  gap: { xs: '0.5em', md: '2' },
+                }}
+              >
+                <StyledPaper elevation={6}>
+                  <Typography variant="h4">CO2 Saved This Week</Typography>
+                  <Typography variant="h5" className="statValue">
+                    <AutoGraphOutlined fontSize="large" />
+                    {groupInfo.weekly_co2}g
+                  </Typography>
+                </StyledPaper>
+                <StyledPaper elevation={6}>
+                  <Typography variant="h4">Total CO2 Saved</Typography>
+                  <Typography variant="h5" className="statValue">
+                    {groupInfo.total_co2}g
+                  </Typography>
+                </StyledPaper>
+              </Box>
+            </Grid>
           </Grid>
+
           <Grid
             container
             item
@@ -215,7 +237,8 @@ const GroupProfile = () => {
                   borderBottom: 1,
                   borderTop: 1,
                   borderColor: 'divider',
-                  width: '100%',
+                  maxWidth: { xs: 320, sm: '100%' },
+                  width: { sm: '100%' },
                   display: 'flex',
                   padding: '0.5em',
                 }}
@@ -227,21 +250,27 @@ const GroupProfile = () => {
                   allowScrollButtonsMobile
                   variant="scrollable"
                 >
-                  <Tab label="Group Info" value="0" />
-                  <Tab label="Member Actions" value="1" />
-                  <Tab label="Group Members" value="2" />
-                  {/* only display addMemberPanel tab if current user is a group owner */}
-                  {currentUserOwner && <Tab label="Add Members" value="3" />}
+                  <Tab label={tabs[0]} value={tabs[0]} />
+                  <Tab label={tabs[1]} value={tabs[1]} />
+                  <Tab label={tabs[2]} value={tabs[2]} />
+                  {/* only display following tabs if current user is a group owner */}
+                  {currentUserOwner && <Tab label={tabs[3]} value={tabs[3]} />}
+                  {currentUserOwner && <Tab label={tabs[4]} value={tabs[4]} />}
                 </TabList>
               </Box>
-              <TabPanel value="0">
+              <TabPanel
+                value={tabs[0]}
+                sx={{
+                  width: '100%',
+                }}
+              >
                 <GroupInfoPanel
                   groupOwners={groupOwners}
                   groupInfo={groupInfo}
                 />
               </TabPanel>
               <TabPanel
-                value="1"
+                value={tabs[1]}
                 sx={{
                   padding: { xs: '0' },
                   width: '100%',
@@ -250,7 +279,7 @@ const GroupProfile = () => {
                 <MemberActionsPanel groupInfo={groupInfo} />
               </TabPanel>
               <TabPanel
-                value="2"
+                value={tabs[2]}
                 sx={{
                   padding: { xs: '0' },
                   width: '100%',
@@ -261,16 +290,26 @@ const GroupProfile = () => {
                   setGroupMembers={setGroupMembers}
                   groupInfo={groupInfo}
                   currentUserOwner={currentUserOwner}
+                  cognitoUser={cognitoUser}
                 />
               </TabPanel>
               <TabPanel
-                value="3"
+                value={tabs[3]}
                 sx={{
                   padding: { xs: '1.5em 0' },
                   width: '100%',
                 }}
               >
                 <AddMemberPanel groupInfo={groupInfo} />
+              </TabPanel>
+              <TabPanel
+                value={tabs[4]}
+                sx={{
+                  padding: { xs: '1.5em 0' },
+                  width: '100%',
+                }}
+              >
+                <EditGroupPanel groupInfo={groupInfo} />
               </TabPanel>
             </TabContext>
           </Grid>

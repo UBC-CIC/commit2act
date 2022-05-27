@@ -220,8 +220,9 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
                   <TableRow
                     key={group.group_id}
                     className={
-                      currentGroup.group_name === group.group_name &&
-                      'currentGroupOrUser'
+                      currentGroup.group_name === group.group_name
+                        ? 'currentGroupOrUser'
+                        : ''
                     }
                     sx={{
                       '&:last-child td, &:last-child th': { border: 0 },

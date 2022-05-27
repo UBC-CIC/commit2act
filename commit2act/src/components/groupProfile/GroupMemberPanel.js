@@ -8,6 +8,7 @@ const GroupMemberPanel = ({
   setGroupMembers,
   groupInfo,
   currentUserOwner,
+  cognitoUser,
 }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState();
@@ -98,6 +99,7 @@ const GroupMemberPanel = ({
               groupInfo={groupInfo}
               setGroupMembers={setGroupMembers}
               currentUserOwner={currentUserOwner}
+              cognitoUser={cognitoUser}
             />
           )}
         </Paper>

@@ -36,7 +36,6 @@ const CreateGroup = ({ user }) => {
     group_image: '',
     is_public: true,
     private_password: '',
-    showPassword: false,
   };
   const [createGroupForm, setCreateGroupForm] = useState(emptyCreateGroupForm);
   const [isValid, setIsValid] = useState({
@@ -47,6 +46,7 @@ const CreateGroup = ({ user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState(false);
   const [createGroupSuccess, setCreateGroupSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const updateForm = (e) => {
     setCreateGroupForm((prev) => ({
@@ -68,13 +68,6 @@ const CreateGroup = ({ user }) => {
         }));
       }
     }
-  };
-
-  const handleClickShowPassword = () => {
-    setCreateGroupForm({
-      ...createGroupForm,
-      showPassword: !createGroupForm.showPassword,
-    });
   };
 
   const handleMouseDownPassword = (e) => {
@@ -290,21 +283,17 @@ const CreateGroup = ({ user }) => {
                   InputLabelProps={{ shrink: true }}
                   onChange={updateForm}
                   sx={{ mt: '1.5em' }}
-                  type={createGroupForm.showPassword ? 'text' : 'password'}
+                  type={showPassword ? 'text' : 'password'}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
+                          onClick={() => setShowPassword(!showPassword)}
                           onMouseDown={handleMouseDownPassword}
                           edge="end"
                         >
-                          {createGroupForm.showPassword ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
                         </IconButton>
                       </InputAdornment>
                     ),
