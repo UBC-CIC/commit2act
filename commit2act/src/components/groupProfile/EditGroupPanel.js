@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -12,9 +12,19 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Storage, API } from 'aws-amplify';
+import { updateGroup, deleteGroup } from '../../graphql/mutations';
+import { getAllGroups } from '../../graphql/queries';
+import { useNavigate } from 'react-router-dom';
 
 const Input = styled('input')`
   display: none;
@@ -27,26 +37,68 @@ const EditGroupPanel = ({ groupInfo }) => {
     group_name,
     is_public,
     private_password,
+    group_id,
   } = groupInfo;
   const initialGroupForm = {
-    name: group_name,
-    description: group_description,
-    image: group_image,
+    group_name: group_name,
+    group_description: group_description,
+    group_image: group_image,
     is_public: is_public,
     private_password: private_password,
   };
   const [groupInfoForm, setGroupInfoForm] = useState(initialGroupForm);
   const [avatarPreview, setAvatarPreview] = useState();
   const [avatarFile, setAvatarFile] = useState();
-  const [requiredAttributeError, setRequiredAttributeError] = useState(false);
+  const [allGroupNames, setAllGroupNames] = useState();
+  const [emptyGroupNameError, setEmptyGroupNameError] = useState(false);
+  const [groupNameTakenError, setGroupNameTakenError] = useState(false);
+  const [emptyPasswordError, setEmptyPasswordError] = useState(false);
   const [nameExistsError, setNameExistsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
+  const [updateGroupSuccess, setUpdateGroupSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  //gets list of all group names
+  useEffect(() => {
+    const getGroups = async () => {
+      const groupsRes = await API.graphql({ query: getAllGroups });
+      const allGroups = groupsRes.data.getAllGroups;
+      const allGroupNames = allGroups.map((group) => group.group_name);
+      //remove current group name from the groupNames array
+      const allOtherGroupNames = allGroupNames.filter(
+        (name) => name !== group_name
+      );
+      setAllGroupNames(allOtherGroupNames);
+    };
+    getGroups();
+  }, [group_name]);
 
   const updateForm = (e) => {
     setGroupInfoForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    if (e.target.name === 'group_name') {
+      if (e.target.value) {
+        setEmptyGroupNameError(false);
+      }
+    }
+  };
+
+  const checkRequiredFields = () => {
+    const { group_name, private_password, is_public } = groupInfoForm;
+    //checks for empty or existing group name
+    if (group_name === '') {
+      throw new Error('Empty group name');
+    } else if (allGroupNames.includes(group_name)) {
+      throw new Error('Group name is taken');
+    }
+    //check for empty password for private groups
+    if (!is_public && private_password === '') {
+      throw new Error('Empty password');
+    }
   };
 
   const handleAvatarChange = (e) => {
@@ -60,11 +112,68 @@ const EditGroupPanel = ({ groupInfo }) => {
     setAvatarPreview(previewLink);
   };
 
-  const updateGroupInfo = async () => {};
+  const updateGroupInfo = async () => {
+    try {
+      checkRequiredFields();
+      const { group_name, group_description, is_public, private_password } =
+        groupInfoForm;
+
+      //if user uploaded an icon image, get the group name to upload the group avatar image to s3/cloudfront
+      let imageKey = 'groupIcons/'.concat(group_name);
+      let iconLink = null;
+      if (avatarFile) {
+        let imageType = avatarFile.type;
+        iconLink =
+          process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+        await Storage.put(imageKey, avatarFile, {
+          contentType: imageType,
+        });
+      }
+      await API.graphql({
+        query: updateGroup,
+        variables: {
+          group_id: group_id,
+          group_name: group_name,
+          group_description: group_description,
+          group_image: iconLink,
+          is_public: is_public,
+          private_password: private_password,
+        },
+      });
+      //clear form and related states
+      // setGroupInfoForm(initialGroupForm);
+      setEmptyGroupNameError(false);
+      setGroupNameTakenError(false);
+      setAvatarPreview();
+      //render success message
+      setUpdateGroupSuccess(true);
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Empty group name')) {
+        setEmptyGroupNameError(true);
+      } else if (errorMsg.includes('Group name is taken')) {
+        setGroupNameTakenError(true);
+      } else if (errorMsg.includes('Empty password')) {
+        setEmptyPasswordError(true);
+      }
+    }
+  };
 
   const handleMouseDownPassword = (e) => {
     e.preventDefault();
   };
+
+  const deleteCurrentGroup = async () => {
+    await API.graphql({
+      query: deleteGroup,
+      variables: { group_id: group_id },
+    });
+    setDeleteSuccess(true);
+    setTimeout(() => {
+      navigate('/');
+    }, 1000);
+  };
+
   return (
     <>
       <Typography variant="h2">Edit Group Info</Typography>
@@ -97,7 +206,7 @@ const EditGroupPanel = ({ groupInfo }) => {
               <>
                 <Avatar
                   variant="rounded"
-                  sx={{ height: 100, width: 100, alignSelf: 'center' }}
+                  sx={{ height: 120, width: 120, alignSelf: 'center' }}
                   alt={`${group_name} avatar`}
                   src={group_image + '?' + new Date()}
                 />
@@ -119,8 +228,8 @@ const EditGroupPanel = ({ groupInfo }) => {
                   <Avatar
                     variant="rounded"
                     sx={{
-                      height: 100,
-                      width: 100,
+                      height: 120,
+                      width: 120,
                     }}
                     alt="Uploaded Group Icon"
                     src={avatarPreview}
@@ -129,8 +238,8 @@ const EditGroupPanel = ({ groupInfo }) => {
                   <Avatar
                     variant="rounded"
                     sx={{
-                      height: 100,
-                      width: 100,
+                      height: 120,
+                      width: 120,
                     }}
                   />
                 )}
@@ -157,35 +266,40 @@ const EditGroupPanel = ({ groupInfo }) => {
               mt: '1em',
             }}
           >
-            {requiredAttributeError && (
+            {/* {requiredAttributeError && (
               <Alert severity="error">
                 Please fill out all required fields
               </Alert>
-            )}
+            )} */}
             <TextField
               required
               label="Name"
-              name="name"
-              value={groupInfoForm.name}
+              name="group_name"
+              value={groupInfoForm.group_name}
               InputLabelProps={{ shrink: true }}
               onChange={updateForm}
             />
             <TextField
-              required
               label="Description"
-              name="description"
+              name="group_description"
               multiline
-              value={groupInfoForm.description}
+              value={groupInfoForm.group_description}
               InputLabelProps={{ shrink: true }}
               sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
             />
-            <Typography variant="h7">Group Privacy</Typography>
+            <Typography variant="h7" sx={{ mt: '2em' }}>
+              Group Privacy
+            </Typography>
             <RadioGroup
               aria-labelledby="group-privacy-label"
               name="group-privacy-options"
               required
-              sx={{ flexDirection: 'row' }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+              }}
             >
               <FormControlLabel
                 value={true}
@@ -246,7 +360,12 @@ const EditGroupPanel = ({ groupInfo }) => {
                 my: '2em',
               }}
             >
-              <Button variant="outlined">Delete Group</Button>
+              <Button
+                variant="outlined"
+                onClick={() => setShowDeleteWarning(true)}
+              >
+                Delete Group
+              </Button>
               <Button
                 variant="contained"
                 sx={{
@@ -259,6 +378,57 @@ const EditGroupPanel = ({ groupInfo }) => {
             </Box>
           </Box>
         </FormGroup>
+        {/* display warning dialog when user clicks the delete action button*/}
+        <Dialog
+          aria-labelledby="delete-warning-dialog"
+          PaperProps={{
+            sx: {
+              p: '1em',
+              display: 'flex',
+              justifyContent: 'center',
+              textAlign: 'center',
+              alignItems: 'center',
+            },
+          }}
+          open={showDeleteWarning}
+        >
+          {deleteSuccess ? (
+            <>
+              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
+              <DialogContent
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <Typography>
+                  {group_name} has been deleted! <br></br>You will now be
+                  directed to the homepage
+                </Typography>
+                <CircularProgress sx={{ mt: '2em' }} />
+              </DialogContent>
+            </>
+          ) : (
+            <>
+              <DialogTitle>Delete {group_name}?</DialogTitle>
+              <WarningAmberIcon fontSize="large" />
+              <DialogContent>This is irreversible</DialogContent>
+              <DialogActions sx={{ display: 'flex', gap: '2em' }}>
+                <Button
+                  variant="contained"
+                  onClick={() => setShowDeleteWarning(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="outlined" onClick={() => deleteCurrentGroup()}>
+                  Delete
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
       </Box>
     </>
   );

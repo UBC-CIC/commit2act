@@ -41,14 +41,12 @@ const CreateGroup = ({ user }) => {
   };
   const [createGroupForm, setCreateGroupForm] = useState(emptyCreateGroupForm);
   const [allGroupNames, setAllGroupNames] = useState();
-  // const [groupNameValid, setGroupNameValid] = useState(false);
-  const [groupIconFile, setGroupIconFile] = useState();
-  const [groupIconPreviewLink, setGroupIconPreviewLink] = useState();
+  const [avatarFile, setAvatarFile] = useState();
+  const [avatarPreview, setAvatarPreview] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [emptyGroupNameError, setEmptyGroupNameError] = useState(false);
   const [groupNameTakenError, setGroupNameTakenError] = useState(false);
   const [emptyPasswordError, setEmptyPasswordError] = useState(false);
-  // const [formError, setFormError] = useState(true);
   const [createGroupSuccess, setCreateGroupSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -82,15 +80,15 @@ const CreateGroup = ({ user }) => {
 
   /** functions for uploading an icon */
 
-  const handleIconUpload = (e) => {
+  const handleAvatarChange = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
-      setGroupIconFile(null);
+      setAvatarFile(null);
       return;
     }
-    let imageFile = e.target.files[0];
-    let previewLink = URL.createObjectURL(imageFile);
-    setGroupIconFile(imageFile);
-    setGroupIconPreviewLink(previewLink);
+    const imageFile = e.target.files[0];
+    const previewLink = URL.createObjectURL(imageFile);
+    setAvatarFile(imageFile);
+    setAvatarPreview(previewLink);
   };
 
   /** functions adding the group */
@@ -114,32 +112,29 @@ const CreateGroup = ({ user }) => {
     try {
       checkRequiredFields();
       setIsLoading(true);
-
-      //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
-      let imageKey = 'groupIcons/'.concat(createGroupForm.group_name);
+      const { group_name, group_description, is_public, private_password } =
+        createGroupForm;
+      //if user uploaded an icon image, get the group name to upload the group avatar image to s3/cloudfront
+      let imageKey = 'groupIcons/'.concat(group_name);
       let iconLink = null;
-      if (groupIconFile) {
-        let imageType = groupIconFile.type;
+      if (avatarFile) {
+        let imageType = avatarFile.type;
         iconLink =
           process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-        try {
-          await Storage.put(imageKey, groupIconFile, {
-            contentType: imageType,
-          });
-        } catch (error) {
-          console.log('Error uploading file', error);
-        }
+        await Storage.put(imageKey, avatarFile, {
+          contentType: imageType,
+        });
       }
       //create the action and get its id
       await API.graphql({
         query: createGroupAndOwner,
         variables: {
           owner_user_id: user.user_id,
-          group_name: createGroupForm.group_name,
-          group_description: createGroupForm.group_description,
+          group_name: group_name,
+          group_description: group_description,
           group_image: iconLink,
-          is_public: createGroupForm.is_public,
-          private_password: createGroupForm.private_password,
+          is_public: is_public,
+          private_password: private_password,
         },
       });
 
@@ -147,12 +142,11 @@ const CreateGroup = ({ user }) => {
       setCreateGroupForm(emptyCreateGroupForm);
       setEmptyGroupNameError(false);
       setGroupNameTakenError(false);
-      setGroupIconPreviewLink();
+      setAvatarPreview();
       //render success message
       setCreateGroupSuccess(true);
     } catch (e) {
       const errorMsg = e.message;
-      console.log(errorMsg);
       if (errorMsg.includes('Empty group name')) {
         setEmptyGroupNameError(true);
       } else if (errorMsg.includes('Group name is taken')) {
@@ -199,12 +193,12 @@ const CreateGroup = ({ user }) => {
                   gap: '1em',
                 }}
               >
-                {groupIconPreviewLink ? (
+                {avatarPreview ? (
                   <Avatar
                     variant="rounded"
                     sx={{ height: 150, width: 150, alignSelf: 'center' }}
                     alt="Uploaded Group Icon"
-                    src={groupIconPreviewLink}
+                    src={avatarPreview}
                   />
                 ) : (
                   <Avatar
@@ -220,7 +214,7 @@ const CreateGroup = ({ user }) => {
                     accept="image/*"
                     id="group-icon-image"
                     type="file"
-                    onChange={handleIconUpload}
+                    onChange={handleAvatarChange}
                   />
                   <Button
                     variant="outlined"

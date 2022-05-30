@@ -41,7 +41,9 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
             About
           </Typography>
           <Typography component="div" variant="subtitle2">
-            {groupInfo.group_description}
+            {groupInfo.group_description
+              ? groupInfo.group_description
+              : 'This group currently does not have a description.'}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={5}>

@@ -50,7 +50,7 @@ const MemberActionsPanel = ({ groupInfo }) => {
           </Button>
         ) : (
           <Typography variant="subtitle2">
-            There are currently no actions to display
+            There are currently no actions to display.
           </Typography>
         )}
       </Stack>
