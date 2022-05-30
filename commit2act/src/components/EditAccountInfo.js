@@ -11,7 +11,6 @@ import {
   Avatar,
   Typography,
   InputAdornment,
-  Snackbar,
   Alert,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -36,6 +35,7 @@ const EditAccountInfo = ({
   open,
   databaseUser,
   setEditUser,
+  editUser,
   getCurrentDatabaseUser,
 }) => {
   const [avatarPreview, setAvatarPreview] = useState();
@@ -88,6 +88,8 @@ const EditAccountInfo = ({
 
       return passwordRequirements;
     });
+    setEditUser(false);
+
     setInvalidEmailError(false);
     setAccountEmailExistError(false);
     setCurrentPassIncorrectError(false);
@@ -96,7 +98,8 @@ const EditAccountInfo = ({
     setRequiredAttributeError(false);
     setRequiredPasswordError(false);
     setUserInfoForm(initialUserForm);
-    setEditUser(false);
+    setInfoUpdateSuccess(false);
+    setPasswordUpdateSuccess(false);
   };
 
   const checkMatchingPasswords = () => {
@@ -237,295 +240,301 @@ const EditAccountInfo = ({
     e.preventDefault();
   };
 
-  return (
-    <Dialog
-      aria-labelledby="action-card-dialog"
-      PaperProps={{ sx: { minWidth: '70%' } }}
-      open={open}
-    >
-      <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
-        <CloseIcon />
-      </IconButton>
-      <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-        Edit Account Information
-      </StyledDialogTitle>
-      <DialogContent
-        sx={{
-          p: '3em',
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          overflow: 'initial',
-        }}
-      >
-        <FormGroup
+  const renderSuccessMsg = () => {
+    return (
+      <>
+        <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+          Success!
+        </StyledDialogTitle>
+        <DialogContent sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+          {infoUpdateSuccess
+            ? 'User information has been changed'
+            : passwordUpdateSuccess && 'Password has been changed'}
+        </DialogContent>
+      </>
+    );
+  };
+
+  const renderEditInfoForm = () => {
+    return (
+      <>
+        <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
+          <CloseIcon />
+        </IconButton>
+        <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+          Edit Account Information
+        </StyledDialogTitle>
+        <DialogContent
           sx={{
-            mt: '2em',
+            p: '3em',
+            display: 'flex',
+            justifyContent: 'center',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: '1em',
+            overflow: 'initial',
           }}
         >
-          <Box
+          <FormGroup
             sx={{
-              display: 'flex',
+              mt: '2em',
               flexDirection: 'column',
-              alignItems: 'center',
+              justifyContent: 'space-between',
               gap: '1em',
             }}
           >
-            {databaseUser.avatar && !avatarPreview ? (
-              <>
-                <Avatar
-                  variant="rounded"
-                  sx={{ height: 100, width: 100, alignSelf: 'center' }}
-                  alt={`${databaseUser.name} avatar`}
-                  src={databaseUser.avatar + '?' + new Date()}
-                />
-                <label htmlFor="action-icon-image">
-                  <Input
-                    accept="image/*"
-                    id="action-icon-image"
-                    type="file"
-                    onChange={handleAvatarChange}
-                  />
-                  <Button variant="outlined" component="span">
-                    Upload Profile Photo
-                  </Button>
-                </label>
-              </>
-            ) : (
-              <>
-                {avatarPreview ? (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '1em',
+              }}
+            >
+              {databaseUser.avatar && !avatarPreview ? (
+                <>
                   <Avatar
                     variant="rounded"
-                    sx={{
-                      height: 100,
-                      width: 100,
-                    }}
-                    alt="Uploaded Action Icon"
-                    src={avatarPreview}
+                    sx={{ height: 100, width: 100, alignSelf: 'center' }}
+                    alt={`${databaseUser.name} avatar`}
+                    src={databaseUser.avatar + '?' + new Date()}
                   />
-                ) : (
-                  <Avatar
-                    variant="rounded"
-                    sx={{
-                      height: 100,
-                      width: 100,
-                    }}
-                  />
-                )}
+                  <label htmlFor="action-icon-image">
+                    <Input
+                      accept="image/*"
+                      id="action-icon-image"
+                      type="file"
+                      onChange={handleAvatarChange}
+                    />
+                    <Button variant="outlined" component="span">
+                      Upload Profile Photo
+                    </Button>
+                  </label>
+                </>
+              ) : (
+                <>
+                  {avatarPreview ? (
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        height: 100,
+                        width: 100,
+                      }}
+                      alt="Uploaded Action Icon"
+                      src={avatarPreview}
+                    />
+                  ) : (
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        height: 100,
+                        width: 100,
+                      }}
+                    />
+                  )}
 
-                <label htmlFor="action-icon-image">
-                  <Input
-                    accept="image/*"
-                    id="action-icon-image"
-                    type="file"
-                    onChange={handleAvatarChange}
-                  />
-                  <Button variant="outlined" component="span">
-                    Upload Profile Photo
-                  </Button>
-                </label>
-              </>
-            )}
-          </Box>
-          <Box
+                  <label htmlFor="action-icon-image">
+                    <Input
+                      accept="image/*"
+                      id="action-icon-image"
+                      type="file"
+                      onChange={handleAvatarChange}
+                    />
+                    <Button variant="outlined" component="span">
+                      Upload Profile Photo
+                    </Button>
+                  </label>
+                </>
+              )}
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1em',
+                mt: '1em',
+              }}
+            >
+              {requiredAttributeError && (
+                <Alert severity="error">
+                  Please fill out all required fields
+                </Alert>
+              )}
+              <TextField
+                required
+                label="Name"
+                name="name"
+                value={userInfoForm.name}
+                InputLabelProps={{ shrink: true }}
+                onChange={updateForm}
+              />
+              <TextField
+                required
+                label="Email"
+                name="email"
+                value={userInfoForm.email}
+                InputLabelProps={{ shrink: true }}
+                sx={{ xs: { mt: '1.5em' } }}
+                onChange={updateForm}
+                error={accountEmailExistError || invalidEmailError}
+                helperText={
+                  (accountEmailExistError &&
+                    'An account with the given email already exists.') ||
+                  (invalidEmailError && 'Please enter a valid email.')
+                }
+              />
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: { xs: '1.5em', sm: '0em' },
+                }}
+                onClick={updateUserInfo}
+              >
+                Save Name, Email, Photo
+              </Button>
+            </Box>
+          </FormGroup>
+          <FormGroup
             sx={{
-              display: 'flex',
+              mt: '4em',
               flexDirection: 'column',
+              justifyContent: 'space-between',
               gap: '1em',
-              mt: '1em',
+              textAlign: { xs: 'center', md: 'left' },
             }}
           >
-            {requiredAttributeError && (
+            <Typography
+              variant="h7"
+              sx={{ mb: '1em', color: '#455A7F', fontWeight: 400 }}
+            >
+              Change Password
+            </Typography>
+            {requiredPasswordError && (
               <Alert severity="error">
                 Please fill out all required fields
               </Alert>
             )}
             <TextField
               required
-              label="Name"
-              name="name"
-              value={userInfoForm.name}
+              label="Current Password"
+              name="currentPassword"
+              value={userInfoForm.password}
               InputLabelProps={{ shrink: true }}
+              type={showCurrentPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle current password visibility"
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showCurrentPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
+              error={currentPassIncorrectError}
+              helperText={
+                currentPassIncorrectError && 'Current password is incorrect'
+              }
             />
             <TextField
               required
-              label="Email"
-              name="email"
-              value={userInfoForm.email}
+              label="New Password"
+              name="newPassword"
+              value={userInfoForm.password}
               InputLabelProps={{ shrink: true }}
+              type={showNewPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle new password visibility"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showNewPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               sx={{ xs: { mt: '1.5em' } }}
-              onChange={updateForm}
-              error={accountEmailExistError || invalidEmailError}
-              helperText={
-                (accountEmailExistError &&
-                  'An account with the given email already exists.') ||
-                (invalidEmailError && 'Please enter a valid email.')
-              }
+              onChange={onChangePassword}
+              error={accountPasswordError}
+              helperText={'Your password must have the following:'}
+            />
+            <PasswordRequirements requirements={passwordRequirements} />
+
+            <TextField
+              required
+              label="Confirm New Password"
+              name="confirmNewPassword"
+              value={userInfoForm.confirmPassword}
+              InputLabelProps={{ shrink: true }}
+              type={showConfirmNewPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle confirm new password visibility"
+                      onClick={() =>
+                        setShowConfirmNewPassword(!showConfirmNewPassword)
+                      }
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showConfirmNewPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ xs: { mt: '1.5em' } }}
+              onChange={onChangePassword}
+              error={passwordsNotMatchError}
+              helperText={passwordsNotMatchError && 'Passwords do not match.'}
             />
             <Button
               variant="outlined"
               sx={{
                 mt: { xs: '1.5em', sm: '0em' },
               }}
-              onClick={updateUserInfo}
+              onClick={updatePassword}
             >
-              Save Name, Email, Photo
+              Save Password
             </Button>
-          </Box>
-        </FormGroup>
-        <FormGroup
-          sx={{
-            mt: '4em',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: '1em',
-            textAlign: { xs: 'center', md: 'left' },
-          }}
-        >
-          <Typography
-            variant="h7"
-            sx={{ mb: '1em', color: '#455A7F', fontWeight: 400 }}
-          >
-            Change Password
-          </Typography>
-          {requiredPasswordError && (
-            <Alert severity="error">Please fill out all required fields</Alert>
-          )}
-          <TextField
-            required
-            label="Current Password"
-            name="currentPassword"
-            value={userInfoForm.password}
-            InputLabelProps={{ shrink: true }}
-            type={showCurrentPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle current password visibility"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showCurrentPassword ? (
-                      <VisibilityIcon />
-                    ) : (
-                      <VisibilityOffIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{ xs: { mt: '1.5em' } }}
-            onChange={updateForm}
-            error={currentPassIncorrectError}
-            helperText={
-              currentPassIncorrectError && 'Current password is incorrect'
-            }
-          />
-          <TextField
-            required
-            label="New Password"
-            name="newPassword"
-            value={userInfoForm.password}
-            InputLabelProps={{ shrink: true }}
-            type={showNewPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle new password visibility"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showNewPassword ? (
-                      <VisibilityIcon />
-                    ) : (
-                      <VisibilityOffIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{ xs: { mt: '1.5em' } }}
-            onChange={onChangePassword}
-            error={accountPasswordError}
-            helperText={'Your password must have the following:'}
-          />
-          <PasswordRequirements requirements={passwordRequirements} />
+          </FormGroup>
+        </DialogContent>
+      </>
+    );
+  };
 
-          <TextField
-            required
-            label="Confirm New Password"
-            name="confirmNewPassword"
-            value={userInfoForm.confirmPassword}
-            InputLabelProps={{ shrink: true }}
-            type={showConfirmNewPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle confirm new password visibility"
-                    onClick={() =>
-                      setShowConfirmNewPassword(!showConfirmNewPassword)
-                    }
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showConfirmNewPassword ? (
-                      <VisibilityIcon />
-                    ) : (
-                      <VisibilityOffIcon />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{ xs: { mt: '1.5em' } }}
-            onChange={onChangePassword}
-            error={passwordsNotMatchError}
-            helperText={passwordsNotMatchError && 'Passwords do not match.'}
-          />
-          <Button
-            variant="outlined"
-            sx={{
-              mt: { xs: '1.5em', sm: '0em' },
-            }}
-            onClick={updatePassword}
-          >
-            Save Password
-          </Button>
-        </FormGroup>
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={infoUpdateSuccess}
-          autoHideDuration={1000}
-          onClose={() => setInfoUpdateSuccess(false)}
-        >
-          <Alert onClose={() => setInfoUpdateSuccess(false)} severity="success">
-            User Info Successfully Updated
-          </Alert>
-        </Snackbar>
-
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={passwordUpdateSuccess}
-          autoHideDuration={1000}
-          onClose={() => setPasswordUpdateSuccess(false)}
-        >
-          <Alert
-            onClose={() => setPasswordUpdateSuccess(false)}
-            severity="success"
-          >
-            Pssword Successfully Changed
-          </Alert>
-        </Snackbar>
-      </DialogContent>
+  return (
+    <Dialog
+      aria-labelledby="action-card-dialog"
+      PaperProps={{ sx: { minWidth: '70%' } }}
+      open={open}
+    >
+      {/* render edit info form if password or info has not been successfully updated */}
+      {infoUpdateSuccess || passwordUpdateSuccess
+        ? renderSuccessMsg()
+        : editUser && renderEditInfoForm()}
     </Dialog>
   );
 };

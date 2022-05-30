@@ -334,6 +334,7 @@ const AccountSettings = ({ databaseUser, setUser }) => {
               open={editUser}
               databaseUser={databaseUser}
               setEditUser={setEditUser}
+              editUser={editUser}
               getCurrentDatabaseUser={getCurrentDatabaseUser}
             />
           </Box>
