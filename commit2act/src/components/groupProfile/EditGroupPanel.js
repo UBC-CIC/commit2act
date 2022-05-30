@@ -30,7 +30,7 @@ const Input = styled('input')`
   display: none;
 `;
 
-const EditGroupPanel = ({ groupInfo }) => {
+const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
   const {
     group_description,
     group_image,
@@ -53,7 +53,6 @@ const EditGroupPanel = ({ groupInfo }) => {
   const [emptyGroupNameError, setEmptyGroupNameError] = useState(false);
   const [groupNameTakenError, setGroupNameTakenError] = useState(false);
   const [emptyPasswordError, setEmptyPasswordError] = useState(false);
-  const [nameExistsError, setNameExistsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [updateGroupSuccess, setUpdateGroupSuccess] = useState(false);
@@ -65,14 +64,12 @@ const EditGroupPanel = ({ groupInfo }) => {
     const getGroups = async () => {
       const groupsRes = await API.graphql({ query: getAllGroups });
       const allGroups = groupsRes.data.getAllGroups;
-      const allGroupNames = allGroups.map((group) => group.group_name);
+      let allNames = allGroups.map((group) => group.group_name);
       //remove current group name from the groupNames array
-      const allOtherGroupNames = allGroupNames.filter(
-        (name) => name !== group_name
-      );
-      setAllGroupNames(allOtherGroupNames);
+      allNames = allNames.filter((name) => name !== group_name);
+      setAllGroupNames(allNames);
     };
-    getGroups();
+    group_name && getGroups();
   }, [group_name]);
 
   const updateForm = (e) => {
@@ -129,7 +126,7 @@ const EditGroupPanel = ({ groupInfo }) => {
           contentType: imageType,
         });
       }
-      await API.graphql({
+      const updateRes = await API.graphql({
         query: updateGroup,
         variables: {
           group_id: group_id,
@@ -140,13 +137,17 @@ const EditGroupPanel = ({ groupInfo }) => {
           private_password: private_password,
         },
       });
+      console.log(updateRes);
       //clear form and related states
       // setGroupInfoForm(initialGroupForm);
-      setEmptyGroupNameError(false);
-      setGroupNameTakenError(false);
-      setAvatarPreview();
+
       //render success message
       setUpdateGroupSuccess(true);
+      getUpdatedGroup(group_id);
+      setEmptyGroupNameError(false);
+      setGroupNameTakenError(false);
+      setEmptyPasswordError(false);
+      setAvatarPreview();
     } catch (e) {
       const errorMsg = e.message;
       if (errorMsg.includes('Empty group name')) {
@@ -278,6 +279,12 @@ const EditGroupPanel = ({ groupInfo }) => {
               value={groupInfoForm.group_name}
               InputLabelProps={{ shrink: true }}
               onChange={updateForm}
+              error={emptyGroupNameError || groupNameTakenError}
+              helperText={
+                (emptyGroupNameError && 'Group Name field must be completed') ||
+                (groupNameTakenError &&
+                  'A group already exists with the given name')
+              }
             />
             <TextField
               label="Description"
@@ -350,6 +357,10 @@ const EditGroupPanel = ({ groupInfo }) => {
                     </InputAdornment>
                   ),
                 }}
+                error={emptyPasswordError}
+                helperText={
+                  emptyPasswordError && 'Private groups must have a password'
+                }
               ></TextField>
             )}
             <Box

@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom';
 import { Auth, API } from 'aws-amplify';
 import {
   getSingleGroupByName,
+  getSingleGroup,
   getAllUsersInGroup,
   getAllOwnersInGroup,
 } from '../graphql/queries';
@@ -55,6 +56,27 @@ const GroupProfile = () => {
   const [cognitoUser, setCognitoUser] = useState();
   const [userId, setUserId] = useState();
   const [groupId, setGroupId] = useState();
+
+  // const getCognitoUser = async () => {
+  //   const cognitoRes = await Auth.currentAuthenticatedUser();
+  //   setCognitoUser(cognitoRes);
+  //   const currentUserId = Number(cognitoRes.attributes['custom:id']);
+  //   setUserId(currentUserId);
+  // };
+
+  // const getGroupInfo = async (name) => {
+  //   const groupInfoRes = await API.graphql({
+  //     query: getSingleGroupByName,
+  //     varialbes: { group_name: groupName },
+  //   });
+  //   const currentGroupId = groupInfoRes.data.getSingleGroupByName.group_id;
+  //   setGroupId(currentGroupId);
+  // };
+
+  // useEffect(() => {
+  //   getCognitoUser();
+  //   getGroupInfo();
+  // }, []);
 
   useEffect(() => {
     const getGroupAndUserInfo = async () => {
@@ -103,10 +125,18 @@ const GroupProfile = () => {
       isUserGroupOwner();
       getGroupUsers();
     }
-  }, [userId, groupId]);
+  }, [userId, groupId, groupInfo]);
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
+  };
+
+  const getUpdatedGroup = async (id) => {
+    const updatedGroupRes = await API.graphql({
+      query: getSingleGroup,
+      variables: { group_id: id },
+    });
+    setGroupInfo(updatedGroupRes.data.getSingleGroup);
   };
 
   return (
@@ -309,7 +339,11 @@ const GroupProfile = () => {
                   width: '100%',
                 }}
               >
-                <EditGroupPanel groupInfo={groupInfo} />
+                <EditGroupPanel
+                  groupInfo={groupInfo}
+                  // getGroupInfo={getGroupInfo}
+                  getUpdatedGroup={getUpdatedGroup}
+                />
               </TabPanel>
             </TabContext>
           </Grid>

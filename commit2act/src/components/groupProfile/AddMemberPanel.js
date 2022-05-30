@@ -41,7 +41,13 @@ const AddMemberPanel = ({ groupInfo }) => {
       <Typography component="div" variant="subtitle2" sx={{ m: '2em 0 1em 0' }}>
         Your Group Link is:{' '}
       </Typography>
-      <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
+      <Box
+        display="flex"
+        sx={{
+          flexDirection: { xs: 'column', md: 'row' },
+          wordBreak: 'break-word',
+        }}
+      >
         <Typography
           component="div"
           variant="subtitle2"
@@ -90,7 +96,10 @@ const AddMemberPanel = ({ groupInfo }) => {
           </Typography>
           <Box
             display="flex"
-            sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+            sx={{
+              flexDirection: { xs: 'column', md: 'row' },
+              wordBreak: 'break-word',
+            }}
           >
             <Typography
               component="div"
