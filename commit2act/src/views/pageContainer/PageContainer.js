@@ -98,8 +98,8 @@ function PageContainer(props) {
     getUserInfo(cognitoUserEntry, id);
   };
 
+  //gets database entry for cognito user
   const getUserInfo = async (cognitoUserEntry, id) => {
-    //gets database entry for cognito user
     const username = cognitoUserEntry.attributes.preferred_username;
     const res = await API.graphql({
       query: getSingleUserByUsername,
@@ -281,7 +281,9 @@ function PageContainer(props) {
             <Route
               exact
               path={'/account-settings'}
-              element={<AccountSettings />}
+              element={
+                <AccountSettings databaseUser={user} setUser={setUser} />
+              }
             />
             <Route
               exact

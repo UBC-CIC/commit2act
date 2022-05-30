@@ -1,27 +1,8 @@
-import {
-  Button,
-  CircularProgress,
-  Divider,
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@material-ui/core';
+import { Button, CircularProgress, Divider, Grid } from '@material-ui/core';
 import { Alert } from '@mui/lab';
 
 // icons
-import {
-  ArrowBack,
-  AlternateEmail,
-  Lock,
-  Dialpad,
-  CheckCircle,
-  Cancel,
-} from '@mui/icons-material';
-
-// colors
-import { green, red } from '@material-ui/core/colors';
+import { ArrowBack, AlternateEmail, Lock, Dialpad } from '@mui/icons-material';
 
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { Auth } from 'aws-amplify';
@@ -31,8 +12,7 @@ import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
 import { Snackbar } from '@mui/material';
-import { API } from 'aws-amplify';
-import { createUser } from '../../graphql/mutations';
+import PasswordRequirements from './PasswordRequirements';
 
 const initialFormState = {
   email: '',
@@ -1022,43 +1002,43 @@ const BackAndSubmitButtons = ({ backAction, ...others }) => {
   );
 };
 
-const PasswordRequirements = ({ requirements }) => {
-  const styles = makeStyles((theme) => ({
-    valid: {
-      color: green[500],
-    },
-    invalid: {
-      color: red[500],
-    },
-    fontSize: {
-      fontSize: '0.9rem',
-    },
-  }));
+// const PasswordRequirements = ({ requirements }) => {
+//   const styles = makeStyles((theme) => ({
+//     valid: {
+//       color: green[500],
+//     },
+//     invalid: {
+//       color: red[500],
+//     },
+//     fontSize: {
+//       fontSize: '0.9rem',
+//     },
+//   }));
 
-  const localStyles = styles();
+//   const localStyles = styles();
 
-  return (
-    <List dense={true} className={localStyles.root}>
-      {Object.entries(requirements).map((req) => {
-        return (
-          <ListItem key={req[0]}>
-            <ListItemIcon>
-              {req[1].error ? (
-                <CheckCircle className={localStyles.valid} />
-              ) : (
-                <Cancel className={localStyles.invalid} />
-              )}
-            </ListItemIcon>
-            <ListItemText
-              className={localStyles.fontSize}
-              primary={req[1].description}
-            />
-          </ListItem>
-        );
-      })}
-    </List>
-  );
-};
+//   return (
+//     <List dense={true} className={localStyles.root}>
+//       {Object.entries(requirements).map((req) => {
+//         return (
+//           <ListItem key={req[0]}>
+//             <ListItemIcon>
+//               {req[1].error ? (
+//                 <CheckCircle className={localStyles.valid} />
+//               ) : (
+//                 <Cancel className={localStyles.invalid} />
+//               )}
+//             </ListItemIcon>
+//             <ListItemText
+//               className={localStyles.fontSize}
+//               primary={req[1].description}
+//             />
+//           </ListItem>
+//         );
+//       })}
+//     </List>
+//   );
+// };
 const mapStateToProps = (state) => {
   return {
     loginState: state.loginState.currentState,

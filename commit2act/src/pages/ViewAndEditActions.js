@@ -6,7 +6,7 @@ import ImageListItem, {
 import { getAllActions } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
-import ActionCard from '../components/ActionCard';
+import ActionCard from '../components/adminDashboard/ActionCard';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {

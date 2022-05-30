@@ -21,7 +21,7 @@ import {
   Skeleton,
 } from '@mui/material';
 import { Storage, API } from 'aws-amplify';
-import { getActionItemsForAction } from '../graphql/queries';
+import { getActionItemsForAction } from '../../graphql/queries';
 import {
   deleteAction,
   updateAction,
@@ -29,7 +29,7 @@ import {
   restoreAction,
   remakeActionItems,
   remakeActionValidationLabels,
-} from '../graphql/mutations';
+} from '../../graphql/mutations';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -717,7 +717,7 @@ const ActionCard = ({
   return (
     <>
       <Dialog
-        aria-labelledby="already-member-dialog"
+        aria-labelledby="action-card-dialog"
         PaperProps={{ sx: { minWidth: '70%' } }}
         open={open}
         onClose={editAction ? () => setShowCloseWarning(true) : handleClose}

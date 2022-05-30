@@ -16,7 +16,6 @@ const MemberActionsPanel = ({ groupInfo }) => {
       });
       setActions(res.data.getAllValidatedSubmittedActionsInGroup);
     };
-
     getActions();
   }, [groupInfo.group_id]);
 

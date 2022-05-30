@@ -76,6 +76,7 @@ const LineChart = ({ allSubmittedActions }) => {
 
   useEffect(() => {
     getLineChartData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilter]);
 
   return (

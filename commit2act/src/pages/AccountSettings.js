@@ -10,59 +10,49 @@ import {
   Tab,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
-import { Storage, API, Auth } from 'aws-amplify';
-import { styled } from '@mui/material/styles';
-import { updateUser } from '../graphql/mutations';
+import { API } from 'aws-amplify';
 import {
   getAllSubmittedActionsForUser,
   getSingleUser,
 } from '../graphql/queries';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import EditAccountInfo from '../components/EditAccountInfo';
 
-const Input = styled('input')`
-  display: none;
-`;
-
-const AccountSettings = () => {
+const AccountSettings = ({ databaseUser, setUser }) => {
   const [showMore, setShowMore] = useState({
     validated: false,
     unvalidated: false,
     failed: false,
   });
-  const [avatarPreview, setAvatarPreview] = useState();
-  const [newAvatarUploaded, setNewAvatarUploaded] = useState(false);
-  const [user, setUser] = useState();
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
   const tabs = ['Validated', 'Awaiting Validation', 'Did Not Pass Validation'];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const [editUser, setEditUser] = useState(false);
 
   const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    getCurrentUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (databaseUser) {
+      getUserActions(databaseUser.user_id);
+    }
+  }, [databaseUser]);
 
-  const getCurrentUser = async () => {
-    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
-    const id = cognitoUserEntry.attributes['custom:id'];
-
-    const res = await API.graphql({
+  const getCurrentDatabaseUser = async (id) => {
+    const userRes = await API.graphql({
       query: getSingleUser,
       variables: { user_id: id },
     });
-    setUser(res.data.getSingleUser);
-    getUserActions(id);
+    setUser(userRes.data.getSingleUser);
   };
 
   const getUserActions = async (id) => {
-    const res = await API.graphql({
+    const actionRes = await API.graphql({
       query: getAllSubmittedActionsForUser,
       variables: { user_id: id },
     });
-    const allActions = res.data.getAllSubmittedActionsForUser;
+    const allActions = actionRes.data.getAllSubmittedActionsForUser;
     //filter for all validated actions
     const validated = allActions.filter((action) => action.is_validated);
     setValidatedActions(validated);
@@ -75,45 +65,6 @@ const AccountSettings = () => {
     const failed = allActions.filter((action) => action.is_rejected);
     setFailedActions(failed);
   };
-
-  //updates user avatar field in database
-  async function updateUserAvatar(userAvatarLink) {
-    await API.graphql({
-      query: updateUser,
-      variables: { user_id: user.user_id, avatar: userAvatarLink },
-    });
-  }
-
-  //sends selected image to s3 storage
-  async function handleAvatarChange(e) {
-    if (user) {
-      if (!e.target.files || e.target.files.length === 0) {
-        setAvatarPreview(null);
-        return;
-      }
-      let imageFile = e.target.files[0];
-      let imageKey = 'avatars/'.concat(user.username, 'avatar');
-      let imageType = imageFile.type;
-      let userAvatarLink =
-        process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
-      //avatarPreview will display right after avatar is changed, since cloudfront url stays the same so changes in the avatar src aren't detected until page refresh
-      let previewLink = URL.createObjectURL(imageFile);
-      setAvatarPreview(previewLink);
-      try {
-        await Storage.put(imageKey, imageFile, {
-          contentType: imageType,
-          contentDisposition: 'inline',
-        });
-        setNewAvatarUploaded(true);
-      } catch (error) {
-        console.log('Error uploading file', error);
-      }
-      //if user avatar field was previously null, update field with new link
-      if (user.avatar === null) {
-        updateUserAvatar(userAvatarLink);
-      }
-    }
-  }
 
   const renderValidatedActionCards = () => {
     //return if validatedActions is not null or undefined and contains at least 1 item
@@ -262,14 +213,14 @@ const AccountSettings = () => {
 
   return (
     <>
-      {user && (
+      {databaseUser && (
         <>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
             <Typography
               variant="h1"
               sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
             >
-              Account Information
+              My Account
             </Typography>
             <Grid
               container
@@ -288,32 +239,12 @@ const AccountSettings = () => {
                 >
                   <Avatar
                     variant="rounded"
-                    src={
-                      user.avatar && !newAvatarUploaded
-                        ? user.avatar
-                        : avatarPreview
-                    }
+                    src={databaseUser.avatar + '?' + new Date()}
                     sx={{
-                      width: 100,
-                      height: 100,
+                      width: 120,
+                      height: 120,
                     }}
                   ></Avatar>
-                  <label htmlFor="user-avatar">
-                    <Input
-                      accept="image/*"
-                      id="user-avatar"
-                      multiple
-                      type="file"
-                      onChange={handleAvatarChange}
-                    />
-                    <Button
-                      variant="outlined"
-                      component="span"
-                      sx={{ mt: '1em', mb: { xs: '1.5em' } }}
-                    >
-                      Upload Photo
-                    </Button>
-                  </label>
                 </Box>
               </Grid>
               <Grid
@@ -331,6 +262,7 @@ const AccountSettings = () => {
                   flexDirection: { xs: 'column' },
                   alignItems: { xs: 'center', md: 'flex-start' },
                   overflow: 'auto',
+                  mt: { xs: '1em', md: '0em' },
                 }}
               >
                 <Box>
@@ -342,17 +274,7 @@ const AccountSettings = () => {
                     >
                       Name:
                     </Typography>
-                    {user.name}
-                  </Typography>
-                  <Typography variant="h7" component="div">
-                    <Typography
-                      variant="h3"
-                      component="span"
-                      sx={{ mr: '1em' }}
-                    >
-                      Username:
-                    </Typography>
-                    {user.username}
+                    {databaseUser.name}
                   </Typography>
                   <Typography variant="h7" component="div">
                     <Typography
@@ -362,16 +284,20 @@ const AccountSettings = () => {
                     >
                       Email:
                     </Typography>
-                    {user.email}
+                    {databaseUser.email}
                   </Typography>
                 </Box>
-                <Button size="small" sx={{ alignSelf: { md: 'flex-start' } }}>
+                <Button
+                  size="small"
+                  sx={{ alignSelf: { md: 'flex-start' } }}
+                  onClick={() => setEditUser(true)}
+                >
                   Edit Info
                 </Button>
               </Grid>
             </Grid>
 
-            <Typography variant="h2" sx={{ m: '2.5em 0 1.25em' }}>
+            <Typography variant="h2" sx={{ m: '3.5em 0 1.25em' }}>
               Logged Actions
             </Typography>
             <TabContext value={selectedTab}>
@@ -404,6 +330,13 @@ const AccountSettings = () => {
               </TabPanel>
               <TabPanel value={tabs[2]}>{renderFailedActionCards()}</TabPanel>
             </TabContext>
+            <EditAccountInfo
+              open={editUser}
+              databaseUser={databaseUser}
+              setEditUser={setEditUser}
+              editUser={editUser}
+              getCurrentDatabaseUser={getCurrentDatabaseUser}
+            />
           </Box>
         </>
       )}
