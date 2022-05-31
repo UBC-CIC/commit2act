@@ -9,10 +9,6 @@ export const getSingleUser = /* GraphQL */ `
       name
       email
       avatar
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -24,10 +20,6 @@ export const getSingleUserByUsername = /* GraphQL */ `
       name
       email
       avatar
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -40,14 +32,12 @@ export const getSingleSubmittedAction = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
       points_earned
       submitted_image
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -60,7 +50,7 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -71,8 +61,6 @@ export const getSingleSubmittedActionWithItems = /* GraphQL */ `
         sa_id
         input_value
       }
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -85,7 +73,6 @@ export const getSingleAction = /* GraphQL */ `
       action_icon
       fallback_quiz_media
       validation_labels
-      is_hidden
     }
   }
 `;
@@ -122,10 +109,6 @@ export const getAllUsers = /* GraphQL */ `
       name
       email
       avatar
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -138,20 +121,6 @@ export const getAllActions = /* GraphQL */ `
       action_icon
       fallback_quiz_media
       validation_labels
-      is_hidden
-    }
-  }
-`;
-export const getAllUngraveyardedActions = /* GraphQL */ `
-  query GetAllUngraveyardedActions {
-    getAllUngraveyardedActions {
-      action_id
-      action_name
-      page_media
-      action_icon
-      fallback_quiz_media
-      validation_labels
-      is_hidden
     }
   }
 `;
@@ -164,14 +133,12 @@ export const getAllSubmittedActions = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
       points_earned
       submitted_image
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -204,7 +171,7 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -212,8 +179,6 @@ export const getAllSubmittedActionsForUser = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -226,7 +191,7 @@ export const getAllValidatedSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -234,8 +199,6 @@ export const getAllValidatedSubmittedActionsForUser = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -248,7 +211,7 @@ export const getAllUnvalidatedSubmittedActionsForUser = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -256,30 +219,6 @@ export const getAllUnvalidatedSubmittedActionsForUser = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
-      is_rejected
-      is_image_explicit
-    }
-  }
-`;
-export const getAllGraveyardedSubmittedActionsForUser = /* GraphQL */ `
-  query GetAllGraveyardedSubmittedActionsForUser($user_id: Int!) {
-    getAllGraveyardedSubmittedActionsForUser(user_id: $user_id) {
-      sa_id
-      user_id
-      action_id
-      quiz_id
-      g_co2_saved
-      date_of_action
-      time_submitted
-      first_quiz_answer_correct
-      quiz_answered
-      is_validated
-      points_earned
-      submitted_action_items
-      action_name
-      submitted_image
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -292,10 +231,6 @@ export const getAllGroups = /* GraphQL */ `
       group_image
       is_public
       private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -308,10 +243,6 @@ export const getSingleGroup = /* GraphQL */ `
       group_image
       is_public
       private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -324,10 +255,6 @@ export const getSingleGroupByName = /* GraphQL */ `
       group_image
       is_public
       private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -340,10 +267,6 @@ export const getAllUsersInGroup = /* GraphQL */ `
       email
       avatar
       user_role
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -378,7 +301,7 @@ export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
       quiz_id
       g_co2_saved
       date_of_action
-      time_submitted
+      time_sumbitted
       first_quiz_answer_correct
       quiz_answered
       is_validated
@@ -386,8 +309,6 @@ export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
       submitted_action_items
       action_name
       submitted_image
-      is_rejected
-      is_image_explicit
     }
   }
 `;
@@ -400,10 +321,6 @@ export const getAllGroupsForUser = /* GraphQL */ `
       group_image
       is_public
       private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -416,10 +333,6 @@ export const getAllGroupsUserOwns = /* GraphQL */ `
       group_image
       is_public
       private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -432,10 +345,6 @@ export const getAllGroupsUserIsAMember = /* GraphQL */ `
       group_image
       is_public
       private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
     }
   }
 `;
@@ -453,29 +362,5 @@ export const isPrivateGroupPasswordCorrect = /* GraphQL */ `
       group_id: $group_id
       private_password: $private_password
     )
-  }
-`;
-export const getAllSubmittedActionsToValidate = /* GraphQL */ `
-  query GetAllSubmittedActionsToValidate($user_id: Int!) {
-    getAllSubmittedActionsToValidate(user_id: $user_id) {
-      sa_id
-      user_id
-      action_id
-      quiz_id
-      g_co2_saved
-      date_of_action
-      time_submitted
-      first_quiz_answer_correct
-      quiz_answered
-      is_validated
-      points_earned
-      submitted_action_items
-      action_name
-      submitted_image
-      name_of_user
-      group_names
-      is_rejected
-      is_image_explicit
-    }
   }
 `;
