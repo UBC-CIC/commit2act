@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -71,23 +72,18 @@ const ActionCard = ({
     item_description: '',
     co2_saved_per_unit: '',
   };
-
-  const [isValid, setIsValid] = useState({
-    co2: false,
-    itemName: false,
-    itemDescription: false,
-    actionItems: false,
-    validationLabels: false,
-  });
   const [actionForm, setActionForm] = useState(initialActionForm);
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [showPauseWarning, setShowPauseWarning] = useState(false);
-  const [formError, setFormError] = useState(false);
-  const [actionItemFormError, setActionItemFormError] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
+  //error states
+  const [cO2Error, setCO2Error] = useState(false);
+  const [emptyItemFieldError, setEmptyItemFieldError] = useState(false);
+  const [emptyActionItemError, setEmptyActionItemError] = useState(false);
+  const [emptyLabelError, setEmptyLabelError] = useState(false);
 
   //get all action items for the action
   useEffect(() => {
@@ -102,8 +98,7 @@ const ActionCard = ({
       }));
     };
     getActionItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [action_id]);
 
   /** functions for rendering the non editable action card */
 
@@ -200,83 +195,13 @@ const ActionCard = ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
-      switch (e.target.name) {
-        case 'item_name':
-          //checks to see if user input for item name field is null
-          if (!e.target.value) {
-            setIsValid((prev) => ({
-              ...prev,
-              itemName: false,
-            }));
-          } else {
-            setIsValid((prev) => ({
-              ...prev,
-              itemName: true,
-            }));
-          }
-          break;
-        case 'item_description':
-          //checks to see if user input for item description field is null
-          if (!e.target.value) {
-            setIsValid((prev) => ({
-              ...prev,
-              itemDescription: false,
-            }));
-          } else {
-            setIsValid((prev) => ({
-              ...prev,
-              itemDescription: true,
-            }));
-          }
-          break;
-        default:
-          //checks to see if user input for co2 saved per unit field is a positive numerical value
-          if (!e.target.value.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
-            setIsValid((prev) => ({
-              ...prev,
-              co2: false,
-            }));
-          } else {
-            setIsValid((prev) => ({
-              ...prev,
-              co2: true,
-            }));
-          }
-      }
-    } else if (e.target.name in actionForm) {
+    } else {
       setActionForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
     }
   };
-
-  //checks to see if actionItems and image validation labels  are valid for submission (if there is more than 1 item in the array)
-  useEffect(() => {
-    if (actionForm.labels.length > 0) {
-      setIsValid((prev) => ({
-        ...prev,
-        validationLabels: true,
-      }));
-    } else if (actionForm.labels.length === 0) {
-      setIsValid((prev) => ({
-        ...prev,
-        validationLabels: false,
-      }));
-    }
-
-    if (actionForm.action_items.length < 1) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItems: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItems: true,
-      }));
-    }
-  }, [actionForm]);
 
   const removeActionItem = (name) => {
     let actionItemsCopy = actionForm.action_items;
@@ -289,8 +214,24 @@ const ActionCard = ({
     }));
   };
 
+  const checkRequiredActionItemFields = () => {
+    const { item_name, item_description, co2_saved_per_unit } = actionItemsForm;
+
+    if (
+      item_name === '' ||
+      item_description === '' ||
+      co2_saved_per_unit === ''
+    ) {
+      throw new Error('Empty field');
+    }
+    if (!co2_saved_per_unit.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
+      throw new Error('Invalid co2 field');
+    }
+  };
+
   const addActionItem = () => {
-    if (isValid.co2 && isValid.itemName && isValid.itemDescription) {
+    try {
+      checkRequiredActionItemFields();
       actionItemsForm.co2_saved_per_unit = Number(
         actionItemsForm.co2_saved_per_unit
       );
@@ -300,15 +241,19 @@ const ActionCard = ({
       setActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
       //clears the actionItemsForm so user can enter in a new action item
       setActionItemsForm(emptyActionItemForm);
-      setIsValid((prev) => ({
-        ...prev,
-        co2: false,
-        itemName: false,
-        itemDescription: false,
-      }));
-      setActionItemFormError(false);
-    } else {
-      setActionItemFormError(true);
+      //reset error states
+      if (actionItemsCopy.length > 0) {
+        setEmptyActionItemError(false);
+      }
+      setEmptyItemFieldError(false);
+      setCO2Error(false);
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Invalid co2 field')) {
+        setCO2Error(true);
+      } else if (errorMsg.includes('Empty field')) {
+        setEmptyItemFieldError(true);
+      }
     }
   };
 
@@ -324,6 +269,9 @@ const ActionCard = ({
     let labelsCopy = actionForm.labels;
     labelsCopy.push(actionForm.curr_label);
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+    if (labelsCopy.length > 0) {
+      setEmptyLabelError(false);
+    }
     //clear current label
     setActionForm((prev) => ({ ...prev, curr_label: '' }));
   };
@@ -339,8 +287,18 @@ const ActionCard = ({
     setActionIconPreviewLink(previewLink);
   };
 
+  const checkRequiredActionFields = () => {
+    const { labels, action_items } = actionForm;
+    if (labels.length === 0) {
+      throw new Error('Missing labels');
+    } else if (action_items.length === 0) {
+      throw new Error('Missing action items');
+    }
+  };
+
   const updateSelectedAction = async () => {
-    if (isValid.actionItems && isValid.validationLabels) {
+    try {
+      checkRequiredActionFields();
       //update icon image in s3 if user uploaded a new image
       let iconLink = null;
       if (actionIconFile) {
@@ -382,8 +340,13 @@ const ActionCard = ({
       ]);
       handleClose();
       getActions();
-    } else {
-      setFormError(true);
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Missing labels')) {
+        setEmptyLabelError(true);
+      } else if (errorMsg.includes('Missing action items')) {
+        setEmptyActionItemError(true);
+      }
     }
   };
 
@@ -493,7 +456,7 @@ const ActionCard = ({
             component="span"
             sx={{
               color: '#d32f2f',
-              display: formError && !isValid.actionItems ? 'inline' : 'none',
+              display: emptyActionItemError ? 'inline' : 'none',
             }}
           >
             New Action Type must have at least 1 action item
@@ -540,6 +503,11 @@ const ActionCard = ({
                 </AccordionDetails>
               </Accordion>
             ))}
+          {emptyItemFieldError && (
+            <Alert severity="error" sx={{ my: '2em' }}>
+              Please fill out all required item fields
+            </Alert>
+          )}
           <FormGroup
             sx={{
               mt: '3em',
@@ -562,12 +530,6 @@ const ActionCard = ({
                 name="item_name"
                 InputLabelProps={{ shrink: true }}
                 value={actionItemsForm.item_name}
-                error={actionItemFormError && !isValid.itemName}
-                helperText={
-                  actionItemFormError &&
-                  !isValid.itemName &&
-                  'Input is required'
-                }
                 onChange={updateForm}
               />
               <TextField
@@ -576,12 +538,6 @@ const ActionCard = ({
                 name="item_description"
                 InputLabelProps={{ shrink: true }}
                 value={actionItemsForm.item_description}
-                error={actionItemFormError && !isValid.itemDescription}
-                helperText={
-                  actionItemFormError &&
-                  !isValid.itemDescription &&
-                  'Input is required'
-                }
                 onChange={updateForm}
               />
               <TextField
@@ -591,12 +547,8 @@ const ActionCard = ({
                 inputProps={{ inputMode: 'numeric' }}
                 InputLabelProps={{ shrink: true }}
                 value={actionItemsForm.co2_saved_per_unit}
-                error={actionItemFormError && !isValid.co2}
-                helperText={
-                  actionItemFormError &&
-                  !isValid.co2 &&
-                  'Input must be a number greater than 0'
-                }
+                error={cO2Error}
+                helperText={cO2Error && 'Input must be a number greater than 0'}
                 sx={{ xs: { mt: '1.5em' } }}
                 onChange={updateForm}
               />
@@ -623,8 +575,7 @@ const ActionCard = ({
             component="span"
             sx={{
               color: '#d32f2f',
-              display:
-                formError && !isValid.validationLabels ? 'inline' : 'none',
+              display: emptyLabelError ? 'inline' : 'none',
             }}
           >
             New Action Type must have at least 1 image validation label
