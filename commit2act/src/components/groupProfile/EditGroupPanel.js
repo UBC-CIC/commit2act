@@ -334,7 +334,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
               {/* only show private password text field if user selects private group */}
               {!groupInfoForm.is_public && (
                 <TextField
-                  label="password"
+                  label="Password"
                   name="private_password"
                   value={
                     groupInfoForm.private_password
