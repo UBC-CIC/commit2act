@@ -5,6 +5,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import CreateAction from './CreateAction';
 import ViewAndEditActions from './ViewAndEditActions';
+import ViewAndEditQuizzes from './ViewAndEditQuizzes';
 import Dashboard from '../components/adminDashboard/Dashboard';
 
 const AdminDashboard = () => {
@@ -68,6 +69,7 @@ const AdminDashboard = () => {
         <Typography variant="h2" component="h1" sx={{ mb: '2em' }}>
           Select an action to view and add quiz questions
         </Typography>
+        <ViewAndEditQuizzes />
       </TabPanel>
     </TabContext>
   );
