@@ -6,7 +6,6 @@ import {
   FormGroup,
   Button,
   Avatar,
-  Alert,
   InputAdornment,
   IconButton,
   RadioGroup,
@@ -50,13 +49,15 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
   const [avatarPreview, setAvatarPreview] = useState();
   const [avatarFile, setAvatarFile] = useState();
   const [allGroupNames, setAllGroupNames] = useState();
-  const [emptyGroupNameError, setEmptyGroupNameError] = useState(false);
-  const [groupNameTakenError, setGroupNameTakenError] = useState(false);
-  const [emptyPasswordError, setEmptyPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
   const [updateGroupSuccess, setUpdateGroupSuccess] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
+  //error states
+  const [emptyGroupNameError, setEmptyGroupNameError] = useState(false);
+  const [groupNameTakenError, setGroupNameTakenError] = useState(false);
+  const [emptyPasswordError, setEmptyPasswordError] = useState(false);
+
   const navigate = useNavigate();
 
   //gets list of all group names
@@ -126,7 +127,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
           contentType: imageType,
         });
       }
-      const updateRes = await API.graphql({
+      await API.graphql({
         query: updateGroup,
         variables: {
           group_id: group_id,
@@ -137,10 +138,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
           private_password: private_password,
         },
       });
-      console.log(updateRes);
       //clear form and related states
-      // setGroupInfoForm(initialGroupForm);
-
       //render success message
       setUpdateGroupSuccess(true);
       getUpdatedGroup(group_id);
@@ -175,274 +173,298 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
     }, 1000);
   };
 
-  return (
-    <>
-      <Typography variant="h2">Edit Group Info</Typography>
-      <Box
-        sx={{
-          p: '3em',
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          overflow: 'initial',
-        }}
-      >
-        <FormGroup
+  const renderEditGroupForm = () => {
+    return (
+      <>
+        <Typography variant="h2">Edit Group Info</Typography>
+        <Box
           sx={{
-            mt: '2em',
+            p: '3em',
+            display: 'flex',
+            justifyContent: 'center',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: '1em',
+            overflow: 'initial',
           }}
         >
-          <Box
+          <FormGroup
             sx={{
-              display: 'flex',
+              mt: '2em',
               flexDirection: 'column',
-              alignItems: 'center',
+              justifyContent: 'space-between',
               gap: '1em',
             }}
           >
-            {group_image && !avatarPreview ? (
-              <>
-                <Avatar
-                  variant="rounded"
-                  sx={{ height: 120, width: 120, alignSelf: 'center' }}
-                  alt={`${group_name} avatar`}
-                  src={group_image + '?' + new Date()}
-                />
-                <label htmlFor="action-icon-image">
-                  <Input
-                    accept="image/*"
-                    id="action-icon-image"
-                    type="file"
-                    onChange={handleAvatarChange}
-                  />
-                  <Button variant="outlined" component="span">
-                    Upload Group Icon
-                  </Button>
-                </label>
-              </>
-            ) : (
-              <>
-                {avatarPreview ? (
-                  <Avatar
-                    variant="rounded"
-                    sx={{
-                      height: 120,
-                      width: 120,
-                    }}
-                    alt="Uploaded Group Icon"
-                    src={avatarPreview}
-                  />
-                ) : (
-                  <Avatar
-                    variant="rounded"
-                    sx={{
-                      height: 120,
-                      width: 120,
-                    }}
-                  />
-                )}
-
-                <label htmlFor="action-icon-image">
-                  <Input
-                    accept="image/*"
-                    id="action-icon-image"
-                    type="file"
-                    onChange={handleAvatarChange}
-                  />
-                  <Button variant="outlined" component="span">
-                    Upload Group Icon
-                  </Button>
-                </label>
-              </>
-            )}
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1em',
-              mt: '1em',
-            }}
-          >
-            {/* {requiredAttributeError && (
-              <Alert severity="error">
-                Please fill out all required fields
-              </Alert>
-            )} */}
-            <TextField
-              required
-              label="Name"
-              name="group_name"
-              value={groupInfoForm.group_name}
-              InputLabelProps={{ shrink: true }}
-              onChange={updateForm}
-              error={emptyGroupNameError || groupNameTakenError}
-              helperText={
-                (emptyGroupNameError && 'Group Name field must be completed') ||
-                (groupNameTakenError &&
-                  'A group already exists with the given name')
-              }
-            />
-            <TextField
-              label="Description"
-              name="group_description"
-              multiline
-              value={groupInfoForm.group_description}
-              InputLabelProps={{ shrink: true }}
-              sx={{ xs: { mt: '1.5em' } }}
-              onChange={updateForm}
-            />
-            <Typography variant="h7" sx={{ mt: '2em' }}>
-              Group Privacy
-            </Typography>
-            <RadioGroup
-              aria-labelledby="group-privacy-label"
-              name="group-privacy-options"
-              required
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <FormControlLabel
-                value={true}
-                control={<Radio />}
-                label="Public"
-                checked={groupInfoForm.is_public === true}
-                onClick={() =>
-                  setGroupInfoForm({
-                    ...groupInfoForm,
-                    is_public: true,
-                  })
-                }
-              />
-              <FormControlLabel
-                value={false}
-                control={<Radio />}
-                label="Private"
-                checked={groupInfoForm.is_public === false}
-                onClick={() =>
-                  setGroupInfoForm({
-                    ...groupInfoForm,
-                    is_public: false,
-                  })
-                }
-              />
-            </RadioGroup>
-            {/* only show private password text field if user selects private group */}
-            {!groupInfoForm.is_public && (
-              <TextField
-                label="password"
-                name="private_password"
-                value={groupInfoForm.private_password}
-                InputLabelProps={{ shrink: true }}
-                onChange={updateForm}
-                sx={{ mt: '1.5em' }}
-                type={showPassword ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                error={emptyPasswordError}
-                helperText={
-                  emptyPasswordError && 'Private groups must have a password'
-                }
-              ></TextField>
-            )}
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                justifyContent: { xs: 'center', sm: 'space-between' },
-                my: '2em',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '1em',
               }}
             >
-              <Button
-                variant="outlined"
-                onClick={() => setShowDeleteWarning(true)}
-              >
-                Delete Group
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  mt: { xs: '1.5em', sm: '0em' },
-                }}
-                onClick={updateGroupInfo}
-              >
-                Save Group Info
-              </Button>
+              {group_image && !avatarPreview ? (
+                <>
+                  <Avatar
+                    variant="rounded"
+                    sx={{ height: 120, width: 120, alignSelf: 'center' }}
+                    alt={`${group_name} avatar`}
+                    src={group_image + '?' + new Date()}
+                  />
+                  <label htmlFor="action-icon-image">
+                    <Input
+                      accept="image/*"
+                      id="action-icon-image"
+                      type="file"
+                      onChange={handleAvatarChange}
+                    />
+                    <Button variant="outlined" component="span">
+                      Upload Group Icon
+                    </Button>
+                  </label>
+                </>
+              ) : (
+                <>
+                  {avatarPreview ? (
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        height: 120,
+                        width: 120,
+                      }}
+                      alt="Uploaded Group Icon"
+                      src={avatarPreview}
+                    />
+                  ) : (
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        height: 120,
+                        width: 120,
+                      }}
+                    />
+                  )}
+
+                  <label htmlFor="action-icon-image">
+                    <Input
+                      accept="image/*"
+                      id="action-icon-image"
+                      type="file"
+                      onChange={handleAvatarChange}
+                    />
+                    <Button variant="outlined" component="span">
+                      Upload Group Icon
+                    </Button>
+                  </label>
+                </>
+              )}
             </Box>
-          </Box>
-        </FormGroup>
-        {/* display warning dialog when user clicks the delete action button*/}
-        <Dialog
-          aria-labelledby="delete-warning-dialog"
-          PaperProps={{
-            sx: {
-              p: '1em',
-              display: 'flex',
-              justifyContent: 'center',
-              textAlign: 'center',
-              alignItems: 'center',
-            },
-          }}
-          open={showDeleteWarning}
-        >
-          {deleteSuccess ? (
-            <>
-              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
-              <DialogContent
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1em',
+                mt: '1em',
+              }}
+            >
+              <TextField
+                required
+                label="Name"
+                name="group_name"
+                value={groupInfoForm.group_name}
+                InputLabelProps={{ shrink: true }}
+                onChange={updateForm}
+                error={emptyGroupNameError || groupNameTakenError}
+                helperText={
+                  (emptyGroupNameError && 'Field must be completed') ||
+                  (groupNameTakenError &&
+                    'A group already exists with the given name')
+                }
+              />
+              <TextField
+                label="Description"
+                name="group_description"
+                multiline
+                value={
+                  groupInfoForm.group_description
+                    ? groupInfoForm.group_description
+                    : ''
+                }
+                InputLabelProps={{ shrink: true }}
+                sx={{ xs: { mt: '1.5em' } }}
+                onChange={updateForm}
+              />
+              <Typography variant="h7" sx={{ mt: '2em' }}>
+                Group Privacy
+              </Typography>
+              <RadioGroup
+                aria-labelledby="group-privacy-label"
+                name="group-privacy-options"
+                required
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
                 }}
               >
-                <Typography>
-                  {group_name} has been deleted! <br></br>You will now be
-                  directed to the homepage
-                </Typography>
-                <CircularProgress sx={{ mt: '2em' }} />
-              </DialogContent>
-            </>
-          ) : (
-            <>
-              <DialogTitle>Delete {group_name}?</DialogTitle>
-              <WarningAmberIcon fontSize="large" />
-              <DialogContent>This is irreversible</DialogContent>
-              <DialogActions sx={{ display: 'flex', gap: '2em' }}>
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Public"
+                  checked={groupInfoForm.is_public === true}
+                  onClick={() =>
+                    setGroupInfoForm({
+                      ...groupInfoForm,
+                      is_public: true,
+                    })
+                  }
+                />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="Private"
+                  checked={groupInfoForm.is_public === false}
+                  onClick={() =>
+                    setGroupInfoForm({
+                      ...groupInfoForm,
+                      is_public: false,
+                    })
+                  }
+                />
+              </RadioGroup>
+              {/* only show private password text field if user selects private group */}
+              {!groupInfoForm.is_public && (
+                <TextField
+                  label="password"
+                  name="private_password"
+                  value={
+                    groupInfoForm.private_password
+                      ? groupInfoForm.private_password
+                      : ''
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  onChange={updateForm}
+                  sx={{ mt: '1.5em' }}
+                  type={showPassword ? 'text' : 'password'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  error={emptyPasswordError}
+                  helperText={
+                    emptyPasswordError && 'Private groups must have a password'
+                  }
+                ></TextField>
+              )}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: { xs: 'center', sm: 'space-between' },
+                  my: '2em',
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => setShowDeleteWarning(true)}
+                >
+                  Delete Group
+                </Button>
                 <Button
                   variant="contained"
-                  onClick={() => setShowDeleteWarning(false)}
+                  sx={{
+                    mt: { xs: '1.5em', sm: '0em' },
+                  }}
+                  onClick={updateGroupInfo}
                 >
-                  Cancel
+                  Save Group Info
                 </Button>
-                <Button variant="outlined" onClick={() => deleteCurrentGroup()}>
-                  Delete
-                </Button>
-              </DialogActions>
-            </>
-          )}
-        </Dialog>
-      </Box>
-    </>
-  );
+              </Box>
+            </Box>
+          </FormGroup>
+          {/* display warning dialog when user clicks the delete action button*/}
+          <Dialog
+            aria-labelledby="delete-warning-dialog"
+            PaperProps={{
+              sx: {
+                p: '1em',
+                display: 'flex',
+                justifyContent: 'center',
+                textAlign: 'center',
+                alignItems: 'center',
+              },
+            }}
+            open={showDeleteWarning}
+          >
+            {deleteSuccess ? (
+              <>
+                <DialogTitle sx={{ textAlign: 'center' }}>
+                  {' '}
+                  Success!
+                </DialogTitle>
+                <DialogContent
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                  }}
+                >
+                  <Typography>
+                    {group_name} has been deleted! <br></br>You will now be
+                    directed to the homepage
+                  </Typography>
+                  <CircularProgress sx={{ mt: '2em' }} />
+                </DialogContent>
+              </>
+            ) : (
+              <>
+                <DialogTitle>Delete {group_name}?</DialogTitle>
+                <WarningAmberIcon fontSize="large" />
+                <DialogContent>This is irreversible</DialogContent>
+                <DialogActions sx={{ display: 'flex', gap: '2em' }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setShowDeleteWarning(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => deleteCurrentGroup()}
+                  >
+                    Delete
+                  </Button>
+                </DialogActions>
+              </>
+            )}
+          </Dialog>
+        </Box>
+      </>
+    );
+  };
+
+  const renderSuccessMsg = () => {
+    return (
+      <>
+        <Typography variant="h2">Success!</Typography>
+        <Typography variant="subtitle2" sx={{ mt: '1em' }}>
+          The group has been updated
+        </Typography>
+      </>
+    );
+  };
+
+  return updateGroupSuccess ? renderSuccessMsg() : renderEditGroupForm();
 };
 
 export default EditGroupPanel;
