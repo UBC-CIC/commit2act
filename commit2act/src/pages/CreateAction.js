@@ -28,6 +28,7 @@ import {
   createAction,
   createActionValidationLabels,
 } from '../graphql/mutations';
+import { getAllActions } from '../graphql/queries';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -54,24 +55,31 @@ const CreateAction = () => {
     item_description: '',
     co2_saved_per_unit: '',
   };
-
-  const [isValid, setIsValid] = useState({
-    co2: false,
-    itemName: false,
-    itemDescription: false,
-    actionName: false,
-    actionItems: false,
-    validationLabels: false,
-  });
-
+  const [allActionNames, setAllActionNames] = useState();
   const [actionForm, setActionForm] = useState(emptyActionForm);
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
-  const [formError, setFormError] = useState(false);
-  const [actionItemFormError, setActionItemFormError] = useState(false);
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [submitActionSuccess, setSubmitActionSuccess] = useState(false);
+  //error states
+  const [cO2Error, setCO2Error] = useState(false);
+  const [emptyItemFieldError, setEmptyItemFieldError] = useState(false);
+  const [emptyActionFieldError, setEmptyActionFieldError] = useState(false);
+  const [actionNameTakenError, setActionNameTakenError] = useState(false);
+  const [emptyActionItemError, setEmptyActionItemError] = useState(false);
+  const [emptyLabelError, setEmptyLabelError] = useState(false);
+
+  //gets list of all action names to make sure submitted group isn't a duplicate
+  useEffect(() => {
+    const getActionNames = async () => {
+      const actionsRes = await API.graphql({ query: getAllActions });
+      const allActions = actionsRes.data.getAllActions;
+      const allNames = allActions.map((action) => action.action_name);
+      setAllActionNames(allNames);
+    };
+    getActionNames();
+  }, []);
 
   const updateForm = (e) => {
     if (e.target.name in actionItemsForm) {
@@ -79,71 +87,11 @@ const CreateAction = () => {
         ...prev,
         [e.target.name]: e.target.value,
       }));
-      switch (e.target.name) {
-        case 'item_name':
-          //checks to see if user input for item name field is null
-          if (!e.target.value) {
-            setIsValid((prev) => ({
-              ...prev,
-              itemName: false,
-            }));
-          } else {
-            setIsValid((prev) => ({
-              ...prev,
-              itemName: true,
-            }));
-          }
-          break;
-        case 'item_description':
-          //checks to see if user input for item description field is null
-          if (!e.target.value) {
-            setIsValid((prev) => ({
-              ...prev,
-              itemDescription: false,
-            }));
-          } else {
-            setIsValid((prev) => ({
-              ...prev,
-              itemDescription: true,
-            }));
-          }
-          break;
-        default:
-          //checks to see if user input for co2 saved per unit field is a positive numerical value
-          if (!e.target.value.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
-            setIsValid((prev) => ({
-              ...prev,
-              co2: false,
-            }));
-          } else {
-            setIsValid((prev) => ({
-              ...prev,
-              co2: true,
-            }));
-          }
-      }
     } else {
       setActionForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
-      switch (e.target.name) {
-        //checks to see if action_name field is null
-        default:
-          if (e.target.name === 'action_name' && !e.target.value) {
-            setIsValid((prev) => ({
-              ...prev,
-              actionName: false,
-            }));
-            setFormError(true);
-          } else if (e.target.name === 'action_name') {
-            setIsValid((prev) => ({
-              ...prev,
-              actionName: true,
-            }));
-          }
-          break;
-      }
     }
   };
 
@@ -159,33 +107,6 @@ const CreateAction = () => {
     setActionIconPreviewLink(previewLink);
   };
 
-  //checks to see if actionItems and image validation labels  are valid for submission (if there is more than 1 item in the array)
-  useEffect(() => {
-    if (actionForm.labels.length > 0) {
-      setIsValid((prev) => ({
-        ...prev,
-        validationLabels: true,
-      }));
-    } else if (actionForm.labels.length === 0) {
-      setIsValid((prev) => ({
-        ...prev,
-        validationLabels: false,
-      }));
-    }
-
-    if (actionForm.action_items.length < 1) {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItems: false,
-      }));
-    } else {
-      setIsValid((prev) => ({
-        ...prev,
-        actionItems: true,
-      }));
-    }
-  }, [actionForm]);
-
   /** functions for adding and removing action items */
   const removeActionItem = (name) => {
     let actionItemsCopy = actionForm.action_items;
@@ -198,23 +119,43 @@ const CreateAction = () => {
     }));
   };
 
+  const checkRequiredActionItemFields = () => {
+    const { item_name, item_description, co2_saved_per_unit } = actionItemsForm;
+
+    if (
+      item_name === '' ||
+      item_description === '' ||
+      co2_saved_per_unit === ''
+    ) {
+      throw new Error('Empty field');
+    }
+    if (!co2_saved_per_unit.match(new RegExp('^([1-9]\\d*|0)(\\.\\d+)?$'))) {
+      throw new Error('Invalid co2 field');
+    }
+  };
+
   const addActionItem = () => {
-    if (isValid.co2 && isValid.itemName && isValid.itemDescription) {
+    try {
+      checkRequiredActionItemFields();
       //adds the item from the form into actionItems array
       let actionItemsCopy = actionForm.action_items;
       actionItemsCopy.push(actionItemsForm);
       setActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
       //clears the actionItemsForm so user can enter in a new action item
       setActionItemsForm(emptyActionItemForm);
-      setIsValid((prev) => ({
-        ...prev,
-        co2: false,
-        itemName: false,
-        itemDescription: false,
-      }));
-      setActionItemFormError(false);
-    } else {
-      setActionItemFormError(true);
+      //reset error states
+      if (actionItemsCopy.length > 0) {
+        setEmptyActionItemError(false);
+      }
+      setEmptyItemFieldError(false);
+      setCO2Error(false);
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Empty field')) {
+        setEmptyItemFieldError(true);
+      } else if (errorMsg.includes('Invalid co2 field')) {
+        setCO2Error(true);
+      }
     }
   };
 
@@ -232,16 +173,33 @@ const CreateAction = () => {
     let labelsCopy = actionForm.labels;
     labelsCopy.push(actionForm.curr_label);
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+    if (labelsCopy.length > 0) {
+      setEmptyLabelError(false);
+    }
     //clear current label
     setActionForm((prev) => ({ ...prev, curr_label: '' }));
   };
 
   // /** functions adding the action itself */
 
-  const submitAction = async () => {
-    if (isValid.actionItems && isValid.actionName && isValid.validationLabels) {
-      setIsLoading(true);
+  const checkRequiredActionFields = () => {
+    const { action_name, labels, action_items } = actionForm;
+    if (action_name === '') {
+      throw new Error('Empty name');
+    } else if (allActionNames.includes(action_name)) {
+      throw new Error('Action name taken');
+    }
+    if (labels.length === 0) {
+      throw new Error('Missing labels');
+    } else if (action_items.length === 0) {
+      throw new Error('Missing action items');
+    }
+  };
 
+  const submitAction = async () => {
+    try {
+      checkRequiredActionFields();
+      setIsLoading(true);
       //if user uploaded an icon image, get the action name to upload the action icon image to s3/cloudfront
       let imageKey = 'actionIcons/'.concat(actionForm.action_name);
       let iconLink = null;
@@ -284,19 +242,26 @@ const CreateAction = () => {
           },
         }),
       ]);
-
       //clear form and related states
       setActionForm(emptyActionForm);
       setActionIconPreviewLink();
-      setIsValid((prev) => ({
-        ...prev,
-        actionName: false,
-      }));
-      setFormError(false);
+      setActionNameTakenError(false);
+      setEmptyActionFieldError(false);
+      setEmptyLabelError(false);
+      setEmptyActionItemError(false);
       //render success message
       setSubmitActionSuccess(true);
-    } else {
-      setFormError(true);
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Action name taken')) {
+        setActionNameTakenError(true);
+      } else if (errorMsg.includes('Empty field')) {
+        setEmptyActionFieldError(true);
+      } else if (errorMsg.includes('Missing labels')) {
+        setEmptyLabelError(true);
+      } else if (errorMsg.includes('Missing action items')) {
+        setEmptyActionItemError(true);
+      }
     }
   };
 
@@ -391,17 +356,21 @@ const CreateAction = () => {
           >
             <Grid item xs={12}>
               <SectionTitle variant="h3">Action Name</SectionTitle>
+              {emptyActionFieldError && (
+                <Alert severity="error" sx={{ my: '2em' }}>
+                  Please fill out all required action fields
+                </Alert>
+              )}
               <TextField
                 required
                 label="Action Name"
                 name="action_name"
                 InputLabelProps={{ shrink: true }}
                 value={actionForm.action_name}
-                error={formError && !isValid.actionName}
+                error={actionNameTakenError}
                 helperText={
-                  formError &&
-                  !isValid.actionName &&
-                  'Action Name field must be completed'
+                  actionNameTakenError &&
+                  'There is an existing action with this name'
                 }
                 onChange={updateForm}
                 sx={{ width: '100%' }}
@@ -457,12 +426,17 @@ const CreateAction = () => {
             sx={{
               color: '#d32f2f',
               mb: '2em',
-              display: formError && !isValid.actionItems ? 'inline' : 'none',
+              display: emptyActionItemError ? 'inline' : 'none',
             }}
           >
             New Action Type must have at least 1 action item
           </Typography>
           {renderAddedActionItems()}
+          {emptyItemFieldError && (
+            <Alert severity="error" sx={{ my: '2em' }}>
+              Please fill out all required item fields
+            </Alert>
+          )}
           <FormGroup
             sx={{
               gap: '1.5em',
@@ -476,10 +450,6 @@ const CreateAction = () => {
               name="item_name"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_name}
-              error={actionItemFormError && !isValid.itemName}
-              helperText={
-                actionItemFormError && !isValid.itemName && 'Input is required'
-              }
               onChange={updateForm}
             />
             <TextField
@@ -488,12 +458,6 @@ const CreateAction = () => {
               name="item_description"
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.item_description}
-              error={actionItemFormError && !isValid.itemDescription}
-              helperText={
-                actionItemFormError &&
-                !isValid.itemDescription &&
-                'Input is required'
-              }
               onChange={updateForm}
             />
             <TextField
@@ -503,12 +467,8 @@ const CreateAction = () => {
               inputProps={{ inputMode: 'numeric' }}
               InputLabelProps={{ shrink: true }}
               value={actionItemsForm.co2_saved_per_unit}
-              error={actionItemFormError && !isValid.co2}
-              helperText={
-                actionItemFormError &&
-                !isValid.co2 &&
-                'Input must be a number greater than 0'
-              }
+              error={cO2Error}
+              helperText={cO2Error && 'Input must be a number greater than 0'}
               sx={{ xs: { mt: '1.5em' } }}
               onChange={updateForm}
             />
@@ -535,8 +495,7 @@ const CreateAction = () => {
             sx={{
               color: '#d32f2f',
               mb: '2em',
-              display:
-                formError && !isValid.validationLabels ? 'inline' : 'none',
+              display: emptyLabelError ? 'inline' : 'none',
             }}
           >
             New Action Type must have at least 1 image validation label
@@ -598,11 +557,6 @@ const CreateAction = () => {
             variant="contained"
             type="submit"
             onClick={submitAction}
-            disabled={
-              !isValid.actionName ||
-              !isValid.validationLabels ||
-              !isValid.actionItems
-            }
           >
             Submit New Action
           </Button>
