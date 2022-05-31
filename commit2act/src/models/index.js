@@ -2,7 +2,7 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
-const UserRole = {
+const UserType = {
   "STUDENT": "STUDENT",
   "EDUCATOR": "EDUCATOR",
   "ADMINISTRATOR": "ADMINISTRATOR",
@@ -10,15 +10,18 @@ const UserRole = {
   "USER": "USER"
 };
 
-const { Group, User, PlantBasedMealAction, WaterAction, TransportationAction, FactBonusPointQuiz, UserGroup } = initSchema(schema);
+const { EducatorUser, User, SubmittedAction, Action, FactBonusPointQuiz, School, Group, StudentUser, EducatorUserGroup, StudentUserGroup } = initSchema(schema);
 
 export {
-  Group,
+  EducatorUser,
   User,
-  PlantBasedMealAction,
-  WaterAction,
-  TransportationAction,
+  SubmittedAction,
+  Action,
   FactBonusPointQuiz,
-  UserGroup,
-  UserRole
+  School,
+  Group,
+  StudentUser,
+  EducatorUserGroup,
+  StudentUserGroup,
+  UserType
 };

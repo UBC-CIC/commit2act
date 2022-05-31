@@ -1,7 +1,7 @@
 export const schema = {
     "models": {
-        "Group": {
-            "name": "Group",
+        "EducatorUser": {
+            "name": "EducatorUser",
             "fields": {
                 "id": {
                     "name": "id",
@@ -10,46 +10,46 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "name": {
-                    "name": "name",
+                "User": {
+                    "name": "User",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "description": {
-                    "name": "description",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "image": {
-                    "name": "image",
-                    "isArray": false,
-                    "type": "AWSURL",
+                    "type": {
+                        "model": "User"
+                    },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "educatorUserUserId"
+                    }
                 },
-                "userID": {
-                    "name": "userID",
+                "School": {
+                    "name": "School",
                     "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
+                    "type": {
+                        "model": "School"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "educatorUserSchoolId"
+                    }
                 },
-                "users": {
-                    "name": "users",
+                "OwnedGroups": {
+                    "name": "OwnedGroups",
                     "isArray": true,
                     "type": {
-                        "model": "UserGroup"
+                        "model": "EducatorUserGroup"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "group"
+                        "associatedWith": "educatorUser"
                     }
                 },
                 "createdAt": {
@@ -67,23 +67,28 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "educatorUserUserId": {
+                    "name": "educatorUserUserId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "educatorUserSchoolId": {
+                    "name": "educatorUserSchoolId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
-            "pluralName": "Groups",
+            "pluralName": "EducatorUsers",
             "attributes": [
                 {
                     "type": "model",
                     "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byUser",
-                        "fields": [
-                            "userID"
-                        ]
-                    }
                 },
                 {
                     "type": "auth",
@@ -134,20 +139,34 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "role": {
-                    "name": "role",
+                "type": {
+                    "name": "type",
                     "isArray": false,
                     "type": {
-                        "enum": "UserRole"
+                        "enum": "UserType"
                     },
                     "isRequired": true,
                     "attributes": []
                 },
-                "PlantBasedMealActions": {
-                    "name": "PlantBasedMealActions",
+                "total_points": {
+                    "name": "total_points",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "total_g_co2_saved": {
+                    "name": "total_g_co2_saved",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "SubmittedActions": {
+                    "name": "SubmittedActions",
                     "isArray": true,
                     "type": {
-                        "model": "PlantBasedMealAction"
+                        "model": "SubmittedAction"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -155,62 +174,6 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "userID"
-                    }
-                },
-                "WaterActions": {
-                    "name": "WaterActions",
-                    "isArray": true,
-                    "type": {
-                        "model": "WaterAction"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
-                    }
-                },
-                "TransportationActions": {
-                    "name": "TransportationActions",
-                    "isArray": true,
-                    "type": {
-                        "model": "TransportationAction"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
-                    }
-                },
-                "GroupsOwned": {
-                    "name": "GroupsOwned",
-                    "isArray": true,
-                    "type": {
-                        "model": "Group"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
-                    }
-                },
-                "JoinedGroups": {
-                    "name": "JoinedGroups",
-                    "isArray": true,
-                    "type": {
-                        "model": "UserGroup"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "user"
                     }
                 },
                 "createdAt": {
@@ -255,8 +218,8 @@ export const schema = {
                 }
             ]
         },
-        "PlantBasedMealAction": {
-            "name": "PlantBasedMealAction",
+        "SubmittedAction": {
+            "name": "SubmittedAction",
             "fields": {
                 "id": {
                     "name": "id",
@@ -265,40 +228,33 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "number_of_plant_based_meals": {
-                    "name": "number_of_plant_based_meals",
+                "Action": {
+                    "name": "Action",
                     "isArray": false,
-                    "type": "Int",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "date_of_action": {
-                    "name": "date_of_action",
-                    "isArray": false,
-                    "type": "AWSDate",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "image": {
-                    "name": "image",
-                    "isArray": false,
-                    "type": "AWSURL",
+                    "type": {
+                        "model": "Action"
+                    },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "submittedActionActionId"
+                    }
                 },
-                "points_received": {
-                    "name": "points_received",
+                "FactBonusPointQuiz": {
+                    "name": "FactBonusPointQuiz",
                     "isArray": false,
-                    "type": "Int",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "g_co2_saved": {
-                    "name": "g_co2_saved",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": true,
-                    "attributes": []
+                    "type": {
+                        "model": "FactBonusPointQuiz"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "submittedActionFactBonusPointQuizId"
+                    }
                 },
                 "userID": {
                     "name": "userID",
@@ -322,10 +278,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "submittedActionActionId": {
+                    "name": "submittedActionActionId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "submittedActionFactBonusPointQuizId": {
+                    "name": "submittedActionFactBonusPointQuizId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
-            "pluralName": "PlantBasedMealActions",
+            "pluralName": "SubmittedActions",
             "attributes": [
                 {
                     "type": "model",
@@ -358,20 +328,13 @@ export const schema = {
                 }
             ]
         },
-        "WaterAction": {
-            "name": "WaterAction",
+        "Action": {
+            "name": "Action",
             "fields": {
                 "id": {
                     "name": "id",
                     "isArray": false,
                     "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "ml_tap_water": {
-                    "name": "ml_tap_water",
-                    "isArray": false,
-                    "type": "Float",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -392,7 +355,7 @@ export const schema = {
                 "points_received": {
                     "name": "points_received",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "Float",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -403,10 +366,17 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "userID": {
-                    "name": "userID",
+                "action_name": {
+                    "name": "action_name",
                     "isArray": false,
-                    "type": "ID",
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "action_items": {
+                    "name": "action_items",
+                    "isArray": false,
+                    "type": "AWSJSON",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -428,137 +398,11 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "WaterActions",
+            "pluralName": "Actions",
             "attributes": [
                 {
                     "type": "model",
                     "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byUser",
-                        "fields": [
-                            "userID"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "TransportationAction": {
-            "name": "TransportationAction",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "km_walked": {
-                    "name": "km_walked",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "km_biked": {
-                    "name": "km_biked",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "km_transited": {
-                    "name": "km_transited",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "date_of_action": {
-                    "name": "date_of_action",
-                    "isArray": false,
-                    "type": "AWSDate",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "image": {
-                    "name": "image",
-                    "isArray": false,
-                    "type": "AWSURL",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "points_received": {
-                    "name": "points_received",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "g_co2_save": {
-                    "name": "g_co2_save",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "userID": {
-                    "name": "userID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "TransportationActions",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byUser",
-                        "fields": [
-                            "userID"
-                        ]
-                    }
                 },
                 {
                     "type": "auth",
@@ -659,8 +503,352 @@ export const schema = {
                 }
             ]
         },
-        "UserGroup": {
-            "name": "UserGroup",
+        "School": {
+            "name": "School",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "city": {
+                    "name": "city",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "country": {
+                    "name": "country",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Schools",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Group": {
+            "name": "Group",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "image": {
+                    "name": "image",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "studentusers": {
+                    "name": "studentusers",
+                    "isArray": true,
+                    "type": {
+                        "model": "StudentUserGroup"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "group"
+                    }
+                },
+                "educatorusers": {
+                    "name": "educatorusers",
+                    "isArray": true,
+                    "type": {
+                        "model": "EducatorUserGroup"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "group"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Groups",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "StudentUser": {
+            "name": "StudentUser",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "User": {
+                    "name": "User",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "studentUserUserId"
+                    }
+                },
+                "School": {
+                    "name": "School",
+                    "isArray": false,
+                    "type": {
+                        "model": "School"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "studentUserSchoolId"
+                    }
+                },
+                "JoinedGroups": {
+                    "name": "JoinedGroups",
+                    "isArray": true,
+                    "type": {
+                        "model": "StudentUserGroup"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "studentUser"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "studentUserUserId": {
+                    "name": "studentUserUserId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "studentUserSchoolId": {
+                    "name": "studentUserSchoolId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            },
+            "syncable": true,
+            "pluralName": "StudentUsers",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "EducatorUserGroup": {
+            "name": "EducatorUserGroup",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "educatorUser": {
+                    "name": "educatorUser",
+                    "isArray": false,
+                    "type": {
+                        "model": "EducatorUser"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "educatorUserID"
+                    }
+                },
+                "group": {
+                    "name": "group",
+                    "isArray": false,
+                    "type": {
+                        "model": "Group"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "groupID"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "EducatorUserGroups",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                }
+            ]
+        },
+        "StudentUserGroup": {
+            "name": "StudentUserGroup",
             "fields": {
                 "id": {
                     "name": "id",
@@ -682,17 +870,17 @@ export const schema = {
                         "targetName": "groupID"
                     }
                 },
-                "user": {
-                    "name": "user",
+                "studentUser": {
+                    "name": "studentUser",
                     "isArray": false,
                     "type": {
-                        "model": "User"
+                        "model": "StudentUser"
                     },
                     "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "userID"
+                        "targetName": "studentUserID"
                     }
                 },
                 "createdAt": {
@@ -713,7 +901,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "UserGroups",
+            "pluralName": "StudentUserGroups",
             "attributes": [
                 {
                     "type": "model",
@@ -723,8 +911,8 @@ export const schema = {
         }
     },
     "enums": {
-        "UserRole": {
-            "name": "UserRole",
+        "UserType": {
+            "name": "UserType",
             "values": [
                 "STUDENT",
                 "EDUCATOR",
@@ -735,5 +923,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "573216e7f57aa30031ecda75bb808e33"
+    "version": "d3e90245a1d335b309ff6f04be999a38"
 };

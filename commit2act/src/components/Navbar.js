@@ -1,153 +1,238 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
   Typography,
   IconButton,
   Avatar,
-  Drawer,
-  Divider,
-  List,
-  ListItem,
-} from '@mui/material';
-import {
+  Grid,
+  CircularProgress,
+  Backdrop,
   Menu,
-  Group,
-  Home,
-  Assessment,
-  Info,
-  ChevronLeft,
-  ExpandLess,
-} from '@mui/icons-material';
-import { NavLink } from 'react-router-dom';
-import { createTheme, ThemeProvider, styled } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
+  MenuItem,
+} from '@mui/material';
+import { ExitToApp, More } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Auth } from 'aws-amplify';
+import { connect } from 'react-redux';
+import { updateLoginState } from '../actions/loginActions';
+import { updateMenuState } from '../actions/menuActions';
 
-const theme = createTheme({
-  components: {
-    MuiTypography: {
-      variants: [
-        {
-          props: {
-            variant: 'h2',
-          },
-          style: {
-            fontSize: 30,
-            color: 'black',
-            fontWeight: 100,
-          },
-        },
-        {
-          props: {
-            variant: 'subtitle1',
-          },
-          style: {
-            fontSize: 15,
-            color: 'black',
-            paddingLeft: 5,
-          },
-        },
-      ],
+const useStyles = makeStyles((theme) => ({
+  grow: {
+    flexGrow: 1,
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
     },
   },
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  // for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
+  logo: {
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
+    },
+    paddingLeft: '15px',
+  },
+  sectionDesktop: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  sectionMobile: {
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: 'pink',
+  },
 }));
 
-const StyledNavLink = styled(NavLink)({
-  textDecoration: 'none',
-  '&:hover': {
-    opacity: 0.8,
-  },
-});
+function Navbar(props) {
+  const {
+    updateLoginState,
+    updateMenuState,
+    loginState,
+    menuEnabled,
+    showSideMenuButton,
+  } = props;
+  const classes = useStyles();
+  const navigate = useNavigate();
 
-const Navbar = () => {
-  const drawerWidth = useMediaQuery('(min-width:600px') ? 240 : '100%';
-  const drawerAnchor = useMediaQuery('(min-width:600px') ? 'left' : 'top';
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [user, setUser] = useState('');
+  const [loadingBackdrop, setLoadingBackdrop] = React.useState(false);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+
+  const handleLogout = async () => {
+    setLoadingBackdrop(true);
+    handleMenuClose();
+    await new Promise((r) => setTimeout(r, 1000));
+    await onSignOut();
+    setLoadingBackdrop(false);
+  };
+
+  const handleMobileMenuOpen = (event) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleLogout}>
+        <span>Logout </span>
+        <ExitToApp color={'secondary'} />
+      </MenuItem>
+    </Menu>
+  );
+
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem disabled>
+        <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
+      </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <span>Logout </span>
+        <ExitToApp color={'secondary'} />
+      </MenuItem>
+    </Menu>
+  );
+
+  useEffect(() => {
+    async function retrieveUser() {
+      try {
+        const returnedUser = await Auth.currentAuthenticatedUser();
+        setUser(returnedUser.attributes.email);
+      } catch (e) {}
+    }
+    retrieveUser();
+  }, [loginState]);
+
+  const handleSideMenu = () => {
+    updateMenuState(!menuEnabled);
+  };
+
+  async function onSignOut() {
+    updateLoginState('signIn');
+    navigate('/');
+    await Auth.signOut();
+  }
 
   return (
-    <ThemeProvider theme={theme}>
-      <AppBar position="sticky">
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={() => setOpenDrawer((openDrawer) => !openDrawer)}
+    <Grid item xs={12} className={classes.appBar}>
+      <AppBar position="static" style={{ backgroundColor: '#3F72AF' }}>
+        <Toolbar>
+          {showSideMenuButton ? (
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleSideMenu}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : null}
+          <Typography
+            className={classes.title}
+            variant="h6"
+            component={'h1'}
+            noWrap
+            sx={{ fontWeight: 200 }}
           >
-            <Menu />
-          </IconButton>
-          <Typography variant="h2" color="inherit" component="div">
             Commit2Act
           </Typography>
-          <StyledNavLink to="/account-settings">
-            <Avatar>A</Avatar>
-          </StyledNavLink>
+          <div className={classes.grow} />
+          <div className={classes.sectionDesktop}>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
+            </IconButton>
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <More />
+            </IconButton>
+            {renderMobileMenu}
+            {renderMenu}
+          </div>
         </Toolbar>
       </AppBar>
-      <Drawer
-        anchor={drawerAnchor}
-        variant="persistent"
-        open={openDrawer}
-        PaperProps={{
-          sx: { width: drawerWidth },
-        }}
-      >
-        <DrawerHeader>
-          <IconButton
-            onClick={() => setOpenDrawer(false)}
-            sx={{ paddingRight: '20px' }}
-          >
-            {drawerAnchor === 'left' ? <ChevronLeft /> : <ExpandLess />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <StyledNavLink to="/">
-            <ListItem button>
-              <IconButton>
-                <Home />
-                <Typography variant="subtitle1">Home</Typography>
-              </IconButton>
-            </ListItem>
-          </StyledNavLink>
-          <StyledNavLink to="/find-group">
-            <ListItem button>
-              <IconButton>
-                <Group />
-                <Typography variant="subtitle1">Find Group</Typography>
-              </IconButton>
-            </ListItem>
-          </StyledNavLink>
-          <StyledNavLink to="/report-action">
-            <ListItem button>
-              <IconButton>
-                <Assessment />
-                <Typography variant="subtitle1">Report Action</Typography>
-              </IconButton>
-            </ListItem>
-          </StyledNavLink>
-          <StyledNavLink to="/info">
-            <ListItem button>
-              <IconButton>
-                <Info />
-                <Typography variant="subtitle1">Info</Typography>
-              </IconButton>
-            </ListItem>
-          </StyledNavLink>
-        </List>
-      </Drawer>
-    </ThemeProvider>
+      <Backdrop className={classes.backdrop} open={loadingBackdrop}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </Grid>
   );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    loginState: state.loginState.currentState,
+    menuEnabled: state.appState.showSideBar,
+  };
 };
 
-export default Navbar;
+const mapDispatchToProps = {
+  updateLoginState,
+  updateMenuState,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

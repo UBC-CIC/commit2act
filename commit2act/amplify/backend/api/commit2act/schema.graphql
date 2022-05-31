@@ -1,70 +1,298 @@
-enum UserRole {
-  STUDENT
-  EDUCATOR
-  ADMINISTRATOR
-  DEVELOPER
-  USER
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY {
+  globalAuthRule: AuthRule = { allow: public }
+} # FOR TESTING ONLY!
+type Action {
+  action_id: Int!
+  action_name: String!
+  page_media: String
+  action_icon: String
+  fallback_quiz_media: String
 }
 
-type Group @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String!
-  description: String!
-  image: AWSURL
-  userID: ID! @index(name: "byUser")
-  users: [User] @manyToMany(relationName: "UserGroup")
+type ActionItem {
+  action_id: Int!
+  item_name: String!
+  item_description: String!
+  co2_saved_per_unit: Float!
 }
 
-type User @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  username: String!
-  email: AWSEmail!
-  avatar: AWSURL
-  role: UserRole!
-  PlantBasedMealActions: [PlantBasedMealAction] @hasMany(indexName: "byUser", fields: ["id"])
-  WaterActions: [WaterAction] @hasMany(indexName: "byUser", fields: ["id"])
-  TransportationActions: [TransportationAction] @hasMany(indexName: "byUser", fields: ["id"])
-  GroupsOwned: [Group] @hasMany(indexName: "byUser", fields: ["id"])
-  JoinedGroups: [Group] @manyToMany(relationName: "UserGroup")
+input ActionItemInput {
+  item_name: String!
+  item_description: String!
+  co2_saved_per_unit: Float!
 }
 
-type FactBonusPointQuiz @model @auth(rules: [{allow: public}]) {
-  id: ID!
+type ActionQuiz {
+  quiz_id: Int!
   fact_text: String!
   question_text: String!
-  answers: [String!]!
-  correct_answer: String!
+  action_id: ID!
 }
 
-type PlantBasedMealAction @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  number_of_plant_based_meals: Int!
-  date_of_action: AWSDate!
-  image: AWSURL
-  points_received: Int!
+type ActionQuizAnswer {
+  quiz_id: Int!
+  answer: String!
+  is_correct_answer: Boolean!
+}
+
+type ActionValidationLabel {
+  action_id: Int!
+  validation_label: String!
+}
+
+type ActionWithLabels {
+  action_id: Int!
+  action_name: String!
+  page_media: String
+  action_icon: String
+  fallback_quiz_media: String
+  validation_labels: String
+}
+
+type Group {
+  group_id: Int!
+  group_name: String!
+  group_description: String
+  group_image: String
+  is_public: Boolean!
+  private_password: String
+}
+
+type GroupInfo {
+  total_co2: Float
+  week_co2: Float
+  number_of_users: Float
+}
+
+type GroupUser {
+  group_id: Int!
+  user_id: Int!
+  user_role: UserRoleInGroup!
+}
+
+type Mutation {
+  # Put a single value of type User
+  createUser(
+    username: String!
+    name: String!
+    email: String!
+    avatar: String
+  ): User
+  # update a single value of type User, needs at least one of name, email, avatar
+  updateUser(user_id: Int!, name: String, email: String, avatar: String): User
+  deleteUser(user_id: Int!): String
+  createSubmittedAction(
+    user_id: Int!
+    action_id: Int!
+    quiz_id: Int
+    g_co2_saved: Float!
+    date_of_action: String!
+    first_quiz_answer_correct: Boolean!
+    quiz_answered: Boolean!
+    is_validated: Boolean!
+    points_earned: Int!
+  ): SubmittedAction
+  createSubmittedActionItem(
+    sa_id: Int!
+    item_name: String!
+    input_value: Float!
+  ): SubmittedActionItem
+  createSubmittedActionItems(
+    sa_id: Int!
+    submitted_action_items: [SubmittedActionItemInput!]!
+  ): [SubmittedActionItem]
+  createAction(
+    action_name: String!
+    page_media: String
+    action_icon: String
+    fallback_quiz_media: String
+  ): Action
+  createActionItems(
+    action_id: Int!
+    action_items: [ActionItemInput!]!
+  ): [ActionItem]
+  createActionValidationLabels(
+    action_id: Int!
+    validation_labels: [String!]!
+  ): [ActionValidationLabel]
+  deleteAction(action_id: Int!): String
+  createGroup(
+    group_name: String!
+    group_description: String
+    group_image: String
+    is_public: Boolean!
+    private_password: String
+  ): Group
+  createGroupAndOwner(
+    owner_user_id: Int!
+    group_name: String!
+    group_description: String
+    group_image: String
+    is_public: Boolean!
+    private_password: String
+  ): Group
+  updateGroup(
+    group_id: Int!
+    group_name: String
+    group_description: String
+    group_image: String
+    is_public: Boolean
+    private_password: String
+  ): Group
+  deleteGroup(group_id: Int!): String
+  addGroupUser(
+    group_id: Int!
+    user_id: Int!
+    user_role: UserRoleInGroup!
+  ): GroupUser
+  addGroupOwner(group_id: Int!, user_id: Int!): GroupUser
+  addGroupMember(group_id: Int!, user_id: Int!): GroupUser
+  demoteGroupOwner(group_id: Int!, user_id: Int!): GroupUser
+  promoteGroupMember(group_id: Int!, user_id: Int!): GroupUser
+  removeGroupMember(group_id: Int!, user_id: Int!): String
+}
+
+type Query {
+  # Get a single value of type 'User' by primary key.
+  getSingleUser(user_id: Int!): User
+  getSingleUserByUsername(username: String!): User
+  getSingleSubmittedAction(sa_id: Int!): SubmittedAction
+  getSingleSubmittedActionWithItems(sa_id: Int!): SubmittedActionWithItems
+  getSingleAction(action_id: Int!): ActionWithLabels
+  getTotalGlobalCO2: Float
+  getUsersTotalCO2(user_id: Int!): Float
+  getGroupsTotalCO2(group_id: Int!): Float
+  getUsersWeekCO2(user_id: Int!): Float
+  getGroupsWeekCO2(group_id: Int!): Float
+  getAllUsers: [User]
+  getAllActions: [ActionWithLabels]
+  getAllSubmittedActions: [SubmittedAction]
+  getAllActionItems: [ActionItem]
+  getActionItemsForAction(action_id: Int!): [ActionItem]
+  getAllSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllValidatedSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllUnvalidatedSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllGroups: [Group]
+  getSingleGroup(group_id: Int!): Group
+  getSingleGroupByName(group_name: String!): Group
+  getAllUsersInGroup(group_id: Int): [UserWithRole]
+  getAllOwnersInGroup(group_id: Int): [User]
+  getAllMembersInGroup(group_id: Int): [User]
+  getAllValidatedSubmittedActionsInGroup(
+    group_id: Int
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllGroupsForUser(user_id: Int): [Group]
+  getAllGroupsUserOwns(user_id: Int): [Group]
+  getAllGroupsUserIsAMember(user_id: Int): [Group]
+  getGroupTotalCO2(group_id: Int!): Float
+  isPrivateGroupPasswordCorrect(
+    group_id: Int!
+    private_password: String!
+  ): Boolean
+}
+
+type Role {
+  user_id: Int!
+  role: UserRole!
+}
+
+type SubmittedAction {
+  sa_id: Int!
+  user_id: Int!
+  action_id: Int!
+  quiz_id: Int
   g_co2_saved: Float!
-  userID: ID! @index(name: "byUser")
+  date_of_action: String!
+  time_sumbitted: String
+  first_quiz_answer_correct: Boolean!
+  quiz_answered: Boolean!
+  is_validated: Boolean!
+  points_earned: Int!
+  submitted_image: String
 }
 
-type WaterAction @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  ml_tap_water: Float!
-  date_of_action: AWSDate!
-  image: AWSURL
-  points_received: Int!
+type SubmittedActionItem {
+  item_name: String!
+  sa_id: Int!
+  input_value: Float
+}
+
+input SubmittedActionItemInput {
+  item_name: String!
+  input_value: Float!
+}
+
+type SubmittedActionWithItems {
+  sa_id: Int!
+  user_id: Int!
+  action_id: Int!
+  quiz_id: Int
   g_co2_saved: Float!
-  userID: ID! @index(name: "byUser")
+  date_of_action: String!
+  time_sumbitted: String
+  first_quiz_answer_correct: Boolean!
+  quiz_answered: Boolean!
+  is_validated: Boolean!
+  points_earned: Int!
+  submitted_image: String
+  submitted_action_items: [SubmittedActionItem]
 }
 
-type TransportationAction @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  km_walked: Float!
-  km_biked: Float!
-  km_transited: Float!
-  date_of_action: AWSDate!
-  image: AWSURL
-  points_received: Int!
-  g_co2_save: Float!
-  userID: ID! @index(name: "byUser")
+type SubmittedActionWithItemsEmbedded {
+  sa_id: Int!
+  user_id: Int!
+  action_id: Int!
+  quiz_id: Int
+  g_co2_saved: Float!
+  date_of_action: String!
+  time_sumbitted: String
+  first_quiz_answer_correct: Boolean!
+  quiz_answered: Boolean!
+  is_validated: Boolean!
+  points_earned: Int!
+  submitted_action_items: String
+  action_name: String
+  submitted_image: String
 }
- 
+
+type User {
+  user_id: Int!
+  username: String!
+  name: String!
+  email: String!
+  avatar: String
+}
+
+enum UserRole {
+  student
+  educator
+  administrator
+  user
+}
+
+enum UserRoleInGroup {
+  owner
+  member
+}
+
+type UserWithRole {
+  user_id: Int!
+  username: String!
+  name: String!
+  email: String!
+  avatar: String
+  user_role: UserRoleInGroup!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

@@ -1,34 +1,91 @@
 import './App.css';
-import { ApolloProvider } from '@apollo/client';
-import client from './ApolloClient';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import SelfReportMenu from './components/SelfReportMenu';
-import FindGroupPage from './pages/FindGroupPage';
-import InfoPage from './pages/InfoPage';
-import LandingPage from './pages/LandingPage';
-import AccountSettingsPage from './pages/AccountSettingsPage';
+import { BrowserRouter } from 'react-router-dom';
+import PageContainer from './views/pageContainer/PageContainer';
+import Amplify from 'aws-amplify';
+import awsmobile from './aws-exports';
+import { StylesProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import Login from './components/authentication/Login_material';
+import { Hub } from 'aws-amplify';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { updateLoginState } from './actions/loginActions';
+import theme from './themes';
+import ScrollToTop from './components/ScrollToTop';
 
-function App() {
+Amplify.configure(awsmobile);
+
+function App(props) {
+  const { loginState, updateLoginState } = props;
+
+  const [currentLoginState, updateCurrentLoginState] = useState(loginState);
+
+  useEffect(() => {
+    setAuthListener();
+  }, []);
+
+  useEffect(() => {
+    updateCurrentLoginState(loginState);
+  }, [loginState]);
+
+  async function setAuthListener() {
+    Hub.listen('auth', (data) => {
+      switch (data.payload.event) {
+        case 'signOut':
+          updateLoginState('signIn');
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
   return (
-    <ApolloProvider client={client}>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route exact path="/find-group" element={<FindGroupPage />} />
-          <Route exact path="/report-action" element={<SelfReportMenu />} />
-          <Route exact path="/info" element={<InfoPage />} />
-          <Route
-            exact
-            path="/account-settings"
-            element={<AccountSettingsPage />}
-          />
-          {/* catch all route */}
-          <Route path="/" element={<LandingPage />} />
-        </Routes>
-      </Router>
-    </ApolloProvider>
+    <StylesProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <div style={{ width: '100vw', height: '100vh' }}>
+          {currentLoginState !== 'signedIn' && (
+            /* Login component options:
+             *
+             * [logo: "custom", "none"]
+             * [type: "video", "image", "static"]
+             * [themeColor: "standard", "#012144" (color hex value in quotes) ]
+             *  Suggested alternative theme colors: #037dad, #5f8696, #495c4e, #4f2828, #ba8106, #965f94
+             * [animateTitle: true, false]
+             * [title: string]
+             * [darkMode (changes font/logo color): true, false]
+             * [disableSignUp: true, false]
+             * */
+            <Login
+              logo={'custom'}
+              type={'image'}
+              themeColor={'standard'}
+              animateTitle={false}
+              title={'Commit2Act'}
+              darkMode={true}
+              disableSignUp={false}
+            />
+          )}
+          {currentLoginState === 'signedIn' && (
+            <BrowserRouter>
+              <ScrollToTop />
+              <PageContainer />
+            </BrowserRouter>
+          )}
+        </div>
+      </ThemeProvider>
+    </StylesProvider>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    loginState: state.loginState.currentState,
+  };
+};
+
+const mapDispatchToProps = {
+  updateLoginState,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
