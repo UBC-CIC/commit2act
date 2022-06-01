@@ -1,9 +1,6 @@
 version: 1
 backend:
   phases:
-    preBuild:
-      commands:
-        - cd commit2act
     build:
       commands:
         - export AWS_REGION=$(aws configure get region)
