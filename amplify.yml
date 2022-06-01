@@ -3,6 +3,7 @@ backend:
   phases:
     build:
       commands:
+        - cd commit2act
         - export AWS_REGION=$(aws configure get region)
         - npm install -g @aws-amplify/cli
         - "# Execute Amplify CLI with the helper script"
@@ -11,7 +12,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - cd commit2act
         - "# Execute Amplify CLI with the helper script"
         - amplifyPush --simple
         - npm install
@@ -26,4 +26,4 @@ frontend:
       - "**/*"
   cache:
     paths:
-      - node_modules/**/*
+      - commit2act/node_modules/**/*
