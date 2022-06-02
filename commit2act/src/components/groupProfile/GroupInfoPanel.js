@@ -27,13 +27,23 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
 
   return (
     <>
-      <Grid container sx={{ pt: '1.5em' }} columnSpacing={12} rowSpacing={4}>
+      <Grid
+        container
+        sx={{
+          overflow: 'auto',
+          padding: '0.25em',
+        }}
+        columnSpacing={12}
+        rowSpacing={4}
+      >
         <Grid item xs={12} sm={7}>
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             About
           </Typography>
           <Typography component="div" variant="subtitle2">
-            {groupInfo.group_description}
+            {groupInfo.group_description
+              ? groupInfo.group_description
+              : 'This group currently does not have a description.'}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={5}>

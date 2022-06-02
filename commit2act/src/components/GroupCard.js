@@ -180,17 +180,21 @@ const GroupCard = ({ group }) => {
             </Box>
           )}
 
-          <Typography variant="body2" sx={{ mt: '1em' }}>
-            {readMore
-              ? group_description
-              : group_description.slice(0, descriptionLength)}
-          </Typography>
-          <Button
-            sx={{ p: 0, mt: '0.5em', fontSize: 13 }}
-            onClick={() => setReadMore(!readMore)}
-          >
-            Read {readMore ? 'Less' : 'More'}
-          </Button>
+          {group_description && (
+            <>
+              <Typography variant="body2" sx={{ mt: '1em' }}>
+                {readMore
+                  ? group_description
+                  : group_description.slice(0, descriptionLength)}
+              </Typography>
+              <Button
+                sx={{ p: 0, mt: '0.5em', fontSize: 13 }}
+                onClick={() => setReadMore(!readMore)}
+              >
+                Read {readMore ? 'Less' : 'More'}
+              </Button>
+            </>
+          )}
         </CardContent>
       </Box>
     </Card>

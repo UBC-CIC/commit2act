@@ -34,14 +34,20 @@ const AddMemberPanel = ({ groupInfo }) => {
       flexDirection="column"
       alignItems={{ xs: 'center', lg: 'flex-start' }}
     >
-      <Typography component="div" variant="h3">
-        Add Users To This Group By Sending Them Your Group Link{' '}
-        {!groupInfo.is_public && 'And Password'}
+      <Typography component="div" variant="h2">
+        Add users to this group by sending them your group link{' '}
+        {!groupInfo.is_public && 'and password'}
       </Typography>
       <Typography component="div" variant="subtitle2" sx={{ m: '2em 0 1em 0' }}>
         Your Group Link is:{' '}
       </Typography>
-      <Box display="flex" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
+      <Box
+        display="flex"
+        sx={{
+          flexDirection: { xs: 'column', md: 'row' },
+          wordBreak: 'break-word',
+        }}
+      >
         <Typography
           component="div"
           variant="subtitle2"
@@ -90,7 +96,10 @@ const AddMemberPanel = ({ groupInfo }) => {
           </Typography>
           <Box
             display="flex"
-            sx={{ flexDirection: { xs: 'column', md: 'row' } }}
+            sx={{
+              flexDirection: { xs: 'column', md: 'row' },
+              wordBreak: 'break-word',
+            }}
           >
             <Typography
               component="div"

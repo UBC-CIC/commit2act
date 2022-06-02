@@ -3,18 +3,21 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  IconButton,
+  CircularProgress,
+  Typography,
 } from '@mui/material';
 import {
   AccountCircle,
   PersonAddAlt1,
   PersonRemove,
   GroupRemove,
+  ExitToApp,
+  Close,
 } from '@mui/icons-material';
 import {
   promoteGroupMember,
@@ -32,11 +35,13 @@ const GroupMemberDialog = ({
   groupInfo,
   setGroupMembers,
   currentUserOwner,
+  cognitoUser,
 }) => {
   const dialogDisplayInitial = {
     promoteUserSuccess: false,
     demoteOwnerSuccess: false,
     removeUserSuccess: false,
+    leaveGroupSuccess: false,
   };
   const [dialogDisplay, setDialogDisplay] = useState(dialogDisplayInitial);
   const [membersUpdated, setMembersUpdated] = useState(false);
@@ -90,19 +95,36 @@ const GroupMemberDialog = ({
     setMembersUpdated(true);
   };
 
-  const getUpdatedMembers = async () => {
-    const res = await API.graphql({
-      query: getAllUsersInGroup,
-      variables: { group_id: groupInfo.group_id },
-    });
-    setGroupMembers(res.data.getAllUsersInGroup);
+  const leaveGroup = async () => {
+    try {
+      await API.graphql({
+        query: removeGroupMember,
+        variables: {
+          group_id: groupInfo.group_id,
+          user_id: selectedMember.user_id,
+        },
+      });
+      setDialogDisplay({ ...dialogDisplay, leaveGroupSuccess: true });
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    } catch (err) {
+      console.log(err);
+    }
+    setMembersUpdated(true);
   };
 
   //everytime a member is updated, run query to get list of all updated members to reload and update the parent component
   useEffect(() => {
+    const getUpdatedMembers = async () => {
+      const res = await API.graphql({
+        query: getAllUsersInGroup,
+        variables: { group_id: groupInfo.group_id },
+      });
+      setGroupMembers(res.data.getAllUsersInGroup);
+    };
     getUpdatedMembers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [membersUpdated]);
+  }, [groupInfo.group_id, membersUpdated, setGroupMembers]);
 
   //display promote, demote and remove options only if current user is a group owner
   const renderOwnerView = () => {
@@ -140,35 +162,60 @@ const GroupMemberDialog = ({
       {openDialog && (
         <Dialog
           aria-labelledby="already-member-dialog"
-          PaperProps={{ sx: { p: '1em' } }}
+          PaperProps={{ sx: { minWidth: '20%', p: '1em' } }}
           open={openDialog}
           onClose={handleClose}
         >
-          {/* if there are no success messages to show, display the initial dialog menu */}
-          {Object.values(dialogDisplay).every((value) => value === false) && (
+          <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
+            <Close />
+          </IconButton>
+          {/* if current cognito user is the selected member, give option to leave group */}
+          {!dialogDisplay.leaveGroupSuccess &&
+          selectedMember.user_id ===
+            Number(cognitoUser.attributes['custom:id']) ? (
             <>
               <DialogTitle>{selectedMember.name}</DialogTitle>
               <DialogContent>
-                Role:{' '}
+                Your Role:{' '}
                 {selectedMember.user_role.charAt(0).toUpperCase() +
                   selectedMember.user_role.slice(1)}
               </DialogContent>
-              <List sx={{ pt: 0 }}>
-                <ListItem
-                  autoFocus
-                  button
-                  onClick={() =>
-                    navigate(`/user-profile/${selectedMember.user_id}`)
-                  }
-                >
+              <List sx={{ pt: 0, pb: '2em' }}>
+                <ListItem autoFocus button onClick={leaveGroup}>
                   <ListItemIcon>
-                    <AccountCircle />
+                    <ExitToApp />
                   </ListItemIcon>
-                  <ListItemText>View User Profile</ListItemText>
+                  <ListItemText>Leave Group</ListItemText>
                 </ListItem>
-                {renderOwnerView()}
               </List>
             </>
+          ) : (
+            /* if there are no success messages to show, display the initial dialog menu */
+            Object.values(dialogDisplay).every((value) => value === false) && (
+              <>
+                <DialogTitle>{selectedMember.name}</DialogTitle>
+                <DialogContent>
+                  Role:{' '}
+                  {selectedMember.user_role.charAt(0).toUpperCase() +
+                    selectedMember.user_role.slice(1)}
+                </DialogContent>
+                <List sx={{ pt: 0, pb: '2em' }}>
+                  <ListItem
+                    autoFocus
+                    button
+                    onClick={() =>
+                      navigate(`/user-profile/${selectedMember.user_id}`)
+                    }
+                  >
+                    <ListItemIcon>
+                      <AccountCircle />
+                    </ListItemIcon>
+                    <ListItemText>View User Profile</ListItemText>
+                  </ListItem>
+                  {renderOwnerView()}
+                </List>
+              </>
+            )
           )}
           {dialogDisplay.promoteUserSuccess && (
             <>
@@ -194,9 +241,25 @@ const GroupMemberDialog = ({
               </DialogContent>
             </>
           )}
-          <DialogActions>
-            <Button onClick={handleClose}>Close</Button>
-          </DialogActions>
+          {dialogDisplay.leaveGroupSuccess && (
+            <>
+              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
+              <DialogContent
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <Typography>
+                  You have left the the group! <br></br>You will now be directed
+                  to the homepage
+                </Typography>
+                <CircularProgress sx={{ mt: '2em' }} />
+              </DialogContent>
+            </>
+          )}
         </Dialog>
       )}
     </>

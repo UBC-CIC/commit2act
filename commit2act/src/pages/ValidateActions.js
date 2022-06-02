@@ -170,10 +170,19 @@ const ValidateActions = () => {
             </Typography>
           )
         )}
+        {allActions && allActions.length === 0 && (
+          <Typography
+            variant="subtitle2"
+            sx={{ textAlign: 'center', mt: '1em' }}
+          >
+            There are no actions in need of validation
+          </Typography>
+        )}
         <Stack spacing={2}>
           {/* if group has not been selected, display all actions */}
           {!selectedGroup &&
             allActions &&
+            allActions.length > 0 &&
             allActions.map((action, index) => (
               <ValidationNeededCard
                 action={action}

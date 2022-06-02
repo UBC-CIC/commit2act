@@ -116,7 +116,14 @@ const Landing = ({ user }) => {
             justifyContent="center"
             sx={{ width: { xs: '70%', sm: '100%' } }}
           >
-            <Typography variant="h1" sx={{ mt: { xs: '1.5em', lg: '0' } }}>
+            <Typography
+              variant="h1"
+              sx={{
+                mt: { xs: '1.5em', lg: '0' },
+                wordWrap: 'break-word',
+                maxWidth: { xs: '400px', sm: '100%' },
+              }}
+            >
               Welcome {user.name}!
             </Typography>
             {numActionsToValidate > 0 && (
@@ -159,6 +166,7 @@ const Landing = ({ user }) => {
               Recent Progress
             </Typography>
             <Box
+              component={Paper}
               sx={{
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },

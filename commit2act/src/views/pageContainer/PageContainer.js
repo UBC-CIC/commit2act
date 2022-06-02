@@ -17,6 +17,7 @@ import {
   AccountCircle,
   AssignmentTurnedIn,
   AdminPanelSettings,
+  Create,
 } from '@mui/icons-material';
 import { makeStyles } from '@material-ui/core/styles';
 import Navbar from '../../components/Navbar';
@@ -158,6 +159,17 @@ function PageContainer(props) {
             <Group />
           </ListItemIcon>
           <ListItemText primary={'Find Group'} />
+        </ListItem>
+
+        <ListItem
+          button
+          key={'createGroup'}
+          onClick={() => navigate('/create-group')}
+        >
+          <ListItemIcon>
+            <Create />
+          </ListItemIcon>
+          <ListItemText primary={'Create Group'} />
         </ListItem>
 
         <ListItem
