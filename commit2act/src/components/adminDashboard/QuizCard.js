@@ -33,10 +33,25 @@ const StyledDialogTitle = styled(DialogTitle)`
 const QuizCard = ({ action, open, handleClose, getActions }) => {
   const [editQuizzes, setEditQuizzes] = useState(false);
 
+  const question = {
+    fact_text:
+      'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
+    question_text:
+      'What percentage of an average Canadian’s total CO2 production is due to transportation?',
+  };
+
+  const quizAnswers = {
+    answers: ['35%', '70%', '10%', '60%'],
+    answer: '35%',
+  };
+
   const renderViewQuizContent = () => {
     return (
       <Box>
-        <Typography>hi</Typography>
+        <Typography>Fact Text</Typography>
+        <Typography>{question.fact_text}</Typography>
+        <Typography>Question Text</Typography>
+        <Typography>{question.question_text}</Typography>
       </Box>
     );
   };

@@ -4,8 +4,8 @@ import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import CreateAction from './CreateAction';
-import ViewAndEditActions from './ViewAndEditActions';
-import ViewAndEditQuizzes from './ViewAndEditQuizzes';
+import ViewAndEditActions from '../components/adminDashboard/ViewAndEditActions';
+import ViewAndEditQuizzes from '../components/adminDashboard/ViewAndEditQuizzes';
 import Dashboard from '../components/adminDashboard/Dashboard';
 
 const AdminDashboard = () => {

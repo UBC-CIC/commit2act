@@ -3,10 +3,10 @@ import { Box, Grid, ImageListItemBar, CircularProgress } from '@mui/material';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
-import { getAllActions } from '../graphql/queries';
+import { getAllActions } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
-import ActionCard from '../components/adminDashboard/ActionCard';
+import ActionCard from './ActionCard';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
