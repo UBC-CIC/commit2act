@@ -91,7 +91,7 @@ const FindGroup = () => {
       </Box>
       {filteredGroups &&
         filteredGroups.map((group, index) => (
-          <GroupCard key={index} group={group} />
+          <GroupCard key={index} group={group} joinGroupOption={true} />
         ))}
     </>
   );
