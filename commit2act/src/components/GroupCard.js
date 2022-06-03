@@ -18,8 +18,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Public, Lock, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-const GroupCard = ({ group }) => {
+const GroupCard = ({ group, joinGroupOption }) => {
   const {
+    group_id,
     group_name,
     group_description,
     group_image,
@@ -34,6 +35,15 @@ const GroupCard = ({ group }) => {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down('sm'));
   const descriptionLength = mobile ? 100 : 250;
+
+  const joinGroupLink =
+    group &&
+    '/group-profile/'.concat(
+      group_name.replaceAll(' ', '%20'),
+      '/add/',
+      '-',
+      group_id ** 2
+    );
 
   return (
     <Card
@@ -83,15 +93,12 @@ const GroupCard = ({ group }) => {
               mb: '0.625em',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: { xs: 'center', sm: 'flex-start' },
+              justifyContent: { xs: 'center', sm: 'space-between' },
+              pb: '0.5em',
+              flexDirection: { xs: 'column', sm: 'row' },
             }}
           >
-            <Stack
-              direction="row"
-              alignItems="center"
-              gap={1}
-              sx={{ mb: '0.5em' }}
-            >
+            <Stack direction="row" alignItems="center" gap={1}>
               {is_public ? (
                 <Public fontSize="small" />
               ) : (
@@ -111,6 +118,17 @@ const GroupCard = ({ group }) => {
                 {group_name}
               </Typography>
             </Stack>
+            {joinGroupOption && (
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  navigate(joinGroupLink);
+                }}
+                sx={{ my: { xs: '1em' } }}
+              >
+                Join Group
+              </Button>
+            )}
           </Box>
           {/* render accordion view of group stats if screen width is less than 600px, otherwise render divider view */}
           {mobile ? (
