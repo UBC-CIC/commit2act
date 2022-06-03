@@ -57,27 +57,6 @@ const GroupProfile = () => {
   const [userId, setUserId] = useState();
   const [groupId, setGroupId] = useState();
 
-  // const getCognitoUser = async () => {
-  //   const cognitoRes = await Auth.currentAuthenticatedUser();
-  //   setCognitoUser(cognitoRes);
-  //   const currentUserId = Number(cognitoRes.attributes['custom:id']);
-  //   setUserId(currentUserId);
-  // };
-
-  // const getGroupInfo = async (name) => {
-  //   const groupInfoRes = await API.graphql({
-  //     query: getSingleGroupByName,
-  //     varialbes: { group_name: groupName },
-  //   });
-  //   const currentGroupId = groupInfoRes.data.getSingleGroupByName.group_id;
-  //   setGroupId(currentGroupId);
-  // };
-
-  // useEffect(() => {
-  //   getCognitoUser();
-  //   getGroupInfo();
-  // }, []);
-
   useEffect(() => {
     const getGroupAndUserInfo = async () => {
       const [cognitoRes, groupInfoRes] = await Promise.all([
