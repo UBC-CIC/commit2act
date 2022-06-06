@@ -1,0 +1,3305 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Commit2Act SAM deployent
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+- AWS::Serverless-2016-10-31
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: commit2act
+    Description: A name to identify the project
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    MinLength: 1
+    MaxLength: 32
+    ConstraintDescription: must begin with a letter, and only contain alphanumeric characters (1-32 characters)
+  EnvironmentName:
+    Type: String
+    Default: dev
+    # AllowedValues: [dev, prod, test,]
+    Description: A name to identify the environment
+  DeploymentRegion:
+    Type: String
+    Default: us-east-1
+    AllowedValues: [us-east-1, us-east-2, us-west-1, us-west-2, ap-south-1, ap-northeast-1, ap-northeast-2, ap-southeast-1, ap-southeast-2, eu-central-1, eu-west-1, eu-west-2]
+    Description: The region to deploy the solution in
+  DBName:
+    Default: sys
+    Description: The database name
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+  DBUser:
+    # NoEcho: true
+    Default: admin
+    Description: The database admin account username
+    Type: String
+    MinLength: 1
+    MaxLength: 16
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+  DBPassword:
+    # NoEcho: true
+    Description: The database admin account password
+    Type: String
+    MinLength: 1
+    MaxLength: 41
+    AllowedPattern: '[a-zA-Z0-9]+'
+    ConstraintDescription: must contain only alphanumeric characters.
+  # DBAllocatedStorage:
+  #   Default: '5'
+  #   Description: The size of the database (Gb)
+  #   Type: Number
+  #   MinValue: '5'
+  #   MaxValue: '1024'
+  #   ConstraintDescription: must be between 5 and 1024Gb.
+  DBInstanceClass:
+    Description: The database instance type
+    Type: String
+    Default: db.t4g.large
+    AllowedValues: [db.t2.small, db.t2.medium, db.t3.small, db.t3.medium, db.t4g.medium, db.t4g.large, db.r4.large, db.r4.xlarge, db.r4.2xlarge, db.r4.4xlarge, db.r4.8xlarge, db.r4.16xlarge, db.r5.large, db.r5.xlarge, db.r5.2xlarge, db.r5.4xlarge, db.r5.8xlarge, db.r5.12xlarge, db.r5.16xlarge, db.r6g.large, db.r6g.xlarge, db.r6g.2xlarge, db.r6g.4xlarge, db.r6g.8xlarge, db.r6g.12xlarge, db.r6g.16xlarge]
+  DBEngineVersion:
+    Description: The version of Aurora MySQL for the database
+    Type: String
+    Default: 5.7.mysql_aurora.2.09.2
+    AllowedValues: [5.7.mysql_aurora.2.07.0, 5.7.mysql_aurora.2.07.1, 5.7.mysql_aurora.2.07.1, 5.7.mysql_aurora.2.07.2, 5.7.mysql_aurora.2.07.3, 5.7.mysql_aurora.2.07.4, 5.7.mysql_aurora.2.07.5, 5.7.mysql_aurora.2.07.6, 5.7.mysql_aurora.2.07.7, 5.7.mysql_aurora.2.08.0, 5.7.mysql_aurora.2.08.1, 5.7.mysql_aurora.2.08.2, 5.7.mysql_aurora.2.08.3, 5.7.mysql_aurora.2.08.4, 5.7.mysql_aurora.2.09.0, 5.7.mysql_aurora.2.09.1, 5.7.mysql_aurora.2.09.2, 5.7.mysql_aurora.2.09.3, 5.7.mysql_aurora.2.10.0, 5.7.mysql_aurora.2.10.1, 5.7.mysql_aurora.2.10.2,  8.0.mysql_aurora.3.01.0, 8.0.mysql_aurora.3.01.1, 8.0.mysql_aurora.3.02.0]
+  DeletionProtection:
+    Description: When deletion proteciton is enabled, when you request the deletion of a database instance in the AWS Console you are blocked and may not continue without first modifying the instance and disabling deletion protection (recommended for production)
+    Type: String
+    Default: True
+    # AllowedValues: [True, False]
+  EncryptDatabase:
+    Description: Enable encryption of the database
+    Type: String
+    Default: True
+    # AllowedValues: [True, False]
+  CloudFrontPriceClass:
+    Type: String
+    Description: "The price class for CloudFront distribution"
+    Default: "PriceClass_100"
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
+  AmplifyBucket:
+    Type: String
+    Description: "The name of the S3 bucket for the amplify project (ex. projectname-storage-0123456789-dev)"
+  MinConfidenceThreshold:
+    Type: Number
+    Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
+    Default: 70
+    MinValue: 30
+    MaxValue: 100
+    ConstraintDescription: The number should be between 30 and 100
+  # DeletionProtection:
+  #   Description: 
+  #   Type: 
+  #   Default: 
+  #   AllowedValues: 
+    
+
+Resources:
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  IGWAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn:
+    - IGW
+    - VPC
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+  
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    DependsOn:
+    - VPC
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    DependsOn:
+    - VPC
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    DependsOn:
+    - VPC
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    DependsOn:
+    - VPC
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn:
+    - VPC
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Routes
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  OpenSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: A security group that allows all traffic in and out
+      GroupName: open-security-group
+      SecurityGroupEgress: 
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress: 
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  MySQLAuroraInboundSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: A security group for RDS that allows all traffic in on port 3306
+      GroupName: MySQLAurora-security-group
+      SecurityGroupIngress:  # traffic in
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress: 
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+
+# RDS #########################################
+  
+  DBSubnetGrouping:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: Subnet group!
+      DBSubnetGroupName: subnet-group-1-2
+      SubnetIds: 
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+
+
+  MainDBCluster:
+    Type: AWS::RDS::DBCluster
+    DependsOn:
+    - VPC
+    - PublicSubnet1
+    - PublicSubnet2
+    - DBSubnetGrouping
+    - IGWAttachment
+    Properties: 
+      DatabaseName: !Ref 'DBName'
+      DBClusterIdentifier: db-cluster
+      DBSubnetGroupName: !Ref DBSubnetGrouping
+      DeletionProtection: !Ref 'DeletionProtection'
+      EnableCloudwatchLogsExports: 
+        - general
+        - error
+      EnableHttpEndpoint: true #
+      EnableIAMDatabaseAuthentication: false #
+      Engine: aurora-mysql
+      # EngineMode: provisioned
+      EngineVersion: !Ref 'DBEngineVersion'
+      MasterUsername: !Ref 'DBUser'
+      MasterUserPassword: !Ref 'DBPassword'
+      Port: 3306
+      StorageEncrypted: !Ref 'EncryptDatabase' #####
+      SourceRegion: !Ref 'DeploymentRegion'
+      Tags: 
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+      VpcSecurityGroupIds:  
+        - !Ref MySQLAuroraInboundSG
+
+  MainDBInstance:
+    Type: AWS::RDS::DBInstance
+    DependsOn:
+    - MainDBCluster
+    - IGWAttachment
+    Properties: 
+      DBClusterIdentifier: db-cluster
+      Engine: aurora-mysql 
+      # EngineVersion: !Ref 'DBEngineVersion'
+      DBInstanceClass: !Ref 'DBInstanceClass'
+      DBInstanceIdentifier: !Sub '${ProjectName}-${EnvironmentName}-instance'
+      # DBSecurityGroups: #
+      #   - !Ref MySQLAuroraInboundSG
+      PubliclyAccessible: true #
+      Tags: 
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  RDSCredentialsSecret:
+    Type: AWS::SecretsManager::Secret
+    DependsOn:
+    - MainDBCluster
+    - IGWAttachment
+    Properties: 
+      Description: Stores the credentials for the RDS instance
+      Name: RDSCredentials
+      SecretString: !Sub '{"username":"${DBUser}","password":"${DBPassword}","engine":"mysql","host":"${MainDBCluster.Endpoint.Address}","port":3306,"region":"${DeploymentRegion}"}'
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  RDSProxyRole:
+    Type: AWS::IAM::Role
+    DependsOn:
+      - RDSCredentialsSecret
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'rds.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: rdsproxypolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: !Ref RDSCredentialsSecret
+
+  LambdaServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'Lambda-ServiceRole-${AWS::Region}'    
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                # - 'appsync.amazonaws.com'
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: allow-lambda-access-from-appsync
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: appsync:GraphQL
+                Resource: '*'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  RDSProxy:
+    Type: AWS::RDS::DBProxy
+    DependsOn:
+    - MainDBInstance
+    - RDSCredentialsSecret
+    - PublicSubnet1
+    - PublicSubnet2
+    - RDSProxyRole
+    Properties:
+      DebugLogging: true
+      DBProxyName: RDS-Proxy
+      EngineFamily: MYSQL
+      IdleClientTimeout: 120
+      RequireTLS: false
+      RoleArn: !GetAtt RDSProxyRole.Arn
+      Auth:
+        - {AuthScheme: SECRETS, SecretArn: !Ref RDSCredentialsSecret, IAMAuth: DISABLED}
+      VpcSubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      #   Fn::Split: [",", !Ref SubnetIds]
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  RDSProxyTargetGroup:
+    Type: AWS::RDS::DBProxyTargetGroup
+    DependsOn:
+    - MainDBCluster
+    - RDSProxy
+    Properties:
+      DBProxyName: !Ref RDSProxy
+      DBClusterIdentifiers: [!Ref MainDBCluster] #?
+      TargetGroupName: default
+      ConnectionPoolConfigurationInfo:
+          MaxConnectionsPercent: 100
+          MaxIdleConnectionsPercent: 50
+          ConnectionBorrowTimeout: 120
+
+  MinConfidenceThresholdSSM:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Type: String
+      Description: A percentage that represents the minimum required confidence in Rekognition in order to count as a hit, for use in validateImageWithRekognition
+      Name: MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD
+      Value: !Ref MinConfidenceThreshold
+
+
+  # Lambda functions ####################################
+
+  graphQLMySQLResolver:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - RDSProxy
+    - OpenSecurityGroup
+    - MainDBInstance
+    - LambdaServiceRole
+    Properties:
+      FunctionName: graphQL-MySQL-Resolver
+      Handler: graphQL-MySQL-Resolver.lambda_handler
+      CodeUri: lambda_functions/graphQLMySQLResolver/
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 100
+      Description: Called by AppSync to resolve SQL statements in the form of a request mapping
+      Role: !GetAtt LambdaServiceRole.Arn
+      Policies:
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        - Version: '2012-10-17'  # in line policies for lambda
+          Statement:
+          - Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource:
+            - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/GraphQL-MySQL-Resolver:*
+          - Effect: Allow
+            Action: rds-db:connect
+            Resource: !GetAtt RDSProxy.DBProxyArn
+          - Effect: Allow
+            Action:
+            - "ec2:CreateNetworkInterface"
+            - "ec2:DeleteNetworkInterface"
+            - "ec2:DescribeNetworkInterfaces"
+            Resource: '*'
+      Environment:
+        Variables:
+          DBNAME: !Ref 'DBName'
+          PASSWORD: !Ref 'DBPassword'
+          USERNAME: !Ref 'DBUser'
+          RDSPROXY_ENDPOINT: !GetAtt RDSProxy.Endpoint
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref OpenSecurityGroup
+        SubnetIds:
+          - !Ref PublicSubnet1
+          - !Ref PublicSubnet2
+
+  graphQLMySQLResolverLogs:
+    Type: AWS::Logs::LogGroup
+    DependsOn: graphQLMySQLResolver
+    Properties:
+      LogGroupName: !Join ["", ["/aws/lambda/", !Ref graphQLMySQLResolver]]
+      RetentionInDays: 14
+
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+
+  # This is a Lambda function config associated with the source code: get-by-id.js
+  validateImageWithRekognition:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - CloudFrontDistribution
+    - RDSProxy
+    - OpenSecurityGroup
+    - MainDBInstance
+    Properties:
+      FunctionName: validateImageWithRekognition
+      Handler: validateImageWithRekognition.lambda_handler
+      CodeUri: lambda_functions/validateImageWithRekognition
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Validates images uploaded through the submitted action pipeline
+      # Tags:
+      #   - Key: "Project"
+      #     Value: !Ref 'ProjectName'
+      #   - Key: "EnvironmentName"
+      #     Value: !Ref 'EnvironmentName'
+      Policies:
+        # - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        Version: '2012-10-17' # in line policies
+        Statement:
+        - Effect: Allow
+          Action: logs:CreateLogGroup
+          Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+        - Effect: Allow
+          Action:
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource:
+          - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/validateImageWithRekognition:*
+        - Effect: Allow
+          Action:
+          - rekognition:DetectLabels
+          - rekognition:DetectFaces
+          - rekognition:DetectModerationLabels
+          - rekognition:CompareFaces
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - rekognition:CreateCollection
+          - rekognition:IndexFaces
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:GetObject
+          - s3:DeleteObject
+          Resource: arn:aws:s3:::*
+        - Effect: Allow
+          Action:
+          - ssm:GetParameter
+          - ssm:GetParameters
+          Resource:
+          - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD
+        - Effect: Allow
+          Action:
+          - ssm:UpdateInstanceInformation
+          - ssmmessages:CreateControlChannel
+          - ssmmessages:CreateDataChannel
+          - ssmmessages:OpenControlChannel
+          - ssmmessages:OpenDataChannel
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - s3:GetEncryptionConfiguration
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - kms:Decrypt
+          Resource: '*' #!?
+      Environment:
+        Variables:
+          AMPLIFY_BUCKET: !Ref AmplifyBucket #commit2act-storage-4f79922d113723-develop #############
+          CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName # https://d11tk3grlaje8a.cloudfront.net/   #
+          DBNAME: !Ref DBName
+          ENDPOINT: !GetAtt RDSProxy.Endpoint
+          PASSWORD: !Ref DBPassword
+          USERNAME: !Ref DBUser
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref OpenSecurityGroup
+        SubnetIds:
+          - !Ref PublicSubnet1
+          - !Ref PublicSubnet2
+      
+      # Events:
+      #   FileUpload:
+      #     Type: S3
+      #     Properties:
+      #       Bucket: !Ref AmplifyBucket ####################
+      #       Events: s3:ObjectCreated:*
+      #       Filter:
+      #         S3Key:
+      #           Rules:
+      #             - Name: prefix
+      #               Value: "public/validation/input/"
+
+  validateImageWithRekognitionLogs:
+    Type: AWS::Logs::LogGroup
+    DependsOn: validateImageWithRekognition
+    Properties:
+      LogGroupName: !Join ["", ["/aws/lambda/", !Ref validateImageWithRekognition]]
+      RetentionInDays: 14
+
+# Cloudfront ##########################################
+
+  OriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref AWS::StackName
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+    - OriginAccessIdentity
+    Properties:
+      DistributionConfig:
+        Origins:
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            # CustomOriginConfig: 
+            #   CustomOriginConfig
+            DomainName: !Sub '${AmplifyBucket}.s3.${DeploymentRegion}.amazonaws.com'
+            Id: AmplifyBucketCloudFrontDistribution
+            OriginPath: "/public"
+            S3OriginConfig: 
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${OriginAccessIdentity}'
+        Enabled: 'true'
+        DefaultCacheBehavior: 
+          AllowedMethods: 
+            - GET
+            - HEAD
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          # SmoothStreaming: false #?
+          TargetOriginId: AmplifyBucketCloudFrontDistribution
+          ViewerProtocolPolicy: redirect-to-https
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+
+
+  # APPSYNC #####################################################
+
+  AppSyncLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+
+  AppSyncAPI:
+    Type: AWS::AppSync::GraphQLApi
+    DependsOn: 
+      - AppSyncLogsRole
+    Properties:
+      Name: !Sub '${ProjectName}-GraphQL-API-${EnvironmentName}'
+      AuthenticationType: AMAZON_COGNITO_USER_POOLS
+      UserPoolConfig:
+        AwsRegion: !Ref DeploymentRegion
+        DefaultAction: ALLOW
+        UserPoolId: us-east-1_jKhBLdEzs  ############################ TODO: CHANGE
+      LogConfig:
+        CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
+        FieldLogLevel: ALL
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  LambdaAppSyncDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+    - AppSyncAPI
+    - graphQLMySQLResolver
+    - GraphQLApiSchema
+    Properties:
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      Name: LambdaHandler
+      Type: AWS_LAMBDA
+      ServiceRoleArn: !GetAtt LambdaServiceRole.Arn
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt graphQLMySQLResolver.Arn
+
+  GraphQLApiSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      Definition: |
+        type Action {
+          action_id: Int!
+          action_name: String!
+          page_media: String
+          action_icon: String
+          fallback_quiz_media: String
+          is_hidden: Boolean
+        }
+
+        type ActionItem {
+          action_id: Int!
+          item_name: String!
+          item_description: String!
+          co2_saved_per_unit: Float!
+        }
+
+        input ActionItemInput {
+          item_name: String!
+          item_description: String!
+          co2_saved_per_unit: Float!
+        }
+
+        input ActionItemInputId {
+          action_id: Int!
+          item_name: String!
+          item_description: String!
+          co2_saved_per_unit: Float!
+        }
+
+        type ActionQuiz {
+          quiz_id: Int!
+          fact_text: String!
+          question_text: String!
+          action_id: ID!
+        }
+
+        type ActionQuizAnswer {
+          quiz_id: Int!
+          answer: String!
+          is_correct_answer: Boolean!
+        }
+
+        type ActionValidationLabel {
+          action_id: Int!
+          validation_label: String!
+        }
+
+        type ActionWithLabels {
+          action_id: Int!
+          action_name: String!
+          page_media: String
+          action_icon: String
+          fallback_quiz_media: String
+          validation_labels: String
+          is_hidden: Boolean
+        }
+
+        type Group {
+          group_id: Int!
+          group_name: String!
+          group_description: String
+          group_image: String
+          is_public: Boolean!
+          private_password: String
+          total_co2: Float
+          total_points: Int
+          weekly_co2: Float
+          weekly_points: Int
+        }
+
+        type GroupInfo {
+          total_co2: Float
+          week_co2: Float
+          number_of_users: Float
+        }
+
+        type GroupUser {
+          group_id: Int!
+          user_id: Int!
+          user_role: UserRoleInGroup!
+        }
+
+        type Mutation {
+          # Put a single value of type User
+          createUser(
+            name: String!,
+            email: String!,
+            avatar: String,
+            username: String
+          ): User
+          # update a single value of type User, needs at least one of name, email, avatar
+          updateUser(
+            user_id: Int!,
+            name: String,
+            email: String,
+            avatar: String,
+            username: String
+          ): User
+          deleteUser(user_id: Int!): String
+          createSubmittedAction(
+            user_id: Int!,
+            action_id: Int!,
+            quiz_id: Int,
+            g_co2_saved: Float!,
+            date_of_action: String!,
+            first_quiz_answer_correct: Boolean!,
+            quiz_answered: Boolean!,
+            is_validated: Boolean!,
+            points_earned: Int!
+          ): SubmittedAction
+          createSubmittedActionItem(sa_id: Int!, item_name: String!, input_value: Float!): SubmittedActionItem
+          createSubmittedActionItems(sa_id: Int!, submitted_action_items: [SubmittedActionItemInput!]!): [SubmittedActionItem]
+          createAction(
+            action_name: String!,
+            page_media: String,
+            action_icon: String,
+            fallback_quiz_media: String
+          ): Action
+          createActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
+          createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+          deleteAction(action_id: Int!): String
+          createGroup(
+            group_name: String!,
+            group_description: String,
+            group_image: String,
+            is_public: Boolean!,
+            private_password: String
+          ): Group
+          createGroupAndOwner(
+            owner_user_id: Int!,
+            group_name: String!,
+            group_description: String,
+            group_image: String,
+            is_public: Boolean!,
+            private_password: String
+          ): Group
+          updateGroup(
+            group_id: Int!,
+            group_name: String,
+            group_description: String,
+            group_image: String,
+            is_public: Boolean,
+            private_password: String
+          ): Group
+          deleteGroup(group_id: Int!): String
+          addGroupUser(group_id: Int!, user_id: Int!, user_role: UserRoleInGroup!): GroupUser
+          addGroupOwner(group_id: Int!, user_id: Int!): GroupUser
+          addGroupMember(group_id: Int!, user_id: Int!): GroupUser
+          demoteGroupOwner(group_id: Int!, user_id: Int!): GroupUser
+          promoteGroupMember(group_id: Int!, user_id: Int!): GroupUser
+          removeGroupMember(group_id: Int!, user_id: Int!): String
+          approveSubmittedAction(sa_id: Int!): SubmittedAction
+          rejectSubmittedAction(sa_id: Int!): String
+          updateAction(
+            action_id: Int!,
+            action_name: String,
+            page_media: String,
+            action_icon: String,
+            fallback_quiz_media: String
+          ): Action
+          remakeActionItems(action_id: Int!, action_items: [ActionItemInputId!]!): [ActionItem]
+          remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+          deleteActionItem(action_id: Int!, item_name: String): String
+          deleteActionValidationLabel(action_id: Int!, validation_label: String!): String
+          graveyardAction(action_id: Int!): Action
+          restoreAction(action_id: Int!): Action
+        }
+
+        type Query {
+          # Get a single value of type 'User' by primary key.
+          getSingleUser(user_id: Int!): UserWithStats
+          getSingleUserByUsername(username: String!): UserWithStats
+          getSingleUserByEmail(email: String!): UserWithStats
+          getSingleSubmittedAction(sa_id: Int!): SubmittedAction
+          getSingleSubmittedActionWithItems(sa_id: Int!): SubmittedActionWithItems
+          getSingleAction(action_id: Int!): ActionWithLabels
+          getTotalGlobalCO2: Float
+          getUsersTotalCO2(user_id: Int!): Float
+          getGroupsTotalCO2(group_id: Int!): Float
+          getUsersWeekCO2(user_id: Int!): Float
+          getGroupsWeekCO2(group_id: Int!): Float
+          getAllUsers: [UserWithStats]
+          getAllActions: [ActionWithLabels]
+          getAllUngraveyardedActions: [ActionWithLabels]
+          getAllSubmittedActions: [SubmittedAction]
+          getAllActionItems: [ActionItem]
+          getActionItemsForAction(action_id: Int!): [ActionItem]
+          getAllSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
+          getAllValidatedSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
+          getAllUnvalidatedSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
+          getAllGraveyardedSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
+          getAllGroups: [Group]
+          getSingleGroup(group_id: Int!): Group
+          getSingleGroupByName(group_name: String!): Group
+          getAllUsersInGroup(group_id: Int): [UserWithRoleAndStats]
+          getAllOwnersInGroup(group_id: Int): [User]
+          getAllMembersInGroup(group_id: Int): [User]
+          getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbedded]
+          getAllGroupsForUser(user_id: Int): [Group]
+          getAllGroupsUserOwns(user_id: Int): [Group]
+          getGroupTotalCO2(group_id: Int!): Float
+          isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
+          getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
+        }
+
+        type Role {
+          user_id: Int!
+          role: UserRole!
+        }
+
+        type SubmittedAction {
+          sa_id: Int!
+          user_id: Int!
+          action_id: Int!
+          quiz_id: Int
+          g_co2_saved: Float!
+          date_of_action: String!
+          time_submitted: String
+          first_quiz_answer_correct: Boolean!
+          quiz_answered: Boolean!
+          is_validated: Boolean!
+          points_earned: Int!
+          submitted_image: String
+          is_rejected: Boolean
+          is_image_explicit: Boolean
+        }
+
+        type SubmittedActionItem {
+          item_name: String!
+          sa_id: Int!
+          input_value: Float
+        }
+
+        input SubmittedActionItemInput {
+          item_name: String!
+          input_value: Float!
+        }
+
+        type SubmittedActionWithItems {
+          sa_id: Int!
+          user_id: Int!
+          action_id: Int!
+          quiz_id: Int
+          g_co2_saved: Float!
+          date_of_action: String!
+          time_submitted: String
+          first_quiz_answer_correct: Boolean!
+          quiz_answered: Boolean!
+          is_validated: Boolean!
+          points_earned: Int!
+          submitted_image: String
+          submitted_action_items: [SubmittedActionItem]
+          is_rejected: Boolean
+          is_image_explicit: Boolean
+        }
+
+        type SubmittedActionWithItemsEmbedded {
+          sa_id: Int!
+          user_id: Int!
+          action_id: Int!
+          quiz_id: Int
+          g_co2_saved: Float!
+          date_of_action: String!
+          time_submitted: String
+          first_quiz_answer_correct: Boolean!
+          quiz_answered: Boolean!
+          is_validated: Boolean!
+          points_earned: Int!
+          submitted_action_items: String
+          action_name: String
+          submitted_image: String
+          is_rejected: Boolean
+          is_image_explicit: Boolean
+        }
+
+        type SubmittedActionWithItemsEmbeddedAndUserAndGroup {
+          sa_id: Int!
+          user_id: Int!
+          action_id: Int!
+          quiz_id: Int
+          g_co2_saved: Float!
+          date_of_action: String!
+          time_submitted: String
+          first_quiz_answer_correct: Boolean!
+          quiz_answered: Boolean!
+          is_validated: Boolean!
+          points_earned: Int!
+          submitted_action_items: String
+          action_name: String
+          submitted_image: String
+          name_of_user: String
+          group_names: String
+          is_rejected: Boolean
+          is_image_explicit: Boolean
+        }
+
+        type User {
+          user_id: Int!
+          name: String!
+          email: String!
+          avatar: String
+          username: String
+        }
+
+        enum UserRole {
+          student
+          educator
+          administrator
+          user
+        }
+
+        enum UserRoleInGroup {
+          owner
+          member
+        }
+
+        type UserWithRole {
+          user_id: Int!
+          name: String!
+          email: String!
+          avatar: String
+          user_role: UserRoleInGroup!
+          username: String
+        }
+
+        type UserWithRoleAndStats {
+          user_id: Int!
+          name: String!
+          email: String!
+          avatar: String
+          user_role: UserRoleInGroup!
+          total_co2: Float
+          total_points: Int
+          weekly_co2: Float
+          weekly_points: Int
+          username: String
+        }
+
+        type UserWithStats {
+          user_id: Int!
+          name: String!
+          email: String!
+          avatar: String
+          total_co2: Float
+          total_points: Int
+          weekly_co2: Float
+          weekly_points: Int
+          username: String
+        }
+
+        schema {
+          query: Query
+          mutation: Mutation
+        }
+
+        type updateActionItemsType {
+          original_item_name: String
+          new_item_name: String
+          item_description: String
+          co2_saved_per_unit: Float
+        }
+
+
+  getActionItemsForActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getActionItemsForAction
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT * FROM `ActionItem` WHERE action_id = :1",
+            "variableMapping": {
+                ":1": $context.arguments.action_id
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllActionItemsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllActionItems
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT * FROM `ActionItem`",
+            "variableMapping": {
+            },
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllActionsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllActions
+      RequestMappingTemplate: |
+        #**
+        type Action {
+          action_id: Int!
+          action_name: String!
+          page_media: String
+          action_icon: String
+          fallback_quiz_media: String
+          validation_label: [String]
+        }
+        *#
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, concat('', group_concat('', validation_label, '' ORDER BY ActionValidationLabel.action_id ASC SEPARATOR ', '), '') AS validation_labels FROM `Action` INNER JOIN ActionValidationLabel ON `Action`.action_id = ActionValidationLabel.action_id GROUP BY `Action`.action_id",
+            "variableMapping": {
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: |
+        $util.toJson($context.result)
+        ## {
+        ## 	"action_id": $context.result.get("action_id"),
+        ## 	"action_name": $context.result.get("action_name"),
+        ## 	"page_media": $context.result.get("page_media"),
+        ## 	"action_icon": $context.result.get("action_icon"),
+        ## 	"fallback_quiz_media": $context.result.get("fallback_quiz_media"),
+        ## 	"validation_label": null
+        ## }
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllGraveyardedSubmittedActionsForUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllGraveyardedSubmittedActionsForUser
+      RequestMappingTemplate: |
+        
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id=`Action`.action_id where `SubmittedAction`.user_id = :1 and `SubmittedAction`.is_rejected=1 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "variableMapping": {
+              ":1": $context.args.user_id
+            }
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllGroupsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllGroups
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id  GROUP BY `Group`.group_id",
+            "variableMapping": {
+            },
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllGroupsForUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllGroupsForUser
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id WHERE `GroupUser`.user_id = :1 GROUP BY `Group`.group_id",
+            "variableMapping": {
+              ":1": $context.args.user_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllGroupsUserOwnsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllGroupsUserOwns
+      RequestMappingTemplate: |
+        #**
+        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        *#
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id where `GroupUser`.user_id = :1 AND `GroupUser`.user_role = 'owner' GROUP BY GroupUser.group_id",
+            "variableMapping": {
+                ":1": $context.arguments.user_id
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllMembersInGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllMembersInGroup
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select * from `User` INNER JOIN `GroupUser` ON `User`.user_id = GroupUser.user_id WHERE `GroupUser`.group_id = :1 AND user_role='member' GROUP BY `User`.user_id",
+            "variableMapping": {
+              ":1": $context.args.group_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllOwnersInGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllOwnersInGroup
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select * from `User` INNER JOIN `GroupUser` ON `User`.user_id = GroupUser.user_id WHERE `GroupUser`.group_id = :1 AND user_role='owner' GROUP BY `User`.user_id",
+            "variableMapping": {
+              ":1": $context.args.group_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllSubmittedActionsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllSubmittedActions
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT * FROM `SubmittedAction`",
+            "variableMapping": {
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllSubmittedActionsForUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllSubmittedActionsForUser
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id=`Action`.action_id where `SubmittedAction`.user_id = :1 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "variableMapping": {
+              ":1": $context.args.user_id
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($context.result)
+        
+        
+        #*
+        
+        "getAllSubmittedActionsForUser": [
+              {
+                "action_id": 22,
+                "g_co2_saved": 920,
+                "item_name": "Distance Cycled (km)",
+                "input_value": 1,
+                "date_of_action": "2022-04-06T00:00:00.000Z"
+              },
+              {
+                "action_id": 22,
+                "g_co2_saved": 920,
+                "item_name": "Distance Transited (km)",
+                "input_value": 2,
+                "date_of_action": "2022-04-06T00:00:00.000Z"
+              },
+              {
+                "action_id": 22,
+                "g_co2_saved": 920,
+                "item_name": "Distance Walked (km)",
+                "input_value": 3,
+                "date_of_action": "2022-04-06T00:00:00.000Z"
+              }
+            ]
+            
+            
+        TO
+        
+        "getAllSubmittedActionsForUser": [
+              {
+                "action_id": 22,
+                "g_co2_saved": 920,
+                "date_of_action": "2022-04-06T00:00:00.000Z"
+                "submitted_action_items": [
+                  {"item_name": "Distance Cycled (km)",
+                  "input_value": 1},
+                  {"item_name": "Distance Transited (km)",
+                  "input_value": 2},
+                  {"item_name": "Distance Walked (km)",
+                  "input_value": 3}]
+              }
+             
+            ]
+        *#
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllSubmittedActionsToValidateResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllSubmittedActionsToValidate
+      RequestMappingTemplate: |
+        
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat(DISTINCT '', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, group_concat(DISTINCT group_name ORDER BY group_name ASC SEPARATOR ', ') as group_names, `Action`.action_name AS action_name from SubmittedAction INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id  INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id  INNER JOIN (select `User`.user_id AS user_id_in_group, `User`.name AS name_of_user from `User` INNER JOIN `GroupUser` on `User`.user_id = GroupUser.user_id INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id where `Group`.group_id in (select `Group`.group_id from `User` inner join GroupUser on `User`.user_id = GroupUser.user_id and `User`.user_id=:1 INNER JOIN `Group` on GroupUser.group_id = `Group`.group_id where GroupUser.user_role='owner') group by `User`.user_id) sub INNER JOIN GroupUser on GroupUser.user_id=`SubmittedAction`.user_id INNER JOIN `Group` ON `Group`.group_id=GroupUser.group_id where SubmittedAction.user_id = user_id_in_group and is_validated = false AND SubmittedAction.is_rejected=0 group by SubmittedAction.sa_id order by SubmittedAction.time_submitted ASC",
+            "variableMapping": {
+              ":1": $context.args.user_id
+            }
+          }
+        }
+        
+        
+        
+        
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllUngraveyardedActionsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllUngraveyardedActions
+      RequestMappingTemplate: |
+        
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, concat('', group_concat('', validation_label, '' ORDER BY ActionValidationLabel.action_id ASC SEPARATOR ', '), '') AS validation_labels FROM `Action` INNER JOIN ActionValidationLabel ON `Action`.action_id = ActionValidationLabel.action_id WHERE is_hidden=0 GROUP BY `Action`.action_id",
+            "variableMapping": {
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllUnvalidatedSubmittedActionsForUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllUnvalidatedSubmittedActionsForUser
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id=`Action`.action_id where `SubmittedAction`.user_id = :1 and `SubmittedAction`.is_validated=0 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "variableMapping": {
+              ":1": $context.args.user_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllUsersResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllUsers
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT total_co2, total_points, weekly_co2, weekly_points, `User`.* FROM `User`   INNER JOIN  (SELECT T1.user_id,   (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2,   (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points   from   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )   as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points  FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2   ON T1.user_id=T2.user_id )   AS TOTAL_STATS   ON `TOTAL_STATS`.user_id=`User`.user_id  INNER JOIN   ( SELECT T1.user_id,  (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2,  (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points   from  (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )    as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,  coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction   ON `User`.user_id=SubmittedAction.user_id    WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2  ON T1.user_id=T2.user_id   LEFT JOIN   (SELECT `User`.user_id,    coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`  LEFT JOIN SubmittedAction    ON `User`.user_id=SubmittedAction.user_id   WHERE SubmittedAction.is_validated=1  AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now()   GROUP BY `User`.user_id )  AS T3   ON T1.user_id=T3.user_id  )   AS WEEKLY_STATS   ON `WEEKLY_STATS`.user_id=`User`.user_id   group by `User`.user_id",
+            "variableMapping": {
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllUsersInGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllUsersInGroup
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT total_co2, total_points, weekly_co2, weekly_points, `User`.*, user_role  FROM `Group`   INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id   INNER JOIN   (SELECT T1.user_id,  (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2,   (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points   from   (SELECT `User`.user_id,  coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )   as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points  FROM `User`  LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2   ON T1.user_id=T2.user_id )   AS TOTAL_STATS   ON `TOTAL_STATS`.user_id=`GroupUser`.user_id  INNER JOIN   ( SELECT T1.user_id,   (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2,  (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from  (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )    as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction   ON `User`.user_id=SubmittedAction.user_id    WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2  ON T1.user_id=T2.user_id   LEFT JOIN   (SELECT `User`.user_id,    coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`  LEFT JOIN SubmittedAction    ON `User`.user_id=SubmittedAction.user_id   WHERE SubmittedAction.is_validated=1  AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now()   GROUP BY `User`.user_id )  AS T3  ON T1.user_id=T3.user_id  )   AS WEEKLY_STATS   ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id   INNER JOIN `User` ON WEEKLY_STATS.user_id=`User`.user_id  where `Group`.group_id=:1  group by `User`.user_id",
+            "variableMapping": {
+              ":1": $context.args.group_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllValidatedSubmittedActionsForUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllValidatedSubmittedActionsForUser
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id=`Action`.action_id where `SubmittedAction`.user_id = :1 and `SubmittedAction`.is_validated=1 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "variableMapping": {
+              ":1": $context.args.user_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllValidatedSubmittedActionsInGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllValidatedSubmittedActionsInGroup
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `GroupUser` ON `GroupUser`.user_id = `SubmittedAction`.user_id WHERE `GroupUser`.group_id = :1 AND `SubmittedAction`.is_validated = 1 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "variableMapping": {
+              ":1": $context.args.group_id
+            }
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getGroupTotalCO2Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getGroupTotalCO2
+      RequestMappingTemplate: |
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT SUM(g_co2_saved) AS total_g_co2_saved FROM (SELECT SubmittedAction.g_co2_saved FROM `Group` INNER JOIN `GroupUser` on `Group`.group_id = GroupUser.group_id INNER JOIN `User` on `User`.user_id = GroupUser.user_id cross JOIN SubmittedAction on `User`.user_id = SubmittedAction.user_id and `Group`.group_id = 1 ) result",
+            "variableMapping": {
+              ":1": $context.args.group_id
+            },
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result[0].get("total_g_co2_saved"))
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getGroupsTotalCO2Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getGroupsTotalCO2
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id inner join GroupUser on GroupUser.user_id = `User`.user_id where `GroupUser`.group_id = :1 and SubmittedAction.is_validated = 1",
+            "variableMapping": {
+              ":1": $context.arguments.group_id
+            },
+          }
+        }
+        
+        
+        
+      ResponseMappingTemplate: |
+        #if ($context.result[0].get("CO2"))
+          $util.toJson($context.result[0].get("CO2"))
+        #else
+          0.0
+        #end
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getGroupsWeekCO2Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getGroupsWeekCO2
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id inner join GroupUser on GroupUser.user_id = `User`.user_id where `GroupUser`.group_id = :1 and SubmittedAction.is_validated = 1 and SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now()",
+            "variableMapping": {
+              ":1": $context.arguments.group_id
+            },
+          }
+        }
+        
+        
+        
+      ResponseMappingTemplate: |
+        #if ($context.result[0].get("CO2"))
+          $util.toJson($context.result[0].get("CO2"))
+        #else
+          0.0
+        #end
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleAction
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, concat('', group_concat('', validation_label, '' ORDER BY ActionValidationLabel.action_id ASC SEPARATOR ', '), '') AS validation_labels FROM `Action` INNER JOIN ActionValidationLabel ON `Action`.action_id = ActionValidationLabel.action_id WHERE `Action`.action_id = :1", 
+            "variableMapping": { 
+              ":1": $context.arguments.action_id
+            },
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleGroup
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id  WHERE `Group`.group_id=:1 GROUP BY `Group`.group_id",
+            "variableMapping": {
+            ":1": $context.args.group_id
+            },
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleGroupByNameResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleGroupByName
+      RequestMappingTemplate: |
+        #**
+        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id WHERE `Group`.group_name=:1",
+            "variableMapping": {
+                ":1": "$context.arguments.group_name"
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleSubmittedActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleSubmittedAction
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT * FROM `SubmittedAction` WHERE `SubmittedAction`.sa_id = :1",
+            "variableMapping": {
+              ":1": $context.arguments.sa_id, 
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleSubmittedActionWithItemsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleSubmittedActionWithItems
+      RequestMappingTemplate: |
+        
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT * FROM `SubmittedAction` JOIN `SubmittedActionItem` on SubmittedActionItem.sa_id = SubmittedAction.sa_id WHERE SubmittedActionItem.sa_id=:1",
+            "variableMapping": {
+              ":1": $context.arguments.sa_id, 
+            },
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($context.result)
+        #*
+        [
+            {
+                "sa_id": 16,
+                "user_id": 3,
+                "action_id": 5,
+                "g_co2_saved": 1.5,
+                "date_of_action": "2022-04-05T00:00:00.000Z",
+                "time_submitted": "2022-04-05T17:58:11.000Z",
+                "first_quiz_answer_correct": 0,
+                "quiz_answered": 0,
+                "is_validated": 0,
+                "points_earned": 10,
+                "quiz_id": null,
+                "item_name": "7.5 name",
+                "input_value": 17.5
+            },
+            {
+                "sa_id": 16,
+                "user_id": 3,
+                "action_id": 5,
+                "g_co2_saved": 1.5,
+                "date_of_action": "2022-04-05T00:00:00.000Z",
+                "time_submitted": "2022-04-05T17:58:11.000Z",
+                "first_quiz_answer_correct": 0,
+                "quiz_answered": 0,
+                "is_validated": 0,
+                "points_earned": 10,
+                "quiz_id": null,
+                "item_name": "name",
+                "input_value": 1.5
+            }
+        ]
+        TO
+        {
+            "sa_id": 16,
+            "user_id": 3,
+            "action_id": 5,
+            "g_co2_saved": 1.5,
+            "date_of_action": "2022-04-05T00:00:00.000Z",
+            "time_submitted": "2022-04-05T17:58:11.000Z",
+            "first_quiz_answer_correct": 0,
+            "quiz_answered": 0,
+            "is_validated": 0,
+            "points_earned": 10,
+            "quiz_id": null,
+            "submitted_action_items": [
+              	{
+            		"item_name": "name",
+                	"input_value": 1.5
+              	},
+                {
+                    "item_name": "7.5 name",
+                    "input_value": 17.5
+              	}
+            ]
+            
+        }
+        **#
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleUser
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT total_co2, total_points, weekly_co2, weekly_points, `User`.* FROM `User`   INNER JOIN   (SELECT T1.user_id,   (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2,   (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points   from   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )   as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points  FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2   ON T1.user_id=T2.user_id )  AS TOTAL_STATS   ON `TOTAL_STATS`.user_id=`User`.user_id  INNER JOIN  ( SELECT T1.user_id,   (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2,  (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points   from  (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )    as T1  LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction   ON `User`.user_id=SubmittedAction.user_id    WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2  ON T1.user_id=T2.user_id   LEFT JOIN   (SELECT `User`.user_id,    coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`  LEFT JOIN SubmittedAction    ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1  AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now()   GROUP BY `User`.user_id )  AS T3   ON T1.user_id=T3.user_id  )   AS WEEKLY_STATS   ON `WEEKLY_STATS`.user_id=`User`.user_id   where `User`.user_id=:1  group by `User`.user_id",
+            "variableMapping": {
+              ":1": $context.arguments.user_id, 
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleUserByEmailResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleUserByEmail
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT total_co2, total_points, weekly_co2, weekly_points, `User`.* FROM `User`   INNER JOIN   (SELECT T1.user_id,   (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2,   (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points   from   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )   as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points  FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2   ON T1.user_id=T2.user_id )  AS TOTAL_STATS   ON `TOTAL_STATS`.user_id=`User`.user_id  INNER JOIN  ( SELECT T1.user_id,   (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2,  (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points   from  (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )    as T1  LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction   ON `User`.user_id=SubmittedAction.user_id    WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2  ON T1.user_id=T2.user_id   LEFT JOIN   (SELECT `User`.user_id,    coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`  LEFT JOIN SubmittedAction    ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1  AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now()   GROUP BY `User`.user_id )  AS T3   ON T1.user_id=T3.user_id  )   AS WEEKLY_STATS   ON `WEEKLY_STATS`.user_id=`User`.user_id   where `User`.email = :1  group by `User`.user_id",
+            "variableMapping": {
+              ":1": "$context.arguments.email", 
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleUserByUsernameResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleUserByUsername
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT total_co2, total_points, weekly_co2, weekly_points, `User`.* FROM `User`   INNER JOIN   (SELECT T1.user_id,   (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2,   (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points   from   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )   as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points  FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2   ON T1.user_id=T2.user_id )  AS TOTAL_STATS   ON `TOTAL_STATS`.user_id=`User`.user_id  INNER JOIN  ( SELECT T1.user_id,   (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2,  (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points   from  (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )    as T1  LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction   ON `User`.user_id=SubmittedAction.user_id    WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2  ON T1.user_id=T2.user_id   LEFT JOIN   (SELECT `User`.user_id,    coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`  LEFT JOIN SubmittedAction    ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1  AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now()   GROUP BY `User`.user_id )  AS T3   ON T1.user_id=T3.user_id  )   AS WEEKLY_STATS   ON `WEEKLY_STATS`.user_id=`User`.user_id   where `User`.username = :1  group by `User`.user_id",
+            "variableMapping": {
+              ":1": "$context.arguments.username", 
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getTotalGlobalCO2Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getTotalGlobalCO2
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select SUM(SubmittedAction.g_co2_saved) AS totalCO2 from SubmittedAction where is_validated=1",
+            "variableMapping": {
+            },
+          }
+        }
+        
+        
+        
+      ResponseMappingTemplate: |
+        
+        $util.toJson($context.result[0].get("totalCO2"))
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getUsersTotalCO2Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getUsersTotalCO2
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id and `User`.user_id = :1 and SubmittedAction.is_validated=1",
+            "variableMapping": {
+              ":1": $context.arguments.user_id
+            },
+          }
+        }
+        
+        
+        
+      ResponseMappingTemplate: |
+        #if ($context.result[0].get("CO2"))
+          $util.toJson($context.result[0].get("CO2"))
+        #else
+          0.0
+        #end
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getUsersWeekCO2Resolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getUsersWeekCO2
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id and `User`.user_id = :1 AND SubmittedAction.is_validated=1 where SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now()",
+            "variableMapping": {
+              ":1": $context.arguments.user_id
+            },
+          }
+        }
+        
+        
+        
+      ResponseMappingTemplate: |
+        #if ($context.result[0].get("CO2"))
+          $util.toJson($context.result[0].get("CO2"))
+        #else
+          0.0
+        #end
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  isPrivateGroupPasswordCorrectResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: isPrivateGroupPasswordCorrect
+      RequestMappingTemplate: |
+        #**
+        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        *#
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT private_password FROM `Group` WHERE group_id=:1",
+            "variableMapping": {
+                ":1": $context.arguments.group_id, 
+                ":2": "$context.arguments.private_password", 
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: |
+        #if ($context.arguments.private_password == $context.result[0].get("private_password"))
+          true
+        #else
+          false
+        #end
+        
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  addGroupMemberResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: addGroupMember
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `GroupUser` ( group_id, user_id, user_role) VALUES (:1, :2, 'member')",
+            "variableMapping": {
+                ":1": $context.arguments.group_id, 
+                ":2": $context.arguments.user_id
+            },
+            "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  addGroupOwnerResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: addGroupOwner
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `GroupUser` ( group_id, user_id, user_role) VALUES (:1, :2, 'owner')",
+            "variableMapping": {
+                ":1": $context.arguments.group_id, 
+                ":2": $context.arguments.user_id, 
+            },
+            "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  addGroupUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: addGroupUser
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `GroupUser` ( group_id, user_id, user_role) VALUES (:1, :2, :3)",
+            "variableMapping": {
+                ":1": $context.arguments.group_id, 
+                ":2": $context.arguments.user_id, 
+                ":3": $context.arguments.user_role
+            },
+            "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  approveSubmittedActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: approveSubmittedAction
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE SubmittedAction SET is_validated=1 where sa_id=:1",
+            "variableMapping": {
+              ":1": $context.args.sa_id
+            },
+            "responseSQL": "SELECT * FROM `SubmittedAction` WHERE sa_id=:1"
+          }
+        }
+        
+        
+        
+        
+        
+        
+      ResponseMappingTemplate: |
+        $util.toJson($context.result[0])
+        
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createAction
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden ) VALUES (:1, :2, :3, :4, false)",
+            "variableMapping": {
+                ":1": "$context.arguments.action_name", 
+                ":2": "$context.arguments.page_media", 
+                ":3": "$context.arguments.action_icon",
+                ":4": "$context.arguments.fallback_quiz_media"
+            },
+            "responseSQL": "SELECT * FROM `Action` WHERE action_name=:1"
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createActionItemsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createActionItems
+      RequestMappingTemplate: |
+        #**
+        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
+        
+        action_items is an array of JSON objects, in this case it looks like this:
+        [
+          {
+              action_name: "name",
+                action_description: "description",
+                co2_saved_per_unit: 5.5
+            }, ...
+        ]
+        the :K## in the sql corresponds to the names of the keys, (action_name, action_description, and co2_saved_per_unit).
+        the :V## corresponds to the values, ("name", "description", 5.5 for example), however these values will vary across all of the JSON objects in the array.
+        the lambda executes multiple INSERT statements, essentially inserting each JSON object into the database, filling in the corresponding :K## and :V##.
+        important to note is that the specific numbers (like 01, 02, 03) dont necessarily correspond to one of the key-value pairs, 
+        however whatever has the same number (like :K01 and :V01) will be for the same key-value pair
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `ActionItem` (action_id, :K01, :K02, :K03) VALUES ($context.arguments.action_id, :V01, :V02, :V03)",
+            "variableMapping": {
+            },
+            "items": $util.toJson($context.arguments.action_items),
+            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=$context.arguments.action_id"
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createActionValidationLabelsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createActionValidationLabels
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+        ActionValidationLabel
+        *#
+        #set( $val_list = $context.arguments.validation_labels )
+        #set( $final_sql = '' )
+        #set( $beginning = "INSERT INTO ActionValidationLabel (action_id, validation_label) VALUES (:1, '" )
+        #set( $ending = "'); " )
+        #foreach( $val_label in $val_list )
+          #set( $final_sql = "$final_sql$beginning$val_label$ending" )
+        #end
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "$final_sql",
+            "variableMapping": {
+              ":1": $context.arguments.action_id
+            },
+            "responseSQL": "SELECT * FROM `ActionValidationLabel` WHERE action_id=:1"
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createGroup
+      RequestMappingTemplate: |
+        #**
+        This is to ensure that if there is no inputted parameter, it gets set to null in the insert in the lambda by sending it an empty string
+        
+          createGroup(
+            group_name: String!,
+            group_description: String,
+            group_image: String,
+            is_public: Boolean!,
+            private_password: String
+          ): Group
+            
+        *#
+        
+        #if( !$context.arguments.group_description )
+          #set( $context.arguments.group_description = '""' )  #** VTL evaluates this to an empty string "" **#
+        #end
+        #if( !$context.arguments.group_image )
+          #set( $context.arguments.group_image = '""' )  #** VTL evaluates this to an empty string "" **#
+        #end
+        #if( !$context.arguments.private_password )
+          #set( $context.arguments.private_password = '""' )  #** VTL evaluates this to an empty string "" **#
+        #end
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `Group` ( group_name, group_description, group_image, is_public, private_password ) VALUES (:1, :2, :3, :4, :5)",
+            "variableMapping": {
+                ":1": "$context.arguments.group_name", 
+                ":2": "$context.arguments.group_description", 
+                ":3": "$context.arguments.group_image",
+                ":4": $context.arguments.is_public,
+                ":5": "$context.arguments.private_password",
+            },
+            "responseSQL": "SELECT * FROM `Group` WHERE group_name=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createGroupAndOwnerResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createGroupAndOwner
+      RequestMappingTemplate: |
+        #**
+        This is to ensure that if there is no inputted parameter, it gets set to null in the insert in the lambda by sending it an empty string
+        
+          createGroup(
+            owner_user_id: Int!,
+            group_name: String!,
+            group_description: String,
+            group_image: String,
+            is_public: Boolean!,
+            private_password: String
+          ): Group
+            
+        *#
+        
+        #if( !$context.arguments.group_description )
+          #set( $context.arguments.group_description = '' ) 
+        #end
+        #if( !$context.arguments.group_image )
+          #set( $context.arguments.group_image = '' )  
+        #end
+        #if( !$context.arguments.private_password )
+          #set( $context.arguments.private_password = '' )  
+        #end
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `Group` ( group_name, group_description, group_image, is_public, private_password ) VALUES (:1, :2, :3, :4, :5); INSERT INTO `GroupUser` ( group_id, user_id, user_role) VALUES ((SELECT group_id FROM `Group` WHERE group_name=:1), :6, 'owner')",
+            "variableMapping": {
+                ":1": "$context.arguments.group_name", 
+                ":2": "$context.arguments.group_description", 
+                ":3": "$context.arguments.group_image",
+                ":4": $context.arguments.is_public,
+                ":5": "$context.arguments.private_password",
+                ":6": $context.arguments.owner_user_id
+            },
+            "responseSQL": "SELECT * FROM `Group` WHERE group_name=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createSubmittedActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createSubmittedAction
+      RequestMappingTemplate: |
+        #**
+        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        *#
+        #if( !$context.arguments.quiz_id )
+          #set( $context.arguments.quiz_id = '""' )  #** VTL evaluates this to an empty string "" **#
+        #end
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `SubmittedAction` ( user_id, action_id, quiz_id, g_co2_saved, date_of_action, first_quiz_answer_correct, quiz_answered, is_validated, points_earned, time_submitted, is_rejected, is_image_explicit ) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9, current_timestamp(), 0, 0)",
+            "variableMapping": {
+                ":1": $context.arguments.user_id, 
+                ":2": $context.arguments.action_id, 
+                ":3": $context.arguments.quiz_id,
+                ":4": $context.arguments.g_co2_saved,
+                ":5": "$context.arguments.date_of_action",
+                ":6": $context.arguments.first_quiz_answer_correct,
+                ":7": $context.arguments.quiz_answered,
+                ":8": $context.arguments.is_validated,
+                ":9": $context.arguments.points_earned,
+            },
+            "responseSQL": "SELECT * FROM `SubmittedAction` WHERE user_id=:1 AND action_id=:2 AND g_co2_saved=:4 AND date_of_action=:5 AND first_quiz_answer_correct=:6 AND quiz_answered=:7 AND is_validated=:8 AND points_earned=:9  ORDER BY time_submitted DESC"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createSubmittedActionItemResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createSubmittedActionItem
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `SubmittedActionItem` ( item_name, sa_id, input_value ) VALUES (:1, :2, :3)",
+            "variableMapping": {
+                ":1": "$context.arguments.item_name", 
+                ":2": $context.arguments.sa_id, 
+                ":3": $context.arguments.input_value
+            },
+            "responseSQL": "SELECT * FROM `SubmittedActionItem` WHERE item_name=:1 AND sa_id=:2"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createSubmittedActionItemsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createSubmittedActionItems
+      RequestMappingTemplate: |
+        #**
+        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
+        
+        action_items is an array of JSON objects, in this case it looks like this:
+        [
+          {
+              item_name: "name",
+                input_value: 5.5
+            }, ...
+        ]
+        the :K## in the sql corresponds to the names of the keys, (item_name, input_value).
+        the :V## corresponds to the values, ("name", 5.5 for example), however these values will vary across all of the JSON objects in the array.
+        the lambda executes multiple INSERT statements, essentially inserting each JSON object into the database, filling in the corresponding :K## and :V##.
+        important to note is that the specific numbers (like 01, 02) dont necessarily correspond to one of the key-value pairs, 
+        however whatever has the same number (like :K01 and :V01) will be for the same key-value pair
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `SubmittedActionItem` (sa_id, :K01, :K02) VALUES ($context.arguments.sa_id, :V01, :V02)",
+            "variableMapping": {
+            },
+            "items": $util.toJson($context.arguments.submitted_action_items),
+            "responseSQL": "SELECT * FROM `SubmittedActionItem` WHERE sa_id=$context.arguments.sa_id"
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createUser
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "INSERT INTO `User` (username, name, email, avatar) VALUES (:1, :2, :3, :4)",
+            "variableMapping": {
+              ":1": "$context.arguments.username", 
+                ":2": "$context.arguments.name", 
+                ":3": "$context.arguments.email", 
+                ":4": "$context.arguments.avatar"
+            },
+            "responseSQL": "SELECT * FROM `User` WHERE email=:3"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  deleteActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: deleteAction
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `Action` WHERE action_id=:1",
+            "variableMapping": {
+                ":1": $context.arguments.action_id
+            },
+          }
+        }
+      ResponseMappingTemplate: "Deleted action with id :1 and its associated items"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  deleteActionItemResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: deleteActionItem
+      RequestMappingTemplate: |
+        
+        
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `ActionItem` WHERE action_id = :1 AND item_name = :2",
+            "variableMapping": {
+              ":1": $context.arguments.action_id,
+                ":2": "$context.arguments.item_name"
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: "Deleted action item"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  deleteActionValidationLabelResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: deleteActionValidationLabel
+      RequestMappingTemplate: |
+        
+        
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `ActionValidationLabel` WHERE action_id = :1 AND validation_label = :2",
+            "variableMapping": {
+              ":1": $context.arguments.action_id,
+                ":2": "$context.arguments.validation_label"
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: "Deleted validation label"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  deleteGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: deleteGroup
+      RequestMappingTemplate: |
+        
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `Group` WHERE `Group`.group_id = :1",
+            "variableMapping": {
+              ":1": $context.arguments.group_id
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: "Deleted group!"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  deleteUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: deleteUser
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `User` WHERE user_id=:1",
+            "variableMapping": {
+                ":1": $context.arguments.user_id
+            },
+          }
+        }
+      ResponseMappingTemplate: "Deleted user"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  demoteGroupOwnerResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: demoteGroupOwner
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `GroupUser` SET user_role='member' WHERE group_id=:1 AND user_id=:2",
+            "variableMapping": {
+              ":1": $context.arguments.group_id, 
+                ":2": $context.arguments.user_id, 
+            },
+            "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  graveyardActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: graveyardAction
+      RequestMappingTemplate: |
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `Action` SET is_hidden=1 where action_id=:1",
+            "variableMapping": {
+              ":1": $context.args.action_id
+            },
+          "responseSQL": "SELECT * FROM `Action` WHERE action_id=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  promoteGroupMemberResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: promoteGroupMember
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `GroupUser` SET user_role='owner' WHERE group_id=:1 AND user_id=:2",
+            "variableMapping": {
+              ":1": $context.arguments.group_id, 
+                ":2": $context.arguments.user_id, 
+            },
+            "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  rejectSubmittedActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: rejectSubmittedAction
+      RequestMappingTemplate: |
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE SubmittedAction SET is_rejected=1, is_validated=0 where sa_id=:1",
+            "variableMapping": {
+              ":1": $context.args.sa_id
+            },
+          "responseSQL": "SELECT * FROM `SubmittedAction` WHERE sa_id=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  remakeActionItemsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: remakeActionItems
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        remakeActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
+        
+        input ActionItemInput {
+          item_name: String!
+          item_description: String!
+          co2_saved_per_unit: Float!
+        }
+        
+        *#
+        
+        #set( $action_items = $context.arguments.action_items )
+        #set( $final_sql = 'DELETE FROM ActionItem WHERE action_id=:1 ; ' )
+        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES (:1, '" )
+        #set( $sep1 = "', '"  )
+        #set( $sep2 = "', ")
+        #set( $ending = "); " )
+        
+        #foreach( $action_item in $action_items )
+          #set( $ai0 = $action_item.get('item_name') )
+          #set( $ai1 = $action_item.get('item_description') )
+          #set( $ai2 = $action_item.get('co2_saved_per_unit') )
+          #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$sep2$ai2$ending" )
+        #end
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "$final_sql",
+            "variableMapping": {
+              ":1": $context.arguments.action_id
+            },
+            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  remakeActionValidationLabelsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: remakeActionValidationLabels
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        
+        remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+        
+        *#
+        
+        #set( $val_list = $context.arguments.validation_labels )
+        #set( $final_sql = 'DELETE FROM ActionValidationLabel WHERE action_id=:1 ; ' )
+        #set( $beginning = "INSERT INTO ActionValidationLabel (action_id, validation_label) VALUES (:1, '" )
+        #set( $ending = "'); " )
+        #foreach( $val_label in $val_list )
+          #set( $final_sql = "$final_sql$beginning$val_label$ending" )
+        #end
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "$final_sql",
+            "variableMapping": {
+              ":1": $context.arguments.action_id
+            },
+            "responseSQL": "SELECT * FROM `ActionValidationLabel` WHERE action_id=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  removeGroupMemberResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: removeGroupMember
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `GroupUser` WHERE group_id=:1 AND user_id=:2",
+            "variableMapping": {
+              ":1": $context.arguments.group_id, 
+                ":2": $context.arguments.user_id, 
+            },
+          }
+        }
+        
+      ResponseMappingTemplate: "Removed user from group"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  restoreActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: restoreAction
+      RequestMappingTemplate: |
+        
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `Action` SET is_hidden=0 where action_id=:1",
+            "variableMapping": {
+              ":1": $context.args.action_id
+            },
+          "responseSQL": "SELECT * FROM `Action` WHERE action_id=:1"
+          }
+        }
+        
+        
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  updateActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: updateAction
+      RequestMappingTemplate: |
+        
+        
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        
+        type Action {
+          action_id: Int!
+          action_name: String!
+          page_media: String
+          action_icon: String
+          fallback_quiz_media: String
+        }
+        
+        This only updates fields that actually are needing to be updated
+        *#
+        
+        #if( $context.arguments.action_name )
+          #set( $action_name = 'action_name=:1' )
+        #else
+          #set( $action_name = '' )
+        #end
+        #if( $context.arguments.page_media )
+          #set( $page_media = 'page_media=:2' )
+        #else
+          #set( $page_media = '' )
+        #end
+        #if( $context.arguments.action_icon )
+          #set( $action_icon = 'action_icon=:3' )
+        #else
+          #set( $action_icon = '' )
+        #end
+        #if( $context.arguments.fallback_quiz_media )
+          #set( $fallback_quiz_media = 'fallback_quiz_media=:4' )
+        #else
+          #set( $fallback_quiz_media = '' )
+        #end
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `Action` SET $action_name $page_media $action_icon $fallback_quiz_media WHERE action_id=:0",
+            "variableMapping": {
+              ":0": $context.arguments.action_id,
+                ":1": "$context.arguments.action_name", 
+                ":2": "$context.arguments.page_media", 
+                ":3": "$context.arguments.action_icon",
+                ":4": "$context.arguments.fallback_quiz_media"
+            },
+            "responseSQL": "SELECT * FROM `Action` WHERE action_id=:0"
+          }
+        }
+        
+        
+      ResponseMappingTemplate: |
+        
+        
+        $util.toJson($context.result[0])
+        
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  updateGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: updateGroup
+      RequestMappingTemplate: |
+        #**
+        This only updates fields that actually are needing to be updated
+        *#
+        
+        #if( $context.arguments.group_name )
+          #if( $context.arguments.group_description || $context.arguments.group_image || $context.arguments.is_public == true || $context.arguments.is_public == false || $context.arguments.private_password )
+            #set( $group_name = 'group_name=:1,' )
+          #else
+            #set( $group_name = 'group_name=:1' )
+          #end
+        #else
+          #set( $group_name = '' )
+        #end
+        
+        #if( $context.arguments.group_description )
+        
+          #if( $context.arguments.group_image || $context.arguments.is_public == true || $context.arguments.is_public == false || $context.arguments.private_password )
+            #set( $group_description = 'group_description=:2,' )
+          #else
+            #set( $group_description = 'group_description=:2' )
+          #end
+        #else
+          #set( $group_description = '' )
+        #end
+        
+        #if( $context.arguments.group_image )
+          #if( $context.arguments.is_public == true || $context.arguments.is_public == false || $context.arguments.private_password )
+            #set( $group_image = 'group_image=:3,' )
+          #else 
+            #set( $group_image = 'group_image=:3,' )
+          #end
+        #else
+          #set( $group_image = '' )
+        #end
+        
+        #if( $context.arguments.is_public == true || $context.arguments.is_public == false )
+          #if( $context.arguments.private_password )
+            #set( $is_public = 'is_public=:4,' )
+          #else
+            #set( $is_public = 'is_public=:4' )
+          #end
+        #else
+          #set( $is_public = '' )
+          #set( $context.arguments.is_public = '""' )
+        #end
+        
+        #if( $context.arguments.private_password )
+          #set( $private_password = 'private_password=:5' )
+        #else
+          #set( $private_password = '' )
+        #end
+        
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `Group` SET $group_name $group_description $group_image $is_public $private_password WHERE group_id=:6",
+            "variableMapping": {
+              ":6": $context.arguments.group_id,
+                ":1": "$context.arguments.group_name", 
+                ":2": "$context.arguments.group_description", 
+                ":3": "$context.arguments.group_image",
+                ":4": $context.arguments.is_public,
+                ":5": "$context.arguments.private_password"
+            },
+            "responseSQL": "SELECT * FROM `Group` WHERE group_id=:6"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  updateUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: updateUser
+      RequestMappingTemplate: |
+        #**
+        Makes sure that it only updates whatever fields we actually input
+        Will throw an error if none of name, email, avatar are provided!
+        *#
+        #if( $context.arguments.name )
+          #if( $context.arguments.email || $context.arguments.avatar || $context.arguments.username)
+            #set( $name = "name=:2," )
+          #else
+            #set( $name = "name=:2" )
+          #end
+        #else
+          #set( $name = "" )
+        #end
+        #if( $context.arguments.email )
+          #if(  $context.arguments.avatar || $context.arguments.username )
+            #set( $email = "email=:3," )
+          #else
+            #set( $email = "email=:3" )
+          #end
+        #else
+          #set( $email = "" )
+        #end
+        #if( $context.arguments.avatar )
+          #if( $context.arguments.username )
+            #set( $avatar = "avatar=:4," )
+          #else
+            #set( $avatar = "avatar=:4" )
+          #end
+        #else
+          #set( $avatar = "" )
+        #end
+        #if( $context.arguments.username )
+          #set( $username = "username=:5" )
+        #else
+          #set( $username = "" )
+        #end
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `User` SET $name $email $avatar $username WHERE `User`.user_id = :1",
+            "variableMapping": {
+              ":1": $context.arguments.user_id, 
+                ":2": "$context.arguments.name", 
+                ":3": "$context.arguments.email", 
+                ":4": "$context.arguments.avatar",
+                ":5": "$context.arguments.username"
+            },
+            "responseSQL": "SELECT * FROM `User` WHERE user_id=:1"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+
+# OUTPUTS ######################
+
+Outputs:
+  RDSEndpoint:
+    Description: "The endpoint for the RDS"
+    Value: !GetAtt MainDBCluster.Endpoint.Address
+
+  GraphQLEndpoint:
+    Description: The endpoint of the GraphQL API
+    Value: !GetAtt AppSyncAPI.GraphQLUrl
+
+  RDSProxyEndpoint:
+    Description: The endpoint of the database proxy
+    Value: !GetAtt RDSProxy.Endpoint
