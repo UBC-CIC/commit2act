@@ -19,7 +19,7 @@ frontend:
     # IMPORTANT - Please verify your build commands
     build:
       commands:
-        - REACT_APP_CLOUDFRONT_DOMAIN_NAME=${REACT_APP_CLOUDFRONT_DOMAIN_NAME}
+        - export REACT_APP_CLOUDFRONT_DOMAIN_NAME=${REACT_APP_CLOUDFRONT_DOMAIN_NAME}
         - npm run build
   artifacts:
     # IMPORTANT - Please verify your build output directory
