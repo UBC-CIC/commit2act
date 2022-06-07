@@ -172,6 +172,7 @@ const EditAccountInfo = ({
       if (avatarFile) {
         const imageKey = 'avatars/'.concat(databaseUser.user_id, 'avatar');
         const imageType = avatarFile.type;
+        console.log(process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME);
         userAvatarLink =
           process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
         try {
