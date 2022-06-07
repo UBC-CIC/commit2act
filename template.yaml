@@ -383,8 +383,8 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
-                # - 'appsync.amazonaws.com'
-                - 'lambda.amazonaws.com'
+                - 'appsync.amazonaws.com'
+                # - 'lambda.amazonaws.com'
             Action:
               - 'sts:AssumeRole'
       Policies:
@@ -395,8 +395,9 @@ Resources:
               - Effect: Allow
                 Action: appsync:GraphQL
                 Resource: '*'
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      # ManagedPolicyArns:
+      #   - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
 
   RDSProxy:
     Type: AWS::RDS::DBProxy
@@ -467,9 +468,13 @@ Resources:
       MemorySize: 512
       Timeout: 100
       Description: Called by AppSync to resolve SQL statements in the form of a request mapping
-      Role: !GetAtt LambdaServiceRole.Arn
+      # Role: !GetAtt LambdaServiceRole.Arn
       Policies:
         - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+        - arn:aws:iam::aws:policy/AmazonRDSFullAccess
+        # - arn:aws:iam::aws:policy/service-role/SecretsManagerReadWrite
+        - arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess
+        # - arn:aws:iam::aws:policy/AWSLambdaVPCAccessExecutionRole
         - Version: '2012-10-17'  # in line policies for lambda
           Statement:
           - Effect: Allow
