@@ -395,6 +395,12 @@ Resources:
               - Effect: Allow
                 Action: appsync:GraphQL
                 Resource: '*'
+              - Effect: Allow
+                Action: lambda:InvokeAsync
+                Resource: '*'
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: '*'
       # ManagedPolicyArns:
       #   - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
@@ -460,8 +466,10 @@ Resources:
     - LambdaServiceRole
     Properties:
       FunctionName: graphQL-MySQL-Resolver
-      Handler: graphQL-MySQL-Resolver.lambda_handler
-      CodeUri: lambda_functions/graphQLMySQLResolver/
+      Layers:
+        - !Ref graphQLMySQLResolverLayer
+      Handler: index.handler
+      CodeUri: ./lambda_functions/graphQLMySQLResolver/
       Runtime: nodejs14.x
       Architectures:
         - x86_64
@@ -508,6 +516,13 @@ Resources:
           - !Ref PublicSubnet1
           - !Ref PublicSubnet2
 
+  graphQLMySQLResolverLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: graphQLMySQLResolver-Layer
+      Description: Dependency for lambda
+      ContentUri: ./lambda_functions/graphQLMySQLResolver/node_modules
+
   graphQLMySQLResolverLogs:
     Type: AWS::Logs::LogGroup
     DependsOn: graphQLMySQLResolver
@@ -528,8 +543,8 @@ Resources:
     - MainDBInstance
     Properties:
       FunctionName: validateImageWithRekognition
-      Handler: validateImageWithRekognition.lambda_handler
-      CodeUri: lambda_functions/validateImageWithRekognition
+      Handler: lambda_function.lambda_handler
+      CodeUri: ./lambda_functions/validateImageWithRekognition
       Runtime: python3.8
       Architectures:
         - x86_64
