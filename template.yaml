@@ -1420,51 +1420,6 @@ Resources:
         $util.toJson($context.result)
         
         
-        #*
-        
-        "getAllSubmittedActionsForUser": [
-              {
-                "action_id": 22,
-                "g_co2_saved": 920,
-                "item_name": "Distance Cycled (km)",
-                "input_value": 1,
-                "date_of_action": "2022-04-06T00:00:00.000Z"
-              },
-              {
-                "action_id": 22,
-                "g_co2_saved": 920,
-                "item_name": "Distance Transited (km)",
-                "input_value": 2,
-                "date_of_action": "2022-04-06T00:00:00.000Z"
-              },
-              {
-                "action_id": 22,
-                "g_co2_saved": 920,
-                "item_name": "Distance Walked (km)",
-                "input_value": 3,
-                "date_of_action": "2022-04-06T00:00:00.000Z"
-              }
-            ]
-            
-            
-        TO
-        
-        "getAllSubmittedActionsForUser": [
-              {
-                "action_id": 22,
-                "g_co2_saved": 920,
-                "date_of_action": "2022-04-06T00:00:00.000Z"
-                "submitted_action_items": [
-                  {"item_name": "Distance Cycled (km)",
-                  "input_value": 1},
-                  {"item_name": "Distance Transited (km)",
-                  "input_value": 2},
-                  {"item_name": "Distance Walked (km)",
-                  "input_value": 3}]
-              }
-             
-            ]
-        *#
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
@@ -1690,7 +1645,12 @@ Resources:
             },
           }
         }
-      ResponseMappingTemplate: $util.toJson($context.result[0].get("total_g_co2_saved"))
+      ResponseMappingTemplate: |
+        #if ($context.result[0].get("total_g_co2_saved"))
+          $util.toJson($context.result[0].get("total_g_co2_saved"))
+        #else
+          0.0
+        #end
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
@@ -1899,65 +1859,7 @@ Resources:
         }
       ResponseMappingTemplate: |
         $util.toJson($context.result)
-        #*
-        [
-            {
-                "sa_id": 16,
-                "user_id": 3,
-                "action_id": 5,
-                "g_co2_saved": 1.5,
-                "date_of_action": "2022-04-05T00:00:00.000Z",
-                "time_submitted": "2022-04-05T17:58:11.000Z",
-                "first_quiz_answer_correct": 0,
-                "quiz_answered": 0,
-                "is_validated": 0,
-                "points_earned": 10,
-                "quiz_id": null,
-                "item_name": "7.5 name",
-                "input_value": 17.5
-            },
-            {
-                "sa_id": 16,
-                "user_id": 3,
-                "action_id": 5,
-                "g_co2_saved": 1.5,
-                "date_of_action": "2022-04-05T00:00:00.000Z",
-                "time_submitted": "2022-04-05T17:58:11.000Z",
-                "first_quiz_answer_correct": 0,
-                "quiz_answered": 0,
-                "is_validated": 0,
-                "points_earned": 10,
-                "quiz_id": null,
-                "item_name": "name",
-                "input_value": 1.5
-            }
-        ]
-        TO
-        {
-            "sa_id": 16,
-            "user_id": 3,
-            "action_id": 5,
-            "g_co2_saved": 1.5,
-            "date_of_action": "2022-04-05T00:00:00.000Z",
-            "time_submitted": "2022-04-05T17:58:11.000Z",
-            "first_quiz_answer_correct": 0,
-            "quiz_answered": 0,
-            "is_validated": 0,
-            "points_earned": 10,
-            "quiz_id": null,
-            "submitted_action_items": [
-              	{
-            		"item_name": "name",
-                	"input_value": 1.5
-              	},
-                {
-                    "item_name": "7.5 name",
-                    "input_value": 17.5
-              	}
-            ]
-            
-        }
-        **#
+        
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
@@ -2063,8 +1965,11 @@ Resources:
         
         
       ResponseMappingTemplate: |
-        
-        $util.toJson($context.result[0].get("totalCO2"))
+        #if ($context.result[0].get("totalCO2"))
+          $util.toJson($context.result[0].get("totalCO2"))
+        #else
+          0.0
+        #end
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
