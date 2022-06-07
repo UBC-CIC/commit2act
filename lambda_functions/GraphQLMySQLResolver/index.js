@@ -1,5 +1,4 @@
 const mysql = require('mysql');
-
 let dbInit = false;
 
 async function conditionallyCreateDB(connection) {
@@ -164,7 +163,7 @@ exports.handler = async (event) => {
     //     const secretValue = await client.getSecretValue({ SecretId: "arn:aws:secretsmanager:ca-central-1:016942909762:secret:commit2actDB-OBJdoN" }).promise();
     //     secret = JSON.parse(secretValue.SecretString);
     // }
-  
+
   
   // called whenever a GraphQL event is recieved
   console.log(secret, decodedBinarySecret);
