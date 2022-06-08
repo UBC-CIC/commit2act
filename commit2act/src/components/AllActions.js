@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, ImageListItemBar, CircularProgress } from '@mui/material';
+import {
+  Box,
+  Grid,
+  ImageListItemBar,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
@@ -26,6 +32,7 @@ const StyledImageListItem = styled(ImageListItem)`
 
 const AllActions = ({ setSelectedAction }) => {
   const [actionOptions, setActionOptions] = useState();
+  const displayDefaultMsg = actionOptions && actionOptions.length === 0;
 
   useEffect(() => {
     getActions();
@@ -43,9 +50,15 @@ const AllActions = ({ setSelectedAction }) => {
       sx={{
         height: '50vh',
         overflow: 'auto',
+        display: displayDefaultMsg && 'flex',
+        alignItems: displayDefaultMsg && 'center',
+        justifyContent: displayDefaultMsg && 'center',
       }}
     >
       {!actionOptions && <CircularProgress />}
+      {displayDefaultMsg && (
+        <Typography variant="subtitle2">No Actions to Display</Typography>
+      )}
       <Box
         sx={{
           display: 'grid',

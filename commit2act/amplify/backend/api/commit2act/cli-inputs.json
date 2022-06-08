@@ -3,12 +3,19 @@
   "serviceConfiguration": {
     "apiName": "commit2act",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "C:\\Users\\christty\\Desktop\\commit2act\\commit2act\\amplify\\backend\\api\\commit2act\\schema.graphql",
+    "gqlSchemaPath": "/codebuild/output/src743641590/src/commit2act/commit2act/amplify/backend/api/commit2act/schema.graphql",
     "defaultAuthType": {
       "mode": "AMAZON_COGNITO_USER_POOLS",
       "cognitoUserPoolId": "authcommit2act"
     },
     "conflictResolution": {},
-    "additionalAuthTypes": []
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 7,
+        "apiKeyExpirationDate": "2022-06-13T22:28:20.356Z",
+        "keyDescription": ""
+      }
+    ]
   }
 }
