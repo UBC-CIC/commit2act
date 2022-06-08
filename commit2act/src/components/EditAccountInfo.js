@@ -168,6 +168,7 @@ const EditAccountInfo = ({
       });
 
       //handle updating user avatar
+      console.log(process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME);
       let userAvatarLink;
       if (avatarFile) {
         const imageKey = 'avatars/'.concat(databaseUser.user_id, 'avatar');
