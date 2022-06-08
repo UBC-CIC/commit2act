@@ -103,18 +103,12 @@ function PageContainer(props) {
 
   //gets database entry for cognito user
   const getUserInfo = async (cognitoUserEntry, id) => {
-    const username = cognitoUserEntry.attributes.preferred_username;
+    const email = cognitoUserEntry.attributes.email;
     const res = await API.graphql({
-      query: getSingleUserByUsername,
-      variables: { username: username },
+      query: getSingleUserByEmail,
+      variables: { email: email },
     });
-    const databaseUserEntry = res.data.getSingleUserByUsername;
-    // const email = cognitoUserEntry.attributes.email;
-    // const res = await API.graphql({
-    //   query: getSingleUserByEmail,
-    //   variables: { email: email },
-    // });
-    // const databaseUserEntry = res.data.getSingleUserByEmail;
+    const databaseUserEntry = res.data.getSingleUserByEmail;
 
     //if the cognito user has no id attribute (first time logging in), set the id attribute to the user_id field from the database entry
     if (!id) {
