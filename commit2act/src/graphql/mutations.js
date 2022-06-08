@@ -3,22 +3,22 @@
 
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
-    $username: String!
     $name: String!
     $email: String!
     $avatar: String
+    $username: String
   ) {
     createUser(
-      username: $username
       name: $name
       email: $email
       avatar: $avatar
+      username: $username
     ) {
       user_id
-      username
       name
       email
       avatar
+      username
     }
   }
 `;
@@ -38,10 +38,10 @@ export const updateUser = /* GraphQL */ `
       username: $username
     ) {
       user_id
-      username
       name
       email
       avatar
+      username
     }
   }
 `;
@@ -417,16 +417,6 @@ export const deleteActionValidationLabel = /* GraphQL */ `
       action_id: $action_id
       validation_label: $validation_label
     )
-  }
-`;
-export const updateActionItems = /* GraphQL */ `
-  mutation UpdateActionItems($action_id: Int!) {
-    updateActionItems(action_id: $action_id) {
-      action_id
-      item_name
-      item_description
-      co2_saved_per_unit
-    }
   }
 `;
 export const graveyardAction = /* GraphQL */ `

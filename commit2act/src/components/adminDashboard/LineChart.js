@@ -17,7 +17,7 @@ import 'chartjs-adapter-date-fns';
 
 const LineChart = ({ allSubmittedActions }) => {
   const [lineChartData, setLineChartData] = useState();
-  const filters = ['7 Days', '30 Days'];
+  const filters = ['7 Days', '30 Days', 'Year'];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
@@ -43,6 +43,9 @@ const LineChart = ({ allSubmittedActions }) => {
       endingDate = currentDate;
     } else if (selectedFilter === filters[1]) {
       startingDate = sub(currentDate, { days: 30 });
+      endingDate = currentDate;
+    } else if (selectedFilter === filters[2]) {
+      startingDate = sub(currentDate, { years: 1 });
       endingDate = currentDate;
     }
     const datesInInterval = eachDayOfInterval({
@@ -145,7 +148,7 @@ const LineChart = ({ allSubmittedActions }) => {
                   displayFormats: {
                     day: 'MM/dd',
                   },
-                  tooltipFormat: 'MMM dd',
+                  tooltipFormat: 'MMM dd yyyy',
                 },
               },
               y: {

@@ -5,7 +5,6 @@ export const getSingleUser = /* GraphQL */ `
   query GetSingleUser($user_id: Int!) {
     getSingleUser(user_id: $user_id) {
       user_id
-      username
       name
       email
       avatar
@@ -13,6 +12,7 @@ export const getSingleUser = /* GraphQL */ `
       total_points
       weekly_co2
       weekly_points
+      username
     }
   }
 `;
@@ -20,7 +20,6 @@ export const getSingleUserByUsername = /* GraphQL */ `
   query GetSingleUserByUsername($username: String!) {
     getSingleUserByUsername(username: $username) {
       user_id
-      username
       name
       email
       avatar
@@ -28,6 +27,22 @@ export const getSingleUserByUsername = /* GraphQL */ `
       total_points
       weekly_co2
       weekly_points
+      username
+    }
+  }
+`;
+export const getSingleUserByEmail = /* GraphQL */ `
+  query GetSingleUserByEmail($email: String!) {
+    getSingleUserByEmail(email: $email) {
+      user_id
+      name
+      email
+      avatar
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
+      username
     }
   }
 `;
@@ -118,7 +133,6 @@ export const getAllUsers = /* GraphQL */ `
   query GetAllUsers {
     getAllUsers {
       user_id
-      username
       name
       email
       avatar
@@ -126,6 +140,7 @@ export const getAllUsers = /* GraphQL */ `
       total_points
       weekly_co2
       weekly_points
+      username
     }
   }
 `;
@@ -335,7 +350,6 @@ export const getAllUsersInGroup = /* GraphQL */ `
   query GetAllUsersInGroup($group_id: Int) {
     getAllUsersInGroup(group_id: $group_id) {
       user_id
-      username
       name
       email
       avatar
@@ -344,6 +358,7 @@ export const getAllUsersInGroup = /* GraphQL */ `
       total_points
       weekly_co2
       weekly_points
+      username
     }
   }
 `;
@@ -351,10 +366,10 @@ export const getAllOwnersInGroup = /* GraphQL */ `
   query GetAllOwnersInGroup($group_id: Int) {
     getAllOwnersInGroup(group_id: $group_id) {
       user_id
-      username
       name
       email
       avatar
+      username
     }
   }
 `;
@@ -362,10 +377,10 @@ export const getAllMembersInGroup = /* GraphQL */ `
   query GetAllMembersInGroup($group_id: Int) {
     getAllMembersInGroup(group_id: $group_id) {
       user_id
-      username
       name
       email
       avatar
+      username
     }
   }
 `;
@@ -410,22 +425,6 @@ export const getAllGroupsForUser = /* GraphQL */ `
 export const getAllGroupsUserOwns = /* GraphQL */ `
   query GetAllGroupsUserOwns($user_id: Int) {
     getAllGroupsUserOwns(user_id: $user_id) {
-      group_id
-      group_name
-      group_description
-      group_image
-      is_public
-      private_password
-      total_co2
-      total_points
-      weekly_co2
-      weekly_points
-    }
-  }
-`;
-export const getAllGroupsUserIsAMember = /* GraphQL */ `
-  query GetAllGroupsUserIsAMember($user_id: Int) {
-    getAllGroupsUserIsAMember(user_id: $user_id) {
       group_id
       group_name
       group_description

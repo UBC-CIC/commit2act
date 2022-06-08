@@ -216,12 +216,6 @@ const UserProfile = () => {
                 </Typography>
                 <Typography variant="h7" component="div">
                   <Typography variant="h3" component="span" sx={{ mr: '1em' }}>
-                    Username:
-                  </Typography>
-                  {user.username}
-                </Typography>
-                <Typography variant="h7" component="div">
-                  <Typography variant="h3" component="span" sx={{ mr: '1em' }}>
                     Email:
                   </Typography>
                   {user.email}
