@@ -35,7 +35,10 @@ import JoinGroup from '../../pages/JoinGroup';
 import UserProfile from '../../pages/UserProfile';
 import AdminDashboard from '../../pages/AdminDashboard';
 import { API, Auth } from 'aws-amplify';
-import { getSingleUserByUsername } from '../../graphql/queries';
+import {
+  getSingleUserByUsername,
+  getSingleUserByEmail,
+} from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
 
 const useStyles = makeStyles((theme) => ({
@@ -106,6 +109,12 @@ function PageContainer(props) {
       variables: { username: username },
     });
     const databaseUserEntry = res.data.getSingleUserByUsername;
+    // const email = cognitoUserEntry.attributes.email;
+    // const res = await API.graphql({
+    //   query: getSingleUserByEmail,
+    //   variables: { email: email },
+    // });
+    // const databaseUserEntry = res.data.getSingleUserByEmail;
 
     //if the cognito user has no id attribute (first time logging in), set the id attribute to the user_id field from the database entry
     if (!id) {

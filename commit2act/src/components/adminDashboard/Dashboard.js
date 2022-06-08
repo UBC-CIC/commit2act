@@ -25,8 +25,8 @@ const StyledPaper = styled(Paper)`
   }
 `;
 const Dashboard = () => {
-  const [numUsers, setNumUsers] = useState();
-  const [numGroups, setNumGroups] = useState();
+  const [allUsers, setAllUsers] = useState();
+  const [allGroups, setAllGroups] = useState();
   const [donutActionImageData, setDonutActionImageData] = useState([]);
   const [donutQuizData, setDonutQuizData] = useState();
   const [allSubmittedActions, setAllSubmittedActions] = useState();
@@ -41,8 +41,8 @@ const Dashboard = () => {
         API.graphql({ query: getAllSubmittedActions }),
       ]
     );
-    setNumUsers(totalUserRes.data.getAllUsers.length);
-    setNumGroups(totalGroupRes.data.getAllGroups.length);
+    setAllUsers(totalUserRes.data.getAllUsers);
+    setAllGroups(totalGroupRes.data.getAllGroups);
     setAllSubmittedActions(submittedActionRes.data.getAllSubmittedActions);
   };
 
@@ -109,7 +109,7 @@ const Dashboard = () => {
         }}
       >
         <Grid item xs={12} md={3}>
-          {numUsers && (
+          {allUsers && (
             <StyledPaper sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h7"> Total Users</Typography>
               <Typography
@@ -124,11 +124,11 @@ const Dashboard = () => {
                 className="statValue"
               >
                 <PersonIcon fontSize="large" />
-                <span>{numUsers}</span>
+                <span>{allUsers.length}</span>
               </Typography>
             </StyledPaper>
           )}
-          {numGroups && (
+          {allGroups && (
             <StyledPaper
               sx={{ display: 'flex', flexDirection: 'column', mt: '1em' }}
             >
@@ -145,7 +145,7 @@ const Dashboard = () => {
                 className="statValue"
               >
                 <GroupsIcon fontSize="large" />
-                {numGroups}
+                {allGroups.length}
               </Typography>
             </StyledPaper>
           )}
