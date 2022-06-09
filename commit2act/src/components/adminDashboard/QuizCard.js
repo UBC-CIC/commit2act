@@ -1,83 +1,185 @@
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
   Box,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Divider,
-  Chip,
   IconButton,
+  Typography,
+  Paper,
+  Chip,
+  Button,
   TextField,
   FormGroup,
-  Skeleton,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
-import { styled } from '@mui/material/styles';
+import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
-const StyledDialogTitle = styled(DialogTitle)`
-  font-size: 28px;
-  color: #455a7f;
-  font-weight: 300;
-`;
+const QuizCard = ({ question, quizAnswers }) => {
+  const [editQuiz, setEditQuiz] = useState(false);
 
-const QuizCard = ({ action, open, handleClose, getActions }) => {
-  const [editQuizzes, setEditQuizzes] = useState(false);
-
-  const question = {
-    fact_text:
-      'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
-    question_text:
-      'What percentage of an average Canadian’s total CO2 production is due to transportation?',
+  const editQuizCardForm = {
+    fact_text: question.fact_text,
+    question_text: question.question_text,
+    quiz_answers: quizAnswers.answers,
+    correct_answer: quizAnswers.answer,
+    curr_answer: '',
   };
 
-  const quizAnswers = {
-    answers: ['35%', '70%', '10%', '60%'],
-    answer: '35%',
-  };
-
-  const renderViewQuizContent = () => {
+  const renderViewQuizCard = () => {
     return (
-      <Box>
-        <Typography>Fact Text</Typography>
-        <Typography>{question.fact_text}</Typography>
-        <Typography>Question Text</Typography>
-        <Typography>{question.question_text}</Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column' }} component={Paper}>
+        <IconButton
+          sx={{ alignSelf: 'flex-end' }}
+          onClick={() => setEditQuiz(true)}
+        >
+          <EditIcon />
+        </IconButton>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1em',
+            p: '2em',
+          }}
+        >
+          <Box>
+            <Typography variant="h8">Fact Text</Typography>
+            <Typography sx={{ mt: '1em' }}>{question.fact_text}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="h8">Question Text</Typography>
+            <Typography sx={{ mt: '1em' }}>{question.question_text}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="h8">Possible Answers</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                my: '1.5em',
+                gap: '0.5em',
+              }}
+            >
+              {quizAnswers.answers.map((answer) =>
+                answer === quizAnswers.answer ? (
+                  <Chip key={answer} icon={<CheckIcon />} label={answer} />
+                ) : (
+                  <Chip key={answer} label={answer} variant="outlined" />
+                )
+              )}
+            </Box>
+          </Box>
+        </Box>
       </Box>
     );
   };
 
-  const renderEditQuizContent = () => {
-    return <Typography>bye</Typography>;
+  const removeAnswerOption = (answer) => {};
+
+  const renderEditQuizCard = () => {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column' }} component={Paper}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1em',
+            p: '2em',
+          }}
+        >
+          <Box>
+            <Typography variant="h8">Fact Text</Typography>
+            <TextField
+              required
+              name="fact_text"
+              value={editQuizCardForm.fact_text}
+              multiline
+              InputProps={{
+                style: { fontSize: 15, fontWeight: 100, color: 'black' },
+              }}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: '100%', mt: '1em' }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="h8">Question Text</Typography>
+            <TextField
+              required
+              name="question_text"
+              value={editQuizCardForm.question_text}
+              multiline
+              InputProps={{
+                style: { fontSize: 15, fontWeight: 100, color: 'black' },
+              }}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: '100%', mt: '1em' }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="h8">Possible Answers</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                my: '1.5em',
+                gap: '0.5em',
+              }}
+            >
+              {editQuizCardForm.quiz_answers.map((answer) =>
+                answer === quizAnswers.answer ? (
+                  <Chip
+                    key={answer}
+                    icon={<CheckIcon />}
+                    label={answer}
+                    onDelete={() => removeAnswerOption(answer)}
+                  />
+                ) : (
+                  <Chip
+                    key={answer}
+                    label={answer}
+                    variant="outlined"
+                    onDelete={() => removeAnswerOption(answer)}
+                  />
+                )
+              )}
+            </Box>
+            <FormGroup
+              sx={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
+              <TextField
+                required
+                name="curr_answer"
+                value={editQuizCardForm.curr_answer}
+                InputProps={{
+                  style: { fontSize: 15, fontWeight: 100, color: 'black' },
+                }}
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: { xs: '100%', md: '90%' } }}
+              />
+              <IconButton variant="outlined">
+                <AddIcon />
+              </IconButton>
+            </FormGroup>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              mt: '1.5em',
+            }}
+          >
+            <Button>Cancel</Button>
+            <Button>Save</Button>
+          </Box>
+        </Box>
+      </Box>
+    );
   };
 
-  return (
-    <Dialog
-      aria-labelledby="action-card-dialog"
-      PaperProps={{ sx: { minWidth: '70%' } }}
-      open={open}
-      onClose={handleClose}
-    >
-      <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
-        <CloseIcon />
-      </IconButton>
-
-      <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-        {action.action_name}
-      </StyledDialogTitle>
-      <DialogContent sx={{ mt: '1em', p: '3em' }}>
-        {editQuizzes ? renderEditQuizContent() : renderViewQuizContent()}
-      </DialogContent>
-    </Dialog>
-  );
+  return editQuiz ? renderEditQuizCard() : renderViewQuizCard();
 };
+
 export default QuizCard;
