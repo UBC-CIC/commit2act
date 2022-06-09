@@ -42,8 +42,8 @@ const theme = createTheme({
             variant: 'h3',
           },
           style: {
-            fontSize: 20,
-            color: 'black',
+            fontSize: 18,
+            color: '#112D4E',
             fontWeight: 400,
           },
         },
@@ -75,16 +75,6 @@ const theme = createTheme({
             fontSize: 20,
             color: 'black',
             fontWeight: 100,
-          },
-        },
-        {
-          props: {
-            variant: 'h8',
-          },
-          style: {
-            fontSize: 18,
-            color: '#112D4E',
-            fontWeight: 400,
           },
         },
         {

@@ -55,12 +55,15 @@ const LineChart = ({ allSubmittedActions }) => {
     const formattedDatesInInterval = datesInInterval.map((date) =>
       format(date, 'yyyy-MM-dd')
     );
-    //filter all submitted actions to only get actions for the current time interval
-    const intervalSubmittedActions = allSubmittedActions.filter((action) =>
-      formattedDatesInInterval.includes(action.date_of_action.split('T')[0])
+
+    //reduce formattedDatesInInterval array into object with keys being each of the dates
+    const formattedDatesInIntervalObject = formattedDatesInInterval.reduce(
+      (acc, curr) => ((acc[curr] = 0), acc),
+      {}
     );
+
     //group all actions with the same date together
-    const co2ValuesPerDay = intervalSubmittedActions.reduce((prev, curr) => {
+    const co2ValuesPerDay = allSubmittedActions.reduce((prev, curr) => {
       (prev[curr.date_of_action.split('T')[0]] =
         prev[curr.date_of_action.split('T')[0]] || []).push(curr.g_co2_saved);
       return prev;
@@ -74,7 +77,14 @@ const LineChart = ({ allSubmittedActions }) => {
       ])
     );
 
-    setLineChartData(totalCO2PerDay);
+    //if date is in totalCO2PerDay object, replace value of 0 in formattedDatesInIntervalObject with the correct co2 value
+    Object.keys(formattedDatesInIntervalObject).forEach(
+      (key) =>
+        key in totalCO2PerDay &&
+        (formattedDatesInIntervalObject[key] = totalCO2PerDay[key])
+    );
+
+    setLineChartData(formattedDatesInIntervalObject);
   };
 
   useEffect(() => {

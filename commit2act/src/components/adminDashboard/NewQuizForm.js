@@ -17,7 +17,10 @@ const NewQuizForm = () => {
     curr_answer: '',
   };
   const [quizForm, setQuizForm] = useState(emptyQuizForm);
+  //error states
+  const [emptyFieldError, setEmptyFieldError] = useState(false);
   const [emptyAnswerError, setEmptyAnswerError] = useState(false);
+  const [noCorrectAnswerError, setNoCorrectAnswerError] = useState(false);
 
   const updateForm = (e) => {
     setQuizForm((prev) => ({
@@ -56,6 +59,42 @@ const NewQuizForm = () => {
     ));
   };
 
+  const checkRequiredFields = () => {
+    const { fact_text, question_text, quiz_answers, correct_answer } = quizForm;
+    if (fact_text || question_text === '') {
+      throw new Error('Empty field');
+    } else if (quiz_answers.length === 0) {
+      throw new Error('No answers');
+    } else if (!correct_answer) {
+      throw new Error('No correct answer');
+    }
+  };
+
+  const submitQuiz = async () => {
+    try {
+      checkRequiredFields();
+      const {
+        fact_text,
+        question_text,
+        quiz_answers,
+        correct_answer,
+        curr_answer,
+      } = quizForm;
+      //mutation goes here
+
+      //show success message and clear related states
+    } catch (e) {
+      const errorMsg = e.message;
+      if (errorMsg.includes('Empty field')) {
+        setEmptyFieldError(true);
+      } else if (errorMsg.includes('No answers')) {
+        setEmptyAnswerError(true);
+      } else if (errorMsg.includes('No correct answer')) {
+        setNoCorrectAnswerError(true);
+      }
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -65,7 +104,7 @@ const NewQuizForm = () => {
       }}
     >
       <Box>
-        <Typography variant="h8">Fact Text</Typography>
+        <Typography variant="h3">Fact Text</Typography>
         <TextField
           required
           name="fact_text"
@@ -79,7 +118,7 @@ const NewQuizForm = () => {
         />
       </Box>
       <Box>
-        <Typography variant="h8">Question Text</Typography>
+        <Typography variant="h3">Question Text</Typography>
         <TextField
           required
           name="question_text"
@@ -93,7 +132,7 @@ const NewQuizForm = () => {
         />
       </Box>
       <Box>
-        <Typography variant="h8">Possible Answers</Typography>
+        <Typography variant="h3">Possible Answers</Typography>
 
         {quizForm.quiz_answers.length !== 0 && (
           <Box
@@ -143,7 +182,7 @@ const NewQuizForm = () => {
         }}
       >
         <Button>Cancel</Button>
-        <Button>Save</Button>
+        <Button onClick={submitQuiz}>Save</Button>
       </Box>
     </Box>
   );

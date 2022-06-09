@@ -14,15 +14,19 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 
 const QuizCard = ({ question, quizAnswers }) => {
-  const [editQuiz, setEditQuiz] = useState(false);
-
-  const editQuizCardForm = {
+  const initialQuizCardForm = {
     fact_text: question.fact_text,
     question_text: question.question_text,
     quiz_answers: quizAnswers.answers,
     correct_answer: quizAnswers.answer,
     curr_answer: '',
   };
+  const [editQuiz, setEditQuiz] = useState(false);
+  const [quizForm, setQuizForm] = useState(initialQuizCardForm);
+  //error states
+  const [emptyFieldError, setEmptyFieldError] = useState(false);
+  const [emptyAnswerError, setEmptyAnswerError] = useState(false);
+  const [noCorrectAnswerError, setNoCorrectAnswerError] = useState(false);
 
   const renderViewQuizCard = () => {
     return (
@@ -42,15 +46,15 @@ const QuizCard = ({ question, quizAnswers }) => {
           }}
         >
           <Box>
-            <Typography variant="h8">Fact Text</Typography>
+            <Typography variant="h3">Fact Text</Typography>
             <Typography sx={{ mt: '1em' }}>{question.fact_text}</Typography>
           </Box>
           <Box>
-            <Typography variant="h8">Question Text</Typography>
+            <Typography variant="h3">Question Text</Typography>
             <Typography sx={{ mt: '1em' }}>{question.question_text}</Typography>
           </Box>
           <Box>
-            <Typography variant="h8">Possible Answers</Typography>
+            <Typography variant="h3">Possible Answers</Typography>
             <Box
               sx={{
                 display: 'flex',
@@ -87,11 +91,11 @@ const QuizCard = ({ question, quizAnswers }) => {
           }}
         >
           <Box>
-            <Typography variant="h8">Fact Text</Typography>
+            <Typography variant="h3">Fact Text</Typography>
             <TextField
               required
               name="fact_text"
-              value={editQuizCardForm.fact_text}
+              value={initialQuizCardForm.fact_text}
               multiline
               InputProps={{
                 style: { fontSize: 15, fontWeight: 100, color: 'black' },
@@ -101,11 +105,11 @@ const QuizCard = ({ question, quizAnswers }) => {
             />
           </Box>
           <Box>
-            <Typography variant="h8">Question Text</Typography>
+            <Typography variant="h3">Question Text</Typography>
             <TextField
               required
               name="question_text"
-              value={editQuizCardForm.question_text}
+              value={initialQuizCardForm.question_text}
               multiline
               InputProps={{
                 style: { fontSize: 15, fontWeight: 100, color: 'black' },
@@ -115,7 +119,7 @@ const QuizCard = ({ question, quizAnswers }) => {
             />
           </Box>
           <Box>
-            <Typography variant="h8">Possible Answers</Typography>
+            <Typography variant="h3">Possible Answers</Typography>
             <Box
               sx={{
                 display: 'flex',
@@ -124,7 +128,7 @@ const QuizCard = ({ question, quizAnswers }) => {
                 gap: '0.5em',
               }}
             >
-              {editQuizCardForm.quiz_answers.map((answer) =>
+              {initialQuizCardForm.quiz_answers.map((answer) =>
                 answer === quizAnswers.answer ? (
                   <Chip
                     key={answer}
@@ -151,7 +155,7 @@ const QuizCard = ({ question, quizAnswers }) => {
               <TextField
                 required
                 name="curr_answer"
-                value={editQuizCardForm.curr_answer}
+                value={initialQuizCardForm.curr_answer}
                 InputProps={{
                   style: { fontSize: 15, fontWeight: 100, color: 'black' },
                 }}
