@@ -200,13 +200,13 @@ const GroupCard = ({ group, joinGroupOption }) => {
 
           {group_description && (
             <>
-              <Typography variant="body2" sx={{ mt: '1em' }}>
+              <Typography variant="subtitle1" sx={{ mt: '2em' }}>
                 {readMore
                   ? group_description
                   : group_description.slice(0, descriptionLength)}
               </Typography>
               <Button
-                sx={{ p: 0, mt: '0.5em', fontSize: 13 }}
+                sx={{ p: 0, mt: { xs: '1em', sm: '1.5em' }, fontSize: 13 }}
                 onClick={() => setReadMore(!readMore)}
               >
                 Read {readMore ? 'Less' : 'More'}
