@@ -44,7 +44,7 @@ const BonusPointQuiz = ({
             name="quiz-answer-choices-group"
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
-            sx={{ alignItems: 'center' }}
+            sx={{ mt: '0.5em', alignSelf: 'center' }}
           >
             {answersArray.map((answer, index) => {
               return (
