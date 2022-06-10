@@ -3,25 +3,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Button,
-  List,
-  ListItem,
-  ListItemText,
   Box,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Divider,
-  Chip,
   IconButton,
-  TextField,
-  FormGroup,
-  Skeleton,
-  Paper,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 // import CheckIcon from '@mui/icons-material/Check';
@@ -97,8 +82,8 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
   const renderQuizCards = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-        {questions.map((question) => (
-          <QuizCard question={question} quizAnswers={quizAnswers} />
+        {questions.map((question, index) => (
+          <QuizCard key={index} question={question} quizAnswers={quizAnswers} />
         ))}
       </Box>
     );
@@ -133,7 +118,7 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
       </StyledDialogTitle>
       <DialogContent sx={{ mt: '1em', p: '3em' }}>
         {selectedOption === dialogOptions[0] ? (
-          <NewQuizForm />
+          <NewQuizForm action_id={action.action_id} />
         ) : selectedOption === dialogOptions[1] ? (
           renderQuizCards()
         ) : (

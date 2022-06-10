@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   Box,
   Typography,
   Button,
   TextField,
   FormGroup,
   Chip,
+  LinearProgress,
+  Snackbar,
 } from '@mui/material';
+import { createQuiz, createQuizAnswers } from '../../graphql/mutations';
+import { API } from 'aws-amplify';
+import CheckIcon from '@mui/icons-material/Check';
 
-const NewQuizForm = () => {
+const NewQuizForm = ({ action_id }) => {
   const emptyQuizForm = {
     fact_text: '',
     question_text: '',
     quiz_answers: [],
-    correct_answer: '',
     curr_answer: '',
   };
   const [quizForm, setQuizForm] = useState(emptyQuizForm);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitQuizSuccess, setSubmitQuizSuccess] = useState(false);
   //error states
   const [emptyFieldError, setEmptyFieldError] = useState(false);
   const [emptyAnswerError, setEmptyAnswerError] = useState(false);
@@ -31,12 +38,15 @@ const NewQuizForm = () => {
 
   const addAnswer = () => {
     let answersCopy = quizForm.quiz_answers;
-    answersCopy.push(quizForm.curr_answer);
+    const answerObj = {
+      answer: quizForm.curr_answer,
+      is_correct_answer: false,
+    };
+    answersCopy.push(answerObj);
     setQuizForm((prev) => ({ ...prev, quiz_answers: answersCopy }));
     if (answersCopy.length > 0) {
       setEmptyAnswerError(false);
     }
-    //clear current label
     setQuizForm((prev) => ({ ...prev, curr_answer: '' }));
   };
 
@@ -47,25 +57,52 @@ const NewQuizForm = () => {
     setQuizForm((prev) => ({ ...prev, quiz_answers: answersCopy }));
   };
 
+  const handleMarkCorrectAnswer = (answerObj) => {
+    let updatedAnswers = quizForm.quiz_answers.map((obj) =>
+      answerObj === obj
+        ? {
+            ...obj,
+            is_correct_answer: !obj.is_correct_answer,
+          }
+        : obj
+    );
+    setQuizForm((prev) => ({ ...prev, quiz_answers: updatedAnswers }));
+    setNoCorrectAnswerError(false);
+  };
+
   const renderAddedAnswers = () => {
-    return quizForm.quiz_answers.map((answer, index) => (
+    return quizForm.quiz_answers.map((answerObj, index) => (
       <Chip
-        label={answer}
-        variant="outlined"
+        label={answerObj.answer}
+        variant={answerObj.is_correct_answer ? 'filled' : 'outlined'}
         key={index}
-        onDelete={() => removeAnswer(answer)}
+        icon={
+          <CheckIcon
+            onClick={() => handleMarkCorrectAnswer(answerObj)}
+            sx={{
+              '&:hover': {
+                cursor: 'pointer',
+                opacity: 0.5,
+              },
+            }}
+          />
+        }
+        onDelete={() => removeAnswer(answerObj)}
         sx={{ mr: '0.5em' }}
       />
     ));
   };
 
   const checkRequiredFields = () => {
-    const { fact_text, question_text, quiz_answers, correct_answer } = quizForm;
-    if (fact_text || question_text === '') {
+    const { fact_text, question_text, quiz_answers } = quizForm;
+    const isAnswerCorrectValues = quiz_answers.map(
+      (answerObj) => answerObj.is_correct_answer
+    );
+    if (fact_text === '' || question_text === '') {
       throw new Error('Empty field');
     } else if (quiz_answers.length === 0) {
       throw new Error('No answers');
-    } else if (!correct_answer) {
+    } else if (!isAnswerCorrectValues.includes(true)) {
       throw new Error('No correct answer');
     }
   };
@@ -73,18 +110,37 @@ const NewQuizForm = () => {
   const submitQuiz = async () => {
     try {
       checkRequiredFields();
-      const {
-        fact_text,
-        question_text,
-        quiz_answers,
-        correct_answer,
-        curr_answer,
-      } = quizForm;
-      //mutation goes here
+      setIsLoading(true);
+      const { fact_text, question_text, quiz_answers } = quizForm;
 
+      const createQuizRes = await API.graphql({
+        query: createQuiz,
+        variables: {
+          action_id: action_id,
+          fact_text: fact_text,
+          question_text: question_text,
+        },
+      });
+
+      const quizId = createQuizRes.data.createQuiz.quiz_id;
+
+      await API.graphql({
+        query: createQuizAnswers,
+        variables: {
+          quiz_id: quizId,
+          answers: quiz_answers,
+        },
+      });
+      setSubmitQuizSuccess(true);
       //show success message and clear related states
+      setIsLoading(false);
+      setQuizForm(emptyQuizForm);
+      setEmptyFieldError(false);
+      setEmptyAnswerError(false);
+      setNoCorrectAnswerError(false);
     } catch (e) {
       const errorMsg = e.message;
+      console.log(e);
       if (errorMsg.includes('Empty field')) {
         setEmptyFieldError(true);
       } else if (errorMsg.includes('No answers')) {
@@ -104,6 +160,11 @@ const NewQuizForm = () => {
       }}
     >
       <Box>
+        {emptyFieldError && (
+          <Alert severity="error" sx={{ my: '2em' }}>
+            Please fill out all required fields
+          </Alert>
+        )}
         <Typography variant="h3">Fact Text</Typography>
         <TextField
           required
@@ -115,6 +176,8 @@ const NewQuizForm = () => {
           }}
           InputLabelProps={{ shrink: true }}
           sx={{ width: '100%', mt: '1em' }}
+          onChange={updateForm}
+          error={emptyFieldError}
         />
       </Box>
       <Box>
@@ -129,11 +192,17 @@ const NewQuizForm = () => {
           }}
           InputLabelProps={{ shrink: true }}
           sx={{ width: '100%', mt: '1em' }}
+          onChange={updateForm}
+          error={emptyFieldError}
         />
       </Box>
       <Box>
         <Typography variant="h3">Possible Answers</Typography>
-
+        {quizForm.quiz_answers.length > 0 && (
+          <Typography variant="subtitle1" sx={{ mt: '1em' }}>
+            Select the correct answer by clicking the checkmark icon
+          </Typography>
+        )}
         {quizForm.quiz_answers.length !== 0 && (
           <Box
             sx={{
@@ -162,28 +231,54 @@ const NewQuizForm = () => {
             }}
             InputLabelProps={{ shrink: true }}
             sx={{ width: { xs: '100%', md: '80%' } }}
+            error={emptyAnswerError || noCorrectAnswerError}
+            helperText={
+              (emptyAnswerError && 'At least 1 possible answer is required') ||
+              (noCorrectAnswerError && 'Please mark an answer as correct')
+            }
             onChange={updateForm}
           />
           <Button
             variant="outlined"
             onClick={addAnswer}
-            sx={{ width: { xs: '100%', md: '17%' } }}
+            sx={{
+              width: { xs: '100%', md: '17%' },
+              mt: { xs: '1.5em', md: '0em' },
+              height: 'min-content',
+            }}
           >
             Add Answer{' '}
           </Button>
         </FormGroup>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          mt: '1.5em',
-        }}
+      {isLoading && (
+        <LinearProgress
+          sx={{ width: '100%', mt: '1.5em' }}
+          color="primary"
+          variant="indeterminate"
+        />
+      )}
+      <Button
+        variant="contained"
+        sx={{ my: '2em', backgroundColor: '#112D4E' }}
+        onClick={submitQuiz}
       >
-        <Button>Cancel</Button>
-        <Button onClick={submitQuiz}>Save</Button>
-      </Box>
+        Submit New Quiz
+      </Button>
+      <Snackbar
+        open={submitQuizSuccess}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={2000}
+        onClose={() => setSubmitQuizSuccess(false)}
+      >
+        <Alert
+          onClose={() => setSubmitQuizSuccess(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Your quiz has been submitted!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

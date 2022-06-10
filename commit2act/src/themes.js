@@ -82,9 +82,9 @@ const theme = createTheme({
             variant: 'subtitle1',
           },
           style: {
-            fontSize: '0.75rem',
+            fontSize: '10',
             color: 'black',
-            fontWeight: 400,
+            fontWeight: 100,
           },
         },
         {
@@ -108,6 +108,11 @@ const theme = createTheme({
           },
         },
       ],
+    },
+    MuiButtonBase: {
+      defaultProps: {
+        color: '#112D4E',
+      },
     },
   },
 });

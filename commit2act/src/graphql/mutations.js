@@ -443,3 +443,33 @@ export const restoreAction = /* GraphQL */ `
     }
   }
 `;
+export const createQuiz = /* GraphQL */ `
+  mutation CreateQuiz(
+    $action_id: Int!
+    $fact_text: String!
+    $question_text: String!
+  ) {
+    createQuiz(
+      action_id: $action_id
+      fact_text: $fact_text
+      question_text: $question_text
+    ) {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+    }
+  }
+`;
+export const createQuizAnswers = /* GraphQL */ `
+  mutation CreateQuizAnswers(
+    $quiz_id: Int!
+    $answers: [ActionQuizAnswerNoId!]!
+  ) {
+    createQuizAnswers(quiz_id: $quiz_id, answers: $answers) {
+      quiz_id
+      answer
+      is_correct_answer
+    }
+  }
+`;

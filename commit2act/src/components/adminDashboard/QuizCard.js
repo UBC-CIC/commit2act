@@ -77,7 +77,40 @@ const QuizCard = ({ question, quizAnswers }) => {
     );
   };
 
-  const removeAnswerOption = (answer) => {};
+  const removeAnswer = (label) => {
+    let answersCopy = quizForm.quiz_answers;
+    const index = answersCopy.indexOf(label);
+    answersCopy.splice(index, 1);
+    setQuizForm((prev) => ({ ...prev, quiz_answers: answersCopy }));
+  };
+
+  const handleMarkCorrectAnswer = (answer) => {
+    setQuizForm((prev) => ({ ...prev, correct_answer: answer }));
+    setNoCorrectAnswerError(false);
+  };
+
+  const renderAddedAnswers = () => {
+    return quizForm.quiz_answers.map((answer, index) => (
+      <Chip
+        label={answer}
+        variant={quizForm.correct_answer === answer ? 'filled' : 'outlined'}
+        key={index}
+        icon={
+          <CheckIcon
+            onClick={() => handleMarkCorrectAnswer(answer)}
+            sx={{
+              '&:hover': {
+                cursor: 'pointer',
+                opacity: 0.5,
+              },
+            }}
+          />
+        }
+        onDelete={() => removeAnswer(answer)}
+        sx={{ mr: '0.5em' }}
+      />
+    ));
+  };
 
   const renderEditQuizCard = () => {
     return (
@@ -128,23 +161,24 @@ const QuizCard = ({ question, quizAnswers }) => {
                 gap: '0.5em',
               }}
             >
-              {initialQuizCardForm.quiz_answers.map((answer) =>
+              {renderAddedAnswers()}
+              {/* {initialQuizCardForm.quiz_answers.map((answer) =>
                 answer === quizAnswers.answer ? (
                   <Chip
                     key={answer}
                     icon={<CheckIcon />}
                     label={answer}
-                    onDelete={() => removeAnswerOption(answer)}
+                    onDelete={() => removeAnswer(answer)}
                   />
                 ) : (
                   <Chip
                     key={answer}
                     label={answer}
                     variant="outlined"
-                    onDelete={() => removeAnswerOption(answer)}
+                    onDelete={() => removeAnswer(answer)}
                   />
                 )
-              )}
+              )} */}
             </Box>
             <FormGroup
               sx={{
@@ -175,7 +209,7 @@ const QuizCard = ({ question, quizAnswers }) => {
               mt: '1.5em',
             }}
           >
-            <Button>Cancel</Button>
+            <Button>Delete</Button>
             <Button>Save</Button>
           </Box>
         </Box>
