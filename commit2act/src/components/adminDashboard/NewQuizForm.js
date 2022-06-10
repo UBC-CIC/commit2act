@@ -14,7 +14,7 @@ import { createQuiz, createQuizAnswers } from '../../graphql/mutations';
 import { API } from 'aws-amplify';
 import CheckIcon from '@mui/icons-material/Check';
 
-const NewQuizForm = ({ action_id }) => {
+const NewQuizForm = ({ action_id, getQuizzes }) => {
   const emptyQuizForm = {
     fact_text: '',
     question_text: '',
@@ -138,6 +138,7 @@ const NewQuizForm = ({ action_id }) => {
       setEmptyFieldError(false);
       setEmptyAnswerError(false);
       setNoCorrectAnswerError(false);
+      getQuizzes();
     } catch (e) {
       const errorMsg = e.message;
       console.log(e);

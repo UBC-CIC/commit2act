@@ -119,7 +119,7 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
       </StyledDialogTitle>
       <DialogContent sx={{ mt: '1em', p: '3em' }}>
         {selectedOption === dialogOptions[0] ? (
-          <NewQuizForm action_id={action.action_id} />
+          <NewQuizForm action_id={action.action_id} getQuizzes={getQuizzes} />
         ) : selectedOption === dialogOptions[1] ? (
           renderQuizCards()
         ) : (
