@@ -200,7 +200,7 @@ const NewQuizForm = ({ action_id }) => {
         <Typography variant="h3">Possible Answers</Typography>
         {quizForm.quiz_answers.length > 0 && (
           <Typography variant="subtitle1" sx={{ mt: '1em' }}>
-            Select the correct answer by clicking the checkmark icon
+            Select the correct answers by clicking the checkmark icon
           </Typography>
         )}
         {quizForm.quiz_answers.length !== 0 && (

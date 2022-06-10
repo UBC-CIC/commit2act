@@ -25,10 +25,11 @@ const SelfReportMenu = ({ user }) => {
     format(new Date(), 'yyyy-MM-dd')
   );
   const [selectedAction, setSelectedAction] = useState();
-  const [fact, setFact] = useState();
   const [activeStep, setActiveStep] = useState(0);
   const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCO2Saved, setTotalCO2Saved] = useState(0);
+  const [skipBonusQuestion, setSkipBonusQuestion] = useState(false);
+  const [quiz, setQuiz] = useState();
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
@@ -102,9 +103,11 @@ const SelfReportMenu = ({ user }) => {
         )}
         {selectedAction && activeStep === 2 && (
           <ActionFact
-            fact={fact}
-            setFact={setFact}
-            setActiveStep={setActiveStep}
+            selectedAction={selectedAction}
+            user={user}
+            quiz={quiz}
+            setQuiz={setQuiz}
+            setSkipBonusQuestion={setSkipBonusQuestion}
           />
         )}
         {activeStep === 3 && (
@@ -119,6 +122,7 @@ const SelfReportMenu = ({ user }) => {
         )}
         {activeStep === 4 && (
           <ImageValidationPanel
+            skipBonusQuestion={skipBonusQuestion}
             setActiveStep={setActiveStep}
             activeStep={activeStep}
             selectedImage={selectedImage}
@@ -127,7 +131,7 @@ const SelfReportMenu = ({ user }) => {
         )}
         {activeStep === 5 && (
           <BonusPointQuiz
-            fact={fact}
+            quiz={quiz}
             setQuizAnswered={setQuizAnswered}
             setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
             setActiveStep={setActiveStep}

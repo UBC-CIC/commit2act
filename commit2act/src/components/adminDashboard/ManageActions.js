@@ -6,7 +6,7 @@ import ImageListItem, {
 import { getAllActions } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
-import QuizDialog from './QuizDialog';
+import ActionCard from './ActionCard';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -25,7 +25,7 @@ const StyledImageListItem = styled(ImageListItem)`
   }
 `;
 
-const ViewAndEditQuizzes = () => {
+const ManageActions = () => {
   const [actionOptions, setActionOptions] = useState();
   const [selectedAction, setSelectedAction] = useState();
   const [openActionDialog, setOpenActionDialog] = useState(false);
@@ -117,10 +117,12 @@ const ViewAndEditQuizzes = () => {
             </StyledImageListItem>
           ))}
         {selectedAction && (
-          <QuizDialog
+          <ActionCard
             action={selectedAction}
             open={openActionDialog}
             handleClose={handleClose}
+            editAction={editAction}
+            setEditAction={setEditAction}
             getActions={getActions}
           />
         )}
@@ -128,4 +130,4 @@ const ViewAndEditQuizzes = () => {
     </Grid>
   );
 };
-export default ViewAndEditQuizzes;
+export default ManageActions;

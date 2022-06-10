@@ -486,6 +486,7 @@ export const getAllQuizzes = /* GraphQL */ `
       question_text
       action_id
       answers
+      correct_answers
     }
   }
 `;
@@ -497,6 +498,19 @@ export const getAllQuizzesForAction = /* GraphQL */ `
       question_text
       action_id
       answers
+      correct_answers
+    }
+  }
+`;
+export const getQuizPoolForUser = /* GraphQL */ `
+  query GetQuizPoolForUser($user_id: Int!, $action_id: Int!) {
+    getQuizPoolForUser(user_id: $user_id, action_id: $action_id) {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+      answers
+      correct_answers
     }
   }
 `;
@@ -508,6 +522,7 @@ export const getSingleQuiz = /* GraphQL */ `
       question_text
       action_id
       answers
+      correct_answers
     }
   }
 `;

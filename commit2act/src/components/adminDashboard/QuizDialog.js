@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,12 +9,13 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
-// import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
 import NewQuizForm from './NewQuizForm';
 import QuizCard from './QuizCard';
+import { API } from 'aws-amplify';
+import { getAllQuizzesForAction } from '../../graphql/queries';
 
 const StyledDialogTitle = styled(DialogTitle)`
   font-size: 28px;
@@ -28,26 +29,37 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
     'View and Edit Existing Questions',
   ];
   const [selectedOption, setSelectedOption] = useState();
+  const [allQuizzes, setAllQuizzes] = useState();
 
-  const questions = [
-    {
-      fact_text:
-        'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
-      question_text:
-        'What percentage of an average Canadian’s total CO2 production is due to transportation?',
-    },
-    {
-      fact_text:
-        'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
-      question_text:
-        'What percentage of an average Canadian’s total CO2 production is due to transportation?',
-    },
-  ];
+  useEffect(() => {
+    const getQuizzes = async () => {
+      const res = await API.graphql({
+        query: getAllQuizzesForAction,
+        variables: { action_id: action.action_id },
+      });
+      setAllQuizzes(res.data.getAllQuizzesForAction);
+    };
+    getQuizzes();
+  }, [action.action_id]);
+  // const questions = [
+  //   {
+  //     fact_text:
+  //       'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
+  //     question_text:
+  //       'What percentage of an average Canadian’s total CO2 production is due to transportation?',
+  //   },
+  //   {
+  //     fact_text:
+  //       'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
+  //     question_text:
+  //       'What percentage of an average Canadian’s total CO2 production is due to transportation?',
+  //   },
+  // ];
 
-  const quizAnswers = {
-    answers: ['35%', '70%', '10%', '60%'],
-    answer: '35%',
-  };
+  // const quizAnswers = {
+  //   answers: ['35%', '70%', '10%', '60%'],
+  //   answer: '35%',
+  // };
 
   const renderQuizMenu = () => {
     return (
@@ -81,11 +93,13 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
 
   const renderQuizCards = () => {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-        {questions.map((question, index) => (
-          <QuizCard key={index} question={question} quizAnswers={quizAnswers} />
-        ))}
-      </Box>
+      allQuizzes && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+          {allQuizzes.map((quiz, index) => (
+            <QuizCard key={index} quiz={quiz} />
+          ))}
+        </Box>
+      )
     );
   };
 

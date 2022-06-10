@@ -4,8 +4,8 @@ import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import CreateAction from './CreateAction';
-import ViewAndEditActions from '../components/adminDashboard/ViewAndEditActions';
-import ViewAndEditQuizzes from '../components/adminDashboard/ViewAndEditQuizzes';
+import ManageActions from '../components/adminDashboard/ManageActions';
+import ManageQuizzes from '../components/adminDashboard/ManageQuizzes';
 import Dashboard from '../components/adminDashboard/Dashboard';
 
 const AdminDashboard = () => {
@@ -63,13 +63,13 @@ const AdminDashboard = () => {
         <Typography variant="h2" component="h1" sx={{ mb: '2em' }}>
           Select an action to view and edit
         </Typography>
-        <ViewAndEditActions />
+        <ManageActions />
       </TabPanel>
       <TabPanel value={tabs[3]} sx={{ textAlign: 'center' }}>
         <Typography variant="h2" component="h1" sx={{ mb: '2em' }}>
           Select an action to view and add quiz questions
         </Typography>
-        <ViewAndEditQuizzes />
+        <ManageQuizzes />
       </TabPanel>
     </TabContext>
   );
