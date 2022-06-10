@@ -224,6 +224,28 @@ Resources:
         - Key: "EnvironmentName"
           Value: !Ref 'EnvironmentName'
 
+  PublicRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: 
+      - IGWAttachment
+      - PublicRouteTable
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
   OpenSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties: 
@@ -403,6 +425,119 @@ Resources:
                 Resource: '*'
       # ManagedPolicyArns:
       #   - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  EndpointSSM:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ssm'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  EndpointKMS:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.kms'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  EndpointEC2Messages:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ec2messages'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  EndpointLogs:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.logs'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  EndpointRekognition:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.rekognition'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  # EndpointS3:
+  #   Type: AWS::EC2::VPCEndpoint
+  #   Properties:
+  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+  #     # PrivateDnsEnabled: true  # cant be set to true for some reason
+  #     SecurityGroupIds:
+  #       - !Ref OpenSecurityGroup
+  #     SubnetIds:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     VpcEndpointType: Interface
+  #     VpcId: !Ref VPC
+  
+  EndpointS3Outpost:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3-outposts'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+  
+  EndpointRDS:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.rds'
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref OpenSecurityGroup
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  EndpointGatewayS3:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      RouteTableIds: 
+        - !Ref PublicRouteTable
+      VpcEndpointType: Gateway
+      VpcId: !Ref VPC
 
 
   RDSProxy:

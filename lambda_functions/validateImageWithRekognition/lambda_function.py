@@ -66,8 +66,8 @@ def detect_labels(bucket, key):
     if any of the valid_labels are seen in the image with a confidence higher than MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD, they get sent to a
     different bucket for storage and distribution through cloudf.
     """
-    
-    print(f'Detecting labels for image {key} in bucket {bucket}')
+    t = time.time()
+    print(f'{time.time() - t:.3f} seconds since invocation. Detecting labels for image {key} in bucket {bucket}')
     
     # get the minimum rekognition confidence threshold for detect labels
     response = ssm.get_parameters(
@@ -75,17 +75,21 @@ def detect_labels(bucket, key):
     )
     min_confidence = float(response['Parameters'][0]['Value'])
     
+    print(f'{time.time() - t:.3f} seconds since invocation. Minimum confidence: {min_confidence}')
+
     # connect to the database through the RDS proxy
     conn = pymysql.connect(host=db_host, user=db_user, password=db_password, database=db_database, cursorclass=pymysql.cursors.DictCursor) #connect_timeout=5
     cur = conn.cursor()
-        
+    
+    print(f'{time.time() - t:.3f} seconds since invocation. Successfully established connection to the database')
+    
     # get the id of the submitted action
     submitted_action_id = int(key.split("/")[-1].split(".")[0])
     
     # first see if image is explicit
     moderation_labels = rekognition.detect_moderation_labels(Image={'S3Object':{'Bucket':bucket,'Name':key}})
     if len(moderation_labels['ModerationLabels']) > 0:
-        print(f'Innapropriate content found in image: {moderation_labels["ModerationLabels"]}\nDeleting image')
+        print(f'{time.time() - t:.3f} seconds since invocation. Innapropriate content found in image: {moderation_labels["ModerationLabels"]}\nDeleting image')
         # some explicit inappropriate content was found
         response = s3.meta.client.delete_object(Bucket=bucket, Key=key)
         print(f'Successfully deleted image {key} from the validation bucket {bucket}')
@@ -98,14 +102,14 @@ def detect_labels(bucket, key):
         conn.close()
         
         return None
-        
     
-    print('Fetching validation labels for image from the database')
+    print(f'{time.time() - t:.3f} seconds since invocation. Image had no detected innapropriate content, proceeding to fetch labels from the database.')
+
     cur.execute(f'select * from ActionValidationLabel where action_id = (select `Action`.action_id from SubmittedAction JOIN `Action` on `Action`.action_id = SubmittedAction.action_id where SubmittedAction.sa_id={int(key.split("/")[-1].split(".")[0])});') #
     res = cur.fetchall()
     valid_labels = [r['validation_label'] for r in res]
     
-    print('Passing image to rekognition')
+    print(f'{time.time() - t:.3f} seconds since invocation. Passing image to rekognition to detect labels')
     response = rekognition.detect_labels(Image={"S3Object": {"Bucket": bucket, "Name": key}})
     
     # gets the image EXIF data, this section is unused for now, but can be expanded upon in the future
@@ -124,16 +128,19 @@ def detect_labels(bucket, key):
     
     if not confidence_list or max(confidence_list) < min_confidence:
         # no label in the image had enough confidence, or no valid label appeared in Rekognition's reponse
-        print('Failed validation')
+        print(f'{time.time() - t:.3f} seconds since invocation. Image failed validation')
         pass_or_fail = "fail"
     else:
-        print('Passed validation!')
+        print(f'{time.time() - t:.3f} seconds since invocation. Image passed validation!')
     
     # key for the Amplify bucket, what we will name the image in the amplify bucket
     bucket_key_name = f'validation/{pass_or_fail}/{key.split("/")[-1]}'
 
+    # print(s3.meta.client.list_objects(Bucket=bucket))
+
     try:
-        # Move the iamge to the Amplify bucket
+        # Move the image to the Amplify bucket
+        print(f'{time.time() - t:.3f} seconds since invocation. Moving photo from bucket {bucket}, key {key} TO {AMPLIFY_BUCKET}, {"public/" + bucket_key_name}')
         s3.meta.client.copy({"Bucket": bucket, "Key": key}, AMPLIFY_BUCKET, 'public/' + bucket_key_name)
         print(f'Successfully sent image {key} to the amplify storage bucket [the image {pass_or_fail}ed validation]')
         
@@ -147,11 +154,13 @@ def detect_labels(bucket, key):
         conn.close()
         raise e
     
+    print(f'{time.time() - t:.3f} seconds since invocation. Moved image to Amplify bucket')
+
     # update the submitted action to include the cloudfront url of the image for display
-    sql = f'UPDATE SubmittedAction SET submitted_image="{CLOUDFRONT_URL+bucket_key_name}", is_validated={1 if pass_or_fail == "pass" else 0} where sa_id={submitted_action_id};'
+    sql = f'UPDATE SubmittedAction SET submitted_image="{"https://" + CLOUDFRONT_URL + "/" + bucket_key_name}", is_validated={1 if pass_or_fail == "pass" else 0} where sa_id={submitted_action_id};'
     print('Executing statement', sql)
     cur.execute(sql) 
-
+    
     # for the logs only, show the submitted action
     sql = f'SELECT * FROM SubmittedAction where sa_id={submitted_action_id};'
     print('Executing statement', sql)
@@ -159,10 +168,10 @@ def detect_labels(bucket, key):
     print(cur.fetchall())
 
     conn.commit()  # required for statements that have UPDATE
-
+    
     cur.close()
     conn.close()
-    
+    print(f'{time.time() - t:.3f} seconds since invocation. Finished execution.')
     return response
 
 
@@ -179,14 +188,14 @@ def lambda_handler(event, context):
     '''
     S3 trigger that uses Rekognition APIs to detect labels in S3 Object.
     '''
-    t = time.time()
+    
     # Get the object from the event
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'])
     try:
         # Calls rekognition DetectLabels API to detect labels in S3 object
         response = detect_labels(bucket, key)
-        print(response, "It took %.2f seconds from invokation to return of this Lambda" % (time.time() - t))
+        print(response)
         return response
 
     except Exception as e:
