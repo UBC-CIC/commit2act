@@ -6,6 +6,7 @@ import {
   Button,
   Box,
   IconButton,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -31,35 +32,17 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
   const [selectedOption, setSelectedOption] = useState();
   const [allQuizzes, setAllQuizzes] = useState();
 
+  const getQuizzes = async () => {
+    const res = await API.graphql({
+      query: getAllQuizzesForAction,
+      variables: { action_id: action.action_id },
+    });
+    setAllQuizzes(res.data.getAllQuizzesForAction);
+  };
+
   useEffect(() => {
-    const getQuizzes = async () => {
-      const res = await API.graphql({
-        query: getAllQuizzesForAction,
-        variables: { action_id: action.action_id },
-      });
-      setAllQuizzes(res.data.getAllQuizzesForAction);
-    };
     getQuizzes();
   }, [action.action_id]);
-  // const questions = [
-  //   {
-  //     fact_text:
-  //       'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
-  //     question_text:
-  //       'What percentage of an average Canadian’s total CO2 production is due to transportation?',
-  //   },
-  //   {
-  //     fact_text:
-  //       'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production',
-  //     question_text:
-  //       'What percentage of an average Canadian’s total CO2 production is due to transportation?',
-  //   },
-  // ];
-
-  // const quizAnswers = {
-  //   answers: ['35%', '70%', '10%', '60%'],
-  //   answer: '35%',
-  // };
 
   const renderQuizMenu = () => {
     return (
@@ -92,14 +75,18 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
   };
 
   const renderQuizCards = () => {
-    return (
-      allQuizzes && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-          {allQuizzes.map((quiz, index) => (
-            <QuizCard key={index} quiz={quiz} />
-          ))}
-        </Box>
-      )
+    return allQuizzes.length > 0 ? (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+        {allQuizzes.map((quiz, index) => (
+          <QuizCard key={index} quiz={quiz} getQuizzes={getQuizzes} />
+        ))}
+      </Box>
+    ) : (
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant="subtitle1">
+          There are currently no quizzes to display.
+        </Typography>
+      </Box>
     );
   };
 

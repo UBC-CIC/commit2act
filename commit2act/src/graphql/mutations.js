@@ -473,3 +473,38 @@ export const createQuizAnswers = /* GraphQL */ `
     }
   }
 `;
+export const updateQuiz = /* GraphQL */ `
+  mutation UpdateQuiz(
+    $quiz_id: Int
+    $fact_text: String
+    $question_text: String
+  ) {
+    updateQuiz(
+      quiz_id: $quiz_id
+      fact_text: $fact_text
+      question_text: $question_text
+    ) {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+    }
+  }
+`;
+export const remakeQuizAnswers = /* GraphQL */ `
+  mutation RemakeQuizAnswers(
+    $quiz_id: Int!
+    $answers: [ActionQuizAnswerNoId!]!
+  ) {
+    remakeQuizAnswers(quiz_id: $quiz_id, answers: $answers) {
+      quiz_id
+      answer
+      is_correct_answer
+    }
+  }
+`;
+export const deleteQuiz = /* GraphQL */ `
+  mutation DeleteQuiz($quiz_id: Int!) {
+    deleteQuiz(quiz_id: $quiz_id)
+  }
+`;
