@@ -384,8 +384,12 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
                 onChange={handleTabChange}
                 aria-label="Leaderboard tabs"
                 sx={{
+                  borderTop: { xs: 1, sm: 1 },
                   borderRight: { xs: 0, sm: 1 },
-                  borderColor: { xs: 'none', sm: 'divider' },
+                  borderBottom: { xs: 1, sm: 1 },
+                  borderTopColor: { xs: 'divider', sm: 'transparent' },
+                  borderRightColor: { xs: 'transparent', sm: 'divider' },
+                  borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
                 <Tab label="Global Groups" value={tabs[0]} />

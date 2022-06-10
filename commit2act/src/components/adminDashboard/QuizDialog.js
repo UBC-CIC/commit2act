@@ -42,6 +42,7 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
 
   useEffect(() => {
     getQuizzes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action.action_id]);
 
   const renderQuizMenu = () => {

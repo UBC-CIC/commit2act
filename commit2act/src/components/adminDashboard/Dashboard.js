@@ -102,7 +102,7 @@ const Dashboard = () => {
       <Grid
         container
         item
-        spacing={4}
+        spacing={2}
         sx={{
           mt: { xs: '0.5em', md: '2em' },
           width: { xs: '70%', md: '100%' },
@@ -191,7 +191,7 @@ const Dashboard = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{ width: { xs: '70%', md: '100%' } }}>
-        <Typography variant="h2" sx={{ my: '2em' }}>
+        <Typography variant="h2" sx={{ my: { sm: '2em' }, mb: { xs: '2em' } }}>
           All Time Stats
         </Typography>
         <Box
