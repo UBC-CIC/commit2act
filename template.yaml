@@ -875,6 +875,7 @@ Resources:
     Properties:
       ApiId: !GetAtt AppSyncAPI.ApiId
       Definition: |
+        
         type Action {
           action_id: Int!
           action_name: String!
@@ -908,13 +909,27 @@ Resources:
           quiz_id: Int!
           fact_text: String!
           question_text: String!
-          action_id: ID!
+          action_id: Int!
         }
 
         type ActionQuizAnswer {
           quiz_id: Int!
           answer: String!
           is_correct_answer: Boolean!
+        }
+
+        input ActionQuizAnswerNoId {
+          answer: String!
+          is_correct_answer: Boolean!
+        }
+
+        type ActionQuizWithAnswers {
+          quiz_id: Int!
+          fact_text: String!
+          question_text: String!
+          action_id: Int!
+          answers: String
+          correct_answers: String
         }
 
         type ActionValidationLabel {
@@ -1041,6 +1056,11 @@ Resources:
           deleteActionValidationLabel(action_id: Int!, validation_label: String!): String
           graveyardAction(action_id: Int!): Action
           restoreAction(action_id: Int!): Action
+          createQuiz(action_id: Int!, fact_text: String!, question_text: String!): ActionQuiz
+          createQuizAnswers(quiz_id: Int!, answers: [ActionQuizAnswerNoId!]!): [ActionQuizAnswer]
+          updateQuiz(quiz_id: Int, fact_text: String, question_text: String): ActionQuiz
+          remakeQuizAnswers(quiz_id: Int!, answers: [ActionQuizAnswerNoId!]!): [ActionQuizAnswer]
+          deleteQuiz(quiz_id: Int!): String
         }
 
         type Query {
@@ -1078,6 +1098,11 @@ Resources:
           getGroupTotalCO2(group_id: Int!): Float
           isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
           getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
+          getAllQuizzes: [ActionQuizWithAnswers]
+          getAllQuizzesForAction(action_id: Int!): [ActionQuizWithAnswers]
+          getQuizPoolForUser(user_id: Int!, action_id: Int!): [ActionQuizWithAnswers]
+          getSingleQuiz(quiz_id: Int!): ActionQuizWithAnswers
+          isQuizAnswerCorrect(quiz_id: Int!, answer: String!): Boolean
         }
 
         type Role {
@@ -1236,6 +1261,7 @@ Resources:
           item_description: String
           co2_saved_per_unit: Float
         }
+
 
 
   getActionItemsForActionResolver:
@@ -3343,6 +3369,228 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+  
+  getAllQuizzesResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllQuizzes
+      RequestMappingTemplate: |
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, group_concat('', answer, '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as answers, group_concat(IF(is_correct_answer = true, answer, NULL), '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as correct_answers FROM ActionQuiz left join ActionQuizAnswer on ActionQuiz.quiz_id = ActionQuizAnswer.quiz_id GROUP BY ActionQuiz.quiz_id ",
+            "variableMapping": {}
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllQuizzesForActionResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllQuizzesForAction
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, group_concat('', answer, '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as answers, group_concat(IF(is_correct_answer = true, answer, NULL), '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as correct_answers FROM ActionQuiz left join ActionQuizAnswer on ActionQuiz.quiz_id = ActionQuizAnswer.quiz_id WHERE ActionQuiz.action_id=:1 GROUP BY ActionQuiz.quiz_id",
+            "variableMapping": { ":1": $context.args.action_id }
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getQuizPoolForUserResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getQuizPoolForUser
+      RequestMappingTemplate: |
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat('', answer, '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as answers FROM ActionQuiz left join ActionQuizAnswer on ActionQuiz.quiz_id = ActionQuizAnswer.quiz_id WHERE ActionQuiz.quiz_id not in (SELECT ActionQuiz.quiz_id FROM ActionQuiz inner join SubmittedAction on ActionQuiz.quiz_id = SubmittedAction.quiz_id WHERE first_quiz_answer_correct = 1 AND user_id=:1) AND action_id=:2 GROUP BY ActionQuiz.quiz_id;",
+            "variableMapping": {
+              ":1": $context.args.user_id,
+              ":2": $context.args.action_id
+            }
+          }
+        }
+
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getSingleQuizResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleQuiz
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, group_concat('', answer, '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as answers, group_concat(IF(is_correct_answer = true, answer, NULL), '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as correct_answers FROM ActionQuiz left join ActionQuizAnswer on ActionQuiz.quiz_id = ActionQuizAnswer.quiz_id  WHERE ActionQuiz.quiz_id=:1 GROUP BY ActionQuiz.quiz_id",
+            "variableMapping": {
+              ":1": $context.arguments.quiz_id
+            }
+          }
+        }
+
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  isQuizAnswerCorrectResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: isQuizAnswerCorrect
+      RequestMappingTemplate: |
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select is_correct_answer from ActionQuizAnswer where quiz_id=:1 AND answer=:2",
+            "variableMapping": {
+              ":1": $context.args.quiz_id,
+              ":2": "$context.args.answer"
+            }
+          }
+        }
+        
+      ResponseMappingTemplate: $context.result[0].get("is_correct_answer")
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+  
+  getSingleQuizResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getSingleQuiz
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "SELECT *, group_concat('', answer, '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as answers, group_concat(IF(is_correct_answer = true, answer, NULL), '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as correct_answers FROM ActionQuiz left join ActionQuizAnswer on ActionQuiz.quiz_id = ActionQuizAnswer.quiz_id  WHERE ActionQuiz.quiz_id=:1 GROUP BY ActionQuiz.quiz_id",
+            "variableMapping": {
+              ":1": $context.arguments.quiz_id
+            }
+          }
+        }
+
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createQuizResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createQuiz
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "insert into ActionQuiz (action_id, fact_text, question_text) VALUES (:1, :2, :3)",
+            "variableMapping": {
+              ":1": $context.args.action_id,
+                ":2": "$context.args.fact_text",
+                ":3": "$context.args.question_text",
+            },
+            "responseSQL": "SELECT * FROM ActionQuiz WHERE action_id=:1 AND fact_text=:2 AND question_text=:3"
+          }
+        }
+
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  createQuizAnswersResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: createQuizAnswers
+      RequestMappingTemplate: |
+        {
+          "version" : "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "insert into ActionQuizAnswer (quiz_id, :K01, :K02) VALUES ($context.arguments.quiz_id, :V01, :V02)",
+            "variableMapping": {
+            },
+            "items": $util.toJson($context.arguments.answers),
+            "responseSQL": "SELECT * FROM ActionQuizAnswer WHERE quiz_id=$context.arguments.quiz_id"
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
