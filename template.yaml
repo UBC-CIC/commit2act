@@ -3596,6 +3596,125 @@ Resources:
       Kind: UNIT
       MaxBatchSize: 0
 
+  updateQuizResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: updateQuiz
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        updateQuiz(quiz_id: Int, fact_text: String, question_text: String): ActionQuiz
+        *#
+        #**
+        This only updates fields that actually are needing to be updated
+        *#
+
+        #if( $context.arguments.fact_text )
+          #if( $context.arguments.question_text )
+            #set( $fact_text = 'fact_text=:2,' )
+          #else
+            #set( $fact_text = 'fact_text=:2' )
+          #end
+        #else
+          #set( $fact_text = '' )
+        #end
+
+        #if( $context.arguments.question_text )
+          #set( $question_text = 'question_text=:3' )
+        #else
+          #set( $question_text = '' )
+        #end
+
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "UPDATE `ActionQuiz` SET $fact_text $question_text WHERE quiz_id=:1",
+            "variableMapping": {
+              ":1": $context.arguments.quiz_id,
+                ":2": "$context.arguments.fact_text", 
+                ":3": "$context.arguments.question_text"
+            },
+            "responseSQL": "SELECT * FROM `ActionQuiz` WHERE quiz_id=:1"
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  remakeQuizAnswersResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: remakeQuizAnswers
+      RequestMappingTemplate: |
+        #set( $answers = $context.arguments.answers )
+        #set( $final_sql = 'DELETE FROM ActionQuizAnswer WHERE quiz_id=:1 ; ' )
+        #set( $beginning = "INSERT INTO ActionQuizAnswer (quiz_id, answer, is_correct_answer) VALUES (:1, '" )
+        #set( $sep1 = "', "  )
+        #set( $ending = "); " )
+
+        #foreach( $ans in $answers )
+          #set( $ai0 = $ans.get('answer') )
+          #set( $ai1 = $ans.get('is_correct_answer') )
+          #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$ending" )
+        #end
+
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "$final_sql",
+            "variableMapping": {
+              ":1": $context.arguments.quiz_id
+            },
+            "responseSQL": "SELECT * FROM `ActionQuizAnswer` WHERE quiz_id=:1"
+          }
+        }
+
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  deleteQuizResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Mutation
+      FieldName: deleteQuiz
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "DELETE FROM `ActionQuiz` WHERE quiz_id = :1",
+            "variableMapping": {
+              ":1": $context.arguments.quiz_id
+            },
+          }
+        }
+
+      ResponseMappingTemplate: "Deleted quiz"
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
 
 # OUTPUTS ######################
 
