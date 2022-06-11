@@ -27,6 +27,7 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
   const [emptyFieldError, setEmptyFieldError] = useState(false);
   const [emptyAnswerError, setEmptyAnswerError] = useState(false);
   const [noCorrectAnswerError, setNoCorrectAnswerError] = useState(false);
+  const [duplicateAnswerError, setDuplicateAnswerError] = useState(false);
 
   useEffect(() => {
     const answerArray = answers.split('\n');
@@ -115,12 +116,17 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
     const isAnswerCorrectValues = quiz_answers.map(
       (answerObj) => answerObj.is_correct_answer
     );
+    //check to see if any of the answers are duplicates
+    const answerValues = quiz_answers.map((answerObj) => answerObj.answer);
+    const hasDuplicates = answerValues.length !== new Set(answerValues).size;
     if (fact_text === '' || question_text === '') {
       throw new Error('Empty field');
     } else if (quiz_answers.length === 0) {
       throw new Error('No answers');
     } else if (!isAnswerCorrectValues.includes(true)) {
       throw new Error('No correct answer');
+    } else if (hasDuplicates) {
+      throw new Error('Duplicate answer');
     }
   };
 
@@ -149,6 +155,7 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
       setEmptyFieldError(false);
       setEmptyAnswerError(false);
       setNoCorrectAnswerError(false);
+      setDuplicateAnswerError(false);
       getQuizzes();
     } catch (e) {
       const errorMsg = e.message;
@@ -158,6 +165,8 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
         setEmptyAnswerError(true);
       } else if (errorMsg.includes('No correct answer')) {
         setNoCorrectAnswerError(true);
+      } else if (errorMsg.includes('Duplicate answer')) {
+        setDuplicateAnswerError(true);
       }
     }
   };
@@ -252,16 +261,20 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
             }}
             InputLabelProps={{ shrink: true }}
             sx={{ width: { xs: '100%', md: '75%' } }}
-            error={emptyAnswerError || noCorrectAnswerError}
+            error={
+              emptyAnswerError || noCorrectAnswerError || duplicateAnswerError
+            }
             helperText={
               (emptyAnswerError && 'At least 1 possible answer is required') ||
-              (noCorrectAnswerError && 'Please mark an answer as correct')
+              (noCorrectAnswerError && 'Please mark an answer as correct') ||
+              (duplicateAnswerError && 'No duplicate answers are allowed')
             }
             onChange={updateForm}
           />
           <Button
             variant="outlined"
             onClick={addAnswer}
+            disabled={quizForm.curr_answer === ''}
             sx={{
               width: { xs: '100%', md: '20%' },
               mt: { xs: '1.5em', md: '0em' },
