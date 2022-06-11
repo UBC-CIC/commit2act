@@ -478,3 +478,56 @@ export const getAllSubmittedActionsToValidate = /* GraphQL */ `
     }
   }
 `;
+export const getAllQuizzes = /* GraphQL */ `
+  query GetAllQuizzes {
+    getAllQuizzes {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+      answers
+      correct_answers
+    }
+  }
+`;
+export const getAllQuizzesForAction = /* GraphQL */ `
+  query GetAllQuizzesForAction($action_id: Int!) {
+    getAllQuizzesForAction(action_id: $action_id) {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+      answers
+      correct_answers
+    }
+  }
+`;
+export const getQuizPoolForUser = /* GraphQL */ `
+  query GetQuizPoolForUser($user_id: Int!, $action_id: Int!) {
+    getQuizPoolForUser(user_id: $user_id, action_id: $action_id) {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+      answers
+      correct_answers
+    }
+  }
+`;
+export const getSingleQuiz = /* GraphQL */ `
+  query GetSingleQuiz($quiz_id: Int!) {
+    getSingleQuiz(quiz_id: $quiz_id) {
+      quiz_id
+      fact_text
+      question_text
+      action_id
+      answers
+      correct_answers
+    }
+  }
+`;
+export const isQuizAnswerCorrect = /* GraphQL */ `
+  query IsQuizAnswerCorrect($quiz_id: Int!, $answer: String!) {
+    isQuizAnswerCorrect(quiz_id: $quiz_id, answer: $answer)
+  }
+`;

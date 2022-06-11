@@ -35,10 +35,7 @@ import JoinGroup from '../../pages/JoinGroup';
 import UserProfile from '../../pages/UserProfile';
 import AdminDashboard from '../../pages/AdminDashboard';
 import { API, Auth } from 'aws-amplify';
-import {
-  getSingleUserByUsername,
-  getSingleUserByEmail,
-} from '../../graphql/queries';
+import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
 
 const useStyles = makeStyles((theme) => ({

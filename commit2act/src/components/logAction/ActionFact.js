@@ -1,35 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Box, Typography, CircularProgress } from '@mui/material';
-// import { API, graphqlOperation } from 'aws-amplify';
-// import { listQuizID, getFactBonusPointQuiz } from '../../graphql/queries';
+import { API } from 'aws-amplify';
+import { getQuizPoolForUser } from '../../graphql/queries';
 
-const ActionFact = ({ setFact, fact }) => {
-  const [factText, setFactText] = useState(
-    'As of 2019, the average Canadian produced an equivalent of 14.2 tonnes of CO2, with transportation playing the largest role, contributing 35% of total CO2 production'
-  );
-  // const [factLoaded, setFactLoaded] = useState(false);
+const ActionFact = ({
+  selectedAction,
+  setQuiz,
+  quiz,
+  user,
+  setSkipBonusQuestion,
+}) => {
+  const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
 
-  // const getFactIds = async () => {
-  //   const res = await API.graphql(graphqlOperation(listQuizID));
-  //   let numFacts = res.data.listFactBonusPointQuizs.items.length;
-  //   let randomNumber = Math.floor(Math.random() * numFacts);
-  //   let id = res.data.listFactBonusPointQuizs.items[randomNumber].id;
-  //   getSelectedFact(id);
-  // };
+  useEffect(() => {
+    const getFact = async () => {
+      const quizPoolForUserRes = await API.graphql({
+        query: getQuizPoolForUser,
+        variables: {
+          user_id: user.user_id,
+          action_id: selectedAction.action_id,
+        },
+      });
+      //select random fact from quiz pool that has not been answered by the user yet
+      const possibleQuizzes = quizPoolForUserRes.data.getQuizPoolForUser;
+      if (possibleQuizzes.length !== 0) {
+        setQuiz(
+          possibleQuizzes[Math.floor(Math.random() * possibleQuizzes.length)]
+        );
+      } else {
+        setNoPossibleQuizzes(true);
+        //skipBonusQuestion be updated in SelfReportMenu to skip the BonusPointQuiz step
+        setSkipBonusQuestion(true);
+      }
+    };
+    getFact();
+  }, [selectedAction, setQuiz, setSkipBonusQuestion, user.user_id]);
 
-  // const getSelectedFact = async (id) => {
-  //   const res = await API.graphql(
-  //     graphqlOperation(getFactBonusPointQuiz, { id: id })
-  //   );
-  //   setFactText(res.data.getFactBonusPointQuiz.fact_text);
-  //   setFact((fact) => ({ ...res.data.getFactBonusPointQuiz }));
-  //   setFactLoaded(true);
-  // };
-
-  // useEffect(() => {
-  //   getFactIds();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  //if there are no possible quizzes, display fallback text. If there is no fallback text, display default message
+  const renderFact = () => {
+    if (quiz) {
+      return <Typography variant="body1">{quiz.fact_text}</Typography>;
+    } else if (noPossibleQuizzes) {
+      return selectedAction.fallback_quiz_media ? (
+        <Typography variant="body1">
+          {selectedAction.fallback_quiz_media}
+        </Typography>
+      ) : (
+        <Typography variant="h3">
+          Thank you for submitting an action!
+          <Typography variant="body1" sx={{ mt: '2em' }}>
+            You have viewed all the facts for this action
+          </Typography>
+        </Typography>
+      );
+    } else {
+      return <CircularProgress />;
+    }
+  };
 
   return (
     <Grid
@@ -54,14 +81,7 @@ const ActionFact = ({ setFact, fact }) => {
           overflow: 'auto',
         }}
       >
-        {/* {factLoaded ? (
-          <Typography variant="body1">{factText}</Typography>
-        ) : (
-          <CircularProgress />
-        )} */}
-        <Typography variant="body1" sx={{ mt: '1em' }}>
-          {factText}
-        </Typography>
+        {renderFact()}
       </Box>
     </Grid>
   );

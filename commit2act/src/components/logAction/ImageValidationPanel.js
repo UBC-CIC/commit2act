@@ -60,6 +60,7 @@ const ImageValidationPanel = ({
   setSelectedImage,
   setActiveStep,
   activeStep,
+  skipBonusQuestion,
 }) => {
   const [itemDrag, setItemDrag] = useState(false);
   const [selectedImagePreview, setSelectedImagePreview] = useState();
@@ -97,6 +98,15 @@ const ImageValidationPanel = ({
       } else {
         setFileTypeError(true);
       }
+    }
+  };
+
+  const handleButtonClick = (e) => {
+    //skip to CO2SavedScreen step if skipBonusQuestion is true
+    if (skipBonusQuestion) {
+      setActiveStep(activeStep + 2);
+    } else {
+      setActiveStep(activeStep + 1);
     }
   };
 
@@ -178,21 +188,9 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      {selectedImage ? (
-        <StyledButton
-          onClick={() => setActiveStep(activeStep + 1)}
-          variant="contained"
-        >
-          Upload Image
-        </StyledButton>
-      ) : (
-        <StyledButton
-          onClick={() => setActiveStep(activeStep + 1)}
-          variant="contained"
-        >
-          Skip
-        </StyledButton>
-      )}
+      <StyledButton onClick={handleButtonClick} variant="contained">
+        {selectedImage ? 'Upload Image' : 'Skip'}
+      </StyledButton>
     </Box>
   );
 };

@@ -87,18 +87,20 @@ const AccountSettings = ({ databaseUser, setUser }) => {
                   .map((action, index) => (
                     <SubmittedActionCard key={index} action={action} />
                   ))}
-            <Button
-              sx={{ mt: '3em' }}
-              variant="outlined"
-              onClick={() =>
-                setShowMore((prev) => ({
-                  ...prev,
-                  validated: !showMore.validated,
-                }))
-              }
-            >
-              View {showMore.validated ? 'Less' : 'More'}
-            </Button>
+            {validatedActions.length > 3 && (
+              <Button
+                sx={{ mt: '3em' }}
+                variant="outlined"
+                onClick={() =>
+                  setShowMore((prev) => ({
+                    ...prev,
+                    validated: !showMore.validated,
+                  }))
+                }
+              >
+                View {showMore.validated ? 'Less' : 'More'}
+              </Button>
+            )}
           </Stack>
         </Box>
       );
@@ -134,18 +136,20 @@ const AccountSettings = ({ databaseUser, setUser }) => {
                   .map((action, index) => (
                     <SubmittedActionCard key={index} action={action} />
                   ))}
-            <Button
-              sx={{ mt: '3em' }}
-              variant="outlined"
-              onClick={() =>
-                setShowMore((prev) => ({
-                  ...prev,
-                  unvalidated: !showMore.unvalidated,
-                }))
-              }
-            >
-              View {showMore.unvalidated ? 'Less' : 'More'}
-            </Button>
+            {unvalidatedActions.length > 3 && (
+              <Button
+                sx={{ mt: '3em' }}
+                variant="outlined"
+                onClick={() =>
+                  setShowMore((prev) => ({
+                    ...prev,
+                    unvalidated: !showMore.unvalidated,
+                  }))
+                }
+              >
+                View {showMore.unvalidated ? 'Less' : 'More'}
+              </Button>
+            )}
           </Stack>
         </Box>
       );
@@ -181,18 +185,20 @@ const AccountSettings = ({ databaseUser, setUser }) => {
                   .map((action, index) => (
                     <SubmittedActionCard key={index} action={action} />
                   ))}
-            <Button
-              sx={{ mt: '3em' }}
-              variant="outlined"
-              onClick={() =>
-                setShowMore((prev) => ({
-                  ...prev,
-                  failed: !showMore.failed,
-                }))
-              }
-            >
-              View {showMore.failed ? 'Less' : 'More'}
-            </Button>
+            {failedActions.length > 3 && (
+              <Button
+                sx={{ mt: '3em' }}
+                variant="outlined"
+                onClick={() =>
+                  setShowMore((prev) => ({
+                    ...prev,
+                    failed: !showMore.failed,
+                  }))
+                }
+              >
+                View {showMore.failed ? 'Less' : 'More'}
+              </Button>
+            )}
           </Stack>
         </Box>
       );

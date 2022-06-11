@@ -9,7 +9,8 @@ import {
   RadioGroup,
   Radio,
 } from '@mui/material';
-import { CheckCircle, Cancel } from '@mui/icons-material';
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { styled } from '@mui/material/styles';
 
 const StyledButton = styled(Button)`
@@ -18,16 +19,15 @@ const StyledButton = styled(Button)`
 `;
 
 const BonusPointQuiz = ({
-  fact,
+  quiz,
   setActiveStep,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
   activeStep,
 }) => {
-  let question_text =
-    'What percentage of an average Canadian’s total CO2 production is due to transportation?';
-  let answers = ['55%', '20%', '35%', '70%'];
-  let correct_answer = '35%';
+  const { question_text, answers, correct_answers } = quiz;
+  const answersArray = answers.split('\n');
+  const correctAnswersArray = correct_answers.split('\n');
 
   const [userAnswer, setUserAnswer] = useState();
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
@@ -44,9 +44,9 @@ const BonusPointQuiz = ({
             name="quiz-answer-choices-group"
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
-            sx={{ alignItems: 'center' }}
+            sx={{ mt: '0.5em', alignSelf: 'center' }}
           >
-            {answers.map((answer, index) => {
+            {answersArray.map((answer, index) => {
               return (
                 <FormControlLabel
                   key={index}
@@ -85,11 +85,11 @@ const BonusPointQuiz = ({
   const displayAnswer = () => {
     return (
       <>
-        {userAnswer === correct_answer ? (
+        {correctAnswersArray.includes(userAnswer) ? (
           <>
-            <Typography variant="h6">Correct!</Typography>
-            <CheckCircle sx={{ fontSize: 80 }} />
-            <Typography variant="subtitle1">
+            <Typography variant="h4">Correct!</Typography>
+            <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 80 }} />
+            <Typography variant="subtitle1" sx={{ mt: '1.5em' }}>
               {numTries > 1
                 ? '0 bonus points will be added to your entry'
                 : '10 bonus points will be added to your entry'}
@@ -106,8 +106,8 @@ const BonusPointQuiz = ({
           </>
         ) : (
           <>
-            <Typography variant="h6">Incorrect!</Typography>
-            <Cancel sx={{ fontSize: 80 }} />
+            <Typography variant="h4">Incorrect!</Typography>
+            <CancelOutlinedIcon sx={{ fontSize: 80 }} />
             <StyledButton
               onClick={() => {
                 setNumTries(numTries + 1);

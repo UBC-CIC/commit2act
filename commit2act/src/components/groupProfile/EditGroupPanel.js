@@ -179,7 +179,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
         <Typography variant="h2">Edit Group Info</Typography>
         <Box
           sx={{
-            p: '3em',
+            p: '1em',
             display: 'flex',
             justifyContent: 'center',
             flexDirection: 'column',
