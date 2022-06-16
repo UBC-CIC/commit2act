@@ -37,6 +37,7 @@ import AdminDashboard from '../../pages/AdminDashboard';
 import { API, Auth } from 'aws-amplify';
 import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
+import PrivateRoute from './PrivateRoute';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -268,7 +269,11 @@ function PageContainer(props) {
             />
             <Route
               path="/group-profile/:groupName/add/:addUserLink"
-              element={<JoinGroup />}
+              element={
+                <PrivateRoute>
+                  <JoinGroup />
+                </PrivateRoute>
+              }
             />
             <Route
               exact
