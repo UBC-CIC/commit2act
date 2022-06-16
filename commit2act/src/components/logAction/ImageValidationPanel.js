@@ -135,6 +135,9 @@ const ImageValidationPanel = ({
         <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
           Please upload an image related to your action item for verification
         </Typography>
+        <Typography sx={{ fontSize: '15px', color: '#595959' }}>
+          Minimum dimensions 100x100 px
+        </Typography>
         {fileTypeError && (
           <Alert severity="error" onClose={() => setFileTypeError(false)}>
             This Is Not An Image File

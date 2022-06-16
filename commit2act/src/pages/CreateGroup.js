@@ -7,8 +7,6 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  Snackbar,
-  Alert,
   LinearProgress,
   InputAdornment,
   IconButton,
@@ -16,12 +14,16 @@ import {
   Avatar,
   FormGroup,
   CircularProgress,
+  DialogTitle,
+  DialogContent,
+  Dialog,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { Storage, API } from 'aws-amplify';
 import { createGroupAndOwner } from '../graphql/mutations';
 import { getAllGroups } from '../graphql/queries';
+import { useNavigate } from 'react-router-dom';
 
 const Input = styled('input')`
   display: none;
@@ -49,6 +51,7 @@ const CreateGroup = ({ user }) => {
   const [emptyPasswordError, setEmptyPasswordError] = useState(false);
   const [createGroupSuccess, setCreateGroupSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   //gets list of all group names to make sure submitted group isn't a duplicate
   useEffect(() => {
@@ -137,7 +140,7 @@ const CreateGroup = ({ user }) => {
           private_password: private_password,
         },
       });
-
+      const groupName = group_name;
       //clear form and related states
       setCreateGroupForm(emptyCreateGroupForm);
       setEmptyGroupNameError(false);
@@ -145,6 +148,9 @@ const CreateGroup = ({ user }) => {
       setAvatarPreview();
       //render success message
       setCreateGroupSuccess(true);
+      setTimeout(() => {
+        navigate(`/group-profile/${groupName}`);
+      }, 2000);
     } catch (e) {
       const errorMsg = e.message;
       if (errorMsg.includes('Empty group name')) {
@@ -364,21 +370,35 @@ const CreateGroup = ({ user }) => {
                 Create Group
               </Button>
             </FormGroup>
-            <Snackbar
+            <Dialog
+              aria-labelledby="success-dialog"
+              PaperProps={{
+                sx: {
+                  p: '1em',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                },
+              }}
               open={createGroupSuccess}
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-              autoHideDuration={2000}
-              onClose={() => setCreateGroupSuccess(false)}
             >
-              <Alert
-                onClose={() => setCreateGroupSuccess(false)}
-                severity="success"
-                sx={{ width: '100%' }}
+              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
+              <DialogContent
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
               >
-                Your group has been created!
-              </Alert>
-            </Snackbar>
-          </Box>{' '}
+                <Typography>
+                  You will now be redirected to the group page
+                </Typography>
+                <CircularProgress sx={{ mt: '2em' }} />
+              </DialogContent>
+            </Dialog>
+          </Box>
         </>
       ) : (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '5em' }}>
