@@ -8,9 +8,7 @@ import {
   Stack,
   Paper,
   Button,
-  DialogTitle,
-  DialogContent,
-  CircularProgress,
+  IconButton,
   Dialog,
 } from '@mui/material';
 import { TabPanel, TabContext, TabList } from '@mui/lab';
@@ -19,6 +17,7 @@ import {
   PeopleAlt,
   Public,
   Lock,
+  Close,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Auth, API } from 'aws-amplify';
@@ -36,7 +35,7 @@ import { styled } from '@mui/material/styles';
 import GroupPageLeaderboard from '../components/groupProfile/GroupPageLeaderboard';
 import EditGroupPanel from '../components/groupProfile/EditGroupPanel';
 import { v4 as uuidv4 } from 'uuid';
-import { removeGroupMember } from '../graphql/mutations';
+import LeaveGroupDialogContent from '../components/groupProfile/LeaveGroupDialogContent';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -64,7 +63,7 @@ const GroupProfile = () => {
   const [cognitoUser, setCognitoUser] = useState();
   const [userId, setUserId] = useState();
   const [groupId, setGroupId] = useState();
-  const [leaveGroupSuccess, setLeaveGroupSuccess] = useState(false);
+  const [leaveGroupWarning, setLeaveGroupWarning] = useState(false);
   const navigate = useNavigate();
   const groupLink =
     groupInfo &&
@@ -143,24 +142,6 @@ const GroupProfile = () => {
     setGroupInfo(updatedGroupRes.data.getSingleGroup);
   };
 
-  const handleLeaveGroup = async () => {
-    try {
-      await API.graphql({
-        query: removeGroupMember,
-        variables: {
-          group_id: groupInfo.group_id,
-          user_id: userId,
-        },
-      });
-      setLeaveGroupSuccess(true);
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <>
       {groupInfo && (
@@ -229,7 +210,7 @@ const GroupProfile = () => {
                   <Button
                     variant="outlined"
                     sx={{ mt: { xs: '1em' } }}
-                    onClick={handleLeaveGroup}
+                    onClick={() => setLeaveGroupWarning(true)}
                   >
                     Leave Group
                   </Button>
@@ -387,44 +368,40 @@ const GroupProfile = () => {
                 >
                   <EditGroupPanel
                     groupInfo={groupInfo}
-                    // getGroupInfo={getGroupInfo}
                     getUpdatedGroup={getUpdatedGroup}
                   />
                 </TabPanel>
               </TabContext>
             </Grid>
           </Grid>
-          {leaveGroupSuccess && (
-            <Dialog
-              aria-labelledby="leave-group-success-dialog"
-              PaperProps={{
-                sx: {
-                  p: '1em',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  alignItems: 'center',
-                },
-              }}
-              open={leaveGroupSuccess}
+          {/* leave group warning dialog */}
+          <Dialog
+            aria-labelledby="leave-group-dialog"
+            PaperProps={{
+              sx: {
+                p: '1em',
+                display: 'flex',
+                justifyContent: 'center',
+                textAlign: 'center',
+                alignItems: 'center',
+              },
+            }}
+            open={leaveGroupWarning}
+          >
+            <IconButton
+              sx={{ alignSelf: 'flex-end' }}
+              onClick={() => setLeaveGroupWarning(false)}
             >
-              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
-              <DialogContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography>
-                  You have left the the group! <br></br>You will now be directed
-                  to the homepage
-                </Typography>
-                <CircularProgress sx={{ mt: '2em' }} />
-              </DialogContent>
-            </Dialog>
-          )}
+              <Close />
+            </IconButton>
+            <LeaveGroupDialogContent
+              handleClose={() => setLeaveGroupWarning(false)}
+              groupInfo={groupInfo}
+              groupMembers={groupMembers}
+              currentUserOwner={currentUserOwner}
+              userId={userId}
+            />
+          </Dialog>
         </>
       )}
     </>

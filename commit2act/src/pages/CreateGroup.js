@@ -128,7 +128,7 @@ const CreateGroup = ({ user }) => {
           contentType: imageType,
         });
       }
-      //create the action and get its id
+      //create the group
       await API.graphql({
         query: createGroupAndOwner,
         variables: {

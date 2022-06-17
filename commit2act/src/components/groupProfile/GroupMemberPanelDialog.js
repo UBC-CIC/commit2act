@@ -8,8 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
-  CircularProgress,
-  Typography,
 } from '@mui/material';
 import {
   AccountCircle,
@@ -18,6 +16,7 @@ import {
   GroupRemove,
   ExitToApp,
   Close,
+  ErrorOutline,
 } from '@mui/icons-material';
 import {
   promoteGroupMember,
@@ -27,12 +26,14 @@ import {
 import { getAllUsersInGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import { useNavigate } from 'react-router-dom';
+import LeaveGroupDialogContent from './LeaveGroupDialogContent';
 
 const GroupMemberDialog = ({
   selectedMember,
   openDialog,
   handleClose,
   groupInfo,
+  groupMembers,
   setGroupMembers,
   currentUserOwner,
   cognitoUser,
@@ -41,10 +42,12 @@ const GroupMemberDialog = ({
     promoteUserSuccess: false,
     demoteOwnerSuccess: false,
     removeUserSuccess: false,
-    leaveGroupSuccess: false,
+    leaveGroupWarning: false,
+    demoteWarning: false,
   };
   const [dialogDisplay, setDialogDisplay] = useState(dialogDisplayInitial);
   const [membersUpdated, setMembersUpdated] = useState(false);
+  const userType = cognitoUser && cognitoUser.attributes['custom:type'];
   const navigate = useNavigate();
 
   const promoteUser = async () => {
@@ -64,57 +67,51 @@ const GroupMemberDialog = ({
   };
 
   const demoteOwner = async () => {
-    try {
-      await API.graphql({
-        query: demoteGroupOwner,
-        variables: {
-          group_id: groupInfo.group_id,
-          user_id: selectedMember.user_id,
-        },
-      });
-      setDialogDisplay({ ...dialogDisplay, demoteOwnerSuccess: true });
-    } catch (err) {
-      console.log(err);
+    if (
+      groupMembers.filter((member) => member.user_role === 'owner').length === 1
+    ) {
+      setDialogDisplay({ ...dialogDisplay, demoteWarning: true });
+    } else {
+      try {
+        await API.graphql({
+          query: demoteGroupOwner,
+          variables: {
+            group_id: groupInfo.group_id,
+            user_id: selectedMember.user_id,
+          },
+        });
+        setDialogDisplay({ ...dialogDisplay, demoteOwnerSuccess: true });
+      } catch (err) {
+        console.log(err);
+      }
+      setMembersUpdated(true);
     }
-    setMembersUpdated(true);
   };
 
   const removeUser = async () => {
-    try {
-      await API.graphql({
-        query: removeGroupMember,
-        variables: {
-          group_id: groupInfo.group_id,
-          user_id: selectedMember.user_id,
-        },
-      });
-      setDialogDisplay({ ...dialogDisplay, removeUserSuccess: true });
-    } catch (err) {
-      console.log(err);
+    if (
+      groupMembers.length === 1 ||
+      groupMembers.filter((member) => member.user_role === 'owner').length === 1
+    ) {
+      setDialogDisplay({ ...dialogDisplay, leaveGroupWarning: true });
+    } else {
+      try {
+        await API.graphql({
+          query: removeGroupMember,
+          variables: {
+            group_id: groupInfo.group_id,
+            user_id: selectedMember.user_id,
+          },
+        });
+        setDialogDisplay({ ...dialogDisplay, removeUserSuccess: true });
+      } catch (err) {
+        console.log(err);
+      }
+      setMembersUpdated(true);
     }
-    setMembersUpdated(true);
   };
 
-  const leaveGroup = async () => {
-    try {
-      await API.graphql({
-        query: removeGroupMember,
-        variables: {
-          group_id: groupInfo.group_id,
-          user_id: selectedMember.user_id,
-        },
-      });
-      setDialogDisplay({ ...dialogDisplay, leaveGroupSuccess: true });
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
-    } catch (err) {
-      console.log(err);
-    }
-    setMembersUpdated(true);
-  };
-
-  //everytime a member is updated, run query to get list of all updated members to reload and update the parent component
+  //each time a member is updated, run query to get list of all updated members to reload and update the parent component
   useEffect(() => {
     const getUpdatedMembers = async () => {
       const res = await API.graphql({
@@ -127,9 +124,9 @@ const GroupMemberDialog = ({
   }, [groupInfo.group_id, membersUpdated, setGroupMembers]);
 
   //display promote, demote and remove options only if current user is a group owner
-  const renderOwnerView = () => {
+  const renderOwnerAdminView = () => {
     return (
-      currentUserOwner && (
+      (currentUserOwner || userType === 'Admin') && (
         <>
           {selectedMember.user_role === 'member' ? (
             <ListItem autoFocus button onClick={promoteUser}>
@@ -162,7 +159,16 @@ const GroupMemberDialog = ({
       {openDialog && (
         <Dialog
           aria-labelledby="already-member-dialog"
-          PaperProps={{ sx: { minWidth: '20%', p: '1em' } }}
+          PaperProps={{
+            sx: {
+              p: '1em',
+              display: 'flex',
+              justifyContent: 'center',
+              textAlign: 'center',
+              alignItems: 'center',
+              minWidth: '30%',
+            },
+          }}
           open={openDialog}
           onClose={handleClose}
         >
@@ -170,7 +176,7 @@ const GroupMemberDialog = ({
             <Close />
           </IconButton>
           {/* if current cognito user is the selected member, give option to leave group */}
-          {!dialogDisplay.leaveGroupSuccess &&
+          {!dialogDisplay.leaveGroupWarning &&
           selectedMember.user_id ===
             Number(cognitoUser.attributes['custom:id']) ? (
             <>
@@ -180,8 +186,17 @@ const GroupMemberDialog = ({
                 {selectedMember.user_role.charAt(0).toUpperCase() +
                   selectedMember.user_role.slice(1)}
               </DialogContent>
-              <List sx={{ pt: 0, pb: '2em' }}>
-                <ListItem autoFocus button onClick={leaveGroup}>
+              <List sx={{ pt: '1em', pb: '2em' }}>
+                <ListItem
+                  autoFocus
+                  button
+                  onClick={() =>
+                    setDialogDisplay({
+                      ...dialogDisplay,
+                      leaveGroupWarning: true,
+                    })
+                  }
+                >
                   <ListItemIcon>
                     <ExitToApp />
                   </ListItemIcon>
@@ -199,7 +214,7 @@ const GroupMemberDialog = ({
                   {selectedMember.user_role.charAt(0).toUpperCase() +
                     selectedMember.user_role.slice(1)}
                 </DialogContent>
-                <List sx={{ pt: 0, pb: '2em' }}>
+                <List sx={{ pt: '1em', pb: '2em' }}>
                   <ListItem
                     autoFocus
                     button
@@ -212,7 +227,7 @@ const GroupMemberDialog = ({
                     </ListItemIcon>
                     <ListItemText>View User Profile</ListItemText>
                   </ListItem>
-                  {renderOwnerView()}
+                  {renderOwnerAdminView()}
                 </List>
               </>
             )
@@ -241,24 +256,29 @@ const GroupMemberDialog = ({
               </DialogContent>
             </>
           )}
-          {dialogDisplay.leaveGroupSuccess && (
+          {dialogDisplay.demoteWarning && (
             <>
-              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
-              <DialogContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography>
-                  You have left the the group! <br></br>You will now be directed
-                  to the homepage
-                </Typography>
-                <CircularProgress sx={{ mt: '2em' }} />
+              <DialogTitle>Demotion Error</DialogTitle>
+              <ErrorOutline fontSize="large" />
+              <DialogContent>
+                Groups must have at least 1 group owner
               </DialogContent>
             </>
+          )}
+
+          {dialogDisplay.leaveGroupWarning && (
+            <LeaveGroupDialogContent
+              handleClose={() =>
+                setDialogDisplay({
+                  ...dialogDisplay,
+                  leaveGroupWarning: false,
+                })
+              }
+              groupInfo={groupInfo}
+              groupMembers={groupMembers}
+              currentUserOwner={currentUserOwner}
+              userId={selectedMember.user_id}
+            />
           )}
         </Dialog>
       )}
