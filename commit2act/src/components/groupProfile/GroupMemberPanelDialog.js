@@ -133,7 +133,7 @@ const GroupMemberDialog = ({
               <ListItemIcon>
                 <PersonAddAlt1 />
               </ListItemIcon>
-              <ListItemText>Promote User to Group Organizer</ListItemText>
+              <ListItemText>Promote User to Group Owner</ListItemText>
             </ListItem>
           ) : (
             <ListItem autoFocus button onClick={demoteOwner}>

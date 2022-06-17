@@ -4,25 +4,26 @@ import {
   Tooltip,
   Box,
   Grid,
-  Button,
   Avatar,
   AvatarGroup,
   Dialog,
   DialogTitle,
-  DialogActions,
+  IconButton,
   List,
   ListItem,
   ListItemText,
   ListItemAvatar,
+  DialogContent,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 
 const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
-  const [organizerDialogOpen, setOrganizerDialogOpen] = useState(false);
+  const [ownerDialogOpen, setOwnerDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleClose = () => {
-    setOrganizerDialogOpen(false);
+    setOwnerDialogOpen(false);
   };
 
   return (
@@ -48,7 +49,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
         </Grid>
         <Grid item xs={12} sm={5}>
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
-            Group Organizers
+            Group Owners
           </Typography>
           <Box
             display="flex"
@@ -57,7 +58,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
           >
             <AvatarGroup
               max={4}
-              onClick={() => setOrganizerDialogOpen(true)}
+              onClick={() => setOwnerDialogOpen(true)}
               sx={{ ':hover': { cursor: 'pointer', opacity: '0.8' } }}
             >
               {groupOwners &&
@@ -77,30 +78,41 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
         </Grid>
       </Grid>
       {groupOwners && (
-        <Dialog open={organizerDialogOpen}>
-          <DialogTitle>Group Organizers</DialogTitle>
-          <List sx={{ pt: 0 }}>
-            {groupOwners.map((groupOwner, index) => (
-              <ListItem
-                button
-                onClick={() => {
-                  navigate(`/user-profile/${groupOwner.user_id}`);
-                  handleClose();
-                }}
-                key={index}
-              >
-                <ListItemAvatar>
-                  <Avatar src={groupOwner.avatar}>
-                    {groupOwner.name.charAt[0]}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={groupOwner.name} />
-              </ListItem>
-            ))}
-          </List>
-          <DialogActions>
-            <Button onClick={handleClose}>Close</Button>
-          </DialogActions>
+        <Dialog
+          open={ownerDialogOpen}
+          PaperProps={{
+            sx: {
+              p: '1em',
+              textAlign: 'center',
+              minWidth: '30%',
+            },
+          }}
+        >
+          <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+          <DialogTitle>Group Owners</DialogTitle>
+          <DialogContent>
+            <List sx={{ pt: 0 }}>
+              {groupOwners.map((groupOwner, index) => (
+                <ListItem
+                  button
+                  onClick={() => {
+                    navigate(`/user-profile/${groupOwner.user_id}`);
+                    handleClose();
+                  }}
+                  key={index}
+                >
+                  <ListItemAvatar>
+                    <Avatar src={groupOwner.avatar}>
+                      {groupOwner.name.charAt[0]}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={groupOwner.name} />
+                </ListItem>
+              ))}
+            </List>
+          </DialogContent>
         </Dialog>
       )}
     </>
