@@ -85,7 +85,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
       <Box
         sx={{
           height: '50px',
-          width: '150px',
+          width: '200px',
         }}
       >
         <Doughnut
