@@ -252,7 +252,11 @@ function PageContainer(props) {
 
           <Routes>
             <Route exact path={'/'} element={<Landing user={user} />} />
-            <Route exact path={'/find-group'} element={<FindGroup />} />
+            <Route
+              exact
+              path={'/find-group'}
+              element={<FindGroup user={user} />}
+            />
             <Route
               exact
               path={'/log-action'}

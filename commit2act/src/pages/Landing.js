@@ -87,7 +87,7 @@ const Landing = ({ user }) => {
   const renderGroupCards = () => {
     if (userGroups.length > 0) {
       return userGroups.map((group, index) => (
-        <GroupCard key={index} group={group} />
+        <GroupCard key={index} group={group} user={user} />
       ));
     } else {
       return (
