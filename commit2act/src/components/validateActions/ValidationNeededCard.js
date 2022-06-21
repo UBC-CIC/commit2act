@@ -13,7 +13,7 @@ import { Done, Clear } from '@mui/icons-material';
 import {
   approveSubmittedAction,
   rejectSubmittedAction,
-} from '../graphql/mutations';
+} from '../../graphql/mutations';
 import { API } from 'aws-amplify';
 
 const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
