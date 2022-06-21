@@ -251,7 +251,11 @@ function PageContainer(props) {
                 with your app's contents */}
 
           <Routes>
-            <Route exact path={'/'} element={<Landing user={user} />} />
+            <Route
+              exact
+              path={'/'}
+              element={<Landing user={user} userType={userType} />}
+            />
             <Route
               exact
               path={'/find-group'}

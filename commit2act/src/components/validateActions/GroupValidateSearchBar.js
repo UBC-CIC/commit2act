@@ -172,7 +172,7 @@ const GroupValidateSearchBar = ({ user }) => {
         <Typography variant="subtitle2">
           Your search for "{input}" did not match any of your groups
         </Typography>
-      )}{' '}
+      )}
       <Box sx={{ mt: '1.5em' }}>
         {!error && groupsOwnedByUser && groupsOwnedByUser.length === 0 ? (
           <Box sx={{ textAlign: 'center' }}>
@@ -197,7 +197,7 @@ const GroupValidateSearchBar = ({ user }) => {
                 variant="subtitle2"
                 sx={{ color: '#7e7e7e', fontWeight: 500 }}
               >
-                {!selectedGroup ? 'All' : selectedGroup}
+                {!selectedGroup ? 'All My Groups' : selectedGroup}
               </Typography>
             </Typography>
           )

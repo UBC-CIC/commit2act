@@ -5,9 +5,11 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import GroupValidateSearchBar from '../components/validateActions/GroupValidateSearchBar';
+import UsersWithoutGroupPanel from '../components/validateActions/UsersWithoutGroupPanel';
+import AllUnvalidatedActionsPanel from '../components/validateActions/AllUnvalidatedActionsPanel';
 
 const ValidateActions = ({ user, userType }) => {
-  const tabs = ['My Groups', 'Users Without Groups'];
+  const tabs = ['My Groups', 'Users Without Groups', 'All Unvalidated Actions'];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
@@ -47,12 +49,18 @@ const ValidateActions = ({ user, userType }) => {
               >
                 <Tab label={tabs[0]} value={tabs[0]} />
                 <Tab label={tabs[1]} value={tabs[1]} />
+                <Tab label={tabs[2]} value={tabs[2]} />
               </TabList>
             </Box>
             <TabPanel value={tabs[0]}>
               <GroupValidateSearchBar user={user} />
             </TabPanel>
-            <TabPanel value={tabs[1]}></TabPanel>
+            <TabPanel value={tabs[1]}>
+              <UsersWithoutGroupPanel />
+            </TabPanel>
+            <TabPanel value={tabs[2]}>
+              <AllUnvalidatedActionsPanel />
+            </TabPanel>
           </TabContext>
         ) : (
           <GroupValidateSearchBar user={user} />

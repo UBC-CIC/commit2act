@@ -38,13 +38,17 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
 
   //filter submitted action's group names to only show the groups that match groupsOwnedByUser
   useEffect(() => {
-    const submittedGroupNames = action.group_names.split(', ');
-    const usersGroupNames = groupsOwnedByUser.map((group) => group.group_name);
-    const filteredGroups = submittedGroupNames.filter((name) =>
-      usersGroupNames.includes(name)
-    );
-    const filteredGroupString = filteredGroups.join(', ');
-    setDisplayedGroups(filteredGroupString);
+    if (action.group_names && groupsOwnedByUser) {
+      const submittedGroupNames = action.group_names.split(', ');
+      const usersGroupNames = groupsOwnedByUser.map(
+        (group) => group.group_name
+      );
+      const filteredGroups = submittedGroupNames.filter((name) =>
+        usersGroupNames.includes(name)
+      );
+      const filteredGroupString = filteredGroups.join(', ');
+      setDisplayedGroups(filteredGroupString);
+    }
   }, [action.group_names, groupsOwnedByUser]);
 
   return (

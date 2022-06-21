@@ -115,30 +115,30 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
   };
 
   const renderGroupStatListItems = () => {
-    return groupStatsData.map((stat) => (
-      <>
-        <Divider flexItem />
-        <ListItem key={stat.title}>
+    return groupStatsData.map((stat, index) => (
+      <React.Fragment key={index}>
+        <Divider flexItem key={index} />
+        <ListItem>
           <ListItemText primary={stat.title} />
           <span>
             <Typography variant="body1">{stat.value} g</Typography>
           </span>
         </ListItem>
-      </>
+      </React.Fragment>
     ));
   };
 
   const renderUserContributionListItems = () => {
-    return userContributionData.map((stat) => (
-      <>
+    return userContributionData.map((stat, index) => (
+      <React.Fragment key={index}>
         <Divider flexItem />
-        <ListItem key={stat.title}>
+        <ListItem>
           <ListItemText primary={stat.title} />
           <span>
             <Typography variant="body1">{stat.value}%</Typography>
           </span>
         </ListItem>
-      </>
+      </React.Fragment>
     ));
   };
 
