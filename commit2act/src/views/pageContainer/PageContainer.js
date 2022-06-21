@@ -282,7 +282,7 @@ function PageContainer(props) {
             <Route
               exact
               path={'/validate-actions'}
-              element={<ValidateActions />}
+              element={<ValidateActions user={user} />}
             />
             {userType === 'Admin' && (
               <Route exact path={'/create-action'} element={<CreateAction />} />

@@ -6,8 +6,9 @@ import {
   TextField,
   Stack,
   CircularProgress,
+  Pagination,
 } from '@mui/material';
-import { API, Auth } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import { Search } from '@mui/icons-material';
 import {
   getAllGroupsUserOwns,
@@ -15,47 +16,40 @@ import {
 } from '../graphql/queries';
 import ValidationNeededCard from '../components/ValidationNeededCard';
 
-const ValidateActions = () => {
+const ValidateActions = ({ user }) => {
   const [groupsOwnedByUser, setGroupsOwnedByUser] = useState();
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
   const [allActions, setAllActions] = useState();
   const [filteredActions, setFilteredActions] = useState();
-  const [userId, setUserId] = useState();
-
-  const getCognitoUser = async () => {
-    const cognitoUserEntry = await Auth.currentAuthenticatedUser();
-    const id = cognitoUserEntry.attributes['custom:id'];
-    setUserId(id);
-    getGroupsAndAllActions(id);
-  };
-
-  const getGroupsAndAllActions = async (id) => {
-    const [groupRes, allActionRes] = await Promise.all([
-      API.graphql({
-        query: getAllGroupsUserOwns,
-        variables: { user_id: id },
-      }),
-      API.graphql({
-        query: getAllSubmittedActionsToValidate,
-        variables: { user_id: id },
-      }),
-    ]);
-
-    setGroupsOwnedByUser(groupRes.data.getAllGroupsUserOwns);
-    setAllActions(allActionRes.data.getAllSubmittedActionsToValidate);
-  };
+  const [page, setPage] = useState(1);
+  const [pageCount, setPageCount] = useState();
+  const rowsPerPage = 5;
 
   useEffect(() => {
-    getCognitoUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const getGroupsAndAllActions = async () => {
+      const [groupRes, allActionRes] = await Promise.all([
+        API.graphql({
+          query: getAllGroupsUserOwns,
+          variables: { user_id: user.user_id },
+        }),
+        API.graphql({
+          query: getAllSubmittedActionsToValidate,
+          variables: { user_id: user.user_id },
+        }),
+      ]);
+
+      setGroupsOwnedByUser(groupRes.data.getAllGroupsUserOwns);
+      setAllActions(allActionRes.data.getAllSubmittedActionsToValidate);
+    };
+    user && getGroupsAndAllActions();
+  }, [user]);
 
   const getAllActions = async () => {
     const res = await API.graphql({
       query: getAllSubmittedActionsToValidate,
-      variables: { user_id: userId },
+      variables: { user_id: user.user_id },
     });
     setAllActions(res.data.getAllSubmittedActionsToValidate);
   };
@@ -77,14 +71,51 @@ const ValidateActions = () => {
   };
 
   //every time a group is selected, get all the actions in need of validation from users in that group only
+  //if there is no group selected, set page count to default length for all actions
   useEffect(() => {
     if (selectedGroup) {
       const filteredActionArray = allActions.filter((action) =>
         action.group_names.split(', ').includes(selectedGroup)
       );
       setFilteredActions(filteredActionArray);
+      setPage(1);
+    } else {
+      const allActionsPageCount =
+        allActions &&
+        (allActions.length % 5 === 0
+          ? Math.round(allActions.length / 5)
+          : Math.floor(allActions.length / 5 + 1));
+
+      setPageCount(allActionsPageCount);
+      setPage(1);
     }
   }, [selectedGroup, allActions]);
+
+  useEffect(() => {
+    const filteredActionsPageCount =
+      filteredActions &&
+      (filteredActions.length % 5 === 0
+        ? Math.round(filteredActions.length / 5)
+        : Math.floor(filteredActions.length / 5 + 1));
+
+    setPageCount(filteredActionsPageCount);
+  }, [filteredActions]);
+
+  const renderPagination = () => {
+    return (
+      <Pagination
+        showFirstButton
+        showLastButton
+        count={pageCount}
+        page={page}
+        onChange={(e, newPage) => setPage(newPage)}
+        sx={{
+          '&.MuiPagination-root': { mt: '3em', alignSelf: 'center' },
+        }}
+        size="large"
+      />
+    );
+  };
 
   return (
     <>
@@ -183,25 +214,30 @@ const ValidateActions = () => {
           {!selectedGroup &&
             allActions &&
             allActions.length > 0 &&
-            allActions.map((action, index) => (
-              <ValidationNeededCard
-                action={action}
-                key={index}
-                getAllActions={getAllActions}
-                groupsOwnedByUser={groupsOwnedByUser}
-              />
-            ))}
+            allActions
+              .slice((page - 1) * rowsPerPage, page * rowsPerPage)
+              .map((action, index) => (
+                <ValidationNeededCard
+                  action={action}
+                  key={index}
+                  getAllActions={getAllActions}
+                  groupsOwnedByUser={groupsOwnedByUser}
+                />
+              ))}
           {/* if group has been selected, display only actions from that group */}
           {selectedGroup &&
             filteredActions &&
-            filteredActions.map((action, index) => (
-              <ValidationNeededCard
-                action={action}
-                key={index}
-                getAllActions={getAllActions}
-                groupsOwnedByUser={groupsOwnedByUser}
-              />
-            ))}
+            filteredActions
+              .slice((page - 1) * rowsPerPage, page * rowsPerPage)
+              .map((action, index) => (
+                <ValidationNeededCard
+                  action={action}
+                  key={index}
+                  getAllActions={getAllActions}
+                  groupsOwnedByUser={groupsOwnedByUser}
+                />
+              ))}
+          {renderPagination()}
         </Stack>
       </Box>
     </>

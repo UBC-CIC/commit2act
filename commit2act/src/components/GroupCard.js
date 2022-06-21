@@ -81,8 +81,9 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
     );
 
   const renderDonutCharts = () => {
-    return donutChartsData.map((chart) => (
+    return donutChartsData.map((chart, index) => (
       <Box
+        key={index}
         sx={{
           height: '50px',
           width: '200px',
@@ -117,7 +118,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
     return groupStatsData.map((stat) => (
       <>
         <Divider flexItem />
-        <ListItem>
+        <ListItem key={stat.title}>
           <ListItemText primary={stat.title} />
           <span>
             <Typography variant="body1">{stat.value} g</Typography>
@@ -131,7 +132,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
     return userContributionData.map((stat) => (
       <>
         <Divider flexItem />
-        <ListItem>
+        <ListItem key={stat.title}>
           <ListItemText primary={stat.title} />
           <span>
             <Typography variant="body1">{stat.value}%</Typography>
