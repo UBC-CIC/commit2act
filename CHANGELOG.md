@@ -1,3 +1,5 @@
+# 6/22/2022
+
 # Bug Fixes
 
 - Fixed Join Group link navigation to redirect non-signed in users to sign-up/sign-in page
