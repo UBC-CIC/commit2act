@@ -1098,6 +1098,8 @@ Resources:
           getGroupTotalCO2(group_id: Int!): Float
           isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
           getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
+          getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
+          getAllSubmittedActionsToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
           getAllQuizzes: [ActionQuizWithAnswers]
           getAllQuizzesForAction(action_id: Int!): [ActionQuizWithAnswers]
           getQuizPoolForUser(user_id: Int!, action_id: Int!): [ActionQuizWithAnswers]
@@ -1169,6 +1171,26 @@ Resources:
           is_validated: Boolean!
           points_earned: Int!
           submitted_action_items: String
+          action_name: String
+          submitted_image: String
+          is_rejected: Boolean
+          is_image_explicit: Boolean
+        }
+
+        type SubmittedActionWithItemsEmbeddedAndUser {
+          sa_id: Int!
+          user_id: Int!
+          action_id: Int!
+          quiz_id: Int
+          g_co2_saved: Float!
+          date_of_action: String!
+          time_submitted: String
+          first_quiz_answer_correct: Boolean!
+          quiz_answered: Boolean!
+          is_validated: Boolean!
+          points_earned: Int!
+          submitted_action_items: String
+          name_of_user: String
           action_name: String
           submitted_image: String
           is_rejected: Boolean
@@ -1434,7 +1456,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id WHERE `GroupUser`.user_id = :1 GROUP BY `Group`.group_id",
+            "sql": "SELECT * FROM (SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id  GROUP BY `Group`.group_id) as T1 LEFT JOIN GroupUser on GroupUser.group_id = T1.group_id WHERE GroupUser.user_id = :1",
             "variableMapping": {
               ":1": $context.args.user_id
             }
@@ -2244,6 +2266,59 @@ Resources:
       Kind: UNIT
       MaxBatchSize: 0
 
+  getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdminResolver: 
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat(DISTINCT '', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name, `User`.name AS name_of_user from SubmittedAction INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id  INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `User` ON SubmittedAction.user_id = `User`.user_id where `SubmittedAction`.user_id NOT IN (SELECT GroupUser.user_id FROM GroupUser) AND is_validated = 0 and is_rejected = 0 group by SubmittedAction.sa_id",
+            "variableMapping": {}
+          }
+        }
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
+  getAllSubmittedActionsToValidateForAdminResolver: 
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getAllSubmittedActionsToValidateForAdmin
+      RequestMappingTemplate: |
+        #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+        *#
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select *, group_concat(DISTINCT '', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name, `User`.name AS name_of_user from SubmittedAction INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id  INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `User` ON SubmittedAction.user_id = `User`.user_id where is_validated = 0 and is_rejected = 0 group by SubmittedAction.sa_id",
+            "variableMapping": {}
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result)
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
   addGroupMemberResolver:
     Type: AWS::AppSync::Resolver
     DependsOn:
@@ -2532,20 +2607,14 @@ Resources:
       TypeName: Mutation
       FieldName: createGroupAndOwner
       RequestMappingTemplate: |
-        #**
-        This is to ensure that if there is no inputted parameter, it gets set to null in the insert in the lambda by sending it an empty string
-        
-          createGroup(
-            owner_user_id: Int!,
-            group_name: String!,
-            group_description: String,
-            group_image: String,
-            is_public: Boolean!,
-            private_password: String
-          ): Group
-            
-        *#
-        
+        #set( $context.arguments.group_name = $context.arguments.group_name.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.group_name = $context.arguments.group_name.replace("%20", "20 Percent") )  ## someone could be annoying and try to create a group with the same name as one that already exists by replacing any spaces in the original name with %20, so this will prevent any glitches, and we are going to assume that nobody will try to put %20 into a group name unless theyre trying to do something funky to the system
+        #set( $context.arguments.group_description = $util.escapeJavaScript($context.arguments.group_description) )
+        #set( $context.arguments.group_description = $context.arguments.group_description.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.group_description = $context.arguments.group_description.replace("\'", "'") )
+        #set( $context.arguments.group_image = $context.arguments.group_image.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.private_password = $context.arguments.private_password.replace(":::::::", "::::::: ") )
+
         #if( !$context.arguments.group_description )
           #set( $context.arguments.group_description = '' ) 
         #end
@@ -2559,18 +2628,19 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `Group` ( group_name, group_description, group_image, is_public, private_password ) VALUES (:1, :2, :3, :4, :5); INSERT INTO `GroupUser` ( group_id, user_id, user_role) VALUES ((SELECT group_id FROM `Group` WHERE group_name=:1), :6, 'owner')",
+            "sql": "INSERT INTO `Group` ( group_name, group_description, group_image, is_public, private_password ) VALUES (:::::::1, :::::::2, :::::::3, :::::::4, :::::::5); INSERT INTO `GroupUser` ( group_id, user_id, user_role) VALUES ((SELECT group_id FROM `Group` WHERE group_name=:::::::1), :::::::6, 'owner')",
             "variableMapping": {
-                ":1": "$context.arguments.group_name", 
-                ":2": "$context.arguments.group_description", 
-                ":3": "$context.arguments.group_image",
-                ":4": $context.arguments.is_public,
-                ":5": "$context.arguments.private_password",
-                ":6": $context.arguments.owner_user_id
+                ":::::::1": "$context.arguments.group_name", 
+                ":::::::2": "$context.arguments.group_description", 
+                ":::::::3": "$context.arguments.group_image",
+                ":::::::4": $context.arguments.is_public,
+                ":::::::5": "$context.arguments.private_password",
+                ":::::::6": $context.arguments.owner_user_id
             },
-            "responseSQL": "SELECT * FROM `Group` WHERE group_name=:1"
+            "responseSQL": "SELECT * FROM `Group` WHERE group_name=:::::::1"
           }
         }
+
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
       ApiId: !GetAtt AppSyncAPI.ApiId
@@ -2982,12 +3052,12 @@ Resources:
             "sql": "UPDATE SubmittedAction SET is_rejected=1, is_validated=0 where sa_id=:1",
             "variableMapping": {
               ":1": $context.args.sa_id
-            },
-          "responseSQL": "SELECT * FROM `SubmittedAction` WHERE sa_id=:1"
+            }
           }
         }
         
-      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ResponseMappingTemplate: |
+        "Rejected Submitted Action"
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
