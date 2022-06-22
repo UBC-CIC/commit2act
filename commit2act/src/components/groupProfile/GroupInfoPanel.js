@@ -37,15 +37,27 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
         columnSpacing={12}
         rowSpacing={4}
       >
-        <Grid item xs={12} sm={7}>
+        <Grid
+          item
+          xs={12}
+          sm={7}
+          sx={{ wordWrap: 'break-word', whiteSpace: 'pre-line' }}
+        >
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
             About
           </Typography>
-          <Typography component="div" variant="subtitle2">
-            {groupInfo.group_description
-              ? groupInfo.group_description
-              : 'This group currently does not have a description.'}
-          </Typography>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent={{ xs: 'center', lg: 'flex-start' }}
+            sx={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+          >
+            <Typography component="div" variant="subtitle2">
+              {groupInfo.group_description
+                ? groupInfo.group_description
+                : 'This group currently does not have a description.'}
+            </Typography>
+          </Box>
         </Grid>
         <Grid item xs={12} sm={5}>
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>

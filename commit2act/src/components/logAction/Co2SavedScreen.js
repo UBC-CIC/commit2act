@@ -70,9 +70,13 @@ const CO2SavedScreen = ({
       }
     }
     //set timeout of 9s so that image has time to be transferred by lambda and processed by rekognition
+    // setTimeout(() => {
+    //   checkImageValidation(submittedActionId);
+    // }, 9000);
+
     setTimeout(() => {
       checkImageValidation(submittedActionId);
-    }, 9000);
+    }, 4000);
   };
 
   const checkImageValidation = async (submittedActionId) => {
@@ -81,6 +85,7 @@ const CO2SavedScreen = ({
       variables: { sa_id: submittedActionId },
     });
     const passedValidation = res.data.getSingleSubmittedAction.is_validated;
+    console.log(passedValidation);
     if (passedValidation) {
       setValidationSuccess(true);
     }
@@ -100,7 +105,7 @@ const CO2SavedScreen = ({
       {/* display while image validation and action submission are occuring */}
       {loading && (
         <>
-          <Typography variant="h3">
+          <Typography variant="h6" component="h3">
             Your action is currently being{' '}
             {actionSubmitting ? 'submitted' : 'validated'}
           </Typography>
