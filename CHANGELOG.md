@@ -1,0 +1,36 @@
+# 6/22/2022
+
+# Bug Fixes
+
+- Fixed Join Group link navigation to redirect non-signed in users to sign-up/sign-in page
+- Fixed malformed variable causing white screen on action submission
+- Fixed Create Group page routing to redirect users to the profile page of the newly created group
+- Fixed reject button error on Validate Actions page
+- Fixed User Profile groups display to show only public groups
+- Fixed Create Group submission function to escape \n and ' characters in group description text field
+- Fixed action submission for action items with decimal co2 per unit saved values
+
+# Features
+
+## Groups
+
+- Added join group/leave group button to group profile pages
+- Group ownership must be transferred to another group member if there is only 1 group owner and they choose to leave the group
+- A group will be deleted if the only member chooses to leave the group
+- Admin are now able to promote/demote/remove members from any group
+
+## Log Actions
+
+- Added image specifications on the log action menu image upload screen
+
+## Landing
+
+- Group Cards display user contribution stats in pie charts along with the groups total stats in an accordion
+- Added alert displaying the number of actions a user has that are pending validation, along with the impact of those actions
+
+## Validate Actions
+
+- There are now 3 tabs (My Groups, Users Without Groups, All Unvalidated Actions) displayed for Admin Users
+  - My Groups allows admins to validate actions within the groups they own
+  - Users Without Groups allows admins to validate actions for users that are not part of any groups
+  - All Unvalidated Actions displays all actions in need of validation

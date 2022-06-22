@@ -1,26 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, IconButton } from '@mui/material';
 import { Search, Clear } from '@mui/icons-material';
-import { getAllGroups } from '../graphql/queries';
+import { getAllGroups, getAllGroupsForUser } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import GroupCard from '../components/GroupCard';
 
-const FindGroup = () => {
+const FindGroup = ({ user }) => {
   const [groups, setGroups] = useState();
+  const [usersGroups, setUsersGroups] = useState();
   const [input, setInput] = useState('');
   const [filteredGroups, setFilteredGroups] = useState();
   const [error, setError] = useState();
 
-  const getGroups = async () => {
-    const res = await API.graphql({
-      query: getAllGroups,
-    });
-    setGroups(res.data.getAllGroups);
-  };
-
   useEffect(() => {
-    getGroups();
-  }, []);
+    const getGroups = async () => {
+      const [allGroupsRes, usersGroupsRes] = await Promise.all([
+        API.graphql({
+          query: getAllGroups,
+        }),
+        API.graphql({
+          query: getAllGroupsForUser,
+          variables: { user_id: user.user_id },
+        }),
+      ]);
+      setGroups(allGroupsRes.data.getAllGroups);
+      setUsersGroups(usersGroupsRes.data.getAllGroupsForUser);
+    };
+    user && getGroups();
+  }, [user]);
 
   useEffect(() => {
     renderFilteredGroups();
@@ -90,8 +97,18 @@ const FindGroup = () => {
         )}
       </Box>
       {filteredGroups &&
+        usersGroups &&
         filteredGroups.map((group, index) => (
-          <GroupCard key={index} group={group} joinGroupOption={true} />
+          <GroupCard
+            key={index}
+            group={group}
+            joinGroupOption={
+              !usersGroups.some(
+                (userGroup) => userGroup.group_id === group.group_id
+              )
+            }
+            user={user}
+          />
         ))}
     </>
   );

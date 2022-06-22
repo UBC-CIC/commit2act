@@ -13,7 +13,7 @@ const Dropbox = styled('div')`
   border-radius: 5px;
   padding: 2em;
   width: 80%;
-  opacity: ${(props) => (props.itemDraggedOver ? '0.5' : '1')};
+  opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
   #browse {
     background: white;
     padding: 0.3em 1em;
@@ -135,6 +135,9 @@ const ImageValidationPanel = ({
         <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
           Please upload an image related to your action item for verification
         </Typography>
+        <Typography sx={{ fontSize: '15px', color: '#595959' }}>
+          Minimum dimensions 100x100 px
+        </Typography>
         {fileTypeError && (
           <Alert severity="error" onClose={() => setFileTypeError(false)}>
             This Is Not An Image File
@@ -144,7 +147,7 @@ const ImageValidationPanel = ({
           onDragOver={dragOverHandler}
           onDragLeave={dragLeaveHandler}
           onDrop={dropHandler}
-          itemDraggedOver={itemDrag}
+          itemdraggedover={itemDrag ? 1 : 0}
         >
           {selectedImage ? (
             <>

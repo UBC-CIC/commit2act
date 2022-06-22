@@ -40,11 +40,15 @@ const UserProfile = () => {
       }),
     ]);
     setUser(userRes.data.getSingleUser);
-    let allActions = userActionRes.data.getAllSubmittedActionsForUser;
     //filter for all validated actions
-    let validated = allActions.filter((action) => action.is_validated === true);
+    const allActions = userActionRes.data.getAllSubmittedActionsForUser;
+    const validated = allActions.filter((action) => action.is_validated);
     setValidatedActions(validated);
-    setGroups(userGroupRes.data.getAllGroupsForUser);
+
+    //filter for all public groups
+    const allGroups = userGroupRes.data.getAllGroupsForUser;
+    const publicGroups = allGroups.filter((group) => group.is_public);
+    setGroups(publicGroups);
   };
 
   useEffect(() => {
@@ -100,7 +104,7 @@ const UserProfile = () => {
             {user.name} is not a member in any groups
           </Typography>
         )}
-        {/* else display all of the user's groups */}
+        {/* else display all of the user's public groups */}
         {groups && groups.length !== 0 && (
           <Grid
             item

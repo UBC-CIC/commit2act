@@ -619,7 +619,7 @@ const ActionCard = ({
               variant="outlined"
               sx={{
                 width: { xs: '100%', md: '17%' },
-                mt: { xs: '1.5em', sm: '0em' },
+                mt: { xs: '1.5em', md: '0em' },
                 height: 'min-content',
               }}
               onClick={addValidationLabel}
