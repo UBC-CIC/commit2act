@@ -32,7 +32,9 @@ const CO2SavedScreen = ({
 
   const submitAction = async () => {
     //creates and submits the action, returns the submitted action id that is stored in database
-    const points = firstQuizAnswerCorrect ? totalCO2Saved + 10 : totalCO2Saved;
+    const points = firstQuizAnswerCorrect
+      ? Math.ceil(totalCO2Saved) + 10
+      : Math.ceil(totalCO2Saved);
     const res = await API.graphql({
       query: createSubmittedAction,
       variables: {
@@ -46,6 +48,7 @@ const CO2SavedScreen = ({
         user_id: user.user_id,
       },
     });
+
     const submittedActionId = res.data.createSubmittedAction.sa_id;
     //creates the submitted action items for the action
     await API.graphql({
@@ -70,13 +73,13 @@ const CO2SavedScreen = ({
       }
     }
     //set timeout of 9s so that image has time to be transferred by lambda and processed by rekognition
-    // setTimeout(() => {
-    //   checkImageValidation(submittedActionId);
-    // }, 9000);
-
     setTimeout(() => {
       checkImageValidation(submittedActionId);
-    }, 4000);
+    }, 9000);
+
+    // setTimeout(() => {
+    //   checkImageValidation(submittedActionId);
+    // }, 4000);
   };
 
   const checkImageValidation = async (submittedActionId) => {
@@ -85,7 +88,6 @@ const CO2SavedScreen = ({
       variables: { sa_id: submittedActionId },
     });
     const passedValidation = res.data.getSingleSubmittedAction.is_validated;
-    console.log(passedValidation);
     if (passedValidation) {
       setValidationSuccess(true);
     }
@@ -105,7 +107,7 @@ const CO2SavedScreen = ({
       {/* display while image validation and action submission are occuring */}
       {loading && (
         <>
-          <Typography variant="h6" component="h3">
+          <Typography variant="h3">
             Your action is currently being{' '}
             {actionSubmitting ? 'submitted' : 'validated'}
           </Typography>
@@ -122,19 +124,23 @@ const CO2SavedScreen = ({
         <>
           <Typography variant="h2">Thank you!</Typography>
           {validationSuccess ? (
-            <Typography variant="h3">
-              Your action has been validated
+            <Box>
+              <Typography variant="h3">
+                Your action has been validated
+              </Typography>
               <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
                 You have saved {totalCO2Saved} g of CO2
               </Typography>
-            </Typography>
+            </Box>
           ) : (
-            <Typography variant="h3">
-              Your action is awaiting admin approval
+            <Box>
+              <Typography variant="h3">
+                Your action is awaiting admin approval
+              </Typography>
               <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
                 The impact of your action is {totalCO2Saved} g of CO2 saved
               </Typography>
-            </Typography>
+            </Box>
           )}
         </>
       )}

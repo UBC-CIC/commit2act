@@ -39,10 +39,16 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
   const descriptionLength = responsive ? 100 : 250;
 
   const donutChartsData = [
-    { groupTotal: total_co2, contribution: user.total_co2 },
-    { groupTotal: weekly_co2, contribution: user.weekly_co2 },
-    { groupTotal: total_points, contribution: user.total_points },
-    { groupTotal: weekly_points, contribution: user.weekly_points },
+    { groupTotal: total_co2 - user.total_co2, contribution: user.total_co2 },
+    { groupTotal: weekly_co2 - user.weekly_co2, contribution: user.weekly_co2 },
+    {
+      groupTotal: total_points - user.total_points,
+      contribution: user.total_points,
+    },
+    {
+      groupTotal: weekly_points - user.weekly_points,
+      contribution: user.weekly_points,
+    },
   ];
 
   const groupStatsData = [
@@ -91,7 +97,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
       >
         <Doughnut
           data={{
-            labels: ['Group Total', 'My Contribution'],
+            labels: ['All Other Members', 'My Contribution'],
             datasets: [
               {
                 data: [chart.groupTotal, chart.contribution],
