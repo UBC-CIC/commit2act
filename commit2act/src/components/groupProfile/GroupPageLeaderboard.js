@@ -15,6 +15,13 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  Divider,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
@@ -22,7 +29,7 @@ import TabList from '@mui/lab/TabList';
 import { getAllGroups } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import { AutoGraph, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
@@ -54,6 +61,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
+  const hideCharts = useMediaQuery(theme.breakpoints.down('md'));
 
   const donutChartsData = user &&
     currentGroup && [
@@ -76,6 +84,30 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
         groupTotal: currentGroup.weekly_points - user.weekly_points,
         contribution: user.weekly_points,
         title: 'Weekly Points',
+      },
+    ];
+
+  const userContributionData = user &&
+    currentGroup && [
+      {
+        title: 'Total CO2',
+        value: Math.round((user.total_co2 / currentGroup.total_co2) * 100),
+      },
+      {
+        title: 'Weekly CO2',
+        value: Math.round((user.weekly_co2 / currentGroup.weekly_co2) * 100),
+      },
+      {
+        title: 'Total Points',
+        value: Math.round(
+          (user.total_points / currentGroup.total_points) * 100
+        ),
+      },
+      {
+        title: 'Weekly Points',
+        value: Math.round(
+          (user.weekly_points / currentGroup.weekly_points) * 100
+        ),
       },
     ];
 
@@ -157,6 +189,20 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
     setPage(0);
   };
 
+  const renderUserContributionListItems = () => {
+    return userContributionData.map((stat, index) => (
+      <React.Fragment key={index}>
+        <Divider flexItem />
+        <ListItem>
+          <ListItemText primary={stat.title} />
+          <span>
+            <Typography variant="body1">{stat.value}%</Typography>
+          </span>
+        </ListItem>
+      </React.Fragment>
+    ));
+  };
+
   /** function for displaying the leaderboard tables */
 
   const renderTable = () => {
@@ -182,7 +228,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             >
               Current Place
               <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                <AutoGraphIcon />
+                <AutoGraph />
                 {filteredGroups.findIndex(
                   (group) => group.group_name === currentGroup.group_name
                 ) + 1}{' '}
@@ -200,6 +246,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  flexDirection: hideCharts ? 'column' : 'row',
                 }}
               >
                 <Typography
@@ -212,8 +259,15 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   }}
                 >
                   Current Place
-                  <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                    <AutoGraphIcon />
+                  <Typography
+                    variant="h1"
+                    sx={{
+                      mt: '0.2em',
+                      wordBreak: 'break-all',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    <AutoGraph />
                     {filteredMembers.findIndex(
                       (member) => member.user_id === userId
                     ) + 1}{' '}
@@ -227,12 +281,26 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     justifyContent: 'space-evenly',
                   }}
                 >
-                  {donutChartsData.map((data) => (
-                    <UserContributionDonutChart
-                      data={data}
-                      displayTitles={true}
-                    />
-                  ))}
+                  {hideCharts ? (
+                    <Accordion sx={{ my: '1.5em' }}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls="user-contributions-content"
+                      >
+                        <Typography>My Contributions</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ p: 0 }}>
+                        <List dense>{renderUserContributionListItems()}</List>
+                      </AccordionDetails>
+                    </Accordion>
+                  ) : (
+                    donutChartsData.map((data) => (
+                      <UserContributionDonutChart
+                        data={data}
+                        displayTitles={true}
+                      />
+                    ))
+                  )}
                 </Box>
               </Box>
             )}
