@@ -1685,7 +1685,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id=`Action`.action_id where `SubmittedAction`.user_id = :1 and `SubmittedAction`.is_validated=0 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id=`Action`.action_id where `SubmittedAction`.user_id = :1 and `SubmittedAction`.is_validated=0 AND `SubmittedAction`.is_rejected=0 GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
             "variableMapping": {
               ":1": $context.args.user_id
             }
@@ -2446,20 +2446,26 @@ Resources:
       TypeName: Mutation
       FieldName: createAction
       RequestMappingTemplate: |
+        #set( $context.arguments.action_name = $context.arguments.action_name.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.page_media = $context.arguments.page_media.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.action_icon = $context.arguments.action_icon.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.fallback_quiz_media = $context.arguments.fallback_quiz_media.replace(":::::::", "::::::: ") )
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden ) VALUES (:1, :2, :3, :4, false)",
+            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden ) VALUES (:::::::1, :::::::2, :::::::3, :::::::4, false)",
             "variableMapping": {
-                ":1": "$context.arguments.action_name", 
-                ":2": "$context.arguments.page_media", 
-                ":3": "$context.arguments.action_icon",
-                ":4": "$context.arguments.fallback_quiz_media"
+                ":::::::1": "$context.arguments.action_name", 
+                ":::::::2": "$context.arguments.page_media", 
+                ":::::::3": "$context.arguments.action_icon",
+                ":::::::4": "$context.arguments.fallback_quiz_media"
             },
-            "responseSQL": "SELECT * FROM `Action` WHERE action_name=:1"
+            "responseSQL": "SELECT * FROM `Action` WHERE action_name=:::::::1"
           }
         }
+
       ResponseMappingTemplate: $util.toJson($context.result[0])
       ApiId: !GetAtt AppSyncAPI.ApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
@@ -2768,19 +2774,21 @@ Resources:
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
+
+        the variableMapping names are to ensure nobody will accidentally enter one of the :x:x:x:x:x:x:x:x:x:x:x:x
         *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `User` (username, name, email, avatar) VALUES (:1, :2, :3, :4)",
+            "sql": "INSERT INTO `User` (username, name, email, avatar) VALUES (:1:1:1:1:1:1:1:1:1:1:1:1, :2:2:2:2:2:2:2:2:2:2:2:2, :3:3:3:3:3:3:3:3:3:3:3:3, :4:4:4:4:4:4:4:4:4:4:4:4)",
             "variableMapping": {
-              ":1": "$context.arguments.username", 
-                ":2": "$context.arguments.name", 
-                ":3": "$context.arguments.email", 
-                ":4": "$context.arguments.avatar"
+              ":1:1:1:1:1:1:1:1:1:1:1:1": "$context.arguments.username", 
+              ":2:2:2:2:2:2:2:2:2:2:2:2": "$context.arguments.name", 
+              ":3:3:3:3:3:3:3:3:3:3:3:3": "$context.arguments.email", 
+              ":4:4:4:4:4:4:4:4:4:4:4:4": "$context.arguments.avatar"
             },
-            "responseSQL": "SELECT * FROM `User` WHERE email=:3"
+            "responseSQL": "SELECT * FROM `User` WHERE email=:3:3:3:3:3:3:3:3:3:3:3:3"
           }
         }
         
