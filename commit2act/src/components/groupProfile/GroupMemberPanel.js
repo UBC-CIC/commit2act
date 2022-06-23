@@ -6,6 +6,7 @@ import GroupMemberPanelDialog from './GroupMemberPanelDialog';
 const GroupMemberPanel = ({
   groupMembers,
   setGroupMembers,
+  groupOwners,
   groupInfo,
   currentUserOwner,
   cognitoUser,
@@ -97,6 +98,8 @@ const GroupMemberPanel = ({
               handleClose={handleClose}
               selectedMember={selectedMember}
               groupInfo={groupInfo}
+              groupMembers={groupMembers}
+              groupOwners={groupOwners}
               setGroupMembers={setGroupMembers}
               currentUserOwner={currentUserOwner}
               cognitoUser={cognitoUser}

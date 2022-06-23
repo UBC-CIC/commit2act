@@ -21,6 +21,8 @@ import {
   getTotalGlobalCO2,
   getAllGroupsForUser,
   getAllSubmittedActionsToValidate,
+  getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin,
+  getAllUnvalidatedSubmittedActionsForUser,
   getSingleUser,
 } from '../graphql/queries';
 import GlobalLeaderboard from '../components/GlobalLeaderboard';
@@ -33,7 +35,7 @@ const StyledPaper = styled(Paper)`
   }
 `;
 
-const Landing = ({ user }) => {
+const Landing = ({ user, userType }) => {
   const navigate = useNavigate();
   const [progressStats, setProgressStats] = useState({
     globalCO2: '',
@@ -42,12 +44,15 @@ const Landing = ({ user }) => {
   });
   const [userGroups, setUserGroups] = useState([]);
   const [numActionsToValidate, setNumActionsToValidate] = useState();
+  const [pendingActions, setPendingActions] = useState();
+  const [pendingCO2Saved, setPendingCO2Saved] = useState();
 
   useEffect(() => {
     if (user) {
       getProgressStats();
       getGroups();
       getNumActionsToValidate();
+      getPendingActions();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -77,17 +82,48 @@ const Landing = ({ user }) => {
   };
 
   const getNumActionsToValidate = async () => {
-    const res = await API.graphql({
+    const groupSubmittedActionRes = await API.graphql({
       query: getAllSubmittedActionsToValidate,
       variables: { user_id: user.user_id },
     });
-    setNumActionsToValidate(res.data.getAllSubmittedActionsToValidate.length);
+    const numGroupSubmittedActions =
+      groupSubmittedActionRes.data.getAllSubmittedActionsToValidate.length;
+
+    if (userType === 'Admin') {
+      const userWithoutGroupActionRes = await API.graphql({
+        query: getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin,
+      });
+      const numUserWithoutGroupActions =
+        userWithoutGroupActionRes.data
+          .getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin.length;
+      setNumActionsToValidate(
+        numGroupSubmittedActions + numUserWithoutGroupActions
+      );
+    } else {
+      setNumActionsToValidate(numGroupSubmittedActions);
+    }
+  };
+
+  const getPendingActions = async () => {
+    const res = await API.graphql({
+      query: getAllUnvalidatedSubmittedActionsForUser,
+      variables: { user_id: user.user_id },
+    });
+
+    const unvalidatedSubmittedActions =
+      res.data.getAllUnvalidatedSubmittedActionsForUser;
+    const pendingCO2 = unvalidatedSubmittedActions
+      .map((action) => action.g_co2_saved)
+      .reduce((prev, next) => prev + next);
+
+    setPendingActions(unvalidatedSubmittedActions);
+    setPendingCO2Saved(pendingCO2);
   };
 
   const renderGroupCards = () => {
     if (userGroups.length > 0) {
       return userGroups.map((group, index) => (
-        <GroupCard key={index} group={group} />
+        <GroupCard key={index} group={group} user={user} />
       ));
     } else {
       return (
@@ -150,6 +186,25 @@ const Landing = ({ user }) => {
                 <AlertTitle>New Actions In Need of Validation</AlertTitle>
                 You have <strong>{numActionsToValidate}</strong> actions to
                 validate!
+              </Alert>
+            )}
+            {pendingActions && pendingActions.length > 0 && pendingCO2Saved && (
+              <Alert
+                icon={<CircleNotificationsOutlined />}
+                variant="outlined"
+                sx={{
+                  mt: numActionsToValidate > 0 ? '1em' : '3em',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                  alignItems: { xs: 'center', sm: 'flex-start' },
+                }}
+                color="success"
+              >
+                <AlertTitle>
+                  {pendingActions.length} Actions Pending Validation
+                </AlertTitle>
+                The impact of your pending actions is{' '}
+                <strong>{pendingCO2Saved}g</strong> of CO2 saved
               </Alert>
             )}
           </Grid>

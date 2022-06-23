@@ -37,6 +37,7 @@ import AdminDashboard from '../../pages/AdminDashboard';
 import { API, Auth } from 'aws-amplify';
 import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
+import PrivateRoute from './PrivateRoute';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -250,8 +251,16 @@ function PageContainer(props) {
                 with your app's contents */}
 
           <Routes>
-            <Route exact path={'/'} element={<Landing user={user} />} />
-            <Route exact path={'/find-group'} element={<FindGroup />} />
+            <Route
+              exact
+              path={'/'}
+              element={<Landing user={user} userType={userType} />}
+            />
+            <Route
+              exact
+              path={'/find-group'}
+              element={<FindGroup user={user} />}
+            />
             <Route
               exact
               path={'/log-action'}
@@ -268,12 +277,16 @@ function PageContainer(props) {
             />
             <Route
               path="/group-profile/:groupName/add/:addUserLink"
-              element={<JoinGroup />}
+              element={
+                <PrivateRoute>
+                  <JoinGroup />
+                </PrivateRoute>
+              }
             />
             <Route
               exact
               path={'/validate-actions'}
-              element={<ValidateActions />}
+              element={<ValidateActions user={user} userType={userType} />}
             />
             {userType === 'Admin' && (
               <Route exact path={'/create-action'} element={<CreateAction />} />

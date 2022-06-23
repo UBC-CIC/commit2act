@@ -478,6 +478,52 @@ export const getAllSubmittedActionsToValidate = /* GraphQL */ `
     }
   }
 `;
+export const getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin = /* GraphQL */ `
+  query GetAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin {
+    getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_submitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      name_of_user
+      action_name
+      submitted_image
+      is_rejected
+      is_image_explicit
+    }
+  }
+`;
+export const getAllSubmittedActionsToValidateForAdmin = /* GraphQL */ `
+  query GetAllSubmittedActionsToValidateForAdmin {
+    getAllSubmittedActionsToValidateForAdmin {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_submitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_action_items
+      name_of_user
+      action_name
+      submitted_image
+      is_rejected
+      is_image_explicit
+    }
+  }
+`;
 export const getAllQuizzes = /* GraphQL */ `
   query GetAllQuizzes {
     getAllQuizzes {

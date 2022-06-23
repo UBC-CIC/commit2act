@@ -25,6 +25,7 @@ const StyledDialog = styled(Dialog)`
   .MuiDialog-paper {
     justify-content: center;
     align-items: center;
+    padding: 1em;
   }
 `;
 
