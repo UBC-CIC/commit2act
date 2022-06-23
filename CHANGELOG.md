@@ -12,12 +12,13 @@
 
 # Features
 
-## Groups
+## Group Profile
 
 - Added join group/leave group button to group profile pages
 - Group ownership must be transferred to another group member if there is only 1 group owner and they choose to leave the group
 - A group will be deleted if the only member chooses to leave the group
 - Admin are now able to promote/demote/remove members from any group
+- Group Members tab on Leaderboard now shows user contribution for each category (Total CO2, Weekly CO2, Total Points, Weekly Points) in charts beside user ranking
 
 ## Log Actions
 
