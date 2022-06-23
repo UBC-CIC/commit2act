@@ -45,7 +45,7 @@ const StyledPaper = styled(Paper)`
   }
 `;
 
-const GroupProfile = () => {
+const GroupProfile = ({ user }) => {
   const { groupName } = useParams();
   const tabs = [
     'Group Info',
@@ -274,6 +274,7 @@ const GroupProfile = () => {
                 currentGroup={groupInfo}
                 groupMembers={groupMembers}
                 userId={userId}
+                user={user}
               />
             </Grid>
             <Grid

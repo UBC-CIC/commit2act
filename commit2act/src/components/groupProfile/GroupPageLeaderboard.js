@@ -26,6 +26,7 @@ import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
+import UserContributionDonutChart from '../UserContributionDonutChart';
 
 const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
@@ -33,7 +34,7 @@ const StyledTableBody = styled(TableBody)`
   }
 `;
 
-const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
+const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const tabs = ['Global Groups', 'Group Members'];
   const filters = [
     { name: 'Total CO2 Saved', property: 'total_co2' },
@@ -53,6 +54,30 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const donutChartsData = user &&
+    currentGroup && [
+      {
+        groupTotal: currentGroup.total_co2 - user.total_co2,
+        contribution: user.total_co2,
+        title: 'Total CO2',
+      },
+      {
+        groupTotal: currentGroup.weekly_co2 - user.weekly_co2,
+        contribution: user.weekly_co2,
+        title: 'Weekly CO2',
+      },
+      {
+        groupTotal: currentGroup.total_points - user.total_points,
+        contribution: user.total_points,
+        title: 'Total Points',
+      },
+      {
+        groupTotal: currentGroup.weekly_points - user.weekly_points,
+        contribution: user.weekly_points,
+        title: 'Weekly Points',
+      },
+    ];
 
   // avoid a layout jump in the table when reaching the last page with empty rows
   let emptyRows =
@@ -170,24 +195,46 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
             selectedTab === tabs[1] &&
             groupMembers.findIndex((member) => member.user_id === userId) !==
               -1 && (
-              <Typography
-                variant="h3"
-                component="div"
+              <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
               >
-                Current Place
-                <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                  <AutoGraphIcon />
-                  {filteredMembers.findIndex(
-                    (member) => member.user_id === userId
-                  ) + 1}{' '}
-                  / {groupMembers.length}
+                <Typography
+                  variant="h3"
+                  component="div"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  Current Place
+                  <Typography variant="h1" sx={{ mt: '0.2em' }}>
+                    <AutoGraphIcon />
+                    {filteredMembers.findIndex(
+                      (member) => member.user_id === userId
+                    ) + 1}{' '}
+                    / {groupMembers.length}
+                  </Typography>
                 </Typography>
-              </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-evenly',
+                  }}
+                >
+                  {donutChartsData.map((data) => (
+                    <UserContributionDonutChart
+                      data={data}
+                      displayTitles={true}
+                    />
+                  ))}
+                </Box>
+              </Box>
             )}
         </Box>
         <TableContainer component={Paper} sx={{ mt: '1em' }}>
