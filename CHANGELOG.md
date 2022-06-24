@@ -1,4 +1,4 @@
-# 6/22/2022
+# 6/24/2022
 
 # Bug Fixes
 
@@ -35,3 +35,5 @@
   - My Groups allows admins to validate actions within the groups they own
   - Users Without Groups allows admins to validate actions for users that are not part of any groups
   - All Unvalidated Actions displays all actions in need of validation
+- Added button to toggle search bar between searching by Group Name and by Action Name in the My Groups tab
+- Added search bars to filter by Action Name in the Users Without Groups tab and All Unvalidated Actions tab
