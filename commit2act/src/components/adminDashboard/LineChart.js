@@ -13,7 +13,6 @@ import { Line } from 'react-chartjs-2';
 import { format, eachDayOfInterval, sub } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import 'chartjs-adapter-date-fns';
 
 const LineChart = ({ allSubmittedActions }) => {
   const [lineChartData, setLineChartData] = useState();
@@ -58,6 +57,7 @@ const LineChart = ({ allSubmittedActions }) => {
 
     //reduce formattedDatesInInterval array into object with keys being each of the dates
     const formattedDatesInIntervalObject = formattedDatesInInterval.reduce(
+      // eslint-disable-next-line no-sequences
       (acc, curr) => ((acc[curr] = 0), acc),
       {}
     );

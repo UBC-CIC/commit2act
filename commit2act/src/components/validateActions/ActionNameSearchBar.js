@@ -132,7 +132,7 @@ const ActionNameSearchBar = ({
                 variant="outlined"
                 fullWidth
                 label="Search"
-                sx={{ my: '2em' }}
+                sx={{ my: '3em' }}
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
                   ...params.InputProps,

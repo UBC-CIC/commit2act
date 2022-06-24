@@ -124,7 +124,7 @@ const GroupNameSearchBar = ({
                 variant="outlined"
                 fullWidth
                 label="Search"
-                sx={{ my: '2em' }}
+                sx={{ my: '3em' }}
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
                   ...params.InputProps,
@@ -180,7 +180,8 @@ const GroupNameSearchBar = ({
             </Typography>
           )
         )}
-        {allActionsToValidate && allActionsToValidate.length === 0 && (
+        {((allActionsToValidate && allActionsToValidate.length === 0) ||
+          (filteredActions && filteredActions.length === 0)) && (
           <Typography
             variant="subtitle2"
             sx={{ textAlign: 'center', mt: '1em' }}

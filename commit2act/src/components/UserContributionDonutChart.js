@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { Chart as ChartJS } from 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
 
 const UserContributionDonutChart = ({ data, displayTitles }) => {

@@ -37,7 +37,7 @@ const MyGroupsPanel = ({ user }) => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          mt: '3em',
+          mt: '4em',
           gap: '1em',
           flexDirection: { xs: 'column', md: 'row' },
         }}

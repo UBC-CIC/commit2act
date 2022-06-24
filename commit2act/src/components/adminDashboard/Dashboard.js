@@ -1,6 +1,5 @@
 import { Box, Paper, Typography, Grid, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Chart as ChartJS } from 'chart.js/auto';
 import { Doughnut } from 'react-chartjs-2';
 import {
   getAllUsers,

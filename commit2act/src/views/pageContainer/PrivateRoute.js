@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Auth } from 'aws-amplify';
 import { updateLoginState } from '../../actions/loginActions';
 
