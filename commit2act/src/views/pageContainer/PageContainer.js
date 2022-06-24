@@ -273,7 +273,7 @@ function PageContainer(props) {
             />
             <Route
               path="/group-profile/:groupName"
-              element={<GroupProfile />}
+              element={<GroupProfile user={user} />}
             />
             <Route
               path="/group-profile/:groupName/add/:addUserLink"

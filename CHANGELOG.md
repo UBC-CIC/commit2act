@@ -1,4 +1,4 @@
-# Commit2Act Changelog
+# 6/24/2022
 
 ## 6/22/2022
 
@@ -14,12 +14,13 @@
 
 ### Added Features
 
-#### Groups
+## Group Profile
 
 - Added join group/leave group button to group profile pages
-- Group ownership must be transferred to another group member in the event that the sole group owner wants to leave a group
-- A group will be deleted if the only remaining member chooses to leave the group
-- Admin users are now able to promote/demote/remove members from any group
+- Group ownership must be transferred to another group member if there is only 1 group owner and they choose to leave the group
+- A group will be deleted if the only member chooses to leave the group
+- Admin are now able to promote/demote/remove members from any group
+- Group Members tab on Leaderboard now shows user contribution for each category (Total CO2, Weekly CO2, Total Points, Weekly Points) in charts beside user ranking
 
 #### Log Actions
 
@@ -32,8 +33,9 @@
 
 #### Validate Actions
 
-- There are now 3 tabs (My Groups, Users Without Groups, All Unvalidated Actions) displayed for Admin Users on the validation page
-  - **My Groups** allows admins to validate actions for all groups where they are the owner
-  - **Users Without Groups** allows admins to validate actions for users that are not part of any groups
-  - **All Unvalidated Actions** displays all actions in need of validation from all users
-  - Users who are not an admin will only see **My Groups**
+- There are now 3 tabs (My Groups, Users Without Groups, All Unvalidated Actions) displayed for Admin Users
+  - My Groups allows admins to validate actions within the groups they own
+  - Users Without Groups allows admins to validate actions for users that are not part of any groups
+  - All Unvalidated Actions displays all actions in need of validation
+- Added button to toggle search bar between searching by Group Name and by Action Name in the My Groups tab
+- Added search bars to filter by Action Name in the Users Without Groups tab and All Unvalidated Actions tab

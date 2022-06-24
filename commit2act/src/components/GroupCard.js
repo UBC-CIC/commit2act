@@ -17,8 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Public, Lock, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-import { Chart as ChartJS } from 'chart.js/auto';
-import { Doughnut } from 'react-chartjs-2';
+import UserContributionDonutChart from './UserContributionDonutChart';
 
 const GroupCard = ({ group, joinGroupOption, user }) => {
   const {
@@ -39,15 +38,25 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
   const descriptionLength = responsive ? 100 : 250;
 
   const donutChartsData = [
-    { groupTotal: total_co2 - user.total_co2, contribution: user.total_co2 },
-    { groupTotal: weekly_co2 - user.weekly_co2, contribution: user.weekly_co2 },
+    {
+      groupTotal: total_co2 - user.total_co2,
+      contribution: user.total_co2,
+      title: 'Total CO2',
+    },
+    {
+      groupTotal: weekly_co2 - user.weekly_co2,
+      contribution: user.weekly_co2,
+      title: 'Weekly CO2',
+    },
     {
       groupTotal: total_points - user.total_points,
       contribution: user.total_points,
+      title: 'Total Points',
     },
     {
       groupTotal: weekly_points - user.weekly_points,
       contribution: user.weekly_points,
+      title: 'Weekly Points',
     },
   ];
 
@@ -85,40 +94,6 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
       '-',
       group_id ** 2
     );
-
-  const renderDonutCharts = () => {
-    return donutChartsData.map((chart, index) => (
-      <Box
-        key={index}
-        sx={{
-          height: '50px',
-          width: '200px',
-        }}
-      >
-        <Doughnut
-          data={{
-            labels: ['All Other Members', 'My Contribution'],
-            datasets: [
-              {
-                data: [chart.groupTotal, chart.contribution],
-                backgroundColor: ['#808080', '#91C788'],
-              },
-            ],
-          }}
-          options={{
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false,
-              },
-            },
-          }}
-          height={300}
-          width={600}
-        />
-      </Box>
-    ));
-  };
 
   const renderGroupStatListItems = () => {
     return groupStatsData.map((stat, index) => (
@@ -244,7 +219,9 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 mr: '1em',
               }}
             >
-              {renderDonutCharts()}
+              {donutChartsData.map((data) => (
+                <UserContributionDonutChart data={data} displayTitles={false} />
+              ))}
             </Box>
           </AccordionDetails>
         </Accordion>

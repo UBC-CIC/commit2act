@@ -4,9 +4,9 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import GroupValidateSearchBar from '../components/validateActions/GroupValidateSearchBar';
 import UsersWithoutGroupPanel from '../components/validateActions/UsersWithoutGroupPanel';
 import AllUnvalidatedActionsPanel from '../components/validateActions/AllUnvalidatedActionsPanel';
+import MyGroupsPanel from '../components/validateActions/MyGroupsPanel';
 
 const ValidateActions = ({ user, userType }) => {
   const tabs = ['My Groups', 'Users Without Groups', 'All Unvalidated Actions'];
@@ -53,17 +53,17 @@ const ValidateActions = ({ user, userType }) => {
               </TabList>
             </Box>
             <TabPanel value={tabs[0]}>
-              <GroupValidateSearchBar user={user} />
+              <MyGroupsPanel user={user} />
             </TabPanel>
             <TabPanel value={tabs[1]}>
-              <UsersWithoutGroupPanel />
+              <UsersWithoutGroupPanel user={user} />
             </TabPanel>
             <TabPanel value={tabs[2]}>
-              <AllUnvalidatedActionsPanel />
+              <AllUnvalidatedActionsPanel user={user} />
             </TabPanel>
           </TabContext>
         ) : (
-          <GroupValidateSearchBar user={user} />
+          <MyGroupsPanel user={user} />
         ))}
     </>
   );

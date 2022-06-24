@@ -15,6 +15,13 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  Divider,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
@@ -22,10 +29,11 @@ import TabList from '@mui/lab/TabList';
 import { getAllGroups } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import { AutoGraph, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
+import UserContributionDonutChart from '../UserContributionDonutChart';
 
 const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
@@ -33,7 +41,7 @@ const StyledTableBody = styled(TableBody)`
   }
 `;
 
-const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
+const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const tabs = ['Global Groups', 'Group Members'];
   const filters = [
     { name: 'Total CO2 Saved', property: 'total_co2' },
@@ -53,6 +61,55 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
+  const hideCharts = useMediaQuery(theme.breakpoints.down('md'));
+
+  const donutChartsData = user &&
+    currentGroup && [
+      {
+        groupTotal: currentGroup.total_co2 - user.total_co2,
+        contribution: user.total_co2,
+        title: 'Total CO2',
+      },
+      {
+        groupTotal: currentGroup.weekly_co2 - user.weekly_co2,
+        contribution: user.weekly_co2,
+        title: 'Weekly CO2',
+      },
+      {
+        groupTotal: currentGroup.total_points - user.total_points,
+        contribution: user.total_points,
+        title: 'Total Points',
+      },
+      {
+        groupTotal: currentGroup.weekly_points - user.weekly_points,
+        contribution: user.weekly_points,
+        title: 'Weekly Points',
+      },
+    ];
+
+  const userContributionData = user &&
+    currentGroup && [
+      {
+        title: 'Total CO2',
+        value: Math.round((user.total_co2 / currentGroup.total_co2) * 100),
+      },
+      {
+        title: 'Weekly CO2',
+        value: Math.round((user.weekly_co2 / currentGroup.weekly_co2) * 100),
+      },
+      {
+        title: 'Total Points',
+        value: Math.round(
+          (user.total_points / currentGroup.total_points) * 100
+        ),
+      },
+      {
+        title: 'Weekly Points',
+        value: Math.round(
+          (user.weekly_points / currentGroup.weekly_points) * 100
+        ),
+      },
+    ];
 
   // avoid a layout jump in the table when reaching the last page with empty rows
   let emptyRows =
@@ -132,6 +189,20 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
     setPage(0);
   };
 
+  const renderUserContributionListItems = () => {
+    return userContributionData.map((stat, index) => (
+      <React.Fragment key={index}>
+        <Divider flexItem />
+        <ListItem>
+          <ListItemText primary={stat.title} />
+          <span>
+            <Typography variant="body1">{stat.value}%</Typography>
+          </span>
+        </ListItem>
+      </React.Fragment>
+    ));
+  };
+
   /** function for displaying the leaderboard tables */
 
   const renderTable = () => {
@@ -157,7 +228,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
             >
               Current Place
               <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                <AutoGraphIcon />
+                <AutoGraph />
                 {filteredGroups.findIndex(
                   (group) => group.group_name === currentGroup.group_name
                 ) + 1}{' '}
@@ -170,24 +241,68 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId }) => {
             selectedTab === tabs[1] &&
             groupMembers.findIndex((member) => member.user_id === userId) !==
               -1 && (
-              <Typography
-                variant="h3"
-                component="div"
+              <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexDirection: hideCharts ? 'column' : 'row',
                 }}
               >
-                Current Place
-                <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                  <AutoGraphIcon />
-                  {filteredMembers.findIndex(
-                    (member) => member.user_id === userId
-                  ) + 1}{' '}
-                  / {groupMembers.length}
+                <Typography
+                  variant="h3"
+                  component="div"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  Current Place
+                  <Typography
+                    variant="h1"
+                    sx={{
+                      mt: '0.2em',
+                      wordBreak: 'break-all',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    <AutoGraph />
+                    {filteredMembers.findIndex(
+                      (member) => member.user_id === userId
+                    ) + 1}{' '}
+                    / {groupMembers.length}
+                  </Typography>
                 </Typography>
-              </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-evenly',
+                  }}
+                >
+                  {hideCharts ? (
+                    <Accordion sx={{ my: '1.5em' }}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls="user-contributions-content"
+                      >
+                        <Typography>My Contributions</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ p: 0 }}>
+                        <List dense>{renderUserContributionListItems()}</List>
+                      </AccordionDetails>
+                    </Accordion>
+                  ) : (
+                    donutChartsData.map((data) => (
+                      <UserContributionDonutChart
+                        data={data}
+                        displayTitles={true}
+                      />
+                    ))
+                  )}
+                </Box>
+              </Box>
             )}
         </Box>
         <TableContainer component={Paper} sx={{ mt: '1em' }}>
