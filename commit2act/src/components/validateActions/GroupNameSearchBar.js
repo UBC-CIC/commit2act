@@ -10,18 +10,18 @@ import {
 } from '@mui/material';
 import { API } from 'aws-amplify';
 import { Search } from '@mui/icons-material';
-import {
-  getAllGroupsUserOwns,
-  getAllSubmittedActionsToValidate,
-} from '../../graphql/queries';
+import { getAllGroupsUserOwns } from '../../graphql/queries';
 import ValidationNeededCard from './ValidationNeededCard';
 
-const GroupValidateSearchBar = ({ user }) => {
+const GroupNameSearchBar = ({
+  user,
+  getAllActionsToValidate,
+  allActionsToValidate,
+}) => {
   const [groupsOwnedByUser, setGroupsOwnedByUser] = useState();
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('');
-  const [allActions, setAllActions] = useState();
   const [filteredActions, setFilteredActions] = useState();
   //for pagination
   const [page, setPage] = useState(1);
@@ -30,30 +30,14 @@ const GroupValidateSearchBar = ({ user }) => {
 
   useEffect(() => {
     const getGroupsAndAllActions = async () => {
-      const [groupRes, allActionRes] = await Promise.all([
-        API.graphql({
-          query: getAllGroupsUserOwns,
-          variables: { user_id: user.user_id },
-        }),
-        API.graphql({
-          query: getAllSubmittedActionsToValidate,
-          variables: { user_id: user.user_id },
-        }),
-      ]);
-
+      const groupRes = await API.graphql({
+        query: getAllGroupsUserOwns,
+        variables: { user_id: user.user_id },
+      });
       setGroupsOwnedByUser(groupRes.data.getAllGroupsUserOwns);
-      setAllActions(allActionRes.data.getAllSubmittedActionsToValidate);
     };
     user && getGroupsAndAllActions();
   }, [user]);
-
-  const getAllActions = async () => {
-    const res = await API.graphql({
-      query: getAllSubmittedActionsToValidate,
-      variables: { user_id: user.user_id },
-    });
-    setAllActions(res.data.getAllSubmittedActionsToValidate);
-  };
 
   const checkGroup = () => {
     if (!groupsOwnedByUser.some((group) => group.group_name === input)) {
@@ -75,22 +59,22 @@ const GroupValidateSearchBar = ({ user }) => {
   //if there is no group selected, set page count to default length for all actions
   useEffect(() => {
     if (selectedGroup) {
-      const filteredActionArray = allActions.filter((action) =>
+      const filteredActionArray = allActionsToValidate.filter((action) =>
         action.group_names.split(', ').includes(selectedGroup)
       );
       setFilteredActions(filteredActionArray);
       setPage(1);
     } else {
       const allActionsPageCount =
-        allActions &&
-        (allActions.length % 5 === 0
-          ? Math.round(allActions.length / 5)
-          : Math.floor(allActions.length / 5 + 1));
+        allActionsToValidate &&
+        (allActionsToValidate.length % 5 === 0
+          ? Math.round(allActionsToValidate.length / 5)
+          : Math.floor(allActionsToValidate.length / 5 + 1));
 
       setPageCount(allActionsPageCount);
       setPage(1);
     }
-  }, [selectedGroup, allActions]);
+  }, [selectedGroup, allActionsToValidate]);
 
   useEffect(() => {
     const filteredActionsPageCount =
@@ -123,12 +107,6 @@ const GroupValidateSearchBar = ({ user }) => {
       {!groupsOwnedByUser && <LinearProgress sx={{ mt: '3em' }} />}
       {groupsOwnedByUser && (
         <>
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="subtitle2" sx={{ mt: '3em' }}>
-              Search for one of your groups to filter for group specific member
-              actions
-            </Typography>
-          </Box>
           <Autocomplete
             freeSolo
             options={groupsOwnedByUser.map((group) => group.group_name)}
@@ -202,7 +180,7 @@ const GroupValidateSearchBar = ({ user }) => {
             </Typography>
           )
         )}
-        {allActions && allActions.length === 0 && (
+        {allActionsToValidate && allActionsToValidate.length === 0 && (
           <Typography
             variant="subtitle2"
             sx={{ textAlign: 'center', mt: '1em' }}
@@ -213,15 +191,15 @@ const GroupValidateSearchBar = ({ user }) => {
         <Stack spacing={2}>
           {/* if group has not been selected, display all actions */}
           {!selectedGroup &&
-            allActions &&
-            allActions.length > 0 &&
-            allActions
+            allActionsToValidate &&
+            allActionsToValidate.length > 0 &&
+            allActionsToValidate
               .slice((page - 1) * rowsPerPage, page * rowsPerPage)
               .map((action, index) => (
                 <ValidationNeededCard
                   action={action}
                   key={index}
-                  getAllActions={getAllActions}
+                  getAllActions={getAllActionsToValidate}
                   groupsOwnedByUser={groupsOwnedByUser}
                 />
               ))}
@@ -234,7 +212,7 @@ const GroupValidateSearchBar = ({ user }) => {
                 <ValidationNeededCard
                   action={action}
                   key={index}
-                  getAllActions={getAllActions}
+                  getAllActions={getAllActionsToValidate}
                   groupsOwnedByUser={groupsOwnedByUser}
                 />
               ))}
@@ -245,4 +223,4 @@ const GroupValidateSearchBar = ({ user }) => {
   );
 };
 
-export default GroupValidateSearchBar;
+export default GroupNameSearchBar;
