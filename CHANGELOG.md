@@ -1,6 +1,6 @@
 # 6/24/2022
 
-### Bug Fixes
+## Bug Fixes
 
 - Fixed link to join group navigation to redirect non-signed in users to sign-up/sign-in page
 - Fixed malformed variable causing white screen on action submission
@@ -10,9 +10,9 @@
 - Sanitized **Create Group** submission input fields to properly deal with all characters
 - Fixed action submission for action items where `co2_per_unit_saved` is not an integer value
 
-### Added Features
+## Added Features
 
-## Group Profile
+#### Group Profile
 
 - Added join group/leave group button to group profile pages
 - Group ownership must be transferred to another group member if there is only 1 group owner and they choose to leave the group
