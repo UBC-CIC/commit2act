@@ -49,7 +49,7 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
     <img src="https://oneclick.amplifyapp.com/button.svg" alt="Deploy to Amplify Console">
 </a>
 
-1. On the AWS console. select your region on the top right, then connect to github![alt text](images/amplify-console-01.png)
+1. On the AWS console. select your region on the top right, then connect to github![alt text](images/amplify-console-01.PNG)
 2. Select the **amplifyconsole-commit2act-backend-role** for deployment
 3. The deployment will take a few minutes. Wait until the status shows **Verify** in green
 4. Click on left taskbar to open menu, click on Rewrites and redirects, and click on edit
