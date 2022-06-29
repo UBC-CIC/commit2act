@@ -2329,6 +2329,32 @@ Resources:
       Kind: UNIT
       MaxBatchSize: 0
 
+  getUserStatsForGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+    - LambdaAppSyncDataSource
+    Properties:
+      TypeName: Query
+      FieldName: getUserStatsForGroup
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Invoke",
+          "payload": {
+            "sql": "select GroupUser.user_id, group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points FROM GroupUser INNER JOIN SubmittedAction ON GroupUser.user_id=SubmittedAction.user_id WHERE GroupUser.user_id=:2 AND GroupUser.group_id=:1",
+            "variableMapping": {
+              ":1": $context.args.group_id,
+              ":2": $context.args.user_id
+            }
+          }
+        }
+        
+      ResponseMappingTemplate: $util.toJson($context.result[0])
+      ApiId: !GetAtt AppSyncAPI.ApiId
+      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      Kind: UNIT
+      MaxBatchSize: 0
+
   addGroupMemberResolver:
     Type: AWS::AppSync::Resolver
     DependsOn:
