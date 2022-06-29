@@ -4,6 +4,7 @@
 
 - Fixed quizzes not being eliminated from the user's quiz pool once answered
 - Fixed error when a quiz had no questions to show
+- Group card pie charts calculation fixed
 
 ## Added Features
 
