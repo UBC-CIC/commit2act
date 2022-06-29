@@ -23,7 +23,6 @@ The code should now be in the above folder. Now navigate into the commit2act fol
 
 ```bash
 cd commit2act
-cd commit2act
 ```
 
 # Step 2: Frontend Deployment
@@ -53,7 +52,49 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
 2. Select the **amplifyconsole-commit2act-backend-role** for deployment
 3. The deployment will take a few minutes. Wait until the status shows **Verify** in green
 4. Click on left taskbar to open menu, click on Rewrites and redirects, and click on edit
-5. Click and replace the first rule's source address (or add a rule if there is none) to `</^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>`, click and replace target address to `/index.html`, and select and replace **type** with `200 (Rewrite)`, then save. Add a second rule, with the source address as `</^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>`, the target address as `/index.html`, and the **type** with `404 (Rewrite)`
+5. Click and replace the first rule's source address (or add a rule if there is none) to `</^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>`, click and replace target address to `/index.html`, and select and replace **type** with `200 (Rewrite)`, then save. Add a second rule, with the source address as `</^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>`, the target address as `/index.html`, and the **type** with `404 (Rewrite)`.
    Refer to [AWS's Page on Single Page Apps](https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html#redirects-for-single-page-web-apps-spa) for further information on why we did that
+6. At the [AWS online console](https://console.aws.amazon.com/console/home), enter **Cloudfront** in the search bar. Click on the Distributions tab, and click the ID of the distribution with the origin \_\_\_\_. Under the General tab of that distribution, copy the Distribution Domain Name under the Details heading.
+
+//add image
+
+7. Navigate back to the amplify console by entering **Amplify** at the [AWS online console](https://console.aws.amazon.com/console/home). Under the App Settings heading on the left hand sidebar, click Environment Variables. Add an environment variable with the Variable field as `REACT_APP_CLOUDFRONT_DOMAIN_NAME`, and the Value as the Distribution Domain Name that was copied in the previous step.
+
+// add image
 
 Congratulations, your web app is now deployed!
+
+## Register Commit2Act Admin Account
+
+Here, you'll learn how to register for an account on the web app, then how to set any accounts to Commit2Act Admin.
+
+1. At the login page for the Commit2Act website, click create an account \
+   ![alt text](images/webapp0.png)
+2. Enter Account Details and click Sign-up. **Verification code is sent to email.** \
+   ![alt text](images/webapp1.png)
+3. User retrieves verification code from email and enters it to Verify Account\
+   ![alt text](images/webapp2.png)
+4. At the [AWS online console](https://console.aws.amazon.com/console/home), enter **Cognito** in the search bar \
+   ![alt text](images/webapp3.png)
+5. Select the user pool corresponding to the project name (Default commit2actchallenge) \
+   ![alt text](images/webapp4.png)
+6. Select the user which you want to set to Admin \
+   ![alt text](images/webapp5.png)
+7. Scroll down, and click **Add user to group** \
+   ![alt text](images/webapp6.png)
+8. Select **Admins** and click **Add** \
+   ![alt text](images/webapp7.png)
+9. You have set up login credentials. Return to Commit2Act web app, and login. Your user is now a Commit2Act Admin! (If you are having issues, try relogging on the Commit2Act web app)\
+   ![alt text](images/webapp8.png)
+
+# Troubleshooting
+
+### Error #1
+
+If you encounter the following error:
+
+```bash
+The config profile could not be found
+```
+
+chances are that the AWS CLI has not been correctly configured. Ensure you have correctly done so by following the [AWS CLI setup guide](https://aws.amazon.com/cli/), as indicated in the requirements section.
