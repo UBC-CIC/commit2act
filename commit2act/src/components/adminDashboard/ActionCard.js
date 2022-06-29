@@ -55,12 +55,18 @@ const ActionCard = ({
   setEditAction,
   getActions,
 }) => {
-  const { action_icon, action_name, action_id, validation_labels, is_hidden } =
-    action;
+  const {
+    action_icon,
+    action_name,
+    action_id,
+    validation_labels,
+    is_hidden,
+    fallback_quiz_media,
+  } = action;
 
   const initialActionForm = {
     action_name: action_name,
-    fallback_quiz_media: '',
+    fallback_quiz_media: fallback_quiz_media,
     curr_label: '',
     labels: validation_labels.split(', '),
     action_items: [],
@@ -158,6 +164,20 @@ const ActionCard = ({
                 </AccordionDetails>
               </Accordion>
             ))}
+        </Box>
+        <Box>
+          <Typography variant="h3">Fallback Text</Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              mt: '1em',
+            }}
+          >
+            {action.fallback_quiz_media
+              ? action.fallback_quiz_media
+              : 'There is currently no fallback text.'}
+          </Box>
         </Box>
         <Box>
           <Typography variant="h3">Image Validation Labels</Typography>
@@ -320,6 +340,7 @@ const ActionCard = ({
           query: updateAction,
           variables: {
             action_id: action_id,
+            fallback_quiz_media: actionForm.fallback_quiz_media,
             action_icon: actionIconFile ? iconLink : action_icon,
           },
         }),
@@ -565,6 +586,21 @@ const ActionCard = ({
               Add Item
             </Button>
           </FormGroup>
+        </Box>
+        <Box>
+          <Typography variant="h3">Fallback Text</Typography>
+          <TextField
+            required
+            name="fallback_quiz_media"
+            value={actionForm.fallback_quiz_media}
+            multiline
+            InputProps={{
+              style: { fontSize: 15, fontWeight: 100, color: 'black' },
+            }}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: '100%', mt: '1em' }}
+            onChange={updateForm}
+          />
         </Box>
         <Box>
           <Typography variant="h3" sx={{ mb: '1em' }}>
