@@ -13,6 +13,7 @@ const CO2SavedScreen = ({
   totalCO2Saved,
   setActiveStep,
   quizAnswered,
+  quiz,
   firstQuizAnswerCorrect,
   user,
   actionItemValues,
@@ -46,6 +47,7 @@ const CO2SavedScreen = ({
         points_earned: points,
         quiz_answered: quizAnswered,
         user_id: user.user_id,
+        quiz_id: quiz.quiz_id,
       },
     });
 

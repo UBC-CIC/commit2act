@@ -577,3 +577,15 @@ export const isQuizAnswerCorrect = /* GraphQL */ `
     isQuizAnswerCorrect(quiz_id: $quiz_id, answer: $answer)
   }
 `;
+export const getUserStatsForGroup = /* GraphQL */ `
+  query GetUserStatsForGroup($user_id: Int!, $group_id: Int!) {
+    getUserStatsForGroup(user_id: $user_id, group_id: $group_id) {
+      user_id
+      group_id
+      total_co2
+      total_points
+      weekly_co2
+      weekly_points
+    }
+  }
+`;
