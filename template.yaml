@@ -3225,12 +3225,10 @@ Resources:
       TypeName: Mutation
       FieldName: updateAction
       RequestMappingTemplate: |
-        
-        
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
-        
+
         type Action {
           action_id: Int!
           action_name: String!
@@ -3238,22 +3236,31 @@ Resources:
           action_icon: String
           fallback_quiz_media: String
         }
-        
+
         This only updates fields that actually are needing to be updated
         *#
-        
+
         #if( $context.arguments.action_name )
           #set( $action_name = 'action_name=:1' )
+          #if( $ctx.args.page_media || $ctx.args.action_icon || $ctx.args.fallback_quiz_media )
+            #set( $action_name = 'action_name=:1,' )
+          #end
         #else
           #set( $action_name = '' )
         #end
         #if( $context.arguments.page_media )
           #set( $page_media = 'page_media=:2' )
+          #if( $ctx.args.action_icon || $ctx.args.fallback_quiz_media )
+            #set( $page_media = 'page_media=:2,' )
+          #end
         #else
           #set( $page_media = '' )
         #end
         #if( $context.arguments.action_icon )
           #set( $action_icon = 'action_icon=:3' )
+          #if(  $ctx.args.fallback_quiz_media )
+            #set( $action_icon = 'action_icon=:3,' )
+          #end
         #else
           #set( $action_icon = '' )
         #end
@@ -3262,7 +3269,7 @@ Resources:
         #else
           #set( $fallback_quiz_media = '' )
         #end
-        
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -3278,6 +3285,7 @@ Resources:
             "responseSQL": "SELECT * FROM `Action` WHERE action_id=:0"
           }
         }
+
         
         
       ResponseMappingTemplate: |
