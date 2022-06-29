@@ -94,6 +94,9 @@ Parameters:
   AmplifyBucket:
     Type: String
     Description: "The name of the S3 bucket for the amplify project (ex. projectname-storage-0123456789-dev)"
+  CognitoUserPoolId: 
+    Type: String
+    Description: "The ID of your Cognito User Pool for the app (ex. us-east-1_abcdefgh)"
   MinConfidenceThreshold:
     Type: Number
     Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
@@ -846,7 +849,7 @@ Resources:
       UserPoolConfig:
         AwsRegion: !Ref DeploymentRegion
         DefaultAction: ALLOW
-        UserPoolId: us-east-1_jKhBLdEzs  ############################ TODO: CHANGE
+        UserPoolId: !Ref CognitoUserPoolId  
       LogConfig:
         CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
         FieldLogLevel: ALL
@@ -2517,7 +2520,6 @@ Resources:
       FieldName: createActionItems
       RequestMappingTemplate: |
         #**
-        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
         
         action_items is an array of JSON objects, in this case it looks like this:
         [
@@ -2767,7 +2769,6 @@ Resources:
       FieldName: createSubmittedActionItems
       RequestMappingTemplate: |
         #**
-        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
         
         action_items is an array of JSON objects, in this case it looks like this:
         [
