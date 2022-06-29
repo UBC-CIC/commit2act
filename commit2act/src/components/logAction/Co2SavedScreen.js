@@ -47,7 +47,7 @@ const CO2SavedScreen = ({
         points_earned: points,
         quiz_answered: quizAnswered,
         user_id: user.user_id,
-        quiz_id: quiz.quiz_id,
+        quiz_id: quiz ? quiz.quiz_id : null,
       },
     });
 
