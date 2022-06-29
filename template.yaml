@@ -1700,7 +1700,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT total_co2, total_points, weekly_co2, weekly_points, `User`.*, user_role  FROM `Group`   INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id   INNER JOIN   (SELECT T1.user_id,  (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2,   (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points   from   (SELECT `User`.user_id,  coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )   as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points  FROM `User`  LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2   ON T1.user_id=T2.user_id )   AS TOTAL_STATS   ON `TOTAL_STATS`.user_id=`GroupUser`.user_id  INNER JOIN   ( SELECT T1.user_id,   (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2,  (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from  (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id   GROUP BY `User`.user_id )    as T1   LEFT JOIN   (SELECT `User`.user_id,   coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`   LEFT JOIN SubmittedAction   ON `User`.user_id=SubmittedAction.user_id    WHERE SubmittedAction.is_validated=0   GROUP BY `User`.user_id )   AS T2  ON T1.user_id=T2.user_id   LEFT JOIN   (SELECT `User`.user_id,    coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2,   coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points   FROM `User`  LEFT JOIN SubmittedAction    ON `User`.user_id=SubmittedAction.user_id   WHERE SubmittedAction.is_validated=1  AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now()   GROUP BY `User`.user_id )  AS T3  ON T1.user_id=T3.user_id  )   AS WEEKLY_STATS   ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id   INNER JOIN `User` ON WEEKLY_STATS.user_id=`User`.user_id  where `Group`.group_id=:1  group by `User`.user_id",
+            "sql": "select `User`.*, user_role, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points FROM GroupUser INNER JOIN SubmittedAction ON GroupUser.user_id=SubmittedAction.user_id INNER JOIN `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=:1 GROUP BY GroupUser.user_id",
             "variableMapping": {
               ":1": $context.args.group_id
             }
@@ -3164,7 +3164,6 @@ Resources:
         #else
           #set( $fallback_quiz_media = '' )
         #end
-
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -3180,9 +3179,6 @@ Resources:
             "responseSQL": "SELECT * FROM `Action` WHERE action_id=:0"
           }
         }
-
-        
-        
       ResponseMappingTemplate: |
         
         
