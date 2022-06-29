@@ -13,3 +13,5 @@
 | [Validate Actions](#Validate-Actions) | How Group owners and Admin can manually validate actions that have failed rekognition |
 | [Admin Dashboard](#Admin-Dashboard)   | How Admin can manage actions and quiz questions                                       |
 | [Account Settings](#Account-Settings) | Managing user account information                                                     |
+
+## Landing Page
