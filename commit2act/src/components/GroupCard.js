@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemText } from '@mui/material';
 import {
   Typography,
@@ -18,6 +18,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Public, Lock, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import UserContributionDonutChart from './UserContributionDonutChart';
+import { API } from 'aws-amplify';
+import { getUserStatsForGroup } from '../graphql/queries';
 
 const GroupCard = ({ group, joinGroupOption, user }) => {
   const {
@@ -32,58 +34,81 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
     weekly_points,
   } = group;
   const [readMore, setReadMore] = useState(false);
+  const [userStats, setUserStats] = useState();
+  const [donutChartsData, setDonutChartsData] = useState();
+  const [userContributionPercentages, setUserContributionPercentages] =
+    useState();
   const navigate = useNavigate();
   const theme = useTheme();
   const responsive = useMediaQuery(theme.breakpoints.down('md'));
   const descriptionLength = responsive ? 100 : 250;
 
-  const donutChartsData = [
-    {
-      groupTotal: total_co2 - user.total_co2,
-      contribution: user.total_co2,
-      title: 'Total CO2',
-    },
-    {
-      groupTotal: weekly_co2 - user.weekly_co2,
-      contribution: user.weekly_co2,
-      title: 'Weekly CO2',
-    },
-    {
-      groupTotal: total_points - user.total_points,
-      contribution: user.total_points,
-      title: 'Total Points',
-    },
-    {
-      groupTotal: weekly_points - user.weekly_points,
-      contribution: user.weekly_points,
-      title: 'Weekly Points',
-    },
-  ];
+  useEffect(() => {
+    const getUserStats = async () => {
+      const res = await API.graphql({
+        query: getUserStatsForGroup,
+        variables: { user_id: user.user_id, group_id: group_id },
+      });
+      setUserStats(res.data.getUserStatsForGroup);
+    };
+
+    group && user && getUserStats();
+  }, [group, group_id, user, user.user_id]);
+
+  useEffect(() => {
+    if (userStats) {
+      const donutData = [
+        {
+          groupTotal: total_co2 - userStats.total_co2,
+          contribution: userStats.total_co2,
+          title: 'Total CO2',
+        },
+        {
+          groupTotal: weekly_co2 - userStats.weekly_co2,
+          contribution: userStats.weekly_co2,
+          title: 'Weekly CO2',
+        },
+        {
+          groupTotal: total_points - userStats.total_points,
+          contribution: userStats.total_points,
+          title: 'Total Points',
+        },
+        {
+          groupTotal: weekly_points - userStats.weekly_points,
+          contribution: userStats.weekly_points,
+          title: 'Weekly Points',
+        },
+      ];
+      setDonutChartsData(donutData);
+
+      const percentageData = [
+        {
+          title: 'Total CO2',
+          value: Math.round((userStats.total_co2 / total_co2) * 100),
+        },
+        {
+          title: 'Weekly CO2',
+          value: Math.round((userStats.weekly_co2 / weekly_co2) * 100),
+        },
+        {
+          title: 'Total Points',
+          value: Math.round((userStats.total_points / total_points) * 100),
+        },
+        {
+          title: 'Weekly Points',
+          value: Math.round((userStats.weekly_points / weekly_points) * 100),
+        },
+      ];
+      setUserContributionPercentages(percentageData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userStats]);
 
   const groupStatsData = [
     { title: 'Total CO2', value: total_co2 },
     { title: 'Weekly CO2', value: weekly_co2 },
     { title: 'Total Points', value: total_points },
     { title: 'Weekly Points', value: weekly_points },
-  ];
-
-  const userContributionData = [
-    {
-      title: 'Total CO2',
-      value: Math.round((user.total_co2 / total_co2) * 100),
-    },
-    {
-      title: 'Weekly CO2',
-      value: Math.round((user.weekly_co2 / weekly_co2) * 100),
-    },
-    {
-      title: 'Total Points',
-      value: Math.round((user.total_points / total_points) * 100),
-    },
-    {
-      title: 'Weekly Points',
-      value: Math.round((user.weekly_points / weekly_points) * 100),
-    },
   ];
 
   const joinGroupLink =
@@ -110,17 +135,20 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
   };
 
   const renderUserContributionListItems = () => {
-    return userContributionData.map((stat, index) => (
-      <React.Fragment key={index}>
-        <Divider flexItem />
-        <ListItem>
-          <ListItemText primary={stat.title} />
-          <span>
-            <Typography variant="body1">{stat.value}%</Typography>
-          </span>
-        </ListItem>
-      </React.Fragment>
-    ));
+    return (
+      userContributionPercentages &&
+      userContributionPercentages.map((stat, index) => (
+        <React.Fragment key={index}>
+          <Divider flexItem />
+          <ListItem>
+            <ListItemText primary={stat.title} />
+            <span>
+              <Typography variant="body1">{stat.value}%</Typography>
+            </span>
+          </ListItem>
+        </React.Fragment>
+      ))
+    );
   };
 
   const renderResponsiveView = () => {
@@ -219,9 +247,13 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 mr: '1em',
               }}
             >
-              {donutChartsData.map((data) => (
-                <UserContributionDonutChart data={data} displayTitles={false} />
-              ))}
+              {donutChartsData &&
+                donutChartsData.map((data) => (
+                  <UserContributionDonutChart
+                    data={data}
+                    displayTitles={false}
+                  />
+                ))}
             </Box>
           </AccordionDetails>
         </Accordion>

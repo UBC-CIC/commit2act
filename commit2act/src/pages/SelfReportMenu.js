@@ -144,6 +144,7 @@ const SelfReportMenu = ({ user }) => {
             actionDate={selectedDate}
             totalCO2Saved={totalCO2Saved}
             setTotalCO2Saved={setTotalCO2Saved}
+            quiz={quiz}
             quizAnswered={quizAnswered}
             firstQuizAnswerCorrect={firstQuizAnswerCorrect}
             user={user}
