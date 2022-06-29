@@ -1017,7 +1017,6 @@ Resources:
         }
 
         type Query {
-          # Get a single value of type 'User' by primary key.
           getSingleUser(user_id: Int!): UserWithStats
           getSingleUserByUsername(username: String!): UserWithStats
           getSingleUserByEmail(email: String!): UserWithStats
@@ -1026,9 +1025,7 @@ Resources:
           getSingleAction(action_id: Int!): ActionWithLabels
           getTotalGlobalCO2: Float
           getUsersTotalCO2(user_id: Int!): Float
-          getGroupsTotalCO2(group_id: Int!): Float
           getUsersWeekCO2(user_id: Int!): Float
-          getGroupsWeekCO2(group_id: Int!): Float
           getAllUsers: [UserWithStats]
           getAllActions: [ActionWithLabels]
           getAllUngraveyardedActions: [ActionWithLabels]
@@ -1048,7 +1045,6 @@ Resources:
           getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbedded]
           getAllGroupsForUser(user_id: Int): [Group]
           getAllGroupsUserOwns(user_id: Int): [Group]
-          getGroupTotalCO2(group_id: Int!): Float
           isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
           getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
           getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
@@ -1772,108 +1768,6 @@ Resources:
       Kind: UNIT
       MaxBatchSize: 0
 
-  getGroupTotalCO2Resolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getGroupTotalCO2
-      RequestMappingTemplate: |
-        
-        {
-          "version": "2018-05-29",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "SELECT SUM(g_co2_saved) AS total_g_co2_saved FROM (SELECT SubmittedAction.g_co2_saved FROM `Group` INNER JOIN `GroupUser` on `Group`.group_id = GroupUser.group_id INNER JOIN `User` on `User`.user_id = GroupUser.user_id cross JOIN SubmittedAction on `User`.user_id = SubmittedAction.user_id and `Group`.group_id = 1 ) result",
-            "variableMapping": {
-              ":1": $context.args.group_id
-            },
-          }
-        }
-      ResponseMappingTemplate: |
-        #if ($context.result[0].get("total_g_co2_saved"))
-          $util.toJson($context.result[0].get("total_g_co2_saved"))
-        #else
-          0.0
-        #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
-  getGroupsTotalCO2Resolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getGroupsTotalCO2
-      RequestMappingTemplate: |
-        #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
-        *#
-        {
-          "version": "2018-05-29",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id inner join GroupUser on GroupUser.user_id = `User`.user_id where `GroupUser`.group_id = :1 and SubmittedAction.is_validated = 1",
-            "variableMapping": {
-              ":1": $context.arguments.group_id
-            },
-          }
-        }
-        
-        
-        
-      ResponseMappingTemplate: |
-        #if ($context.result[0].get("CO2"))
-          $util.toJson($context.result[0].get("CO2"))
-        #else
-          0.0
-        #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
-  getGroupsWeekCO2Resolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getGroupsWeekCO2
-      RequestMappingTemplate: |
-        #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
-        *#
-        {
-          "version": "2018-05-29",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id inner join GroupUser on GroupUser.user_id = `User`.user_id where `GroupUser`.group_id = :1 and SubmittedAction.is_validated = 1 and SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now()",
-            "variableMapping": {
-              ":1": $context.arguments.group_id
-            },
-          }
-        }
-        
-        
-        
-      ResponseMappingTemplate: |
-        #if ($context.result[0].get("CO2"))
-          $util.toJson($context.result[0].get("CO2"))
-        #else
-          0.0
-        #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
   getSingleActionResolver:
     Type: AWS::AppSync::Resolver
     DependsOn:
@@ -1918,7 +1812,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id  WHERE `Group`.group_id=:1 GROUP BY `Group`.group_id",
+            "sql": "SELECT * FROM (SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id) AS T WHERE group_id=:1",
             "variableMapping": {
             ":1": $context.args.group_id
             },
@@ -1939,15 +1833,16 @@ Resources:
       FieldName: getSingleGroupByName
       RequestMappingTemplate: |
         #**
-        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
         *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id WHERE `Group`.group_name=:1",
+            "sql": "SELECT * FROM (SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id) AS T WHERE group_name=:1",
             "variableMapping": {
-                ":1": "$context.arguments.group_name"
+            ":1": $context.args.group_name
             },
           }
         }
