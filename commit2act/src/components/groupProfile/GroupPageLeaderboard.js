@@ -219,7 +219,9 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
         <ListItem>
           <ListItemText primary={stat.title} />
           <span>
-            <Typography variant="body1">{stat.value}%</Typography>
+            <Typography variant="body1">
+              {stat.value ? stat.value : 0}%
+            </Typography>
           </span>
         </ListItem>
       </React.Fragment>

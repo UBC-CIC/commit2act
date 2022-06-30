@@ -29,7 +29,8 @@ const UserContributionDonutChart = ({ data, displayTitles }) => {
               display: false,
             },
             title: {
-              display: displayTitles,
+              display:
+                contribution === 0 && groupTotal === 0 ? false : displayTitles,
               text: title,
               position: 'top',
               font: {
