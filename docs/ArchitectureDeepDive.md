@@ -36,18 +36,14 @@
 
 14. If the user uploaded image is an image to validate their submitted action, the processImagesToValidate Lambda is invoked upon the image’s placement in the bucket.
 
-15. The processImagesToValidate Lambda function moves the image from the Amplify storage bucket to a separate validation bucket which is in a user defined region where Rekognition is available. If the Amplify bucket is in the same region as the validation bucket, no additional cost is incurred.
+15. The validateImageWithRekognition Lambda function invokes the Rekognition detect_labels API call, and the is_image_explicit API call on the uploaded image.
 
-16. The validateImageWithRekognition lambda function is invoked after the image is received in the validation S3 bucket.
+16. Rekognition returns all labels found with their associated confidence values, and a status on the explicit content in the image back to the validateImageWithRekognition Lambda function.
 
-17. The validateImageWithRekognition Lambda function invokes the Rekognition detect_labels function on the uploaded image.
+17. The Lambda function gets the valid labels for the action the image was submitted to from the RDS instance, which is then compared against the results of the detect_labels Rekognition function, and if one of the valid labels for the action is found in the image with a confidence greater than a user defined number, the image passes validation (e.g. if the associated action for the image is Transportation, the set of valid labels may be [“Bus”, “Train”, “Bike”, “Shoes”, “Bicycle”], and if any one of these appear in the set of labels returned by Rekognition, the image passes validation).
 
-18. Rekognition returns all labels found with their associated confidence values to the validateImageWithRekognition Lambda function.
+18. The Lambda function sends the image’s validation status and URL of the image to be stored alongside the submitted action information in the RDS instance (MySQL Aurora DB).
 
-19. The Lambda function gets the valid labels for the action the image was submitted to from the RDS instance, which is then compared against the results of the detect_labels Rekognition function, and if one of the valid labels for the action is found in the image with a confidence greater than a user defined number, the image passes validation (e.g. if the associated action for the image is Transportation, the set of valid labels may be [“Bus”, “Train”, “Bike”, “Shoes”, “Bicycle”], and if any one of these appear in the set of labels returned by Rekognition, the image passes validation).
+19. The Lambda function sends the image to be stored in the Amplify project’s storage S3 Bucket located in the defined region for the project.
 
-20. The Lambda function sends the image to be stored in the Amplify project’s storage S3 Bucket located in the defined region for the project.
-
-21. The Lambda function sends the image’s validation status and URL of the image to be stored alongside the submitted action information in the RDS instance (MySQL Aurora DB).
-
-22. The image is hosted through Cloudfront so that it can be displayed when the user runs the app. Cloudfront acts as a content delivery network to allow the efficient display of the static content.
+20. The image is hosted through Cloudfront so that it can be displayed when the user runs the app. Cloudfront acts as a content delivery network to allow the efficient display of the static content.

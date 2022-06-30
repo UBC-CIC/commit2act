@@ -26,7 +26,7 @@ import {
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
-import { getAllGroups } from '../../graphql/queries';
+import { getAllGroups, getUserStatsForGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { AutoGraph, ExpandMore } from '@mui/icons-material';
@@ -58,58 +58,71 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [userStats, setUserStats] = useState();
+  const [donutChartsData, setDonutChartsData] = useState();
+  const [userContributionPercentages, setUserContributionPercentages] =
+    useState();
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
   const hideCharts = useMediaQuery(theme.breakpoints.down('md'));
 
-  const donutChartsData = user &&
-    currentGroup && [
-      {
-        groupTotal: currentGroup.total_co2 - user.total_co2,
-        contribution: user.total_co2,
-        title: 'Total CO2',
-      },
-      {
-        groupTotal: currentGroup.weekly_co2 - user.weekly_co2,
-        contribution: user.weekly_co2,
-        title: 'Weekly CO2',
-      },
-      {
-        groupTotal: currentGroup.total_points - user.total_points,
-        contribution: user.total_points,
-        title: 'Total Points',
-      },
-      {
-        groupTotal: currentGroup.weekly_points - user.weekly_points,
-        contribution: user.weekly_points,
-        title: 'Weekly Points',
-      },
-    ];
+  useEffect(() => {
+    if (userStats) {
+      const donutData = [
+        {
+          groupTotal: currentGroup.total_co2 - userStats.total_co2,
+          contribution: userStats.total_co2,
+          title: 'Total CO2',
+        },
+        {
+          groupTotal: currentGroup.weekly_co2 - userStats.weekly_co2,
+          contribution: userStats.weekly_co2,
+          title: 'Weekly CO2',
+        },
+        {
+          groupTotal: currentGroup.total_points - userStats.total_points,
+          contribution: userStats.total_points,
+          title: 'Total Points',
+        },
+        {
+          groupTotal: currentGroup.weekly_points - userStats.weekly_points,
+          contribution: userStats.weekly_points,
+          title: 'Weekly Points',
+        },
+      ];
+      setDonutChartsData(donutData);
 
-  const userContributionData = user &&
-    currentGroup && [
-      {
-        title: 'Total CO2',
-        value: Math.round((user.total_co2 / currentGroup.total_co2) * 100),
-      },
-      {
-        title: 'Weekly CO2',
-        value: Math.round((user.weekly_co2 / currentGroup.weekly_co2) * 100),
-      },
-      {
-        title: 'Total Points',
-        value: Math.round(
-          (user.total_points / currentGroup.total_points) * 100
-        ),
-      },
-      {
-        title: 'Weekly Points',
-        value: Math.round(
-          (user.weekly_points / currentGroup.weekly_points) * 100
-        ),
-      },
-    ];
+      const percentageData = [
+        {
+          title: 'Total CO2',
+          value: Math.round(
+            (userStats.total_co2 / currentGroup.total_co2) * 100
+          ),
+        },
+        {
+          title: 'Weekly CO2',
+          value: Math.round(
+            (userStats.weekly_co2 / currentGroup.weekly_co2) * 100
+          ),
+        },
+        {
+          title: 'Total Points',
+          value: Math.round(
+            (userStats.total_points / currentGroup.total_points) * 100
+          ),
+        },
+        {
+          title: 'Weekly Points',
+          value: Math.round(
+            (userStats.weekly_points / currentGroup.weekly_points) * 100
+          ),
+        },
+      ];
+      setUserContributionPercentages(percentageData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userStats]);
 
   // avoid a layout jump in the table when reaching the last page with empty rows
   let emptyRows =
@@ -122,12 +135,22 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
       : 0;
 
   useEffect(() => {
+    const getUserStats = async () => {
+      const res = await API.graphql({
+        query: getUserStatsForGroup,
+        variables: { user_id: user.user_id, group_id: currentGroup.group_id },
+      });
+      setUserStats(res.data.getUserStatsForGroup);
+    };
+
     const getGroups = async () => {
       const res = await API.graphql({
         query: getAllGroups,
       });
       setGroups(res.data.getAllGroups);
     };
+
+    currentGroup && user && getUserStats();
     getGroups();
   }, []);
 
@@ -190,13 +213,15 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   };
 
   const renderUserContributionListItems = () => {
-    return userContributionData.map((stat, index) => (
+    return userContributionPercentages.map((stat, index) => (
       <React.Fragment key={index}>
         <Divider flexItem />
         <ListItem>
           <ListItemText primary={stat.title} />
           <span>
-            <Typography variant="body1">{stat.value}%</Typography>
+            <Typography variant="body1">
+              {stat.value ? stat.value : 0}%
+            </Typography>
           </span>
         </ListItem>
       </React.Fragment>
