@@ -24,8 +24,7 @@ Parameters:
   EnvironmentName:
     Type: String
     Default: dev
-    # AllowedValues: [dev, prod, test,]
-    Description: A name to identify the environment
+    Description: A name to identify the environment (ex. dev, prod, test)
   DeploymentRegion:
     Type: String
     Default: us-east-1
@@ -40,7 +39,6 @@ Parameters:
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
   DBUser:
-    # NoEcho: true
     Default: admin
     Description: The database admin account username
     Type: String
@@ -49,20 +47,12 @@ Parameters:
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
   DBPassword:
-    # NoEcho: true
     Description: The database admin account password
     Type: String
     MinLength: 1
     MaxLength: 41
     AllowedPattern: '[a-zA-Z0-9]+'
     ConstraintDescription: must contain only alphanumeric characters.
-  # DBAllocatedStorage:
-  #   Default: '5'
-  #   Description: The size of the database (Gb)
-  #   Type: Number
-  #   MinValue: '5'
-  #   MaxValue: '1024'
-  #   ConstraintDescription: must be between 5 and 1024Gb.
   DBInstanceClass:
     Description: The database instance type
     Type: String
@@ -77,12 +67,10 @@ Parameters:
     Description: When deletion proteciton is enabled, when you request the deletion of a database instance in the AWS Console you are blocked and may not continue without first modifying the instance and disabling deletion protection (recommended for production)
     Type: String
     Default: True
-    # AllowedValues: [True, False]
   EncryptDatabase:
     Description: Enable encryption of the database
     Type: String
     Default: True
-    # AllowedValues: [True, False]
   CloudFrontPriceClass:
     Type: String
     Description: "The price class for CloudFront distribution"
@@ -94,6 +82,9 @@ Parameters:
   AmplifyBucket:
     Type: String
     Description: "The name of the S3 bucket for the amplify project (ex. projectname-storage-0123456789-dev)"
+  CognitoUserPoolId: 
+    Type: String
+    Description: "The ID of your Cognito User Pool for the app (ex. us-east-1_abcdefgh)"
   MinConfidenceThreshold:
     Type: Number
     Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
@@ -101,12 +92,7 @@ Parameters:
     MinValue: 30
     MaxValue: 100
     ConstraintDescription: The number should be between 30 and 100
-  # DeletionProtection:
-  #   Description: 
-  #   Type: 
-  #   Default: 
-  #   AllowedValues: 
-    
+
 
 Resources:
   IGW:
@@ -319,15 +305,14 @@ Resources:
       EnableCloudwatchLogsExports: 
         - general
         - error
-      EnableHttpEndpoint: true #
-      EnableIAMDatabaseAuthentication: false #
+      EnableHttpEndpoint: true 
+      EnableIAMDatabaseAuthentication: false 
       Engine: aurora-mysql
-      # EngineMode: provisioned
       EngineVersion: !Ref 'DBEngineVersion'
       MasterUsername: !Ref 'DBUser'
       MasterUserPassword: !Ref 'DBPassword'
       Port: 3306
-      StorageEncrypted: !Ref 'EncryptDatabase' #####
+      StorageEncrypted: !Ref 'EncryptDatabase' 
       SourceRegion: !Ref 'DeploymentRegion'
       Tags: 
         - Key: "Project"
@@ -345,12 +330,9 @@ Resources:
     Properties: 
       DBClusterIdentifier: db-cluster
       Engine: aurora-mysql 
-      # EngineVersion: !Ref 'DBEngineVersion'
       DBInstanceClass: !Ref 'DBInstanceClass'
       DBInstanceIdentifier: !Sub '${ProjectName}-${EnvironmentName}-instance'
-      # DBSecurityGroups: #
-      #   - !Ref MySQLAuroraInboundSG
-      PubliclyAccessible: true #
+      PubliclyAccessible: true 
       Tags: 
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -406,7 +388,6 @@ Resources:
             Principal:
               Service:
                 - 'appsync.amazonaws.com'
-                # - 'lambda.amazonaws.com'
             Action:
               - 'sts:AssumeRole'
       Policies:
@@ -423,8 +404,6 @@ Resources:
               - Effect: Allow
                 Action: lambda:InvokeFunction
                 Resource: '*'
-      # ManagedPolicyArns:
-      #   - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
   EndpointSSM:
     Type: AWS::EC2::VPCEndpoint
@@ -491,19 +470,6 @@ Resources:
       VpcEndpointType: Interface
       VpcId: !Ref VPC
 
-  # EndpointS3:
-  #   Type: AWS::EC2::VPCEndpoint
-  #   Properties:
-  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
-  #     # PrivateDnsEnabled: true  # cant be set to true for some reason
-  #     SecurityGroupIds:
-  #       - !Ref OpenSecurityGroup
-  #     SubnetIds:
-  #       - !Ref PublicSubnet1
-  #       - !Ref PublicSubnet2
-  #     VpcEndpointType: Interface
-  #     VpcId: !Ref VPC
-  
   EndpointS3Outpost:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -560,7 +526,6 @@ Resources:
       VpcSubnetIds:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
-      #   Fn::Split: [",", !Ref SubnetIds]
       Tags:
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -574,7 +539,7 @@ Resources:
     - RDSProxy
     Properties:
       DBProxyName: !Ref RDSProxy
-      DBClusterIdentifiers: [!Ref MainDBCluster] #?
+      DBClusterIdentifiers: [!Ref MainDBCluster] 
       TargetGroupName: default
       ConnectionPoolConfigurationInfo:
           MaxConnectionsPercent: 100
@@ -611,13 +576,10 @@ Resources:
       MemorySize: 512
       Timeout: 100
       Description: Called by AppSync to resolve SQL statements in the form of a request mapping
-      # Role: !GetAtt LambdaServiceRole.Arn
       Policies:
         - arn:aws:iam::aws:policy/SecretsManagerReadWrite
         - arn:aws:iam::aws:policy/AmazonRDSFullAccess
-        # - arn:aws:iam::aws:policy/service-role/SecretsManagerReadWrite
         - arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess
-        # - arn:aws:iam::aws:policy/AWSLambdaVPCAccessExecutionRole
         - Version: '2012-10-17'  # in line policies for lambda
           Statement:
           - Effect: Allow
@@ -665,10 +627,7 @@ Resources:
       LogGroupName: !Join ["", ["/aws/lambda/", !Ref graphQLMySQLResolver]]
       RetentionInDays: 14
 
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  # This is a Lambda function config associated with the source code: get-by-id.js
   validateImageWithRekognition:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -686,13 +645,7 @@ Resources:
       MemorySize: 128
       Timeout: 100
       Description: Validates images uploaded through the submitted action pipeline
-      # Tags:
-      #   - Key: "Project"
-      #     Value: !Ref 'ProjectName'
-      #   - Key: "EnvironmentName"
-      #     Value: !Ref 'EnvironmentName'
       Policies:
-        # - arn:aws:iam::aws:policy/SecretsManagerReadWrite
         Version: '2012-10-17' # in line policies
         Statement:
         - Effect: Allow
@@ -743,11 +696,11 @@ Resources:
         - Effect: Allow
           Action:
           - kms:Decrypt
-          Resource: '*' #!?
+          Resource: '*' 
       Environment:
         Variables:
-          AMPLIFY_BUCKET: !Ref AmplifyBucket #commit2act-storage-4f79922d113723-develop #############
-          CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName # https://d11tk3grlaje8a.cloudfront.net/   #
+          AMPLIFY_BUCKET: !Ref AmplifyBucket
+          CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName 
           DBNAME: !Ref DBName
           ENDPOINT: !GetAtt RDSProxy.Endpoint
           PASSWORD: !Ref DBPassword
@@ -777,6 +730,7 @@ Resources:
     Properties:
       LogGroupName: !Join ["", ["/aws/lambda/", !Ref validateImageWithRekognition]]
       RetentionInDays: 14
+
 
 # Cloudfront ##########################################
 
@@ -818,7 +772,6 @@ Resources:
           Value: !Ref 'EnvironmentName'
 
 
-
   # APPSYNC #####################################################
 
   AppSyncLogsRole:
@@ -846,7 +799,7 @@ Resources:
       UserPoolConfig:
         AwsRegion: !Ref DeploymentRegion
         DefaultAction: ALLOW
-        UserPoolId: us-east-1_jKhBLdEzs  ############################ TODO: CHANGE
+        UserPoolId: !Ref CognitoUserPoolId  
       LogConfig:
         CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
         FieldLogLevel: ALL
@@ -1064,7 +1017,6 @@ Resources:
         }
 
         type Query {
-          # Get a single value of type 'User' by primary key.
           getSingleUser(user_id: Int!): UserWithStats
           getSingleUserByUsername(username: String!): UserWithStats
           getSingleUserByEmail(email: String!): UserWithStats
@@ -1073,9 +1025,7 @@ Resources:
           getSingleAction(action_id: Int!): ActionWithLabels
           getTotalGlobalCO2: Float
           getUsersTotalCO2(user_id: Int!): Float
-          getGroupsTotalCO2(group_id: Int!): Float
           getUsersWeekCO2(user_id: Int!): Float
-          getGroupsWeekCO2(group_id: Int!): Float
           getAllUsers: [UserWithStats]
           getAllActions: [ActionWithLabels]
           getAllUngraveyardedActions: [ActionWithLabels]
@@ -1095,7 +1045,6 @@ Resources:
           getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbedded]
           getAllGroupsForUser(user_id: Int): [Group]
           getAllGroupsUserOwns(user_id: Int): [Group]
-          getGroupTotalCO2(group_id: Int!): Float
           isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
           getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
           getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
@@ -1819,108 +1768,6 @@ Resources:
       Kind: UNIT
       MaxBatchSize: 0
 
-  getGroupTotalCO2Resolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getGroupTotalCO2
-      RequestMappingTemplate: |
-        
-        {
-          "version": "2018-05-29",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "SELECT SUM(g_co2_saved) AS total_g_co2_saved FROM (SELECT SubmittedAction.g_co2_saved FROM `Group` INNER JOIN `GroupUser` on `Group`.group_id = GroupUser.group_id INNER JOIN `User` on `User`.user_id = GroupUser.user_id cross JOIN SubmittedAction on `User`.user_id = SubmittedAction.user_id and `Group`.group_id = 1 ) result",
-            "variableMapping": {
-              ":1": $context.args.group_id
-            },
-          }
-        }
-      ResponseMappingTemplate: |
-        #if ($context.result[0].get("total_g_co2_saved"))
-          $util.toJson($context.result[0].get("total_g_co2_saved"))
-        #else
-          0.0
-        #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
-  getGroupsTotalCO2Resolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getGroupsTotalCO2
-      RequestMappingTemplate: |
-        #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
-        *#
-        {
-          "version": "2018-05-29",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id inner join GroupUser on GroupUser.user_id = `User`.user_id where `GroupUser`.group_id = :1 and SubmittedAction.is_validated = 1",
-            "variableMapping": {
-              ":1": $context.arguments.group_id
-            },
-          }
-        }
-        
-        
-        
-      ResponseMappingTemplate: |
-        #if ($context.result[0].get("CO2"))
-          $util.toJson($context.result[0].get("CO2"))
-        #else
-          0.0
-        #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
-  getGroupsWeekCO2Resolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getGroupsWeekCO2
-      RequestMappingTemplate: |
-        #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
-        *#
-        {
-          "version": "2018-05-29",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "select SUM(SubmittedAction.g_co2_saved) AS CO2 from `User` inner join SubmittedAction on `User`.user_id = SubmittedAction.user_id inner join GroupUser on GroupUser.user_id = `User`.user_id where `GroupUser`.group_id = :1 and SubmittedAction.is_validated = 1 and SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now()",
-            "variableMapping": {
-              ":1": $context.arguments.group_id
-            },
-          }
-        }
-        
-        
-        
-      ResponseMappingTemplate: |
-        #if ($context.result[0].get("CO2"))
-          $util.toJson($context.result[0].get("CO2"))
-        #else
-          0.0
-        #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
   getSingleActionResolver:
     Type: AWS::AppSync::Resolver
     DependsOn:
@@ -1965,7 +1812,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id  WHERE `Group`.group_id=:1 GROUP BY `Group`.group_id",
+            "sql": "SELECT * FROM (SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id) AS T WHERE group_id=:1",
             "variableMapping": {
             ":1": $context.args.group_id
             },
@@ -1986,15 +1833,16 @@ Resources:
       FieldName: getSingleGroupByName
       RequestMappingTemplate: |
         #**
-        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
         *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.*, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM `Group` INNER JOIN `GroupUser` ON `Group`.group_id=`GroupUser`.group_id INNER JOIN (SELECT T1.user_id, (IFNULL(T1.total_co2, 0) - IFNULL(T2.total_co2, 0)) as total_co2, (IFNULL(T1.total_points, 0) - IFNULL(T2.total_points, 0)) as total_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS total_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS total_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id ) AS TOTAL_STATS ON `TOTAL_STATS`.user_id=`GroupUser`.user_id INNER JOIN ( SELECT T1.user_id, (IFNULL(T1.weekly_co2, 0) - IFNULL(T2.weekly_co2, 0) - IFNULL(T3.weekly_co2, 0)) as weekly_co2, (IFNULL(T1.weekly_points, 0) - IFNULL(T2.weekly_points, 0)) as weekly_points  from (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id GROUP BY `User`.user_id ) as T1 LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=0 GROUP BY `User`.user_id ) AS T2 ON T1.user_id=T2.user_id LEFT JOIN (SELECT `User`.user_id, coalesce(SUM(`SubmittedAction`.g_co2_saved), 0) AS weekly_co2, coalesce(SUM(SubmittedAction.points_earned), 0) AS weekly_points FROM `User` LEFT JOIN SubmittedAction ON `User`.user_id=SubmittedAction.user_id  WHERE SubmittedAction.is_validated=1 AND SubmittedAction.time_submitted not between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP BY `User`.user_id ) AS T3 ON T1.user_id=T3.user_id  ) AS WEEKLY_STATS ON `WEEKLY_STATS`.user_id=`GroupUser`.user_id WHERE `Group`.group_name=:1",
+            "sql": "SELECT * FROM (SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id) AS T WHERE group_name=:1",
             "variableMapping": {
-                ":1": "$context.arguments.group_name"
+            ":1": $context.args.group_name
             },
           }
         }
@@ -2517,7 +2365,6 @@ Resources:
       FieldName: createActionItems
       RequestMappingTemplate: |
         #**
-        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
         
         action_items is an array of JSON objects, in this case it looks like this:
         [
@@ -2767,7 +2614,6 @@ Resources:
       FieldName: createSubmittedActionItems
       RequestMappingTemplate: |
         #**
-        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
         
         action_items is an array of JSON objects, in this case it looks like this:
         [
@@ -3274,7 +3120,6 @@ Resources:
       TypeName: Mutation
       FieldName: updateAction
       RequestMappingTemplate: |
-        
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.

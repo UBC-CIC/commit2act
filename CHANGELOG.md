@@ -1,3 +1,16 @@
+# 6/29/2022
+
+## Bug Fixes
+
+- Fixed quizzes not being eliminated from the user's quiz pool once answered
+- Fixed error when a quiz had no questions to show
+- Group card pie charts calculation fixed
+
+## Added Features
+
+- Group's CO2 and Points stats now are only tracked from the moment users join a group (actions submitted before they joined won't count towards their totals)
+- Fallback text now can be changed in **Edit Action** 
+
 # 6/24/2022
 
 ## Bug Fixes
