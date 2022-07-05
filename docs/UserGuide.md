@@ -23,18 +23,18 @@ The landing page contains 4 main sections.
 
 - New Actions in Need of Validation alert is displayed when the user is an admin or a group owner and there are actions by they need to validate.
 - Actions Pending Validation is displayed if the user has any actions pending manual validation. This alert shows the potential impact of the user's pending actions.
-  ![alt text](images/landing0.png)
+  ![alt text](images/landing/landing0.png)
 
 ### 2. Recent Progress
 
 - Displays collective CO2 impact of all users on the app, and the current user's weekly and cumulative CO2 Saved
-  ![alt text](images/landing1.png)
+  ![alt text](images/landing/landing1.png)
 
 ### 3. Leaderboards
 
 - 2 views: Global Groups and Global Users
 - Users can filter the metric they want to view by clicking the filter button (available metrics are Total CO2, Weekly CO2, Total Points and Weekly Points)
-  ![alt text](images/landing2.png)
+  ![alt text](images/landing/landing2.png)
 
 ### 4. My Groups
 
@@ -42,7 +42,7 @@ The landing page contains 4 main sections.
 - Clicking on the group name will redirect to the group's profile page
 - Clicking on the dropdown accordion opens up charts displaying the user's individual contribution for each group stat (hover over each colour in the graph to see labels - grey is the contribution of all other members, green is the user's contribution)
 - Users can also access the Create Group page by clicking the Create Group button
-  ![alt text](images/landing3.png)
+  ![alt text](images/landing/landing3.png)
 
 ## Find Group
 
@@ -58,6 +58,46 @@ The landing page contains 4 main sections.
 
 ## Group Profile
 
+The group page has 3 sections
+
+### 1. Group Overview
+
+![alt text](images/groupProfile/group_profile0.png)
+
+### 2. Leaderboards
+
+![alt text](images/groupProfile/group_profile1.png)
+
+### 3. Tabs
+
+The 5 tabs are:
+
+#### 1. Group Info
+
+![alt text](images/groupProfile/group_profile2.png)
+
+#### 2. Member Actions
+
+![alt text](images/groupProfile/group_profile3.png)
+
+#### 3. Group Members
+
+![alt text](images/groupProfile/group_profile4.png)
+
+![alt text](images/groupProfile/group_profile5.png)
+
+![alt text](images/groupProfile/group_profile6.png)
+
+![alt text](images/groupProfile/group_profile7.png)
+
+#### 4. Add Members
+
+![alt text](images/groupProfile/group_profile8.png)
+
+#### 5. Edit Group Info
+
+<br>
+
 ## Log Action
 
 The log action flow has 7 steps
@@ -65,35 +105,35 @@ The log action flow has 7 steps
 ### 1. Select Action
 
 - Select an action to log from any of the icons displayed
-  ![alt text](images/log_action0.png)
+  ![alt text](images/logAction/log_action0.png)
 
 ### 2. Select Date
 
 - Click on the calendar icon to display full calendar view
-  ![alt text](images/log_action1.png)
+  ![alt text](images/logAction/log_action1.png)
 
 ### 3. Action Fact
 
 - A related fact to the action will be shown here. If a user has seen all possible facts, the action's fallback text will be displayed. If there is no fallback text set for the action, there will be a default message displayed.
-  ![alt text](images/log_action2.png)
+  ![alt text](images/logAction/log_action2.png)
 
 ### 4. Action Items
 
 - Users must enter inputs for one or more of the action items for the selected action
-  ![alt text](images/log_action3.png)
+  ![alt text](images/logAction/log_action3.png)
 
 ### 5. Validation
 
 - Users can upload an image relating to their action by dragging and dropping the image (browser view only) or by pressing the Browse button
 - This image will undergo Rekognition validation to determine if it contains any of the relevant image validation labels
-  ![alt text](images/log_action4.png)
+  ![alt text](images/logAction/log_action4.png)
 
 ### 6. Bonus Question
 
 - A question related to the action fact shown in step 4. The user can choose to skip the question, or answer. If the user answers the question correctly on the first try, they receive 10 bonus points. Otherwise, they can have multiple tries at the question but will receive no bonus points.
-  ![alt text](images/log_action5.png)
+  ![alt text](images/logAction/log_action5.png)
 
 ### 7. CO2 Saved
 
 - The action will be submitted and undergo Rekognition validation (if there is an uploaded image). If the image has passed validation, a success message will be shown along with the g of CO2 saved. In the cases where the image does not pass validation or the user did not upload an image, the message will inform the user that the action is awaiting manual validation and display the potential impact of that action.
-  ![alt text](images/log_action6.png)
+  ![alt text](images/logAction/log_action6.png)

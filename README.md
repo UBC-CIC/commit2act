@@ -24,11 +24,11 @@ To deploy this solution, please follow our [Deployment Guide](docs/DeploymentGui
 
 # User Guide
 
-For instructions on how to use the web app interface, refer to [Web App User Guide](docs/WebAppUserGuide.md).
+For instructions on how to use the web app interface, refer to [Web App User Guide](docs/UserGuide.md).
 
 # Changelog
 
-To view the changeloge, please view [Changelog](/CHANGELOG.md)
+To view the changelog, please view [Changelog](/CHANGELOG.md)
 
 # Credits
 

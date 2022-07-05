@@ -81,6 +81,7 @@ function PageContainer(props) {
     //on user's first login, create user entry in database, then update custom firstLogin attribute to false
     const firstLogin = cognitoUserEntry.attributes['custom:firstLogin'];
     if (firstLogin === 'true') {
+      console.log('here');
       await API.graphql({
         query: createUser,
         variables: {
@@ -277,11 +278,7 @@ function PageContainer(props) {
             />
             <Route
               path="/group-profile/:groupName/add/:addUserLink"
-              element={
-                <PrivateRoute>
-                  <JoinGroup />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute Component={JoinGroup} user={user} />}
             />
             <Route
               exact
