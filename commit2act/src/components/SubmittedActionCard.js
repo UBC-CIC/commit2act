@@ -10,6 +10,8 @@ const SubmittedActionCard = ({ action }) => {
     points_earned,
     submitted_action_items,
     submitted_image,
+    name_of_user,
+    time_submitted,
   } = action;
   return (
     <Card sx={{ display: 'flex' }}>
@@ -30,7 +32,7 @@ const SubmittedActionCard = ({ action }) => {
               filter: is_rejected && 'grayscale(100%)',
             }}
             image={submitted_image}
-            alt="user submitted image"
+            alt={`A submitted ${action_name} action image submitted at ${time_submitted}`}
           />
         )}
         <CardContent sx={{ ml: { xs: '0em', md: '2em' } }}>
