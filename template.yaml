@@ -439,44 +439,44 @@ Resources:
       VpcEndpointType: Interface
       VpcId: !Ref VPC
 
-  EndpointKMS:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.kms'
-      PrivateDnsEnabled: true
-      SecurityGroupIds:
-        - !Ref OpenSecurityGroup
-      SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      VpcEndpointType: Interface
-      VpcId: !Ref VPC
+  # EndpointKMS:
+  #   Type: AWS::EC2::VPCEndpoint
+  #   Properties:
+  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.kms'
+  #     PrivateDnsEnabled: true
+  #     SecurityGroupIds:
+  #       - !Ref OpenSecurityGroup
+  #     SubnetIds:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     VpcEndpointType: Interface
+  #     VpcId: !Ref VPC
 
-  EndpointEC2Messages:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ec2messages'
-      PrivateDnsEnabled: true
-      SecurityGroupIds:
-        - !Ref OpenSecurityGroup
-      SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      VpcEndpointType: Interface
-      VpcId: !Ref VPC
+  # EndpointEC2Messages:
+  #   Type: AWS::EC2::VPCEndpoint
+  #   Properties:
+  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ec2messages'
+  #     PrivateDnsEnabled: true
+  #     SecurityGroupIds:
+  #       - !Ref OpenSecurityGroup
+  #     SubnetIds:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     VpcEndpointType: Interface
+  #     VpcId: !Ref VPC
 
-  EndpointLogs:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.logs'
-      PrivateDnsEnabled: true
-      SecurityGroupIds:
-        - !Ref OpenSecurityGroup
-      SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      VpcEndpointType: Interface
-      VpcId: !Ref VPC
+  # EndpointLogs:
+  #   Type: AWS::EC2::VPCEndpoint
+  #   Properties:
+  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.logs'
+  #     PrivateDnsEnabled: true
+  #     SecurityGroupIds:
+  #       - !Ref OpenSecurityGroup
+  #     SubnetIds:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     VpcEndpointType: Interface
+  #     VpcId: !Ref VPC
 
   EndpointRekognition:
     Type: AWS::EC2::VPCEndpoint
@@ -504,18 +504,18 @@ Resources:
   #     VpcEndpointType: Interface
   #     VpcId: !Ref VPC
   
-  EndpointS3Outpost:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3-outposts'
-      PrivateDnsEnabled: true
-      SecurityGroupIds:
-        - !Ref OpenSecurityGroup
-      SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      VpcEndpointType: Interface
-      VpcId: !Ref VPC
+  # EndpointS3Outpost:
+  #   Type: AWS::EC2::VPCEndpoint
+  #   Properties:
+  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3-outposts'
+  #     PrivateDnsEnabled: true
+  #     SecurityGroupIds:
+  #       - !Ref OpenSecurityGroup
+  #     SubnetIds:
+  #       - !Ref PublicSubnet1
+  #       - !Ref PublicSubnet2
+  #     VpcEndpointType: Interface
+  #     VpcId: !Ref VPC
   
   EndpointRDS:
     Type: AWS::EC2::VPCEndpoint
@@ -1751,7 +1751,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "select `User`.*, user_role, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points FROM GroupUser INNER JOIN SubmittedAction ON GroupUser.user_id=SubmittedAction.user_id INNER JOIN `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=:1 GROUP BY GroupUser.user_id",
+            "sql": "SELECT user_id, username, email, avatar, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM ( select `User`.*, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points FROM GroupUser INNER JOIN SubmittedAction ON GroupUser.user_id=SubmittedAction.user_id INNER JOIN `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=:1 GROUP BY GroupUser.user_id UNION ALL select `User`.*, 0 as total_co2, 0 as total_points, 0 as weekly_co2, 0 as weekly_points FROM GroupUser INNER JOIN  `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=:1 GROUP BY GroupUser.user_id ) as T group by user_id",
             "variableMapping": {
               ":1": $context.args.group_id
             }
