@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Auth } from 'aws-amplify';
 import { updateLoginState } from '../../actions/loginActions';
+import { CircularProgress, Box } from '@mui/material';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ Component, user }) => {
   const [isLoggedIn, setIsLoggedIn] = useState();
 
   useEffect(() => {
@@ -17,7 +18,24 @@ const PrivateRoute = ({ children }) => {
     checkLogin();
   }, []);
 
-  return isLoggedIn ? children : updateLoginState('signIn');
+  return isLoggedIn ? (
+    user ? (
+      <Component user={user} />
+    ) : (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    )
+  ) : (
+    updateLoginState('signIn')
+  );
 };
 
 export default PrivateRoute;
