@@ -29,3 +29,4 @@ frontend:
   cache:
     paths:
       - commit2act/node_modules/**/*
+      - "!commit2act/node_modules/.cache"
