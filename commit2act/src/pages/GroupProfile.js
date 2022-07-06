@@ -334,7 +334,10 @@ const GroupProfile = ({ user }) => {
                     width: '100%',
                   }}
                 >
-                  <MemberActionsPanel groupInfo={groupInfo} />
+                  <MemberActionsPanel
+                    groupInfo={groupInfo}
+                    cognitoUser={cognitoUser}
+                  />
                 </TabPanel>
                 <TabPanel
                   value={tabs[2]}

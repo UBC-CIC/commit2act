@@ -18,7 +18,7 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 import EditAccountInfo from '../components/EditAccountInfo';
 
-const AccountSettings = ({ databaseUser, setUser }) => {
+const AccountSettings = ({ databaseUser, setUser, userType }) => {
   const [showMore, setShowMore] = useState({
     validated: false,
     unvalidated: false,
@@ -66,6 +66,17 @@ const AccountSettings = ({ databaseUser, setUser }) => {
     setFailedActions(failed);
   };
 
+  const updateValidatedActions = async () => {
+    const actionRes = await API.graphql({
+      query: getAllSubmittedActionsForUser,
+      variables: { user_id: databaseUser.user_id },
+    });
+    const allActions = actionRes.data.getAllSubmittedActionsForUser;
+    //filter for all validated actions
+    const validated = allActions.filter((action) => action.is_validated);
+    setValidatedActions(validated);
+  };
+
   const renderValidatedActionCards = () => {
     //return if validatedActions is not null or undefined and contains at least 1 item
     if (Array.isArray(validatedActions) && validatedActions.length !== 0) {
@@ -80,12 +91,22 @@ const AccountSettings = ({ databaseUser, setUser }) => {
           <Stack spacing={2}>
             {showMore.validated
               ? validatedActions.map((action, index) => (
-                  <SubmittedActionCard key={index} action={action} />
+                  <SubmittedActionCard
+                    key={index}
+                    action={action}
+                    showUnapproveButton={userType === 'Admin'}
+                    getActions={updateValidatedActions}
+                  />
                 ))
               : validatedActions
                   .slice(0, 3)
                   .map((action, index) => (
-                    <SubmittedActionCard key={index} action={action} />
+                    <SubmittedActionCard
+                      key={index}
+                      action={action}
+                      showUnapproveButton={userType === 'Admin'}
+                      getActions={updateValidatedActions}
+                    />
                   ))}
             {validatedActions.length > 3 && (
               <Button
