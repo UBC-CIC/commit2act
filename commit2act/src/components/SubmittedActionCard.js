@@ -65,7 +65,8 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
           )}
           <CardContent sx={{ ml: { xs: '0em', md: '2em' } }}>
             <Typography variant="subtitle2" sx={{ mb: '1.5em' }}>
-              {date_of_action.split('T')[0]} - {name_of_user}
+              {date_of_action.split('T')[0]}{' '}
+              {name_of_user ? `- ${name_of_user}` : ''}
             </Typography>
             <Typography
               variant="h2"
