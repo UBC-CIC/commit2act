@@ -1870,6 +1870,18 @@ Resources:
       TypeName: Query
       FieldName: getSingleUser
       RequestMappingTemplate: |
+        #**
+        If you are reading this, I am so sorry
+        The reason for this query's length is because it is essentially 5 seperate SQL queries turning into
+        Frankenstein's SQL Monster. It is a combined "get user's information" query, "get user's total co2" query,
+        "get user's total points" query, "get user's co2 for the last week" query, and "get user's points for the last week" query
+        all just in one package so on the frontend we only have to run this query to get all that information.
+        Hopefully you do not have to modify this! 
+
+        TABLES ACCESSED: User, SubmittedAction
+        ARGS: user_id
+        RETURNS: total_co2, total_points, weekly_co2, weekly_points, User.*
+        *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -1895,6 +1907,13 @@ Resources:
       TypeName: Query
       FieldName: getSingleUserByEmail
       RequestMappingTemplate: |
+        #**
+        This is essentially the same query as getSingleUser but instead using an email as an input
+
+        TABLES ACCESSED: User, SubmittedAction
+        ARGS: email
+        RETURNS: total_co2, total_points, weekly_co2, weekly_points, User.*
+        *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -1920,6 +1939,15 @@ Resources:
       TypeName: Query
       FieldName: getSingleUserByUsername
       RequestMappingTemplate: |
+        #**
+        This is essentially the same query as getSingleUser but instead using an username as an input
+        I would not recommend using this query, as we cannot actually enforce username uniqueness
+        due to Cognito being a little bit strange, querying by email is peferred.
+
+        TABLES ACCESSED: User, SubmittedAction
+        ARGS: username
+        RETURNS: total_co2, total_points, weekly_co2, weekly_points, User.*
+        *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2050,7 +2078,7 @@ Resources:
       FieldName: isPrivateGroupPasswordCorrect
       RequestMappingTemplate: |
         #**
-        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+        checking the password in the resolver means we don't have to send the password to the user!
         *#
         
         {
