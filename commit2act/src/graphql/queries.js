@@ -399,6 +399,7 @@ export const getAllValidatedSubmittedActionsInGroup = /* GraphQL */ `
       is_validated
       points_earned
       submitted_action_items
+      name_of_user
       action_name
       submitted_image
       is_rejected

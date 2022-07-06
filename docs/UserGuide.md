@@ -195,6 +195,7 @@ The log action flow has 7 steps
 - Users can only navigate to this page through the navigation bar if they are Admin
   <br>
   There are 4 tabs:
+  <br>
 
 ### 1. Dashboard
 
@@ -209,6 +210,7 @@ The log action flow has 7 steps
   ![alt text](images/adminDashboard/dashboard5.png)
 - Users can filter and view data from only 1 label by clicking on the label they wish to hide
   ![alt text](images/adminDashboard/dashboard4.png)
+  <br>
 
 ### 2. Create Action
 
@@ -217,6 +219,20 @@ The log action flow has 7 steps
 - The Fallback Text field is for what is shown by default in the Action Fact step of the Log Action Menu flow if there are no quiz questions created for that action (shown in image here)
   ![alt text](images/adminDashboard/create_action0.png)
 
+<br>
+
 ### 3. Manage Actions
+
+![alt text](images/adminDashboard/manage_actions0.png)
+![alt text](images/adminDashboard/manage_actions1.png)
+![alt text](images/adminDashboard/manage_actions2.png)
+![alt text](images/adminDashboard/manage_actions3.png)
+![alt text](images/adminDashboard/manage_actions4.png)
+![alt text](images/adminDashboard/manage_actions5.png)
+![alt text](images/adminDashboard/manage_actions6.png)
+![alt text](images/adminDashboard/manage_actions7.png)
+![alt text](images/adminDashboard/manage_actions8.png)
+
+<br>
 
 ### 4. Manage Quiz Questions
