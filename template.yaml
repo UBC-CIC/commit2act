@@ -24,7 +24,6 @@ Parameters:
   EnvironmentName:
     Type: String
     Default: dev
-    # AllowedValues: [dev, prod, test,]
     Description: A name to identify the environment
   DeploymentRegion:
     Type: String
@@ -40,7 +39,6 @@ Parameters:
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
   DBUser:
-    # NoEcho: true
     Default: admin
     Description: The database admin account username
     Type: String
@@ -49,20 +47,12 @@ Parameters:
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
   DBPassword:
-    # NoEcho: true
     Description: The database admin account password
     Type: String
     MinLength: 1
     MaxLength: 41
     AllowedPattern: '[a-zA-Z0-9]+'
     ConstraintDescription: must contain only alphanumeric characters.
-  # DBAllocatedStorage:
-  #   Default: '5'
-  #   Description: The size of the database (Gb)
-  #   Type: Number
-  #   MinValue: '5'
-  #   MaxValue: '1024'
-  #   ConstraintDescription: must be between 5 and 1024Gb.
   DBInstanceClass:
     Description: The database instance type
     Type: String
@@ -77,12 +67,10 @@ Parameters:
     Description: When deletion proteciton is enabled, when you request the deletion of a database instance in the AWS Console you are blocked and may not continue without first modifying the instance and disabling deletion protection (recommended for production)
     Type: String
     Default: True
-    # AllowedValues: [True, False]
   EncryptDatabase:
     Description: Enable encryption of the database
     Type: String
     Default: True
-    # AllowedValues: [True, False]
   CloudFrontPriceClass:
     Type: String
     Description: "The price class for CloudFront distribution"
@@ -93,7 +81,10 @@ Parameters:
       - PriceClass_All
   AmplifyBucket:
     Type: String
-    Description: "The name of the S3 bucket for the amplify project (ex. projectname-storage-0123456789-dev)"
+    Description: "The name of the S3 bucket for the Amplify project (ex. projectname-storage-0123456789-dev)"
+  AmplifyCognitoUserPoolId:
+    Type: String
+    Description: "The ID of the Cognito User Pool for the Amplify project (ex. us-east-1_aBcDeFgh)"
   MinConfidenceThreshold:
     Type: Number
     Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
@@ -101,12 +92,6 @@ Parameters:
     MinValue: 30
     MaxValue: 100
     ConstraintDescription: The number should be between 30 and 100
-  # DeletionProtection:
-  #   Description: 
-  #   Type: 
-  #   Default: 
-  #   AllowedValues: 
-    
 
 Resources:
   IGW:
@@ -302,7 +287,6 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
 
-
   MainDBCluster:
     Type: AWS::RDS::DBCluster
     DependsOn:
@@ -452,32 +436,6 @@ Resources:
   #     VpcEndpointType: Interface
   #     VpcId: !Ref VPC
 
-  # EndpointEC2Messages:
-  #   Type: AWS::EC2::VPCEndpoint
-  #   Properties:
-  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ec2messages'
-  #     PrivateDnsEnabled: true
-  #     SecurityGroupIds:
-  #       - !Ref OpenSecurityGroup
-  #     SubnetIds:
-  #       - !Ref PublicSubnet1
-  #       - !Ref PublicSubnet2
-  #     VpcEndpointType: Interface
-  #     VpcId: !Ref VPC
-
-  # EndpointLogs:
-  #   Type: AWS::EC2::VPCEndpoint
-  #   Properties:
-  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.logs'
-  #     PrivateDnsEnabled: true
-  #     SecurityGroupIds:
-  #       - !Ref OpenSecurityGroup
-  #     SubnetIds:
-  #       - !Ref PublicSubnet1
-  #       - !Ref PublicSubnet2
-  #     VpcEndpointType: Interface
-  #     VpcId: !Ref VPC
-
   EndpointRekognition:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -490,32 +448,6 @@ Resources:
         - !Ref PublicSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
-
-  # EndpointS3:
-  #   Type: AWS::EC2::VPCEndpoint
-  #   Properties:
-  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
-  #     # PrivateDnsEnabled: true  # cant be set to true for some reason
-  #     SecurityGroupIds:
-  #       - !Ref OpenSecurityGroup
-  #     SubnetIds:
-  #       - !Ref PublicSubnet1
-  #       - !Ref PublicSubnet2
-  #     VpcEndpointType: Interface
-  #     VpcId: !Ref VPC
-  
-  # EndpointS3Outpost:
-  #   Type: AWS::EC2::VPCEndpoint
-  #   Properties:
-  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3-outposts'
-  #     PrivateDnsEnabled: true
-  #     SecurityGroupIds:
-  #       - !Ref OpenSecurityGroup
-  #     SubnetIds:
-  #       - !Ref PublicSubnet1
-  #       - !Ref PublicSubnet2
-  #     VpcEndpointType: Interface
-  #     VpcId: !Ref VPC
   
   EndpointRDS:
     Type: AWS::EC2::VPCEndpoint
@@ -560,7 +492,6 @@ Resources:
       VpcSubnetIds:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
-      #   Fn::Split: [",", !Ref SubnetIds]
       Tags:
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -665,9 +596,6 @@ Resources:
       LogGroupName: !Join ["", ["/aws/lambda/", !Ref graphQLMySQLResolver]]
       RetentionInDays: 14
 
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
   # This is a Lambda function config associated with the source code: get-by-id.js
   validateImageWithRekognition:
     Type: AWS::Serverless::Function
@@ -686,11 +614,6 @@ Resources:
       MemorySize: 128
       Timeout: 100
       Description: Validates images uploaded through the submitted action pipeline
-      # Tags:
-      #   - Key: "Project"
-      #     Value: !Ref 'ProjectName'
-      #   - Key: "EnvironmentName"
-      #     Value: !Ref 'EnvironmentName'
       Policies:
         # - arn:aws:iam::aws:policy/SecretsManagerReadWrite
         Version: '2012-10-17' # in line policies
@@ -846,7 +769,7 @@ Resources:
       UserPoolConfig:
         AwsRegion: !Ref DeploymentRegion
         DefaultAction: ALLOW
-        UserPoolId: us-east-1_jKhBLdEzs  ############################ TODO: CHANGE
+        UserPoolId: !Ref AmplifyCognitoUserPoolId
       LogConfig:
         CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
         FieldLogLevel: ALL
@@ -875,7 +798,6 @@ Resources:
     Properties:
       ApiId: !GetAtt AppSyncAPI.ApiId
       Definition: |
-        
         type Action {
           action_id: Int!
           action_name: String!
@@ -1751,9 +1673,8 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT user_id, username, email, avatar, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM ( select `User`.*, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points FROM GroupUser INNER JOIN SubmittedAction ON GroupUser.user_id=SubmittedAction.user_id INNER JOIN `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=:1 GROUP BY GroupUser.user_id UNION ALL select `User`.*, 0 as total_co2, 0 as total_points, 0 as weekly_co2, 0 as weekly_points FROM GroupUser INNER JOIN  `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=:1 GROUP BY GroupUser.user_id ) as T group by user_id",
+            "sql": "SELECT user_id, `name`, user_role, username, email, avatar, SUM(total_co2) as total_co2, SUM(total_points) as total_points, SUM(weekly_co2) as weekly_co2, SUM(weekly_points) as weekly_points FROM ( select `User`.*,  GroupUser.user_role, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points FROM GroupUser INNER JOIN SubmittedAction ON GroupUser.user_id=SubmittedAction.user_id INNER JOIN `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=$context.args.group_id GROUP BY GroupUser.user_id UNION ALL select `User`.*, GroupUser.user_role, 0 as total_co2, 0 as total_points, 0 as weekly_co2, 0 as weekly_points FROM GroupUser INNER JOIN  `User` ON `User`.user_id = GroupUser.user_id WHERE GroupUser.group_id=$context.args.group_id GROUP BY GroupUser.user_id ) as T group by user_id",
             "variableMapping": {
-              ":1": $context.args.group_id
             }
           }
         }
@@ -2517,8 +2438,6 @@ Resources:
       FieldName: createActionItems
       RequestMappingTemplate: |
         #**
-        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
-        
         action_items is an array of JSON objects, in this case it looks like this:
         [
           {
@@ -2527,20 +2446,29 @@ Resources:
                 co2_saved_per_unit: 5.5
             }, ...
         ]
-        the :K## in the sql corresponds to the names of the keys, (action_name, action_description, and co2_saved_per_unit).
-        the :V## corresponds to the values, ("name", "description", 5.5 for example), however these values will vary across all of the JSON objects in the array.
-        the lambda executes multiple INSERT statements, essentially inserting each JSON object into the database, filling in the corresponding :K## and :V##.
-        important to note is that the specific numbers (like 01, 02, 03) dont necessarily correspond to one of the key-value pairs, 
-        however whatever has the same number (like :K01 and :V01) will be for the same key-value pair
         *#
+
+        #set( $action_items = $context.arguments.action_items )
+        #set( $final_sql = ' ' )
+        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES ($context.arguments.action_id, '" )
+        #set( $sep1 = "', '"  )
+        #set( $sep2 = "', ")
+        #set( $ending = "); " )
+
+        #foreach( $action_item in $action_items )
+          #set( $ai0 = $action_item.get('item_name') )
+          #set( $ai1 = $action_item.get('item_description') )
+          #set( $ai2 = $action_item.get('co2_saved_per_unit') )
+          #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$sep2$ai2$ending" )
+        #end
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `ActionItem` (action_id, :K01, :K02, :K03) VALUES ($context.arguments.action_id, :V01, :V02, :V03)",
+            "sql": "$final_sql",
             "variableMapping": {
             },
-            "items": $util.toJson($context.arguments.action_items),
             "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=$context.arguments.action_id"
           }
         }
@@ -2767,29 +2695,34 @@ Resources:
       FieldName: createSubmittedActionItems
       RequestMappingTemplate: |
         #**
-        TODO: DENY ANY STRING WITH A : IN IT AS AN INPUT
-        
-        action_items is an array of JSON objects, in this case it looks like this:
+        submitted_action_items is an array of JSON objects, in this case it looks like this:
         [
           {
               item_name: "name",
                 input_value: 5.5
             }, ...
         ]
-        the :K## in the sql corresponds to the names of the keys, (item_name, input_value).
-        the :V## corresponds to the values, ("name", 5.5 for example), however these values will vary across all of the JSON objects in the array.
-        the lambda executes multiple INSERT statements, essentially inserting each JSON object into the database, filling in the corresponding :K## and :V##.
-        important to note is that the specific numbers (like 01, 02) dont necessarily correspond to one of the key-value pairs, 
-        however whatever has the same number (like :K01 and :V01) will be for the same key-value pair
         *#
+
+        #set( $submitted_action_items = $context.arguments.submitted_action_items )
+        #set( $final_sql = ' ' )
+        #set( $beginning = "INSERT INTO SubmittedActionItem (sa_id, item_name, input_value) VALUES ($context.arguments.sa_id, '" )
+        #set( $sep2 = "', ")
+        #set( $ending = "); " )
+
+        #foreach( $action_item in $submitted_action_items )
+          #set( $ai1 = $action_item.get('item_name') )
+          #set( $ai2 = $action_item.get('input_value') )
+          #set( $final_sql = "$final_sql$beginning$ai1$sep2$ai2$ending" )
+        #end
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `SubmittedActionItem` (sa_id, :K01, :K02) VALUES ($context.arguments.sa_id, :V01, :V02)",
+            "sql": "$final_sql",
             "variableMapping": {
             },
-            "items": $util.toJson($context.arguments.submitted_action_items),
             "responseSQL": "SELECT * FROM `SubmittedActionItem` WHERE sa_id=$context.arguments.sa_id"
           }
         }
@@ -3129,8 +3062,8 @@ Resources:
         *#
         
         #set( $action_items = $context.arguments.action_items )
-        #set( $final_sql = 'DELETE FROM ActionItem WHERE action_id=:1 ; ' )
-        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES (:1, '" )
+        #set( $final_sql = 'DELETE FROM ActionItem WHERE action_id=$context.arguments.action_id ; ' )
+        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES ($context.arguments.action_id, '" )
         #set( $sep1 = "', '"  )
         #set( $sep2 = "', ")
         #set( $ending = "); " )
@@ -3148,9 +3081,8 @@ Resources:
           "payload": {
             "sql": "$final_sql",
             "variableMapping": {
-              ":1": $context.arguments.action_id
             },
-            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=:1"
+            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=$context.arguments.action_id"
           }
         }
         
