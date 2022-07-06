@@ -74,7 +74,7 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
               component="img"
               sx={{ width: 150 }}
               image={action.submitted_image}
-              alt="user submitted image"
+              alt={`A submitted ${action.action_name} action image submitted at ${action.time_submitted}`}
             />
           )}
           <CardContent

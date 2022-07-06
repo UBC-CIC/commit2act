@@ -28,7 +28,7 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 
 # Changelog
 
-To view the changeloge, please view [Changelog](/CHANGELOG.md)
+To view the changelog, please view [Changelog](/CHANGELOG.md)
 
 # Credits
 

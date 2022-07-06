@@ -41,6 +41,7 @@ def detect_faces(bucket, key):
 def image_from_s3(bucket, key):
     # Returns an image object for an image file in an s3 bucket (the path in s3 is "bucket/key")
     # used for image analysis without AWS services if it is desired
+    # this function is not working at the moment! can be expanded upon
     bucket = s3.Bucket(bucket)
     image = bucket.Object(key)
     img_data = image.get().get('Body').read()

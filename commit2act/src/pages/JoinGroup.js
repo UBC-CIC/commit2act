@@ -29,9 +29,8 @@ const StyledDialog = styled(Dialog)`
   }
 `;
 
-const JoinGroup = () => {
+const JoinGroup = ({ user }) => {
   const { groupName, addUserLink } = useParams();
-  const [userId, setUserId] = useState();
   const [group, setGroup] = useState();
   const [alreadyInGroup, setAlreadyInGroup] = useState(false);
   const [addPublicMember, setAddPublicMember] = useState(false);
@@ -41,15 +40,8 @@ const JoinGroup = () => {
   const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
 
-  const getUserInfo = async () => {
-    //get user id of current cognito user
-    const cognitoUser = await Auth.currentAuthenticatedUser();
-    const id = cognitoUser.attributes['custom:id'];
-    setUserId(Number(id));
-  };
-
   const renderAddMemberView = async () => {
-    if (userId) {
+    if (user.user_id) {
       //decode group id
       const hashedId = addUserLink.split('-').pop();
       const groupId = Math.sqrt(hashedId);
@@ -68,26 +60,28 @@ const JoinGroup = () => {
       setGroup(groupInfo);
       const groupMemberData = groupMemberRes.data.getAllUsersInGroup;
       const groupMemberIds = groupMemberData.map((member) => member.user_id);
-      if (groupMemberIds.includes(userId)) {
+      if (groupMemberIds.includes(user.user_id)) {
         setAlreadyInGroup(true);
-      } else if (!groupMemberIds.includes(userId) && groupInfo.is_public) {
+      } else if (
+        !groupMemberIds.includes(user.user_id) &&
+        groupInfo.is_public
+      ) {
         //if group is public, load add member view
         setAddPublicMember(true);
         //if group is private, load add member with password view
-      } else if (!groupMemberIds.includes(userId) && !groupInfo.is_public) {
+      } else if (
+        !groupMemberIds.includes(user.user_id) &&
+        !groupInfo.is_public
+      ) {
         setAddPrivateMember(true);
       }
     }
   };
 
   useEffect(() => {
-    renderAddMemberView();
+    user && renderAddMemberView();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
+  }, [user]);
 
   const updateForm = (e) => {
     setPrivateGroupForm({
@@ -127,13 +121,14 @@ const JoinGroup = () => {
 
   const addUser = async () => {
     try {
-      await API.graphql({
+      const res = await API.graphql({
         query: addGroupMember,
         variables: {
           group_id: group.group_id,
-          user_id: userId,
+          user_id: user.user_id,
         },
       });
+      console.log(res);
       setUserAdded(true);
       setTimeout(() => {
         redirectProfile();

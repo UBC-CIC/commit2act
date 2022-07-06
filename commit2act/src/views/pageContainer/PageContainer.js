@@ -277,11 +277,7 @@ function PageContainer(props) {
             />
             <Route
               path="/group-profile/:groupName/add/:addUserLink"
-              element={
-                <PrivateRoute>
-                  <JoinGroup />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute Component={JoinGroup} user={user} />}
             />
             <Route
               exact
@@ -295,7 +291,11 @@ function PageContainer(props) {
               exact
               path={'/account-settings'}
               element={
-                <AccountSettings databaseUser={user} setUser={setUser} />
+                <AccountSettings
+                  databaseUser={user}
+                  setUser={setUser}
+                  userType={userType}
+                />
               }
             />
             <Route

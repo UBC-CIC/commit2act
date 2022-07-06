@@ -12,6 +12,7 @@ import SubmittedActionCard from '../components/SubmittedActionCard';
 const UserProfile = () => {
   const { userId } = useParams();
   const [user, setUser] = useState();
+  const [userType, setUserType] = useState();
   const [validatedActions, setValidatedActions] = useState();
   const [groups, setGroups] = useState();
   const [showMore, setShowMore] = useState();
@@ -20,6 +21,7 @@ const UserProfile = () => {
   const getCurrentUserInfo = async () => {
     //if currently logged in user has the same id as the user profile link id, redirect user to their account settings page
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
+    setUserType(cognitoUserEntry.attributes['custom:type']);
     const id = cognitoUserEntry.attributes['custom:id'];
     if (id === userId) {
       navigate(`/account-settings`);
@@ -51,6 +53,17 @@ const UserProfile = () => {
     setGroups(publicGroups);
   };
 
+  const getActions = async () => {
+    const res = await API.graphql({
+      query: getAllSubmittedActionsForUser,
+      variables: { user_id: userId },
+    });
+    //filter for all validated actions
+    const allActions = res.data.getAllSubmittedActionsForUser;
+    const validated = allActions.filter((action) => action.is_validated);
+    setValidatedActions(validated);
+  };
+
   useEffect(() => {
     getCurrentUserInfo();
   }, []);
@@ -69,12 +82,22 @@ const UserProfile = () => {
           <Stack spacing={2}>
             {showMore
               ? validatedActions.map((action, index) => (
-                  <SubmittedActionCard key={index} action={action} />
+                  <SubmittedActionCard
+                    key={index}
+                    action={action}
+                    showUnapproveButton={userType === 'Admin'}
+                    getActions={getActions}
+                  />
                 ))
               : validatedActions
                   .slice(0, 3)
                   .map((action, index) => (
-                    <SubmittedActionCard key={index} action={action} />
+                    <SubmittedActionCard
+                      key={index}
+                      action={action}
+                      showUnapproveButton={userType === 'Admin'}
+                      getActions={getActions}
+                    />
                   ))}
             <Button
               sx={{ mt: '3em' }}

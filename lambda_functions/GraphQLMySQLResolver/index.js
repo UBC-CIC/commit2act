@@ -84,6 +84,7 @@ async function conditionallyCreateDB(connection) {
     \`group_id\` int,
     \`user_id\` int COMMENT 'only educator and administrator roles can own/make a group',
     \`user_role\` ENUM ('owner', 'member') NOT NULL,
+    \`date_joined\` datetime default CURRENT_TIMESTAMP(),
     PRIMARY KEY (\`group_id\`, \`user_id\`)
   );
   ALTER TABLE \`Role\` ADD FOREIGN KEY (\`user_id\`) REFERENCES \`User\` (\`user_id\`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -133,7 +134,6 @@ function populateAndSanitizeSQL(sql, variableMapping, connection) {
   return sql;
 }
 
-
 let connection;
 connection = mysql.createPool({
   host     : process.env.RDSPROXY_ENDPOINT,
@@ -142,31 +142,20 @@ connection = mysql.createPool({
   database : process.env.DBNAME
 });
 
+// // Load the AWS SDK
+// var AWS = require('aws-sdk'),  // to change
+//     region = "ca-central-1",
+//     secretName = "commit2actRDS",//"arn:aws:secretsmanager:ca-central-1:016942909762:secret:commit2actDB-OBJdoN",
+//     secret,
+//     decodedBinarySecret;
 
-// Load the AWS SDK
-var AWS = require('aws-sdk'),  // to change
-    region = "ca-central-1",
-    secretName = "commit2actRDS",//"arn:aws:secretsmanager:ca-central-1:016942909762:secret:commit2actDB-OBJdoN",
-    secret,
-    decodedBinarySecret;
-
-// Create a Secrets Manager client
-var client = new AWS.SecretsManager({
-    region: region
-});
+// // Create a Secrets Manager client
+// var client = new AWS.SecretsManager({
+//     region: region
+// });
 
 exports.handler = async (event) => {
-  // cache the secret
-    // if(!secret){
-    //     console.log('getting secret from secret manager')
-    //     // get secret string from secret manager
-    //     const secretValue = await client.getSecretValue({ SecretId: "arn:aws:secretsmanager:ca-central-1:016942909762:secret:commit2actDB-OBJdoN" }).promise();
-    //     secret = JSON.parse(secretValue.SecretString);
-    // }
-
-  
   // called whenever a GraphQL event is recieved
-  console.log(secret, decodedBinarySecret);
   console.log('Received event', JSON.stringify(event, null, 3));
 
   let result;
@@ -179,57 +168,15 @@ exports.handler = async (event) => {
     dbInit = true;
   }
   
-  if (event.items) { 
-    // for queries and mutations where there are >=1 possible statements to execute
-    // events.items is a JSON object
-    let counter;
-    
-    for (const item of event.items) {
-      let variableMapping;
-      if (! event.variableMapping ) {
-        variableMapping = {};
-      }
-      else {
-        variableMapping = event.variableMapping;
-      }
-      var keyMapping = {};
-      counter = 1;
-      let formattedNumber;
-      Object.keys(item).forEach(function(key) {
-        formattedNumber = ("0" + counter).slice(-2);
-        keyMapping[":K" + formattedNumber] = key;
-        variableMapping[":V" + formattedNumber] = item[key];
-        counter ++;
-      });
-      
-      var sqlStatement = event.sql;
-      
-      counter = 1;
-      Object.keys(keyMapping).forEach(function(key) { 
-        // keys look like ":K01"
-        // replace instances of ":K##" in our sql statement with corresponding value
-        formattedNumber = ("0" + counter).slice(-2);
-        sqlStatement = sqlStatement.replace(":K" + formattedNumber, keyMapping[key]);
-        counter ++;
-      });
-      
-      let inputSQL = populateAndSanitizeSQL(sqlStatement, variableMapping, connection);
-      
-      result = await executeSQL(connection, inputSQL);
+  let sql_statements = event.sql.split(";"); // splits up multiple SQL statements into an array
+  for (let sql_statement of sql_statements) { // iterate through the SQL statements
+    if (sql_statement.length < 3) { // sometimes an empty statement will try to be executed, this stops those from executing
+      continue;
     }
-  }
-  
-  else {
-    let sql_statements = event.sql.split(";"); // splits up multiple SQL statements into an array
-    for (let sql_statement of sql_statements) { // iterate through the SQL statements
-      if (sql_statement.length < 3) { // sometimes an empty statement will try to be executed, this stops those from executing
-        continue;
-      }
-      // 'fill in' the variables in the sql statement with ones from variableMapping
-      const inputSQL = populateAndSanitizeSQL(sql_statement, event.variableMapping, connection);
-      // execute the sql statement on our database
-      result = await executeSQL(connection, inputSQL);
-    }
+    // 'fill in' the variables in the sql statement with ones from variableMapping
+    const inputSQL = populateAndSanitizeSQL(sql_statement, event.variableMapping, connection);
+    // execute the sql statement on our database
+    result = await executeSQL(connection, inputSQL);
   }
   
   // for secondary SQL statement to execute, like a SELECT after an INSERT
@@ -238,11 +185,6 @@ exports.handler = async (event) => {
       populateAndSanitizeSQL(event.responseSQL, event.variableMapping, connection);
     result = await executeSQL(connection, responseSQL);
   }
-  
-  // connection.end(function(error, results) {
-  //   // The connection is terminated now 
-  //   console.log("Connection ended");
-  // });
-  
+  console.log("Finished exectution")
   return result;
 };
