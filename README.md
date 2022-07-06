@@ -1,6 +1,6 @@
 ## Commit2Act
 
-TakingITGlobal is a non-governmental organization that focuses on global issues by promoting youth engagement and awareness. In collaboration with the UBC Cloud Innovation Centre (CIC), Commit2Act is an solution that has been developed that serves as a helpful companion for youth (12-18) to drive climate-friendly decision-making in everyday life. It will guide youth towards climate-friendly lifestyle choices, measure the impact of these choices, and connect users to a community of like-minded youth who are working collaboratively towards the UN’s sustainable development goals.
+TakingITGlobal is a non-governmental organization that focuses on global issues by promoting youth engagement and awareness. In collaboration with the UBC Cloud Innovation Centre (CIC), Commit2Act is a solution that has been developed that serves as a helpful companion for youth (12-18) to drive climate-friendly decision-making in everyday life. It will guide youth towards climate-friendly lifestyle choices, measure the impact of these choices, and connect users to a community of like-minded individuals who are working collaboratively towards the UN’s sustainable development goals.
 
 | Index                                               | Description                                             |
 | :-------------------------------------------------- | :------------------------------------------------------ |
