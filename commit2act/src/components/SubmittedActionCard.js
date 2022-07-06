@@ -22,6 +22,7 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
     submitted_action_items,
     submitted_image,
     time_submitted,
+    name_of_user,
   } = action;
 
   const rejectAction = async () => {
@@ -63,8 +64,8 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
             />
           )}
           <CardContent sx={{ ml: { xs: '0em', md: '2em' } }}>
-            <Typography variant="subtitle2">
-              {date_of_action.split('T')[0]}
+            <Typography variant="subtitle2" sx={{ mb: '1.5em' }}>
+              {date_of_action.split('T')[0]} - {name_of_user}
             </Typography>
             <Typography
               variant="h2"
