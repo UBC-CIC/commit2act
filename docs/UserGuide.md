@@ -223,16 +223,59 @@ The log action flow has 7 steps
 
 ### 3. Manage Actions
 
-![alt text](images/adminDashboard/manage_actions0.png)
-![alt text](images/adminDashboard/manage_actions1.png)
-![alt text](images/adminDashboard/manage_actions2.png)
-![alt text](images/adminDashboard/manage_actions3.png)
-![alt text](images/adminDashboard/manage_actions4.png)
-![alt text](images/adminDashboard/manage_actions5.png)
-![alt text](images/adminDashboard/manage_actions6.png)
-![alt text](images/adminDashboard/manage_actions7.png)
-![alt text](images/adminDashboard/manage_actions8.png)
+- Admin can click on an action icon to view the action and its corresponding information (action icon, action items, fallback text, image validation labels)
+  ![alt text](images/adminDashboard/manage_actions0.png)
+  ![alt text](images/adminDashboard/manage_actions1.png)
+- Clicking on each individual action item will display the Name, Description and CO2 Saved Per Unit fields for that action item
+  ![alt text](images/adminDashboard/manage_actions3.png)
+
+- To edit the action information, click the Edit Button
+  ![alt text](images/adminDashboard/manage_actions2.png)
+- To delete an action, click the Delete button. If an action is deleted, all user submitted content for that action will also be deleted
+  <br>
+  ![alt text](images/adminDashboard/manage_actions4.png)
+- To pause an action, click the Pause button. When an action is paused, it will not appear as an option on the Log Action Menu for users to submit to
+  <br>
+  ![alt text](images/adminDashboard/manage_actions5.png)
+- Paused actions will appear with a greyed out icon on the Manage Actions menu
+  ![alt text](images/adminDashboard/manage_actions6.png)
+- A paused action must be restored by clicking the Restore Action button before users can submit that action
+  ![alt text](images/adminDashboard/manage_actions7.png)
+  <br>
+
+### 4. Manage Quiz Questions
 
 <br>
 
-### 4. Manage Quiz Questions
+#### Creating Quiz Questions
+
+- Admin can click on an action icon to view and create action fact/ corresponding quiz questions for that action
+  ![alt text](images/adminDashboard/manage_quizzes0.png)
+  ![alt text](images/adminDashboard/manage_quizzes1.png)
+- To create a new quiz, click the Add New Question Button
+- Required fields to create a new question are Fact Text, Question Text and at least 1 Possible Answer
+  ![alt text](images/adminDashboard/manage_quizzes2.png)
+- To mark an answer as correct, click the checkmark icon on the left hand side of the answer. The answer will then become shaded in (in the following image, test answer on the left hand side is marked as correct). Multiple answers can be marked as correct.
+  ![alt text](images/adminDashboard/manage_quizzes5.png)
+  <br>
+  Here is an example of a sample quiz, along with an explanation of how the contents of each field will be displayed:
+  ![alt text](images/adminDashboard/manage_quizzes6.png)
+- The Fact Text field will be the fact that is displayed in step 3 of the Log Action menu:
+  - ![alt text](images/adminDashboard/manage_quizzes7.png)
+- The Question Text field will be the question that is displayed in step 6 of the Log Action menu, and the Possible Answers will be displayed as multiple choice options. If multiple answers were marked as correct options, the user will get the question right as long as they select 1 of those options.
+  - ![alt text](images/adminDashboard/manage_quizzes8.png)
+- If an action has no quizzes and no fallback text (explained in the Creating An Action section), then a default message will be displayed in the log action menu, and the Bonus Question step will be skipped.
+  - ![alt text](images/adminDashboard/manage_quizzes9.png)
+
+<br>
+
+#### Editing Quiz Questions
+
+- To edit existing quizzes, click the Edit Existing Questions Button. This will display all the quizzes for your selected action
+  ![alt text](images/adminDashboard/manage_quizzes3.png)
+- Click the Pencil icon on the upper right hand corner to edit
+  ![alt text](images/adminDashboard/manage_quizzes4.png)
+- Pressing the pencil button will change the card into a form, which has the same functionality as described in the Creating Quiz Questions section.
+- To delete a question, click the Delete button on the bottom left hand corner
+- To apply changes, click the Save button on the bottom right hand corner
+- To switch out of the Edit View, click the Pencil icon again
