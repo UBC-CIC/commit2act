@@ -1,7 +1,18 @@
 import React from 'react';
-import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  CardActions,
+  Button,
+} from '@mui/material';
+import { Clear } from '@mui/icons-material';
+import { rejectSubmittedAction } from '../graphql/mutations';
+import { API } from 'aws-amplify';
 
-const SubmittedActionCard = ({ action }) => {
+const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
   const {
     action_name,
     date_of_action,
@@ -10,11 +21,20 @@ const SubmittedActionCard = ({ action }) => {
     points_earned,
     submitted_action_items,
     submitted_image,
-    name_of_user,
     time_submitted,
   } = action;
+
+  const rejectAction = async () => {
+    await API.graphql({
+      query: rejectSubmittedAction,
+      variables: { sa_id: action.sa_id },
+    });
+
+    getActions();
+  };
+
   return (
-    <Card sx={{ display: 'flex' }}>
+    <Card sx={{ display: 'flex', overflow: 'auto' }}>
       <Box
         sx={{
           display: 'flex',
@@ -23,38 +43,61 @@ const SubmittedActionCard = ({ action }) => {
           alignItems: { xs: 'center', md: 'flex-start' },
         }}
       >
-        {submitted_image && (
-          <CardMedia
-            component="img"
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            width: '100%',
+            alignItems: { xs: 'center', sm: 'stretch' },
+          }}
+        >
+          {submitted_image && (
+            <CardMedia
+              component="img"
+              sx={{
+                width: 150,
+                filter: is_rejected && 'grayscale(100%)',
+              }}
+              image={submitted_image}
+              alt={`A submitted ${action_name} action image submitted at ${time_submitted}`}
+            />
+          )}
+          <CardContent sx={{ ml: { xs: '0em', md: '2em' } }}>
+            <Typography variant="subtitle2">
+              {date_of_action.split('T')[0]}
+            </Typography>
+            <Typography
+              variant="h2"
+              sx={{
+                mt: { xs: '0.5em', md: '0', color: is_rejected && '#303030' },
+              }}
+            >
+              {action_name}
+            </Typography>
+            <Typography sx={{ my: 1.5, color: '#7e7e7e' }}>
+              {submitted_action_items}
+            </Typography>
+            <Typography variant="body1">CO2 Saved: {g_co2_saved} g</Typography>
+            <Typography variant="body1">
+              Total Points Earned: {points_earned}
+            </Typography>
+          </CardContent>
+        </Box>
+        {showUnapproveButton && (
+          <CardActions
             sx={{
-              width: 150,
-              height: '100%',
-              filter: is_rejected && 'grayscale(100%)',
-            }}
-            image={submitted_image}
-            alt={`A submitted ${action_name} action image submitted at ${time_submitted}`}
-          />
-        )}
-        <CardContent sx={{ ml: { xs: '0em', md: '2em' } }}>
-          <Typography variant="subtitle2">
-            {date_of_action.split('T')[0]}
-          </Typography>
-          <Typography
-            variant="h2"
-            sx={{
-              mt: { xs: '0.5em', md: '0', color: is_rejected && '#303030' },
+              display: 'flex',
+              justifyContent: { xs: 'center', sm: 'flex-end' },
+              alignSelf: 'center',
+              mb: { xs: '1em', sm: '0em' },
+              mr: { xs: '0em', sm: '3em' },
             }}
           >
-            {action_name}
-          </Typography>
-          <Typography sx={{ my: 1.5, color: '#7e7e7e' }}>
-            {submitted_action_items}
-          </Typography>
-          <Typography variant="body1">CO2 Saved: {g_co2_saved} g</Typography>
-          <Typography variant="body1">
-            Total Points Earned: {points_earned}
-          </Typography>
-        </CardContent>
+            <Button startIcon={<Clear />} onClick={rejectAction}>
+              Unapprove
+            </Button>
+          </CardActions>
+        )}
       </Box>
     </Card>
   );

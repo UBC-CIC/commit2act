@@ -4,31 +4,47 @@ import { API } from 'aws-amplify';
 import { getAllValidatedSubmittedActionsInGroup } from '../../graphql/queries';
 import SubmittedActionCard from '../SubmittedActionCard';
 
-const MemberActionsPanel = ({ groupInfo }) => {
+const MemberActionsPanel = ({ groupInfo, cognitoUser }) => {
   const [actions, setActions] = useState();
   const [showMore, setShowMore] = useState(false);
 
+  const getActions = async () => {
+    const res = await API.graphql({
+      query: getAllValidatedSubmittedActionsInGroup,
+      variables: { group_id: groupInfo.group_id },
+    });
+    setActions(res.data.getAllValidatedSubmittedActionsInGroup);
+  };
+
   useEffect(() => {
-    const getActions = async () => {
-      const res = await API.graphql({
-        query: getAllValidatedSubmittedActionsInGroup,
-        variables: { group_id: groupInfo.group_id },
-      });
-      setActions(res.data.getAllValidatedSubmittedActionsInGroup);
-    };
     getActions();
-  }, [groupInfo.group_id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderActionCards = () => {
     if (actions) {
       return showMore
         ? actions.map((action, index) => (
-            <SubmittedActionCard key={index} action={action} />
+            <SubmittedActionCard
+              key={index}
+              action={action}
+              showUnapproveButton={
+                cognitoUser.attributes['custom:type'] === 'Admin'
+              }
+              getActions={getActions}
+            />
           ))
         : actions
             .slice(0, 3)
             .map((action, index) => (
-              <SubmittedActionCard key={index} action={action} />
+              <SubmittedActionCard
+                key={index}
+                action={action}
+                showUnapproveButton={
+                  cognitoUser.attributes['custom:type'] === 'Admin'
+                }
+                getActions={getActions}
+              />
             ));
     }
   };
