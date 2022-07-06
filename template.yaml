@@ -1014,7 +1014,7 @@ Resources:
           getAllUsersInGroup(group_id: Int): [UserWithRoleAndStats]
           getAllOwnersInGroup(group_id: Int): [User]
           getAllMembersInGroup(group_id: Int): [User]
-          getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbedded]
+          getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbeddedAndUser]
           getAllGroupsForUser(user_id: Int): [Group]
           getAllGroupsUserOwns(user_id: Int): [Group]
           getGroupTotalCO2(group_id: Int!): Float
@@ -1728,7 +1728,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "select *, group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `GroupUser` ON `GroupUser`.user_id = `SubmittedAction`.user_id WHERE `GroupUser`.group_id = :1 AND `SubmittedAction`.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
+            "sql": "select *, `User`.`name` AS name_of_user , group_concat('', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name from `SubmittedAction` INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `GroupUser` ON `GroupUser`.user_id = `SubmittedAction`.user_id inner join `User` on GroupUser.user_id=`User`.user_id WHERE `GroupUser`.group_id = :1 AND `SubmittedAction`.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined GROUP BY SubmittedActionItem.sa_id ORDER BY time_submitted DESC",
             "variableMapping": {
               ":1": $context.args.group_id
             }
@@ -2075,9 +2075,6 @@ Resources:
             },
           }
         }
-        
-        
-        
       ResponseMappingTemplate: |
         #if ($context.result[0].get("totalCO2"))
           $util.toJson($context.result[0].get("totalCO2"))
