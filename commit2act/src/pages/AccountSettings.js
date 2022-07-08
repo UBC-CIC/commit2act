@@ -16,7 +16,7 @@ import {
   getSingleUser,
 } from '../graphql/queries';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import EditAccountInfo from '../components/EditAccountInfo';
+import EditAccountInfo from '../components/accountSettings/EditAccountInfo';
 
 const AccountSettings = ({ databaseUser, setUser, userType }) => {
   const [showMore, setShowMore] = useState({

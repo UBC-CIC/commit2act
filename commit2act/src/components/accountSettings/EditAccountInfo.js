@@ -15,11 +15,11 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import { updateUser } from '../graphql/mutations';
+import { updateUser } from '../../graphql/mutations';
 import { Storage, API, Auth } from 'aws-amplify';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import PasswordRequirements from './authentication/PasswordRequirements';
+import PasswordRequirements from '../authentication/PasswordRequirements';
 
 const StyledDialogTitle = styled(DialogTitle)`
   font-size: 28px;
