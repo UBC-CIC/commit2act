@@ -92,13 +92,13 @@ The 5 tabs are:
 #### 2. Member Actions
 
 - Displays all validated actions submitted by members of the group
-- If the user is an admin, there will be an "Unapprove" button on the actions to override rekognition's validation or the manual validation done by group owners
+- If the user is an admin, there will be an "Unapprove" button on the actions to override rekognition's validation or the manual validation done by group owners. Admins can also unapprove actions on the user's profile page.
   ![alt text](images/groupProfile/group_profile4.png)
 
 #### 3. Group Members
 
 - Displays all group members (group owners will have a start icon by their profile picture)
-- Clicking on any member profile picture will display their name and role, as well as an option to go to their user profile (More information on [User Profiles](#User-Profiles))
+- Clicking on any member profile picture will display their name and role, as well as an option to go to their user profile (More information in [User Profiles](#User-Profiles))
   ![alt text](images/groupProfile/group_profile5.png)
 - A user can see the option to leave the group by clicking on their own profile picture
   ![alt text](images/groupProfile/group_profile6.png)
@@ -330,4 +330,6 @@ There are 4 tabs:
 
 3. A list of all their validated submitted actions
 
+- Admin users can go onto user profiles to Unapprove validated actions by clicking the Unapprove Button
+- Regular users will not be able to see the Unapprove Button
 - ![alt text](images/userProfile/user_profile2.png)
