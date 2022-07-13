@@ -2114,8 +2114,14 @@ Resources:
       FieldName: getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin
       RequestMappingTemplate: |
         #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
+        Gets the all the submitted actions for users who do not belong to a group
+        Used for an admin page to let admin validate their actions, since these people
+        would not have a group owner to validate their actions.
+
+        The group_concat serves to combine all of the submitted action items from an action into 1 string
+        for display
+
+        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action, GroupUser, User
         *#
         {
           "version": "2018-05-29",
@@ -2140,8 +2146,12 @@ Resources:
       FieldName: getAllSubmittedActionsToValidateForAdmin
       RequestMappingTemplate: |
         #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
+        Gets the all the submitted actions for all users, used for admin validation
+
+        The group_concat serves to combine all of the submitted action items from an action into 1 string
+        for display
+
+        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action, GroupUser, User
         *#
         {
           "version": "2018-05-29",
@@ -2166,6 +2176,11 @@ Resources:
       TypeName: Query
       FieldName: getUserStatsForGroup
       RequestMappingTemplate: |
+        #**
+        Gets a single user's stats within 1 group (alltime/weekly co2/points)
+
+        TABLES ACCESSED: SubmittedAction, GroupUser
+        *#
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2311,6 +2326,15 @@ Resources:
       TypeName: Mutation
       FieldName: createAction
       RequestMappingTemplate: |
+        #**
+        This looks very peculiar because we have to insert particular string values, meaning we need to use
+        variableMapping to pass them into the SQL statement. Using this method means that if one of the keys of VM is used,
+        an error will occur, so we make the keys unlikely to be enterred, and if someone does enter one of the keys we
+        just add a space so no error will occur
+
+        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action, GroupUser, User
+        *#
+
         #set( $context.arguments.action_name = $context.arguments.action_name.replace(":::::::", "::::::: ") )
         #set( $context.arguments.page_media = $context.arguments.page_media.replace(":::::::", "::::::: ") )
         #set( $context.arguments.action_icon = $context.arguments.action_icon.replace(":::::::", "::::::: ") )

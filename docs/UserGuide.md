@@ -97,7 +97,7 @@ The 5 tabs are:
 
 #### 3. Group Members
 
-- Displays all group members (group owners will have a start icon by their profile picture)
+- Displays all group members (group owners will have a star icon by their profile picture)
 - Clicking on any member profile picture will display their name and role, as well as an option to go to their user profile (More information on [User Profiles](#User-Profiles))
   ![alt text](images/groupProfile/group_profile5.png)
 - A user can see the option to leave the group by clicking on their own profile picture
@@ -255,7 +255,7 @@ There are 4 tabs:
 
 ![alt text](images/adminDashboard/manage_quizzes0.png)
 
-- Admin can click on an action icon to view and create action fact/ corresponding quiz questions for that action
+- Admin can click on an action icon to view and create action facts with quiz questions for that action
   ![alt text](images/adminDashboard/manage_quizzes1.png)
 - To create a new quiz, click the Add New Question Button
 - Required fields to create a new question are Fact Text, Question Text and at least 1 Possible Answer
