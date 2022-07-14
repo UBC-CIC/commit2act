@@ -85,6 +85,9 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 │   ├── DeploymentGuide.md
 │   └── UserGuide.md
 ├── lambda_functions
+│   ├── graphQLMySQLResolver
+│   ├── processImagesToValidate
+│   └── validateImageWithRekognition
 ├── node_modules
 ├── .gitignore
 ├── amplify.yml
@@ -118,7 +121,10 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
    8. **`/themes.js`**: Global styling for fonts. Note that most components have their own module-scoped styling.
 
 3. **`/docs`**: Contains all relevant documentation files
-4. **`/lambda_functions`**: Contains all relevant documentation files
+4. **`/lambda_functions`**: Contains the Lambda Functions for the proejct
+      - graphQLMySQLResolver is the Lambda function that translates an AWS AppSync request into a call to the database
+      - processImagesToValidate is the Lambda function that will move an image to a region where Rekognition is available
+      - validateImageWithRekognition is the Lambda function that calls the Amazon Rekognition image processing API on user submitted images
 
 # Changelog
 
