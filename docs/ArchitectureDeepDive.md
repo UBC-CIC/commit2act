@@ -54,8 +54,6 @@
 
 # Backend + AppSync Crash Course
 
-> *The main screen of AppSync, where a lot of the work with AppSync will occur*
-
 ## Schema
 
 The entire backend works around `AWS AppSync`, a serverless `GraphQL` API service. With each call to the AppSync GraphQL API a `resolver` is triggered which will pass along an `SQL` statement to a `Lambda function`, which will then execute the SQL statement on the project's `MySQL RDS instance`. Inside of AppSync, there is a `schema` which acts like the skeleton for AppSync; it provides the structure that the API is built on. The schema contains many different `types`, and these types represent the different tables inside of the RDS instance. For example, in the `User` table these are the columns:
