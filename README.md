@@ -32,11 +32,11 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 ```text
 .
 ├── frontend/
-│   ├── amplify
-│   ├── node_modules
+│   ├── amplify/
+│   ├── node_modules/
 │   ├── public
 │   └── src/
-│       ├── actions
+│       ├── actions/
 │       ├── components/
 │       │   ├── accountSettings/
 │       │   ├── adminDashboard/
@@ -51,8 +51,8 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 │       │   ├── ScrollToTop.js
 │       │   ├── SubmittedActionCard.js
 │       │   └── UserContributionDonutChart.js
-│       ├── graphql
-│       ├── models
+│       ├── graphql/
+│       ├── models/
 │       ├── pages/
 │       │   ├── AccountSettings.js
 │       │   ├── AdminDashboard.js
@@ -65,8 +65,8 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 │       │   ├── SelfReportMenu.js
 │       │   ├── UserProfile.js
 │       │   └── ValidateActions.js
-│       ├── reducers
-│       ├── views
+│       ├── reducers/
+│       ├── views/
 │       ├── App.css
 │       ├── App.js
 │       ├── App.test.js
@@ -84,7 +84,7 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 │   ├── ArchitectureDeepDive.md
 │   ├── DeploymentGuide.md
 │   └── UserGuide.md
-├── lambda_functions
+├── lambda_functions/
 │   ├── graphQLMySQLResolver
 │   ├── processImagesToValidate
 │   └── validateImageWithRekognition
@@ -112,19 +112,18 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
         - ScrollToTop.js: Function to scroll page content to the top on page change
         - SubmittedActionCard.js: Used in Account Settings, User Profile and Group Profile pages
         - UserContributionDonutCharts.js: Used in Landing page (in GroupCard component) and Group Profile page (in GroupPageLeaderboard component)
-   2. **`/graphql`**:
-   3. **`/models`**:
-   4. **`/pages`**: Files for each individual page of the app
-   5. **`/reducers`**: Reducers for Login and Signup authentication states
-   6. **`/views`**: Files for app routing
-   7. **`/service-worker.js, serviceWorkerRegistration.js`**: Files for setting up application to be a PWA (Progressive Web Application)
-   8. **`/themes.js`**: Global styling for fonts. Note that most components have their own module-scoped styling.
+   2. **`/graphql`**: Contains files for mutations, queries and the schema
+   3. **`/pages`**: Files for each individual page of the app
+   4. **`/reducers`**: Reducers for Login and Signup authentication states
+   5. **`/views`**: Files for app routing
+   6. **`/service-worker.js, serviceWorkerRegistration.js`**: Files for setting up application to be a PWA (Progressive Web Application)
+   7. **`/themes.js`**: Global styling for fonts. Note that most components have their own module-scoped styling.
 
 3. **`/docs`**: Contains all relevant documentation files
 4. **`/lambda_functions`**: Contains the Lambda Functions for the proejct
-      - graphQLMySQLResolver is the Lambda function that translates an AWS AppSync request into a call to the database
-      - processImagesToValidate is the Lambda function that will move an image to a region where Rekognition is available
-      - validateImageWithRekognition is the Lambda function that calls the Amazon Rekognition image processing API on user submitted images
+   - graphQLMySQLResolver is the Lambda function that translates an AWS AppSync request into a call to the database
+   - processImagesToValidate is the Lambda function that will move an image to a region where Rekognition is available
+   - validateImageWithRekognition is the Lambda function that calls the Amazon Rekognition image processing API on user submitted images
 
 # Changelog
 
