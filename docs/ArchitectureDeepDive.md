@@ -54,8 +54,6 @@
 
 # Backend + AppSync Crash Course
 
-![The main screen of AppSync](../docs/images/AppSync/mainscreen.png)
-
 > *The main screen of AppSync, where a lot of the work with AppSync will occur*
 
 ## Schema
@@ -193,7 +191,6 @@ For the `deleteQuiz` mutation, we only need to input the quiz_id of the quiz we 
 
 ### Testing Queries and Mutations
 
-![The query screen of AppSync](../docs/images/AppSync/queryscreen.png)
 
 Testing is an important part of making new queries and mutations, and the easiest way to test them is through the `Queries` tab on AppSync. In the image above, we can see the section in the middle of the screen has 3 parts.
 
@@ -226,8 +223,6 @@ Since for the frontend, we decided that a query that gets these metrics for a us
 
 ## Resolvers
 
-
-![The main screen of AppSync](../docs/images/AppSync/resolverstemp.png)
 
 
 Resolvers are an extremely important part of AppSync to know about, since resolvers are how queries and mutations get connected to the datasource in the backend. There are many different ways to configure resolvers, but this guide will just describe the setup used for this project. 
