@@ -31,7 +31,7 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 
 ```text
 .
-├── commit2act/
+├── frontend/
 │   ├── amplify
 │   ├── node_modules
 │   ├── public
