@@ -60,15 +60,16 @@
 
 ## Schema
 
-The entire backend works around AWS AppSync, a serverless GraphQL API service. With each call to the AppSync GraphQL API a resolver is triggered which will pass along an SQL statement to a Lambda function, which will then execute the SQL statement on the project's MySQL RDS instance. Inside of AppSync there is a schema which contains lots of different data types, and these represent the different tables inside of the RDS instance. For example, for the `User` table these are the columns:
+The entire backend works around `AWS AppSync`, a serverless `GraphQL` API service. With each call to the AppSync GraphQL API a `resolver` is triggered which will pass along an `SQL` statement to a `Lambda function`, which will then execute the SQL statement on the project's `MySQL RDS instance`. Inside of AppSync, there is a `schema` which acts like the skeleton for AppSync; it provides the structure that the API is built on. The schema contains many different `types`, and these types represent the different tables inside of the RDS instance. For example, in the `User` table these are the columns:
 
 ```
- user_id  |   username   |   name        |   email             |  avatar
------------------------------------------------------------------------------
- 1	      |   michael    |   Michael	 |   email@example.ca  |  example.png
+ user_id | username | name    | email            | avatar
+---------------------------------------------------------------
+ 1       | michael  | Michael | email@example.ca | example.png
 ```
 
 Here is how the `User` type is defined in the GraphQL schema:
+
 ```
 type User {
 	user_id: Int!
@@ -78,7 +79,7 @@ type User {
 	username: String
 }
 ```
-Here, we are defining the 5 columns in the SQL Table as a `type` with 5 different `fields`, with each field corresponding to a column in the database. Each type has a `scalar type` (also known as a data type in most other langages) which defines what kind of data each field represents. GraphQL only has a few different scalar types, and these are String, Int, Float, Boolean, and ID. Since these have less resolution than MySQL data types, a GraphQL String just means anything string based. So for example, data types in MySQL like `TEXT`, `VARCHAR(255)`, `DATETIME` are all just represented by `String` in GraphQL.
+Here, we are defining the 5 columns in the SQL Table as a `type` with 5 different `fields`, with each field corresponding to a column in the database (the fields are user_id, username, name, email, and avatar). Each type has a `scalar type` (also known as a data type in most other langages) which defines what kind of data each field represents. GraphQL only has a few different scalar types, and these are String, Int, Float, Boolean, and ID. Since these have less resolution than MySQL data types, a GraphQL String just means anything string based. So for example, data types in MySQL like `TEXT`, `VARCHAR(255)`, `DATETIME` are all represented by `String` in GraphQL.
 
 In the Schema Definition Language (SDL), an `!` means that the field cannot be null (so here, the fields user_id, name, and email cannot have null values after a query or mutation is called that returns the `type` User). 
 
@@ -105,9 +106,16 @@ This means that user_role can only be the strings `"owner"` or `"member"`, and i
 
 ### Queries
 
-There are some special types defined within the Schema Definition Language, and the two most important to know about is the `query` type and the `mutation` type. 
+There are some special types defined within the Schema Definition Language, and the two most important to know about is the `query` type and the `mutation` type. These are defined in the schema as the following:
+```
+schema {
+	query: Query
+	mutation: Mutation
+}
+```
+This tells AppSync that the queries are located in the `Query` type, and mutations in the `Mutation` type.
 
-A `query` is a type of API call that just retrieves data. These can be thought of as essentially just `SELECT` statements. These statements will only read from the data source, and will not modify the data. Here is an example of how it is definied in the schema:
+A `query` is a kind of API call that only retrieves data. These can be thought of as essentially just `SELECT` statements. These statements will only read from the data source, and will not modify the data. Here is an example of how it is definied in the schema:
 
 ```
 type Query {
@@ -238,7 +246,7 @@ After filling in values for both mapping templates, press the `Save Resolver` bu
 
 #### Request Mapping Templates
 
-The `request mapping template` is a way to transform the data recieved from the GraphQL query/mutation into a form that our data source can understand. Since our data source is a Lambda function, we need to transform the data into a JSON object. This JSON object will then be passed to the Lambda function as an input. There is a very specific format required for the request mapping templates so that the Lambda will execute correctly, and it is the following:
+The `request mapping template` is a way to transform the data recieved from the GraphQL query/mutation into a form that our data source can understand. Since our data source is a Lambda function, we need to transform the data into a JSON object. The `payload` JSON object will be passed to the Lambda function as an input after VTL has evaluated any logic in our resolver. There is a very specific format required for the request mapping templates so that the Lambda will execute correctly, and it is the following:
 ```
 {
     "version" : "2017-02-28",
@@ -267,13 +275,44 @@ This is the JSON object that the Lambda will recieve. Here is a concrete example
     }
 }
 ```
-The `"sql"` key contains the SQL statement we want to execute first. In this case, we want to insert into the GroupUser table a group_id, a user_id, and set the user_role to "member". The group_id and user_id are arguments that are passed in from GraphQL, and how we actually get the values of these input arguments into the SQL statement is through the `"variableMapping"` JSON object. This contains a key-pair combo for every user defined argument that we want to pass into the SQL statements. In VTL, the `$` symbol means the following text is a variable (or a special AppSync operation, which we will see later), and AppSync automatically populates each `$context.arguments.INPUT_VARIABLE_NAME` for all inputted variables to the statement. In the Lambda, it will look for the first instance of each variable mapping key (for example, `:1`) inside of the actual sql string, and then it will replace the key with the corresponding value in variableMapping (if the passed in group_id was 10, then the first instance of :1 found in the sql string will be replaced with the value 10).
+The `"sql"` key contains the SQL statement we want to execute first. In this case, we want to insert into the GroupUser table a group_id, a user_id, and set the user_role to "member". The group_id and user_id are arguments that are passed in from GraphQL, and how we actually get the values of these input arguments into the SQL statement is through the `"variableMapping"` JSON object. This contains a key-pair combo for every user defined argument that we want to pass into the SQL statements. In VTL, the `$` symbol means the following text is a variable (or a special AppSync operation, which we will see later), and AppSync automatically populates each variable with the name `$context.arguments.INPUT_VARIABLE_NAME` with the inputted value for every variable with a value passed in to the statement. In the Lambda, it will look for the first instance of each variable mapping key (for example, `:1`) inside of the actual sql string, and then it will replace the key with the corresponding value in variableMapping (if the passed in group_id was 10, then the first instance of :1 found in the sql string will be replaced with the value 10).
 
 > *NOTE: It is really important to know that the Lambda only replaces the **first** instance of the key in the sql string, any subsequent instances of :1 in the string will not be replaced with 10)*
 
 The same principle applies to the `"responseSQL"` key. This statement is used inside of mutations to get a return value back to GraphQL. The Lambda will execute this statement after the initial sql statement. The same variableMapping object will be applied to responseSQL.
 
-`[INSERT String VARIABLEMAPPING EXAMPLE, AND NO VARIBALE MAPPING EXAMPLE]`
+> *NOTE: The value for `"version"` should not really matter, "2017-02-28" or "2018-05-29" work just fine*
+
+The contents of `variableMapping` will depend on exactly what the inputs to a query/mutation are. In the case where there are no inputs, we can just make it an empty JSON object. Here is an example from `getAllSubmittedActions`:
+```
+{
+    "version": "2018-05-29",
+    "operation": "Invoke",
+    "payload": {
+    "sql": "SELECT * FROM `SubmittedAction`",
+    "variableMapping": {},
+    }
+}
+```
+
+One really important thing to keep in mind when putting the variables in variableMapping is that which scalar type the variable is will define how variableMapping will look. When the argument's scalar type is a `String`, the VTL variable should be surrounded with double quotes. Here is an example for the query `createSubmittedActionItem`
+```
+{
+    "version": "2018-05-29",
+    "operation": "Invoke",
+    "payload": {
+    "sql": "INSERT INTO `SubmittedActionItem` ( item_name, sa_id, input_value ) VALUES (:1, :2, :3)",
+    "variableMapping": {
+        ":1": "$context.arguments.item_name", 
+        ":2": $context.arguments.sa_id, 
+        ":3": $context.arguments.input_value
+    },
+    "responseSQL": "SELECT * FROM `SubmittedActionItem` WHERE item_name=:1 AND sa_id=:2"
+    }
+}
+```
+
+Above, the `item_name` argument is a `String`, so we have to wrap it with double quotes. The `sa_id` and `input_value` are both numberical, so we do not need quotes for them. A `Boolean` can be entered the same way as an `Int` or a `Float`.
 
 #### Response Mapping Templates
 
@@ -299,3 +338,60 @@ In the event that the return type is a scalar type (like in the query `getTotalG
 #end
 ```
 This will return the float value for the SQL column `totalCO2` from the statement `select SUM(SubmittedAction.g_co2_saved) AS totalCO2 from SubmittedAction where is_validated=1` if the value exists. If the value does not exist (i.e. the query returned null, which will happen if the SubmittedAction table does not have any actions where `is_validated=1`) we just return a value of `0.0`.
+
+
+### Advanced Mapping Templates
+
+For some of the resolvers, I used some complicated logic in order to achieve the desired result for a query or mutation. This section will go over some of the techniques I used.
+
+#### createSubmittedActions
+
+The following query shows an example of using VTL logic outside of the main JSON object to handle a situation where no quiz_id is provided, since this is an optional field. This is a large template, so try not to feel overwhelmed! The important details are in the very first 3 lines before the first `{`.
+
+```
+#if( !$context.arguments.quiz_id )
+    #set( $context.arguments.quiz_id = '""' )  #** VTL evaluates this to an empty string "" **#
+#end
+{
+    "version": "2018-05-29",
+    "operation": "Invoke",
+    "payload": {
+        "sql": "INSERT INTO `SubmittedAction` ( user_id, action_id, quiz_id, g_co2_saved, date_of_action, first_quiz_answer_correct, quiz_answered, is_validated, points_earned, time_submitted, is_rejected, is_image_explicit ) VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9, current_timestamp(), 0, 0)",
+        "variableMapping": {
+            ":1": $context.arguments.user_id, 
+            ":2": $context.arguments.action_id, 
+            ":3": $context.arguments.quiz_id,
+            ":4": $context.arguments.g_co2_saved,
+            ":5": "$context.arguments.date_of_action",
+            ":6": $context.arguments.first_quiz_answer_correct,
+            ":7": $context.arguments.quiz_answered,
+            ":8": $context.arguments.is_validated,
+            ":9": $context.arguments.points_earned,
+        },
+        "responseSQL": "SELECT * FROM `SubmittedAction` WHERE user_id=:1 AND action_id=:2 AND g_co2_saved=:4 AND date_of_action=:5 AND first_quiz_answer_correct=:6 AND quiz_answered=:7 AND is_validated=:8 AND points_earned=:9 ORDER BY time_submitted DESC"
+    }
+}
+```
+
+Here, we are checking if the quiz_id variable was passed in. If it was not provided as an argument, we will set the `$context.arguments.quiz_id` variable to be `'""'`. There is some logic inside of the lambda to set an empty string to a null, so if quiz_id is not provided, we just set it to null in the INSERT. We have to do this when quiz_id is not a string value. After the first three lines are evaluated by VTL, `$context.arguments.quiz_id` is guaranteed to have a value. If we did not do the `#set` operation, the variable mapping may end up looking like this in the event quiz_id isn't set after VTL evaluation (with example values):
+```
+"variableMapping": {
+    ":1": 1, 
+    ":2": 2, 
+    ":3": $context.arguments.quiz_id,
+    ":4": 12.5,
+    ":5": "2022-06-09 18:39:44",
+    ":6": false,
+    ":7": false,
+    ":8": false,
+    ":9": 12.5,
+},
+```
+This will cause VTL to throw an error, since it will not know what `$context.arguments.quiz_id` is.
+
+In the event you want to conditionally set a String variable, it will in be a similar way:
+```
+#if( !$context.arguments.group_description )
+    #set( $context.arguments.group_description = '' ) 
+#end
+```

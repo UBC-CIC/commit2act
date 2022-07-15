@@ -1392,10 +1392,6 @@ Resources:
       TypeName: Query
       FieldName: getAllGroupsUserOwns
       RequestMappingTemplate: |
-        #**
-        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
-        *#
-        
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -1871,7 +1867,6 @@ Resources:
       FieldName: getSingleUser
       RequestMappingTemplate: |
         #**
-        If you are reading this, I am so sorry
         The reason for this query's length is because it is essentially 5 seperate SQL queries turning into
         Frankenstein's SQL Monster. It is a combined "get user's information" query, "get user's total co2" query,
         "get user's total points" query, "get user's co2 for the last week" query, and "get user's points for the last week" query
@@ -2157,7 +2152,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "select *, group_concat(DISTINCT '', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name, `User`.name AS name_of_user from SubmittedAction INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id  INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `User` ON SubmittedAction.user_id = `User`.user_id where is_validated = 0 and is_rejected = 0 group by SubmittedAction.sa_id",
+            "sql": "select *, group_concat(DISTINCT '', item_name,': ' , input_value ORDER BY item_name ASC SEPARATOR ', ') AS submitted_action_items, `Action`.action_name AS action_name, `User`.name AS name_of_user from SubmittedAction INNER JOIN `SubmittedActionItem` ON SubmittedActionItem.sa_id = SubmittedAction.sa_id  INNER JOIN `Action` ON SubmittedAction.action_id = `Action`.action_id INNER JOIN `User` ON SubmittedAction.user_id = `User`.user_id where is_validated = 0 and is_rejected = 0 group by SubmittedAction.sa_id ORDER BY time_submitted ASC",
             "variableMapping": {}
           }
         }
@@ -2510,7 +2505,7 @@ Resources:
       FieldName: createGroupAndOwner
       RequestMappingTemplate: |
         #set( $context.arguments.group_name = $context.arguments.group_name.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.group_name = $context.arguments.group_name.replace("%20", "20 Percent") )  ## someone could be annoying and try to create a group with the same name as one that already exists by replacing any spaces in the original name with %20, so this will prevent any glitches, and we are going to assume that nobody will try to put %20 into a group name unless theyre trying to do something funky to the system
+        #set( $context.arguments.group_name = $context.arguments.group_name.replace("%20", "20 Percent") )  ## it is possible to create a group with the same name as one that already exists by replacing any spaces in the original name with %20, so this will prevent any glitches, and we are going to assume that nobody will try to put %20 into a group name
         #set( $context.arguments.group_description = $util.escapeJavaScript($context.arguments.group_description) )
         #set( $context.arguments.group_description = $context.arguments.group_description.replace(":::::::", "::::::: ") )
         #set( $context.arguments.group_description = $context.arguments.group_description.replace("\'", "'") )
