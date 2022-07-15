@@ -15,17 +15,17 @@ TakingITGlobal is a non-governmental organization that focuses on global issues 
 
 # High Level Architecture
 
-The following architecture diagram illustrates the various AWS components utliized to deliver the solution. For an in-depth explanation of the frontend and backend stacks, refer to [Architecture Deep Dive](docs/ArchitectureDeepDive.md).
+The following architecture diagram illustrates the various AWS components utliized to deliver the solution. For an in-depth explanation of the frontend and backend stacks, refer to the [Architecture Deep Dive](docs/ArchitectureDeepDive.md).
 
 ![alt text](docs/images/architecture-diagram.png)
 
 # Deployment Guide
 
-To deploy this solution, please follow our [Deployment Guide](docs/DeploymentGuide.md)
+To deploy this solution, please follow the steps laid out in the [Deployment Guide](docs/DeploymentGuide.md)
 
 # User Guide
 
-For instructions on how to use the web app interface, refer to [Web App User Guide](docs/UserGuide.md).
+For instructions on how to navigate the web app interface, refer to the [Web App User Guide](docs/UserGuide.md).
 
 # Files And Directories
 
@@ -84,19 +84,17 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 │   ├── ArchitectureDeepDive.md
 │   ├── DeploymentGuide.md
 │   └── UserGuide.md
-├── lambda_functions/
-│   ├── graphQLMySQLResolver
-│   ├── processImagesToValidate
-│   └── validateImageWithRekognition
-├── node_modules
+├── backend/
+│   ├── lambda_functions/
+│   │   ├── graphQLMySQLResolver/
+│   │   ├── processImagesToValidate/
+│   │   └── validateImageWithRekognition/
+│   ├── cfn-amplifyRole.yaml
+│   ├── template.yaml
 ├── .gitignore
 ├── amplify.yml
-├── cfn-amplifyRole.yaml
 ├── CHANGELOG.md
-├── package-lock.json
-├── package.json
-├── README.md
-└── template.yaml
+└── README.md
 ```
 
 1. **`/public`**: Contains assets/images, as well as Worker.js file used for making the application a PWA (Progressive Web Application)
@@ -127,7 +125,7 @@ For instructions on how to use the web app interface, refer to [Web App User Gui
 
 # Changelog
 
-To view the changelog, please view [Changelog](/CHANGELOG.md)
+To view the version history, please view the [Changelog](/CHANGELOG.md)
 
 # Credits
 
