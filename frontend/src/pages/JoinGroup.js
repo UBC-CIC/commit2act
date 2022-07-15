@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { API, Auth } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import {
   getSingleGroup,
   getAllUsersInGroup,

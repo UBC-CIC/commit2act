@@ -48,15 +48,7 @@
 
 20. The image is hosted through Cloudfront so that it can be displayed when the user runs the app. Cloudfront acts as a content delivery network to allow the efficient display of the static content.
 
-
-
-
-
 # Backend + AppSync Crash Course
-
-![The main screen of AppSync](../docs/images/AppSync/mainscreen.png)
-
-> *The main screen of AppSync, where a lot of the work with AppSync will occur*
 
 ## Schema
 
@@ -81,7 +73,7 @@ type User {
 ```
 Here, we are defining the 5 columns in the SQL Table as a `type` with 5 different `fields`, with each field corresponding to a column in the database (the fields are user_id, username, name, email, and avatar). Each type has a `scalar type` (also known as a data type in most other langages) which defines what kind of data each field represents. GraphQL only has a few different scalar types, and these are String, Int, Float, Boolean, and ID. Since these have less resolution than MySQL data types, a GraphQL String just means anything string based. So for example, data types in MySQL like `TEXT`, `VARCHAR(255)`, `DATETIME` are all represented by `String` in GraphQL.
 
-In the Schema Definition Language (SDL), an `!` means that the field cannot be null (so here, the fields user_id, name, and email cannot have null values after a query or mutation is called that returns the `type` User). 
+In the Schema Definition Language (SDL), an `!` means that the field cannot be null (so here, the fields user_id, name, and email cannot have null values after a query or mutation is called that returns the `type` User).
 
 ### Custom Scalar Types
 
@@ -95,6 +87,7 @@ enum UserRoleInGroup {
 ```
 
 These can be used exactly the same way as a String or Int to define a type
+
 ```
 type GroupUser {
 	group_id: Int!
@@ -102,6 +95,7 @@ type GroupUser {
 	user_role: UserRoleInGroup!
 }
 ```
+
 This means that user_role can only be the strings `"owner"` or `"member"`, and it cannot be null.
 
 ### Queries
@@ -125,11 +119,11 @@ type Query {
 }
 ```
 
-The query type is defined the same way any other type would be defined. For each query that we want to write, the field will be the name of the query (Note: the convention for queries is to write the queries in camelCase, with the name starting with get (however there will be an exception that I will show later on)), and the scalar type will be the data type that will be returned from the query. 
+The query type is defined the same way any other type would be defined. For each query that we want to write, the field will be the name of the query (Note: the convention for queries is to write the queries in camelCase, with the name starting with get (however there will be an exception that I will show later on)), and the scalar type will be the data type that will be returned from the query.
 
 For `getTotalGlobalCO2`, the field is getTotalGlobalCO2 and the scalar type is Float. When the getTotalGlobalCO2 query is called it will execute the SQL statement `SELECT SUM(SubmittedAction.g_co2_saved) AS totalCO2 FROM SubmittedAction WHERE is_validated=1`, which will then get us back a float value (how this specifically executes the statement and returns the value will be described in the Resolvers section of this document).
 
-The `getAllGroups` query demonstrates another scalar type, this query will return a list of Groups. An output may look something like: 
+The `getAllGroups` query demonstrates another scalar type, this query will return a list of Groups. An output may look something like:
 
 ```
 [
@@ -151,6 +145,7 @@ The `getAllGroups` query demonstrates another scalar type, this query will retur
 ```
 
 The `getSingleGroup` query shows an example of a query that that takes in a `variable`. The variables are defined within the parenthesis next to the field, and there can be as many variables inputted as you need, with each `variable_name: Scalar_type` being separated by a comma. In `getSingleGroup(group_id: Int!): Group`, the variable is the group_id of the group we want to get, and this variable is an integer. If it has an `!`, the variable needs to be passed in. This query will return this single group if `group_id: 34` is passed in:
+
 ```
 {
     "group_id": 34,
@@ -187,7 +182,7 @@ type Mutation {
 
 For the `createUser` mutation, we are essentially passing in all of the different parameters required to define a User, however we do not need to pass in a user_id, since in the RDS instance we define user_id with the `AUTO INCREMENT` field, which will automatically generate a unique id for the User. The mutation will then return the created user, along with the new user_id. Only the `name` and `email` fields are actually required to be inputted, the other two are optional.
 
-For the `updateGroup` mutation, the only variable that is necessary to input is the group_id, and all the other ones are optional. This lets us only have to actually input whichever fields we want to update. 
+For the `updateGroup` mutation, the only variable that is necessary to input is the group_id, and all the other ones are optional. This lets us only have to actually input whichever fields we want to update.
 
 For the `deleteQuiz` mutation, we only need to input the quiz_id of the quiz we want to delete, no other fields are necessary. For all the deletes I usually return a String. I do this because it does not make sense to return the deleted object, since that will have been deleted, so I usually just pass back a string thats along the lines of `"Deleted quiz!"`.
 
@@ -199,7 +194,7 @@ Testing is an important part of making new queries and mutations, and the easies
 
 The left part lists all queries and mutations currently in the schema. When we select a query or mutation, we can see an option to select exactly which fields we want to be returned to us. A major advantage of GraphQL is that we do not actually need to return all the fields when making an API call, we only need to return whichever fields are important for us at the time. In the image, we have only selected the group_id, group_description, is_public, and group_name fields, so those are the only fields appearing in the resulting array on the right side of the screen.
 
-In the middle of the screen, you can type out exactly whichever queries and mutations you want to test. When selecting a query or mutation on the left of the screen, this middle section is automatically populated with the  statement that will be executed.
+In the middle of the screen, you can type out exactly whichever queries and mutations you want to test. When selecting a query or mutation on the left of the screen, this middle section is automatically populated with the statement that will be executed.
 
 To execute a query or mutation, we just need to click the orange play button in the top middle of the screen. This will then ask us which query or mutation we want to run. The returned result will appear on the right. Before running, I recommend making sure the checkbox named `LOGS` is checked (located in the bottom right), as this will give you a quick link to access the CloudWatch logs for that statement's execution, which helps with debugging. This hyperlink appears on the `VIEW IN CLOUDWATCH` text that appears after execution (NOTE: make sure logging is enbled in the Settings tab on AppSync).
 
@@ -207,7 +202,7 @@ Also prior to running, it is important to be logged in via `Cognito User Groups`
 
 ### Custom Types
 
-In the project's schema, there are also many other types defined. When we write a query or mutation, it is possible we would want the result of two or more tables joined together as the response. When we start making more complicated queries and mutations, we will need to define custom types that don't just correspond with just one table. 
+In the project's schema, there are also many other types defined. When we write a query or mutation, it is possible we would want the result of two or more tables joined together as the response. When we start making more complicated queries and mutations, we will need to define custom types that don't just correspond with just one table.
 
 One example of this is the `getUserStatsForGroup(user_id: Int!, group_id: Int!): UserGroupStats` query. The UserGroupStats type is the following:
 
@@ -222,27 +217,25 @@ type UserGroupStats {
 }
 ```
 
-Since for the frontend, we decided that a query that gets these metrics for a user in a group would be important, I made a new type to return the values we actually need. 
+Since for the frontend, we decided that a query that gets these metrics for a user in a group would be important, I made a new type to return the values we actually need.
 
 ## Resolvers
 
-
 ![The main screen of AppSync](../docs/images/AppSync/resolverstemp.png)
 
-
-Resolvers are an extremely important part of AppSync to know about, since resolvers are how queries and mutations get connected to the datasource in the backend. There are many different ways to configure resolvers, but this guide will just describe the setup used for this project. 
+Resolvers are an extremely important part of AppSync to know about, since resolvers are how queries and mutations get connected to the datasource in the backend. There are many different ways to configure resolvers, but this guide will just describe the setup used for this project.
 
 ### Creating and Accessing Resolvers
 
 To create a new resolver for a query or mutation, first navigate to the `Schema` tab on the AppSync console. On the right of the screen, there will be a large section devoted to resolvers. Scroll down the list until you find the query or mutation that you want to make the resolver for. There should be a button named called `Attach` next to the name of the query or mutation, and clicking that will bring you to a new screen with the resolver information.
 
-The first bit of information that is required to be entered is the `Data source name`. This is asking where exactly should AppSync look for the data when the query is executed. In this project, we have already configured a Lambda function as our data source (the Lambda code can be viewed under /lambda_functions/GraphQLMySQLResolver/index.js), and this is called `LambdaHandler`. 
+The first bit of information that is required to be entered is the `Data source name`. This is asking where exactly should AppSync look for the data when the query is executed. In this project, we have already configured a Lambda function as our data source (the Lambda code can be viewed under /lambda_functions/GraphQLMySQLResolver/index.js), and this is called `LambdaHandler`.
 
 Selecting the LamdbdaHandler as our data source, we then see two toggles that we need to switch on, and these are `Enable request mapping template` and `Enable response mapping template`. These mapping templates are how the resolvers work, and they are written in [VTL (Velocity Template Language)](https://velocity.apache.org/engine/1.7/user-guide.html), and while it is not essential to understand the language, it will be helpful in cases where more complicated resolvers are required.
 
 After filling in values for both mapping templates, press the `Save Resolver` button in the top right to save the resolver. To modify the resolver in the future, scroll on the same right panel in the main screen until you find the query/mutation you want to modify, then click on the text that says `LambdaHandler` (you may have to scroll to the right on the panel to see the text).
 
-> *NOTE: The AppSync console is extremely awkward to work with at times. I have had several cases where I will just suddenly lose some of my resolvers. The best way to avoid this is to only have 1 single tab for working on resolvers. Working on multiple resolvers at once can cause glitches as when you try to save one, it may overwrite another.*
+> _NOTE: The AppSync console is extremely awkward to work with at times. I have had several cases where I will just suddenly lose some of my resolvers. The best way to avoid this is to only have 1 single tab for working on resolvers. Working on multiple resolvers at once can cause glitches as when you try to save one, it may overwrite another._
 
 #### Request Mapping Templates
 
@@ -260,7 +253,9 @@ The `request mapping template` is a way to transform the data recieved from the 
   }
 }
 ```
+
 This is the JSON object that the Lambda will recieve. Here is a concrete example of how it looks for the `addGroupMember` mutation:
+
 ```
 {
     "version": "2018-05-29",
@@ -268,7 +263,7 @@ This is the JSON object that the Lambda will recieve. Here is a concrete example
     "payload": {
         "sql": "INSERT INTO `GroupUser` (group_id, user_id, user_role) VALUES (:1, :2, 'member')",
         "variableMapping": {
-            ":1": $context.arguments.group_id, 
+            ":1": $context.arguments.group_id,
             ":2": $context.arguments.user_id
         },
         "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
@@ -277,7 +272,7 @@ This is the JSON object that the Lambda will recieve. Here is a concrete example
 ```
 The `"sql"` key contains the SQL statement we want to execute first. In this case, we want to insert into the GroupUser table a group_id, a user_id, and set the user_role to "member". The group_id and user_id are arguments that are passed in from GraphQL, and how we actually get the values of these input arguments into the SQL statement is through the `"variableMapping"` JSON object. This contains a key-pair combo for every user defined argument that we want to pass into the SQL statements. In VTL, the `$` symbol means the following text is a variable (or a special AppSync operation, which we will see later), and AppSync automatically populates each variable with the name `$context.arguments.INPUT_VARIABLE_NAME` with the inputted value for every variable with a value passed in to the statement. In the Lambda, it will look for the first instance of each variable mapping key (for example, `:1`) inside of the actual sql string, and then it will replace the key with the corresponding value in variableMapping (if the passed in group_id was 10, then the first instance of :1 found in the sql string will be replaced with the value 10).
 
-> *NOTE: It is really important to know that the Lambda only replaces the **first** instance of the key in the sql string, any subsequent instances of :1 in the string will not be replaced with 10)*
+> _NOTE: It is really important to know that the Lambda only replaces the **first** instance of the key in the sql string, any subsequent instances of :1 in the string will not be replaced with 10)_
 
 The same principle applies to the `"responseSQL"` key. This statement is used inside of mutations to get a return value back to GraphQL. The Lambda will execute this statement after the initial sql statement. The same variableMapping object will be applied to responseSQL.
 
@@ -319,17 +314,21 @@ Above, the `item_name` argument is a `String`, so we have to wrap it with double
 A `Response mapping template` acts in a similar way to its request counterpart, however this one will transform the returned values from the Lambda function into a format that GraphQL will be happy with. There are really only 3 different ways a response mapping template will look, and it just depends on what the returning type is.
 
 If the returning type is a normal type not in an array (like the `getSingleGroup` query, it should return 1 object of type `Group`), the response mapping template should just be:
+
 ```
 $util.toJson($context.result[0])
 ```
+
 This `$util.toJson` function is incredibly important for the response mapping templates, it essentially just turns the output from the Lambda into a format that GraphQL will be able to read. The `$context.result[0]` just means "get the first element from the result of the Lambda", since the Lambda returns everything in the form of an array `[0]` is important to include to get the return type to not be a list.
 
 If the returning type is an array of a certain type (like `getAllGroups`, this returns type `[Group]`), the reponse mapping template will just look like
+
 ```
 $util.toJson($context.result)
 ```
 
 In the event that the return type is a scalar type (like in the query `getTotalGlobalCO2` the return type is `Float`), the reponse mapping template will look a little more complicated, and uses a bit of VTL logic to work:
+
 ```
 #if ($context.result[0].get("totalCO2"))
     $util.toJson($context.result[0].get("totalCO2"))
