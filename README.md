@@ -90,7 +90,7 @@ For instructions on how to navigate the web app interface, refer to the [Web App
 │   │   ├── processImagesToValidate/
 │   │   └── validateImageWithRekognition/
 │   ├── cfn-amplifyRole.yaml
-│   ├── template.yaml
+│   └── template.yaml
 ├── .gitignore
 ├── amplify.yml
 ├── CHANGELOG.md
