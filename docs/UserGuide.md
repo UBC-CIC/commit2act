@@ -256,7 +256,7 @@ There are 4 tabs:
 
 ![alt text](images/adminDashboard/manage_quizzes0.png)
 
-- Admin can click on an action icon to view and create action fact/ corresponding quiz questions for that action
+- Admin can click on an action icon to view and create action facts with quiz questions for that action
   ![alt text](images/adminDashboard/manage_quizzes1.png)
   <br>
 
