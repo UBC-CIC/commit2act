@@ -47,17 +47,19 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
     <img src="https://oneclick.amplifyapp.com/button.svg" alt="Deploy to Amplify Console">
 </a>
 
-1. On the AWS console. select your region on the top right, then connect to github![alt text](images/amplify-console-01.PNG)
-2. Select the **amplifyconsole-commit2act-backend-role** for deployment
-3. The deployment will take a few minutes. Wait until the status shows **Verify** in green
-4. Click on left taskbar to open menu, click on Rewrites and redirects, and click on edit
+1. On the AWS console. select your region on the top right, then connect to github![alt text](images/amplify-console-01.png)
+2. Select the **amplifyconsole-commit2act-backend-role** for deployment![alt text](images/amplify-console-02.png)
+3. The deployment will take a few minutes. Wait until the status shows **Verify** in green![alt text](images/amplify-console-03.png)
+4. Click on left taskbar to open menu, click on Rewrites and redirects, and click on edit![alt text](images/amplify-console-04.png)
 5. Click and replace the first rule's source address (or add a rule if there is none) to `</^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>`, click and replace target address to `/index.html`, and select and replace **type** with `200 (Rewrite)`, then save. Add a second rule, with the source address as `</^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>`, the target address as `/index.html`, and the **type** with `404 (Rewrite)`.
    Refer to [AWS's Page on Single Page Apps](https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html#redirects-for-single-page-web-apps-spa) for further information on why we did that
-6. At the [AWS online console](https://console.aws.amazon.com/console/home), enter **Cloudfront** in the search bar. Click on the Distributions tab, and click the ID of the distribution with the origin \_\_\_\_. Under the General tab of that distribution, copy the Distribution Domain Name under the Details heading.
+   ![alt text](images/amplify-console-05.png)
+6. Proceed to backend deployment (link here) before continuing with the following steps
+7. At the [AWS online console](https://console.aws.amazon.com/console/home), enter **Cloudfront** in the search bar. Click on the Distributions tab, and click the ID of the distribution with the origin \_\_\_\_. Under the General tab of that distribution, copy the Distribution Domain Name under the Details heading.
 
 //add image
 
-7. Navigate back to the amplify console by entering **Amplify** at the [AWS online console](https://console.aws.amazon.com/console/home). Under the App Settings heading on the left hand sidebar, click Environment Variables. Add an environment variable with the Variable field as `REACT_APP_CLOUDFRONT_DOMAIN_NAME`, and the Value as the Distribution Domain Name that was copied in the previous step.
+8. Navigate back to the amplify console by entering **Amplify** at the [AWS online console](https://console.aws.amazon.com/console/home). Under the App Settings heading on the left hand sidebar, click Environment Variables. Add an environment variable with the Variable field as `REACT_APP_CLOUDFRONT_DOMAIN_NAME`, and the Value as the Distribution Domain Name that was copied in the previous step.
 
 // add image
 
@@ -86,16 +88,15 @@ Here, you'll learn how to register for an account on the web app, then how to se
    ![alt text](images/webapp2.png)
 4. At the [AWS online console](https://console.aws.amazon.com/console/home), enter **Cognito** in the search bar \
    ![alt text](images/webapp3.png)
-5. Select the user pool corresponding to the project name (Default commit2actchallenge) \
+5. Select the user pool corresponding to the project name (Default commit2act-deve) \
    ![alt text](images/webapp4.png)
 6. Select the user which you want to set to Admin \
    ![alt text](images/webapp5.png)
-7. Scroll down, and click **Add user to group** \
+7. Scroll down to User Attributes, and click **Edit** \
    ![alt text](images/webapp6.png)
-8. Select **Admins** and click **Add** \
+8. Scroll down to Option Attributes, and change the value in the **custom:type** field from _User_ to _Admin_. Click **Save Changes**\
    ![alt text](images/webapp7.png)
 9. You have set up login credentials. Return to Commit2Act web app, and login. Your user is now a Commit2Act Admin! (If you are having issues, try relogging on the Commit2Act web app)\
-   ![alt text](images/webapp8.png)
 
 # Troubleshooting
 
