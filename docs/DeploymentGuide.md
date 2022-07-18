@@ -23,7 +23,6 @@ The code should now be in the folder you created. Navigate into the frontend fol
 
 ```bash
 cd commit2act
-cd frontend
 ```
 
 # Step 2: Frontend Deployment
@@ -64,12 +63,12 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
 
 Congratulations, your web app is now deployed!
 
-
 # Step 3: Backend Deployment
 
 Now that we have set up the frontend of our application, it's time to set up everything that goes on behind the scenes! For more information on how the backend works, feel free to refer to the Architecture Deep Dive, but an understanding of how it all works is not necessary for deployment.
 
 The first step is to get into the backend folder. This can be done with the following commands:
+
 ```bash
 cd ..
 cd backend
@@ -97,7 +96,6 @@ Here, you'll learn how to register for an account on the web app, then how to se
    ![alt text](images/webapp7.png)
 9. You have set up login credentials. Return to Commit2Act web app, and login. Your user is now a Commit2Act Admin! (If you are having issues, try relogging on the Commit2Act web app)\
    ![alt text](images/webapp8.png)
-
 
 # Troubleshooting
 

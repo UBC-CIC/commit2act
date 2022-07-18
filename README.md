@@ -31,74 +31,79 @@ For instructions on how to navigate the web app interface, refer to the [Web App
 
 ```text
 .
-├── frontend/
-│   ├── amplify/
-│   ├── node_modules/
-│   ├── public
-│   └── src/
-│       ├── actions/
-│       ├── components/
-│       │   ├── accountSettings/
-│       │   ├── adminDashboard/
-│       │   ├── authentication/
-│       │   ├── groupProfile/
-│       │   ├── logAction/
-│       │   ├── validateActions/
-│       │   ├── AllActions.js
-│       │   ├── GlobalLeaderboard.js
-│       │   ├── GroupCard.js
-│       │   ├── Navbar.js
-│       │   ├── ScrollToTop.js
-│       │   ├── SubmittedActionCard.js
-│       │   └── UserContributionDonutChart.js
-│       ├── graphql/
-│       ├── models/
-│       ├── pages/
-│       │   ├── AccountSettings.js
-│       │   ├── AdminDashboard.js
-│       │   ├── CreateAction.js
-│       │   ├── CreateGroup.js
-│       │   ├── FindGroup.js
-│       │   ├── GroupProfile.js
-│       │   ├── JoinGroup.js
-│       │   ├── Landing.js
-│       │   ├── SelfReportMenu.js
-│       │   ├── UserProfile.js
-│       │   └── ValidateActions.js
-│       ├── reducers/
-│       ├── views/
-│       ├── App.css
-│       ├── App.js
-│       ├── App.test.js
-│       ├── aws-exports.js
-│       ├── index.css
-│       ├── index.js
-│       ├── logo.svg
-│       ├── reportWebVitals.js
-│       ├── service-worker.js
-│       ├── serviceWorkerRegistration.js
-│       ├── setupTests.js
-│       └── themes.js
+├── amplify
+├── backend/
+│   ├── lambda_functions
+│   ├── cfn-amplifyRole.yaml
+│   └── template.yaml
 ├── docs/
 │   ├── images/
 │   ├── ArchitectureDeepDive.md
 │   ├── DeploymentGuide.md
 │   └── UserGuide.md
-├── backend/
-│   ├── lambda_functions/
-│   │   ├── graphQLMySQLResolver/
-│   │   ├── processImagesToValidate/
-│   │   └── validateImageWithRekognition/
-│   ├── cfn-amplifyRole.yaml
-│   └── template.yaml
+├── node_modules
+├── public
+├── src/
+│   ├── actions
+│   ├── components/
+│   │   ├── adminDashboard/
+│   │   ├── authentication/
+│   │   ├── groupProfile/
+│   │   ├── logAction/
+│   │   ├── validateActions/
+│   │   ├── AllActions.js
+│   │   ├── EditAccountInfo.js
+│   │   ├── GlobalLeaderboard.js
+│   │   ├── GroupCard.js
+│   │   ├── Navbar.js
+│   │   ├── ScrollToTop.js
+│   │   ├── SubmittedActionCard.js
+│   │   └── UserContributionDonutChart.js
+│   ├── graphql
+│   ├── models
+│   ├── pages/
+│   │   ├── AccountSettings.js
+│   │   ├── AdminDashboard.js
+│   │   ├── CreateAction.js
+│   │   ├── CreateGroup.js
+│   │   ├── FindGroup.js
+│   │   ├── GroupProfile.js
+│   │   ├── JoinGroup.js
+│   │   ├── Landing.js
+│   │   ├── SelfReportMenu.js
+│   │   ├── UserProfile.js
+│   │   └── ValidateActions.js
+│   ├── reducers
+│   ├── views
+│   ├── App.css
+│   ├── App.js
+│   ├── App.test.js
+│   ├── aws-exports.js
+│   ├── index.css
+│   ├── index.js
+│   ├── logo.svg
+│   ├── reportWebVitals.js
+│   ├── service-worker.js
+│   ├── serviceWorkerRegistration.js
+│   ├── setupTests.js
+│   └── themes.js
 ├── .gitignore
+├── .graphqlconfig.yml
 ├── amplify.yml
 ├── CHANGELOG.md
+├── package-lock.json
+├── package.json
 └── README.md
 ```
 
-1. **`/public`**: Contains assets/images, as well as Worker.js file used for making the application a PWA (Progressive Web Application)
-2. **`/src`**: Contains all the source code for the site.
+1. **`/backend`**: Contains all the backend code for the site
+   1. **`/lambda_functions`**: Contains the Lambda Functions for the proejct
+   - graphQLMySQLResolver is the Lambda function that translates an AWS AppSync request into a call to the database
+   - processImagesToValidate is the Lambda function that will move an image to a region where Rekognition is available
+   - validateImageWithRekognition is the Lambda function that calls the Amazon Rekognition image processing API on user submitted images
+2. **`/docs`**: Contains all relevant documentation files
+3. **`/public`**: Contains assets/images, as well as Worker.js file used for making the application a PWA (Progressive Web Application)
+4. **`/src`**: Contains all the source code for the site.
 
    1. **`/components`**: Reusable React components.
       - Components are organized into folders, with the folder names being the page name/functionality that the components within are used for
@@ -116,12 +121,6 @@ For instructions on how to navigate the web app interface, refer to the [Web App
    5. **`/views`**: Files for app routing
    6. **`/service-worker.js, serviceWorkerRegistration.js`**: Files for setting up application to be a PWA (Progressive Web Application)
    7. **`/themes.js`**: Global styling for fonts. Note that most components have their own module-scoped styling.
-
-3. **`/docs`**: Contains all relevant documentation files
-4. **`/lambda_functions`**: Contains the Lambda Functions for the proejct
-   - graphQLMySQLResolver is the Lambda function that translates an AWS AppSync request into a call to the database
-   - processImagesToValidate is the Lambda function that will move an image to a region where Rekognition is available
-   - validateImageWithRekognition is the Lambda function that calls the Amazon Rekognition image processing API on user submitted images
 
 # Changelog
 
