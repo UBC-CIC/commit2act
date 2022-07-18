@@ -22,7 +22,7 @@ git clone https://github.com/UBC-CIC/commit2act.git
 The code should now be in the above folder. Now navigate into the frontend folder containing amplify by running the following commands:
 
 ```bash
-cd frontend
+cd commit2act
 ```
 
 # Step 2: Frontend Deployment

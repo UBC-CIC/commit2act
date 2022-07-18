@@ -3,17 +3,16 @@ backend:
   phases:
     build:
       commands:
-        - cd frontend
         - export AWS_REGION=$(aws configure get region)
         - sed "s|%REGION%|$AWS_REGION|g" amplify/backend/api/commit2act/custom-roles.tmp > amplify/backend/api/commit2act/custom-roles.json
         - npm install -g @aws-amplify/cli
-        - "# Execute Amplify CLI with the helper script"
+        - '# Execute Amplify CLI with the helper script'
         - amplifyPush --simple
 frontend:
   phases:
     preBuild:
       commands:
-        - "# Execute Amplify CLI with the helper script"
+        - '# Execute Amplify CLI with the helper script'
         - amplifyPush --simple
         - npm install
     # IMPORTANT - Please verify your build commands
@@ -23,10 +22,10 @@ frontend:
         - npm run build
   artifacts:
     # IMPORTANT - Please verify your build output directory
-    baseDirectory: ./frontend/build
+    baseDirectory: ./build
     files:
-      - "**/*"
+      - '**/*'
   cache:
     paths:
-      - frontend/node_modules/**/*
-      - "!frontend/node_modules/.cache"
+      - node_modules/**/*
+      - 'node_modules/.cache'
