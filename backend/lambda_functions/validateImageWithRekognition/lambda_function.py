@@ -31,6 +31,7 @@ db_database = os.environ['DBNAME']
 
 CLOUDFRONT_URL = os.environ['CLOUDFRONT_URL']
 AMPLIFY_BUCKET = os.environ['AMPLIFY_BUCKET']
+VALIDATION_BUCKET = os.environ['VALIDATION_BUCKET']
 
 # --------------- Helper Functions to call Rekognition APIs ------------------
 def detect_faces(bucket, key):

@@ -589,6 +589,23 @@ Resources:
       Name: MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD
       Value: !Ref MinConfidenceThreshold
 
+  ValidationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+        - Key: "Description"
+          Value: "This S3 Bucket will be used as a place to upload images for validation"
+
 
   # Lambda functions ####################################
 
@@ -746,8 +763,9 @@ Resources:
           Resource: '*' #!?
       Environment:
         Variables:
-          AMPLIFY_BUCKET: !Ref AmplifyBucket #commit2act-storage-4f79922d113723-develop #############
-          CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName # https://d11tk3grlaje8a.cloudfront.net/   #
+          AMPLIFY_BUCKET: !Ref AmplifyBucket
+          VALIDATION_BUCKET: !Ref ValidationBucket
+          CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName 
           DBNAME: !Ref DBName
           ENDPOINT: !GetAtt RDSProxy.Endpoint
           PASSWORD: !Ref DBPassword
@@ -758,18 +776,17 @@ Resources:
         SubnetIds:
           - !Ref PublicSubnet1
           - !Ref PublicSubnet2
-      
-      # Events:
-      #   FileUpload:
-      #     Type: S3
-      #     Properties:
-      #       Bucket: !Ref AmplifyBucket ####################
-      #       Events: s3:ObjectCreated:*
-      #       Filter:
-      #         S3Key:
-      #           Rules:
-      #             - Name: prefix
-      #               Value: "public/validation/input/"
+      Events:
+        FileUpload:
+          Type: S3
+          Properties:
+            Bucket: !Ref ValidationBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: "public/validation/input/"
 
   validateImageWithRekognitionLogs:
     Type: AWS::Logs::LogGroup
@@ -3849,3 +3866,7 @@ Outputs:
   RDSProxyEndpoint:
     Description: The endpoint of the database proxy
     Value: !GetAtt RDSProxy.Endpoint
+
+  ValidationS3BucketName:
+    Description: The name of the bucket used to upload images for validation
+    Value: !Ref ValidationBucket
