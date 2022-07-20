@@ -21,7 +21,7 @@ Resources:
         - PolicyName: commit2act-extended-policy
           PolicyDocument: # JSON policy document
             Version: "2012-10-17"
-            Statement: # allow read only access to all S3 buckets
+            Statement:
               - Effect: Allow
                 Action:
                   - iam:ListPolicies
