@@ -5,7 +5,7 @@
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  Commit2Act SAM deployent
+  Commit2Act SAM deployment
 
 # Transform section specifies one or more macros that AWS CloudFormation uses to process your template
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
@@ -25,17 +25,12 @@ Parameters:
     Type: String
     Default: dev
     Description: A name to identify the environment (ex. dev, prod, test)
-  DeploymentRegion:
-    Type: String
-    Default: us-east-1
-    AllowedValues: [us-east-1, us-east-2, us-west-1, us-west-2, ap-south-1, ap-northeast-1, ap-northeast-2, ap-southeast-1, ap-southeast-2, eu-central-1, eu-west-1, eu-west-2]
-    Description: The region to deploy the solution in
   AmplifyBucket:
     Type: String
     Description: "The name of the S3 bucket for the Amplify project (ex. projectname-storage-0123456789-dev)"
-  AmplifyCognitoUserPoolId:
+  AppSyncApiId:
     Type: String
-    Description: "The ID of the Cognito User Pool for the Amplify project (ex. us-east-1_aBcDeFgh)"
+    Description: "The ID of the AppSync API for the Amplify project (ex. AbcdeF1234567)"
   DBName:
     Default: sys
     Description: The database name
@@ -81,10 +76,7 @@ Parameters:
     Type: String
     Description: "The price class for CloudFront distribution"
     Default: PriceClass_100
-    AllowedValues:
-      - PriceClass_100
-      - PriceClass_200
-      - PriceClass_All
+    AllowedValues: [PriceClass_100, PriceClass_200, PriceClass_All]
   MinConfidenceThreshold:
     Type: Number
     Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
@@ -231,6 +223,41 @@ Resources:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
 
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn:
+    - VPC
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Routes
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  PrivateRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: 
+      - PrivateRouteTable
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+
   OpenSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties: 
@@ -241,6 +268,23 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
+      SecurityGroupIngress: 
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+      Tags:
+        - Key: "Project"
+          Value: !Ref 'ProjectName'
+        - Key: "EnvironmentName"
+          Value: !Ref 'EnvironmentName'
+
+  ClosedSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: A security group that allows no traffic in, but all traffic out
+      GroupName: closed-security-group
       SecurityGroupIngress: 
         - IpProtocol: -1
           FromPort: -1
@@ -287,18 +331,26 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
 
+  DBPrivateSubnetGrouping:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: Subnet grouping for private subnets
+      DBSubnetGroupName: subnet-group-private-1-2
+      SubnetIds: 
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
   MainDBCluster:
     Type: AWS::RDS::DBCluster
     DependsOn:
     - VPC
-    - PublicSubnet1
-    - PublicSubnet2
-    - DBSubnetGrouping
-    - IGWAttachment
+    - PrivateSubnet1
+    - PrivateSubnet2
+    - DBPrivateSubnetGrouping
     Properties: 
       DatabaseName: !Ref 'DBName'
       DBClusterIdentifier: db-cluster
-      DBSubnetGroupName: !Ref DBSubnetGrouping
+      DBSubnetGroupName: !Ref DBPrivateSubnetGrouping
       DeletionProtection: !Ref 'DeletionProtection'
       EnableCloudwatchLogsExports: 
         - general
@@ -311,7 +363,7 @@ Resources:
       MasterUserPassword: !Ref 'DBPassword'
       Port: 3306
       StorageEncrypted: !Ref 'EncryptDatabase' 
-      SourceRegion: !Ref 'DeploymentRegion'
+      SourceRegion: !Sub '${AWS::Region}'
       Tags: 
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -324,13 +376,12 @@ Resources:
     Type: AWS::RDS::DBInstance
     DependsOn:
     - MainDBCluster
-    - IGWAttachment
     Properties: 
       DBClusterIdentifier: db-cluster
       Engine: aurora-mysql 
       DBInstanceClass: !Ref 'DBInstanceClass'
       DBInstanceIdentifier: !Sub '${ProjectName}-${EnvironmentName}-instance'
-      PubliclyAccessible: true 
+      PubliclyAccessible: false 
       Tags: 
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -345,7 +396,7 @@ Resources:
     Properties: 
       Description: Stores the credentials for the RDS instance
       Name: RDSCredentials
-      SecretString: !Sub '{"username":"${DBUser}","password":"${DBPassword}","engine":"mysql","host":"${MainDBCluster.Endpoint.Address}","port":3306,"region":"${DeploymentRegion}"}'
+      SecretString: !Sub '{"username":"${DBUser}","password":"${DBPassword}","engine":"mysql","host":"${MainDBCluster.Endpoint.Address}","port":3306,"region":"${AWS::Region}"}'
       Tags:
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -413,6 +464,8 @@ Resources:
       SubnetIds:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
 
@@ -439,6 +492,8 @@ Resources:
       SubnetIds:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
   
@@ -452,6 +507,8 @@ Resources:
       SubnetIds:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
 
@@ -461,6 +518,7 @@ Resources:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
       RouteTableIds: 
         - !Ref PublicRouteTable
+        - !Ref PrivateRouteTable
       VpcEndpointType: Gateway
       VpcId: !Ref VPC
 
@@ -470,8 +528,8 @@ Resources:
     DependsOn:
     - MainDBInstance
     - RDSCredentialsSecret
-    - PublicSubnet1
-    - PublicSubnet2
+    - PrivateSubnet1
+    - PrivateSubnet2
     - RDSProxyRole
     Properties:
       DebugLogging: true
@@ -483,8 +541,8 @@ Resources:
       Auth:
         - {AuthScheme: SECRETS, SecretArn: !Ref RDSCredentialsSecret, IAMAuth: DISABLED}
       VpcSubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       Tags:
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -515,24 +573,31 @@ Resources:
 
 
   # Lambda functions ####################################
+  
+  graphQLMySQLResolverLayers:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: graphQLMySQLResolverLayers
+      Description: Dependency for Lambda
+      ContentUri: ./lambda_functions/graphQLMySQLResolver/node_modules/
 
   graphQLMySQLResolver:
     Type: AWS::Serverless::Function
     DependsOn:
     - RDSProxy
-    - OpenSecurityGroup
+    - ClosedSecurityGroup
     - MainDBInstance
     - LambdaServiceRole
     Properties:
       FunctionName: graphQL-MySQL-Resolver
       Layers:
-        - !Ref graphQLMySQLResolverLayer
+        - !Ref graphQLMySQLResolverLayers
       Handler: index.handler
       CodeUri: ./lambda_functions/graphQLMySQLResolver/
       Runtime: nodejs14.x
       Architectures:
         - x86_64
-      MemorySize: 512
+      MemorySize: 1000
       Timeout: 100
       Description: Called by AppSync to resolve SQL statements in the form of a request mapping
       Policies:
@@ -567,17 +632,10 @@ Resources:
           RDSPROXY_ENDPOINT: !GetAtt RDSProxy.Endpoint
       VpcConfig:
         SecurityGroupIds:
-          - !Ref OpenSecurityGroup
+          - !Ref ClosedSecurityGroup
         SubnetIds:
           - !Ref PublicSubnet1
           - !Ref PublicSubnet2
-
-  graphQLMySQLResolverLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName: graphQLMySQLResolver-Layer
-      Description: Dependency for lambda
-      ContentUri: ./lambda_functions/graphQLMySQLResolver/node_modules
 
   graphQLMySQLResolverLogs:
     Type: AWS::Logs::LogGroup
@@ -601,7 +659,7 @@ Resources:
     DependsOn:
     - CloudFrontDistribution
     - RDSProxy
-    - OpenSecurityGroup
+    - ClosedSecurityGroup
     - MainDBInstance
     Properties:
       FunctionName: validateImageWithRekognition
@@ -675,7 +733,7 @@ Resources:
           USERNAME: !Ref DBUser
       VpcConfig:
         SecurityGroupIds:
-          - !Ref OpenSecurityGroup
+          - !Ref ClosedSecurityGroup
         SubnetIds:
           - !Ref PublicSubnet1
           - !Ref PublicSubnet2
@@ -717,7 +775,7 @@ Resources:
         Origins:
           - ConnectionAttempts: 3
             ConnectionTimeout: 10
-            DomainName: !Sub '${AmplifyBucket}.s3.${DeploymentRegion}.amazonaws.com'
+            DomainName: !Sub '${AmplifyBucket}.s3.${AWS::Region}.amazonaws.com'
             Id: AmplifyBucketCloudFrontDistribution
             OriginPath: "/public"
             S3OriginConfig: 
@@ -757,34 +815,33 @@ Resources:
               Service:
                 - appsync.amazonaws.com
 
-  AppSyncAPI:
-    Type: AWS::AppSync::GraphQLApi
-    DependsOn: 
-      - AppSyncLogsRole
-    Properties:
-      Name: !Sub '${ProjectName}-GraphQL-API-${EnvironmentName}'
-      AuthenticationType: AMAZON_COGNITO_USER_POOLS
-      UserPoolConfig:
-        AwsRegion: !Ref DeploymentRegion
-        DefaultAction: ALLOW
-        UserPoolId: !Ref AmplifyCognitoUserPoolId
-      LogConfig:
-        CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
-        FieldLogLevel: ALL
-      Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
+  # AppSyncAPI:
+  #   Type: AWS::AppSync::GraphQLApi
+  #   DependsOn: 
+  #     - AppSyncLogsRole
+  #   Properties:
+  #     Name: !Sub '${ProjectName}-GraphQL-API-${EnvironmentName}'
+  #     AuthenticationType: AMAZON_COGNITO_USER_POOLS
+  #     UserPoolConfig:
+  #       AwsRegion: !Sub '${AWS::Region}'
+  #       DefaultAction: ALLOW
+  #       UserPoolId: !Ref AmplifyCognitoUserPoolId
+  #     LogConfig:
+  #       CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
+  #       FieldLogLevel: ALL
+  #     Tags:
+  #       - Key: "Project"
+  #         Value: !Ref 'ProjectName'
+  #       - Key: "EnvironmentName"
+  #         Value: !Ref 'EnvironmentName'
 
   LambdaAppSyncDataSource:
     Type: AWS::AppSync::DataSource
     DependsOn:
-    - AppSyncAPI
     - graphQLMySQLResolver
     - GraphQLApiSchema
     Properties:
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       Name: LambdaHandler
       Type: AWS_LAMBDA
       ServiceRoleArn: !GetAtt LambdaServiceRole.Arn
@@ -794,7 +851,7 @@ Resources:
   GraphQLApiSchema:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       Definition: |
         type Action {
           action_id: Int!
@@ -1232,7 +1289,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1259,7 +1316,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1303,7 +1360,7 @@ Resources:
         ## 	"fallback_quiz_media": $context.result.get("fallback_quiz_media"),
         ## 	"validation_label": null
         ## }
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1334,7 +1391,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1361,7 +1418,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1389,7 +1446,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1414,7 +1471,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1442,7 +1499,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1470,7 +1527,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1494,7 +1551,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1525,7 +1582,7 @@ Resources:
         $util.toJson($context.result)
         
         
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1560,7 +1617,7 @@ Resources:
         
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1586,7 +1643,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1614,7 +1671,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1642,7 +1699,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1669,7 +1726,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1697,7 +1754,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1725,7 +1782,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1753,7 +1810,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1781,7 +1838,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1810,7 +1867,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1835,7 +1892,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1863,7 +1920,7 @@ Resources:
       ResponseMappingTemplate: |
         $util.toJson($context.result)
         
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1899,7 +1956,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1931,7 +1988,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1965,7 +2022,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1997,7 +2054,7 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2033,7 +2090,7 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2069,7 +2126,7 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2105,7 +2162,7 @@ Resources:
           false
         #end
         
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2137,7 +2194,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2168,7 +2225,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2199,7 +2256,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2226,7 +2283,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2253,7 +2310,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2281,7 +2338,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2318,7 +2375,7 @@ Resources:
       ResponseMappingTemplate: |
         $util.toJson($context.result[0])
         
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2361,7 +2418,7 @@ Resources:
         }
 
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2410,7 +2467,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2449,7 +2506,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2501,7 +2558,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2550,7 +2607,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2590,7 +2647,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2618,7 +2675,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2664,7 +2721,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2699,7 +2756,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2727,7 +2784,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: "Deleted action with and its associated items"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2760,7 +2817,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Deleted action item"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2793,7 +2850,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Deleted validation label"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2820,7 +2877,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Deleted group!"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2848,7 +2905,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: "Deleted user"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2879,7 +2936,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2910,7 +2967,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2941,7 +2998,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2972,7 +3029,7 @@ Resources:
         
       ResponseMappingTemplate: |
         "Rejected Submitted Action"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3024,7 +3081,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3066,7 +3123,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3096,7 +3153,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Removed user from group"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3130,7 +3187,7 @@ Resources:
         
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3207,7 +3264,7 @@ Resources:
         
         $util.toJson($context.result[0])
         
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3290,7 +3347,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3356,7 +3413,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3379,7 +3436,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3406,7 +3463,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3433,7 +3490,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3463,7 +3520,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3489,7 +3546,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $context.result[0].get("is_correct_answer")
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3519,7 +3576,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3552,7 +3609,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3578,7 +3635,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3630,7 +3687,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3668,7 +3725,7 @@ Resources:
         }
 
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3697,7 +3754,7 @@ Resources:
         }
 
       ResponseMappingTemplate: "Deleted quiz"
-      ApiId: !GetAtt AppSyncAPI.ApiId
+      ApiId: !Ref AppSyncApiId
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3706,18 +3763,6 @@ Resources:
 # OUTPUTS ######################
 
 Outputs:
-  RDSEndpoint:
-    Description: "The endpoint for the RDS"
-    Value: !GetAtt MainDBCluster.Endpoint.Address
-
-  GraphQLEndpoint:
-    Description: The endpoint of the GraphQL API
-    Value: !GetAtt AppSyncAPI.GraphQLUrl
-
-  RDSProxyEndpoint:
-    Description: The endpoint of the database proxy
-    Value: !GetAtt RDSProxy.Endpoint
-
   AmplifyBucketName:
     Description: The name of the Amplify S3 bucket
     Value: !Ref AmplifyBucket
@@ -3728,4 +3773,10 @@ Outputs:
 
   CloudFrontDistributionDomainName:
     Description: The domain name of our CloudFront distibution
-    Value: !GetAtt CloudFrontDistribution.DomainName
+    Value: !Sub 
+      - 'https://${Domain}/'
+      - Domain: !GetAtt CloudFrontDistribution.DomainName
+  
+  CloudFrontOriginAccessIdentity:
+    Description: The origin access identity ID for CloudFront
+    Value: !Ref OriginAccessIdentity

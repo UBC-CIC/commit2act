@@ -43,4 +43,8 @@ echo "Running Script with S3 Bucket $1 and Lambda ARN $2";
 aws s3api \
   put-bucket-notification-configuration \
   --bucket="$1" \
-  --notification-configuration "$JSON"
+  --notification-configuration "$JSON";
+
+
+
+echo "Finished!"
