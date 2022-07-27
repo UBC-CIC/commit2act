@@ -32,12 +32,6 @@ db_database = os.environ['DBNAME']
 CLOUDFRONT_URL = os.environ['CLOUDFRONT_URL']
 AMPLIFY_BUCKET = os.environ['AMPLIFY_BUCKET']
 
-# --------------- Helper Functions to call Rekognition APIs ------------------
-def detect_faces(bucket, key):
-    response = rekognition.detect_faces(Image={"S3Object": {"Bucket": bucket, "Name": key}})
-    return response
-
-
 def image_from_s3(bucket, key):
     # Returns an image object for an image file in an s3 bucket (the path in s3 is "bucket/key")
     # used for image analysis without AWS services if it is desired
@@ -175,19 +169,12 @@ def detect_labels(bucket, key):
     print(f'{time.time() - t:.3f} seconds since invocation. Finished execution.')
     return response
 
-
-def index_faces(bucket, key):
-    # Note: Collection has to be created upfront. Use CreateCollection API to create a collecion.
-    #rekognition.create_collection(CollectionId='BLUEPRINT_COLLECTION')
-    response = rekognition.index_faces(Image={"S3Object": {"Bucket": bucket, "Name": key}}, CollectionId="BLUEPRINT_COLLECTION")
-    return response
-
-
 # --------------- Main handler ------------------
 
 def lambda_handler(event, context):
     '''
     S3 trigger that uses Rekognition APIs to detect labels in S3 Object.
+    This is the handler, meaning this function is called upon Lambda invokation
     '''
     
     # Get the object from the event

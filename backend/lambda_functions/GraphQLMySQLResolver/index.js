@@ -5,7 +5,7 @@ async function conditionallyCreateDB(connection) {
   // if the database has not yet been made, make it
   // otherwise, this throws an error, which is caught in the handler and
   // the lambda handler function proceeds as usual
-  const createDBSQL = `
+  let createDBSQL = `
   CREATE TABLE \`User\` (
     \`user_id\` int PRIMARY KEY AUTO_INCREMENT,
     \`username\` varchar(50) NOT NULL,
@@ -103,14 +103,24 @@ async function conditionallyCreateDB(connection) {
   ALTER TABLE \`SubmittedActionItem\` ADD FOREIGN KEY (\`item_name\`) REFERENCES \`ActionItem\` (\`item_name\`) ON DELETE CASCADE ON UPDATE CASCADE;
   ALTER TABLE \`ActionValidationLabel\` ADD FOREIGN KEY (\`action_id\`) REFERENCES \`Action\` (\`action_id\`) ON DELETE CASCADE ON UPDATE CASCADE;
   `;
-  return executeSQL(connection, createDBSQL);
+
+  let sql_statements = createDBSQL.split(";"); // splits up multiple SQL statements into an array
+  for (let sql_statement of sql_statements) { // iterate through the SQL statements
+    if (sql_statement.length < 3) { // sometimes an empty statement will try to be executed, this stops those from executing
+      continue;
+    }
+    // execute the sql statement on our database
+    result = await executeSQL(connection, sql_statement);
+  }
+
+  return result;
 }
 
-function executeSQL(connection, sql) {
+function executeSQL(connection, sql_statement) {
   // executes an sql statement as a promise, with included error handling
   return new Promise((resolve,reject) => {
-    console.log('Executing SQL:', sql);
-    connection.query(sql, (err, data) => { // if error, gets saved in `err`, else response from DB saved in `data`
+    console.log('Executing SQL:', sql_statement);
+    connection.query({sql: sql_statement, timeout: 60000}, (err, data) => { // if error, gets saved in `err`, else response from DB saved in `data`
       if(err) {
         return reject(err);
       }
