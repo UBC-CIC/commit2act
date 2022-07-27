@@ -31,6 +31,9 @@ Parameters:
   AppSyncApiId:
     Type: String
     Description: "The ID of the AppSync API for the Amplify project (ex. AbcdeF1234567)"
+  AmplifyCognitoUserPoolId:
+    Type: String
+    Description: "The ID of the Cognito User Pool for the Amplify project (ex. us-east-1_aBcDeFgh)"
   DBName:
     Default: sys
     Description: The database name
@@ -80,12 +83,6 @@ Parameters:
       - PriceClass_100
       - PriceClass_200
       - PriceClass_All
-  AmplifyBucket:
-    Type: String
-    Description: "The name of the S3 bucket for the Amplify project (ex. projectname-storage-0123456789-dev)"
-  AmplifyCognitoUserPoolId:
-    Type: String
-    Description: "The ID of the Cognito User Pool for the Amplify project (ex. us-east-1_aBcDeFgh)"
   MinConfidenceThreshold:
     Type: Number
     Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
@@ -247,14 +244,6 @@ Resources:
         - Key: "EnvironmentName"
           Value: !Ref 'EnvironmentName'
 
-  PrivateRoute1:
-    Type: AWS::EC2::Route
-    DependsOn: 
-      - PrivateRouteTable
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -294,7 +283,7 @@ Resources:
     Properties: 
       GroupDescription: A security group that allows no traffic in, but all traffic out
       GroupName: closed-security-group
-      SecurityGroupIngress: 
+      SecurityGroupEgress: 
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
@@ -471,8 +460,8 @@ Resources:
       SecurityGroupIds:
         - !Ref OpenSecurityGroup
       SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
+        # - !Ref PublicSubnet1
+        # - !Ref PublicSubnet2
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcEndpointType: Interface
@@ -499,8 +488,8 @@ Resources:
       SecurityGroupIds:
         - !Ref OpenSecurityGroup
       SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
+        # - !Ref PublicSubnet1
+        # - !Ref PublicSubnet2
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcEndpointType: Interface
@@ -514,8 +503,8 @@ Resources:
       SecurityGroupIds:
         - !Ref OpenSecurityGroup
       SubnetIds:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
+        # - !Ref PublicSubnet1
+        # - !Ref PublicSubnet2
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcEndpointType: Interface

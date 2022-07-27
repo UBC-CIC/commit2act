@@ -107,6 +107,8 @@ Configuring SAM deploy
       (See instructions below titled 'Get the Amplify Bucket' to find out how to get this value)
    Parameter AppSyncApiId []: <WILL LOOK LIKE 4bCdEfGhIjKlMn0pQrStUvWxYz>
       (See instructions below titled 'Get the AppSync API ID' to find out how to get this value)
+   Parameter AmplifyCognitoUserPoolId []: <WILL LOOK LIKE us-west-2_5Sb5UhFXI]>
+      (See instructions below titled 'Get the Amplify Cognito User Pool ID' to find out how to get this value)
    Parameter DBName [sys]:
       (Name of the database, sys is the standard name, must begin with a letter and contain only alphanumeric characters, and be 16 characters or less)
    Parameter DBUser [admin]:
@@ -157,6 +159,10 @@ Copy the whole name, and then paste it into your Terminal where you are running 
 
 To get the Cognito User Pool ID, it is a very similar process to the Amplify Bucket. Under `Categories added`, there will be a link called `API`. On the API page click the `View in AppSync` button. Then, go to the settings page, which is located on the left side of the screen. On that page, there will be the API ID. Copy the entire string, and then paste it into your Terminal where you are running the CloudFormation template for the parameter AppSyncApiId.
 
+## Get the Amplify Cognito User Pool ID
+
+Similar to the above process, under `Categories added` click on `Authentication`. Under `Users` click on `View in Cognito`. Near the top left there will be a `User pool ID`, copy that, and paste it for the parameter AmplifyCognitoUserPoolId.
+
 # Step 4: Set up Lambda Trigger
 
 In order for the project to work as intended, we need to set up a trigger for our image validation Lambda function that will let it be called whenever an image file is uploaded to our Amplify S3 Bucket. There are two ways to do this. If you are on an Apple Computer, Linux, or using the Windows Subsystem for Linux (ensuring that you have the AWS CLI set up on these systems), you can run a script to set this up. If you are on a standard Windows machine, you must follow a manual process.
@@ -171,6 +177,14 @@ This will set up the Lambda trigger. The two required parameters will have been 
 ```bash
 ./scripts/lambda_trigger.sh projectname-storage-0123456789abcd-develop arn:aws:lambda:us-east-1:012345678901:function:validateImageWithRekognition
 ```
+
+If you encounter the error `/usr/bin/env: ‘bash\r’: No such file or directory`, something you can do to resolve the error on WSL is run the following commands
+```bash
+sudo apt install dos2unix
+dos2unix ./scripts/lambda_trigger.sh
+```
+
+Now you can run the `./scripts/lambda_trigger.sh <AmplifyBucketName> <ValidationFunctionARN>` command.
 
 Running this will set up the trigger, and you can move on to the next step.
 
