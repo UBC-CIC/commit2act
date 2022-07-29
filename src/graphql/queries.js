@@ -114,19 +114,9 @@ export const getUsersTotalCO2 = /* GraphQL */ `
     getUsersTotalCO2(user_id: $user_id)
   }
 `;
-export const getGroupsTotalCO2 = /* GraphQL */ `
-  query GetGroupsTotalCO2($group_id: Int!) {
-    getGroupsTotalCO2(group_id: $group_id)
-  }
-`;
 export const getUsersWeekCO2 = /* GraphQL */ `
   query GetUsersWeekCO2($user_id: Int!) {
     getUsersWeekCO2(user_id: $user_id)
-  }
-`;
-export const getGroupsWeekCO2 = /* GraphQL */ `
-  query GetGroupsWeekCO2($group_id: Int!) {
-    getGroupsWeekCO2(group_id: $group_id)
   }
 `;
 export const getAllUsers = /* GraphQL */ `
@@ -437,11 +427,6 @@ export const getAllGroupsUserOwns = /* GraphQL */ `
       weekly_co2
       weekly_points
     }
-  }
-`;
-export const getGroupTotalCO2 = /* GraphQL */ `
-  query GetGroupTotalCO2($group_id: Int!) {
-    getGroupTotalCO2(group_id: $group_id)
   }
 `;
 export const isPrivateGroupPasswordCorrect = /* GraphQL */ `

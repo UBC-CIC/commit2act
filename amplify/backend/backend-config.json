@@ -74,5 +74,43 @@
       "providerPlugin": "awscloudformation",
       "dependsOn": []
     }
+  },
+  "custom": {
+    "parameterstoreGraphQL": {
+      "service": "customCDK",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "commit2act",
+          "attributes": [
+            "GraphQLAPIKeyOutput",
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        },
+        {
+          "category": "storage",
+          "resourceName": "s3commit2actstorage4f79922d",
+          "attributes": [
+            "BucketName",
+            "Region"
+          ]
+        },
+        {
+          "category": "auth",
+          "resourceName": "commit2act",
+          "attributes": [
+            "IdentityPoolId",
+            "IdentityPoolName",
+            "UserPoolId",
+            "UserPoolArn",
+            "UserPoolName",
+            "AppClientIDWeb",
+            "AppClientID"
+          ]
+        }
+      ]
+    }
   }
 }
