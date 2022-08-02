@@ -113,6 +113,8 @@ Resources:
           Value: !Ref 'ProjectName'
         - Key: "EnvironmentName"
           Value: !Ref 'EnvironmentName'
+        - Key: "Name"
+          Value: !Sub ${ProjectName} VPC
 
   IGWAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -294,6 +296,49 @@ Resources:
           Value: !Ref 'ProjectName'
         - Key: "EnvironmentName"
           Value: !Ref 'EnvironmentName'
+  
+  SGProxy:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn:
+      - ClosedSecurityGroup
+    Properties: 
+      GroupDescription: A security group for RDS that allows all traffic in on port 3306
+      GroupName: Proxy-security-group
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref ClosedSecurityGroup
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+
+  SGRds:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn:
+      - ClosedSecurityGroup
+      - SGProxy
+    Properties: 
+      GroupDescription: A security group for RDS that allows all traffic in on port 3306 from the proxy and other vpc resources
+      GroupName: RDS-security-group
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref ClosedSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref SGProxy
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
 
   MySQLAuroraInboundSG:
     Type: AWS::EC2::SecurityGroup
@@ -391,6 +436,7 @@ Resources:
     DependsOn:
     - MainDBCluster
     - IGWAttachment
+    - MainDBInstance
     Properties: 
       Description: Stores the credentials for the RDS instance
       Name: RDSCredentials
@@ -400,29 +446,6 @@ Resources:
           Value: !Ref 'ProjectName'
         - Key: "EnvironmentName"
           Value: !Ref 'EnvironmentName'
-
-  RDSProxyRole:
-    Type: AWS::IAM::Role
-    DependsOn:
-      - RDSCredentialsSecret
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - 'rds.amazonaws.com'
-            Action:
-              - 'sts:AssumeRole'
-      Policies:
-        - PolicyName: rdsproxypolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'secretsmanager:GetSecretValue'
-                Resource: !Ref RDSCredentialsSecret
 
   LambdaServiceRole:
     Type: AWS::IAM::Role
@@ -472,8 +495,8 @@ Resources:
   #   Properties:
   #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.kms'
   #     PrivateDnsEnabled: true
-  #     SecurityGroupIds:
-  #       - !Ref OpenSecurityGroup
+      # SecurityGroupIds:
+      #   - !Ref ClosedSecurityGroup
   #     SubnetIds:
   #       - !Ref PublicSubnet1
   #       - !Ref PublicSubnet2
@@ -501,7 +524,7 @@ Resources:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.rds'
       PrivateDnsEnabled: true
       SecurityGroupIds:
-        - !Ref OpenSecurityGroup
+        - !Ref ClosedSecurityGroup
       SubnetIds:
         # - !Ref PublicSubnet1
         # - !Ref PublicSubnet2
@@ -520,6 +543,35 @@ Resources:
       VpcEndpointType: Gateway
       VpcId: !Ref VPC
 
+  RDSProxyRole:
+    Type: AWS::IAM::Role
+    DependsOn:
+      - RDSCredentialsSecret
+      - MainDBInstance
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'rds.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: rdsproxypolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: !Ref RDSCredentialsSecret
+              - Effect: Allow
+                Action: rds-db:connect
+                Resource: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${MainDBCluster}"
+              - Effect: Allow
+                Action: rds-db:connect
+                Resource: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:db:${MainDBInstance}"
 
   RDSProxy:
     Type: AWS::RDS::DBProxy
@@ -541,6 +593,8 @@ Resources:
       VpcSubnetIds:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
+      VpcSecurityGroupIds:
+        - !Ref SGProxy
       Tags:
         - Key: "Project"
           Value: !Ref 'ProjectName'
@@ -632,8 +686,8 @@ Resources:
         SecurityGroupIds:
           - !Ref ClosedSecurityGroup
         SubnetIds:
-          - !Ref PublicSubnet1
-          - !Ref PublicSubnet2
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
 
   graphQLMySQLResolverLogs:
     Type: AWS::Logs::LogGroup
@@ -733,8 +787,8 @@ Resources:
         SecurityGroupIds:
           - !Ref ClosedSecurityGroup
         SubnetIds:
-          - !Ref PublicSubnet1
-          - !Ref PublicSubnet2
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
       
       # Events:
       #   FileUpload:
@@ -1410,7 +1464,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id",
+            "sql": "SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id",
             "variableMapping": {
             },
           }
@@ -1829,7 +1883,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT * FROM (SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id) AS T WHERE group_id=:1",
+            "sql": SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id WHERE group_id=:1 GROUP BY `Group`.group_id ",
             "variableMapping": {
             ":1": $context.args.group_id
             },
@@ -1857,9 +1911,9 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT * FROM (SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id INNER JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` inner join GroupUser on `Group`.group_id=GroupUser.group_id inner join SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id GROUP BY `Group`.group_id) AS T WHERE group_name=:1",
+            "sql": "SELECT `Group`.* , TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id WHERE group_name=:1 GROUP BY `Group`.group_id",
             "variableMapping": {
-            ":1": $context.args.group_name
+            ":1": "$context.args.group_name"
             },
           }
         }
