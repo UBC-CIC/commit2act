@@ -229,7 +229,7 @@ const Dashboard = () => {
                 datasets: [
                   {
                     data: donutActionImageData,
-                    backgroundColor: ['#72b4eb', '#91C788'],
+                    backgroundColor: ['#9cda92', '#da929c'],
                   },
                 ],
               }}
@@ -256,7 +256,7 @@ const Dashboard = () => {
                 datasets: [
                   {
                     data: donutQuizData,
-                    backgroundColor: ['#72b4eb', '#91C788'],
+                    backgroundColor: ['#9cda92', '#da929c'],
                   },
                 ],
               }}
