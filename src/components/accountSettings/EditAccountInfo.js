@@ -171,10 +171,9 @@ const EditAccountInfo = ({
       console.log(process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME);
       let userAvatarLink;
       if (avatarFile) {
-        const imageKey = 'avatars/'.concat(databaseUser.user_id, 'avatar');
+        const imageKey = 'avatars/' + databaseUser.user_id + 'avatar';
         const imageType = avatarFile.type;
-        userAvatarLink =
-          process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+        userAvatarLink = process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME + imageKey;
         try {
           await Storage.put(imageKey, avatarFile, {
             contentType: imageType,
