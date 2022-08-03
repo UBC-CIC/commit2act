@@ -184,7 +184,7 @@ const LineChart = ({ allSubmittedActions }) => {
               maintainAspectRatio: false,
             },
           }}
-          height={50}
+          height={60}
           width={200}
         />
       )}
