@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS } from 'chart.js/auto';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { format, eachDayOfInterval, sub } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -131,14 +131,18 @@ const LineChart = ({ allSubmittedActions }) => {
         </Box>
       </Box>
       {lineChartData && (
-        <Line
+        <Bar
           data={{
             labels: Object.keys(lineChartData),
             datasets: [
               {
-                label: 'g CO2 Saved Per Day',
+                label: 'Total Grams of CO2 Saved Per Day',
                 data: Object.values(lineChartData),
-                backgroundColor: ['#91C788'],
+                backgroundColor: ['#929cda'],
+                barPercentage: 1,
+                categoryPercentage: 1,
+                hoverBackgroundColor: "#5968c7",
+                fill: true
               },
             ],
           }}
