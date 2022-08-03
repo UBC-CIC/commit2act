@@ -16,7 +16,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 
 const LineChart = ({ allSubmittedActions }) => {
   const [lineChartData, setLineChartData] = useState();
-  const filters = ['7 Days', '30 Days', 'Year'];
+  const filters = ['7 Days', '30 Days', '90 Days', '1 Year'];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
@@ -44,6 +44,9 @@ const LineChart = ({ allSubmittedActions }) => {
       startingDate = sub(currentDate, { days: 30 });
       endingDate = currentDate;
     } else if (selectedFilter === filters[2]) {
+      startingDate = sub(currentDate, { days: 90 });
+      endingDate = currentDate;
+    } else if (selectedFilter === filters[3]) {
       startingDate = sub(currentDate, { years: 1 });
       endingDate = currentDate;
     }
@@ -136,12 +139,12 @@ const LineChart = ({ allSubmittedActions }) => {
             labels: Object.keys(lineChartData),
             datasets: [
               {
-                label: 'Total Grams of CO2 Saved Per Day',
+                label: 'Total Grams of CO2 Saved Per Day For All Actions',
                 data: Object.values(lineChartData),
                 backgroundColor: ['#929cda'],
                 barPercentage: 1,
                 categoryPercentage: 1,
-                hoverBackgroundColor: "#5968c7",
+                hoverBackgroundColor: "#6c79cd",
                 fill: true
               },
             ],
@@ -169,7 +172,7 @@ const LineChart = ({ allSubmittedActions }) => {
                 beginAtZero: true,
                 title: {
                   display: true,
-                  text: 'g CO2 Saved',
+                  text: 'Grams CO2 Saved',
                   padding: {
                     bottom: 20,
                   },
