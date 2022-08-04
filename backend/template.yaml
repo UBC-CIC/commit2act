@@ -862,17 +862,17 @@ AdminCognitoUser:
   Properties: 
     UserPoolId: '{{resolve:ssm:/amplify/GraphQLAPIId:1}}'
     UserAttributes: 
-      - Name: name
+      - Name: 'name'
         Value: !Ref CognitoAdminName
-      - Name: email
+      - Name: 'email'
         Value: !Ref CognitoAdminEmail
-      - Name: preferred username
+      - Name: 'preferred username'
         Value: !Join ['', !Split [' ', !Ref CognitoAdminName]]
-      - Name: custom:id
+      - Name: 'custom:id'
         Value: 0
-      - Name: custom:type
+      - Name: 'custom:type'
         Value: 'Admin'
-      - Name: custom:firstLogin
+      - Name: 'custom:firstLogin'
         Value: 'true'
 
 
