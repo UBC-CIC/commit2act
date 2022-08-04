@@ -323,9 +323,8 @@ const ActionCard = ({
       let iconLink = null;
       if (actionIconFile) {
         let imageType = actionIconFile.type;
-        let imageKey = 'actionIcons/'.concat(actionForm.action_name);
-        iconLink =
-          process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME.concat(imageKey);
+        let imageKey = 'actionIcons/' + actionForm.action_name;
+        iconLink = process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME + imageKey;
         try {
           await Storage.put(imageKey, actionIconFile, {
             contentType: imageType,

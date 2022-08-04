@@ -140,14 +140,14 @@ const BarChart = ({ allSubmittedActions }) => {
                 data: Object.values(barChartData).map(
                   (data) => data.actionsWithImage
                 ),
-                backgroundColor: ['#72b4eb'],
+                backgroundColor: ['#9cda92'],
               },
               {
                 label: 'Number of Actions Submitted Without Image',
                 data: Object.values(barChartData).map(
                   (data) => data.actionsWithoutImage
                 ),
-                backgroundColor: ['#91C788'],
+                backgroundColor: ['#da929c'],
               },
             ],
           }}
