@@ -4,7 +4,6 @@ TakingITGlobal is a non-governmental organization that focuses on global issues 
 
 | Index                                               | Description                                             |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [Stack Overview](#Stack-Overview)                   | The technologies powering the project                   |
 | [High Level Architecture](#High-Level-Architecture) | High level overview illustrating component interactions |
 | [Deployment](#Deployment-Guide)                     | How to deploy the project                               |
 | [User Guide](#User-Guide)                           | The working solution                                    |
