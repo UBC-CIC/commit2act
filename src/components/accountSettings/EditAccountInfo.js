@@ -171,7 +171,7 @@ const EditAccountInfo = ({
       console.log(process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME);
       let userAvatarLink;
       if (avatarFile) {
-        const imageKey = 'avatars/' + databaseUser.user_id + 'avatar';
+        const imageKey = 'avatars/' + databaseUser.user_id + 'avatar.png';
         const imageType = avatarFile.type;
         userAvatarLink = process.env.REACT_APP_CLOUDFRONT_DOMAIN_NAME + imageKey;
         try {

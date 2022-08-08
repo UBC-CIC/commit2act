@@ -95,20 +95,14 @@ Configuring SAM deploy
 
    Setting default arguments for 'sam deploy'
    =========================================
-   Stack Name [c2a]: 
+   Stack Name [commit2act]: 
       (This will be the name of the stack you entered when running sam deploy, just press enter)
-   AWS Region [ca-central-1]: <REGION YOU WANT TO DEPLOY TO>
+   AWS Region []: <REGION YOU WANT TO DEPLOY TO>
       (Ensure that you enter the same exact region you used to deploy Amplify in)
-   Parameter ProjectName [commit2act]:
+   Parameter ProjectName []:
       (This can be anything you want)
    Parameter EnvironmentName [dev]:
       (This is just to differentiate between different builds, e.x. you can have dev, prod, and test environemnts)
-   Parameter AmplifyBucket []: <WILL LOOK LIKE projectname-storage-1234567890abcd-env>
-      (See instructions below titled 'Get the Amplify Bucket' to find out how to get this value)
-   Parameter AppSyncApiId []: <WILL LOOK LIKE 4bCdEfGhIjKlMn0pQrStUvWxYz>
-      (See instructions below titled 'Get the AppSync API ID' to find out how to get this value)
-   Parameter AmplifyCognitoUserPoolId []: <WILL LOOK LIKE us-west-2_5Sb5UhFXI]>
-      (See instructions below titled 'Get the Amplify Cognito User Pool ID' to find out how to get this value)
    Parameter DBName [sys]:
       (Name of the database, sys is the standard name, must begin with a letter and contain only alphanumeric characters, and be 16 characters or less)
    Parameter DBUser [admin]:
@@ -127,6 +121,10 @@ Configuring SAM deploy
       (The price class for the CloudFront Distriution, more info on which may be best for you can be found at https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html, however the default value will work perfectly fine for North American deployments. Allowed values: PriceClass_100, PriceClass_200, PriceClass_All)
    Parameter MinConfidenceThreshold [70]:
       (The minimum percent confidence required to accept a label during image validation with Rekognition, from our testing 70 is the best to use, but it can be modified)
+   Parameter CognitoAdminName []: <NAME TO USE FOR ADMIN ACCOUNT>
+      (For the first administrator user, whatever name you want associated to the account, can be your full name, or any other name you want)
+   Parameter CognitoAdminEmail []: <EMAIL TO USE FOR ADMIN ACCOUNT>
+      (For the first administrator user, what ever email you want associated to the account. This will be used for login, and you will receive a temporary passowrd to this email for your first login)
 
    #Shows you resources changes to be deployed and require a 'Y' to initiate deploy
    Confirm changes before deploy [y/N]: y
@@ -147,38 +145,21 @@ Configuring SAM deploy
 
 Be sure to not close the window after this process has completed, as the Outputs section produced will be imortant for the next step.
 
-## Get the Amplify Bucket
-
-To get the name of the Amplify Bucket, navigate to the Amplify project on the AWS website by searching for Amplify in the top search bar. Next, click on the projcet, then go to the `Backend Environments` tab. Under the environment, there will be a section called `Categories added`, and underneath it there will be a link called `File Storage`, which you should click on.
-![Amplify backend environments page](images/backend/1.png)
-There will be the name of the bucket near the top of the page, (it should look something like projectname-storage-123456789abcde-env). 
-![Amplify backend environments page](images/backend/2.png)
-Copy the whole name, and then paste it into your Terminal where you are running the CloudFormation template for the parameter AmplifyBucket.
-
-## Get the AppSync API ID
-
-To get the Cognito User Pool ID, it is a very similar process to the Amplify Bucket. Under `Categories added`, there will be a link called `API`. On the API page click the `View in AppSync` button. Then, go to the settings page, which is located on the left side of the screen. On that page, there will be the API ID. Copy the entire string, and then paste it into your Terminal where you are running the CloudFormation template for the parameter AppSyncApiId.
-
-## Get the Amplify Cognito User Pool ID
-
-Similar to the above process, under `Categories added` click on `Authentication`. Under `Users` click on `View in Cognito`. Near the top left there will be a `User pool ID`, copy that, and paste it for the parameter AmplifyCognitoUserPoolId.
-
 # Step 4: Set up Lambda Trigger
 
 In order for the project to work as intended, we need to set up a trigger for our image validation Lambda function that will let it be called whenever an image file is uploaded to our Amplify S3 Bucket. There are two ways to do this. If you are on an Apple Computer, Linux, or using the Windows Subsystem for Linux (ensuring that you have the AWS CLI set up on these systems), you can run a script to set this up. If you are on a standard Windows machine, you must follow a manual process.
 
-
-If on a Mac, Linux, or WSL instance (making sure you are in the backend directory), run the following command:
+If on a Mac, Linux, or WSL instance (making sure you are in the backend directory), run the command that was outputted from the CloudFormation template. If you closed the Terminal window, the outputs can be found on the AWS Console by searching for `CloudFormation`, clicking on the stack you just deployed, then navigating to the `Outputs` tab (making sure you are in the same region that you deployed to). The command will be the last output, and should look somewhat like the following:
 ```bash
-./scripts/lambda_trigger.sh <AmplifyBucketName> <ValidationFunctionARN>
+./scripts/lambda_trigger.sh commit2act-storage-4f79999d182128-devc arn:aws:lambda:us-west-2:053671316234:function:validateImageWithRekognition E3HJI8V3G54871
 ```
 
-This will set up the Lambda trigger. The two required parameters will have been outputted from the previous CloudFormation step, but if that window was closed the outputs can be found on the AWS Console by searching for `CloudFormation`, clicking on the stack you just deployed, then navigating to the `Outputs` tab (making sure you are in the same region that you deployed to). The command should look something like:
+*NOTE: Sometimes there is a bug where a space will appear within the command, which will break it. An example looks like the following, where there is a space after the first **-** character in us-west-2 in the Lambda ARN. If this occurs for you, delete the space before running the command*
 ```bash
-./scripts/lambda_trigger.sh projectname-storage-0123456789abcd-develop arn:aws:lambda:us-east-1:012345678901:function:validateImageWithRekognition
+./scripts/lambda_trigger.sh commit2act-storage-4f79922d182128-devc arn:aws:lambda:us- west-2:053671316144:function:validateImageWithRekognition E3HJI8V4G54870
 ```
 
-If you encounter the error `/usr/bin/env: ‘bash\r’: No such file or directory`, something you can do to resolve the error on WSL is run the following commands
+If you encounter the error `/usr/bin/env: ‘bash\r’: No such file or directory`, something you can do to resolve the error on Linux/WSL is run the following commands
 ```bash
 sudo apt install dos2unix
 dos2unix ./scripts/lambda_trigger.sh
@@ -186,23 +167,32 @@ dos2unix ./scripts/lambda_trigger.sh
 
 Now you can run the `./scripts/lambda_trigger.sh <AmplifyBucketName> <ValidationFunctionARN>` command.
 
-Running this will set up the trigger, and you can move on to the next step.
+Running this will set up the trigger, and you can move on to step 5.
 
 If you are on a Windows machine, or for whatever reason you encounter errors with the script, the trigger can be added with relative ease through the AWS Console.
 
 Navigate to the validateImageWithRekognition Lambda on the AWS Console (search for Lambda in the box, then click on the function name). From here, click on the tab labelled `Configuration`, then go into the section called `Triggers`, then click `Add trigger`. For the source, scroll until you find `S3`. From there, in the bucket field, select the Amplify Bucket (the bucket name can be found as an output from the CloudFormation stack). Event type will be `All object create events`, prefix is `public/validation/input/`, and don't enter anything for suffix. Be sure to click the acknowledgement checkbox, then press `Add`, and the trigger is set up!
 
-# Step 5: Set up Bucket Policy
+We also need to set up a bucket policy for the Amplify S3 Bucket to ensure that CloudFront can access and display images in the bucket. To do so, search for `S3` in the search box, then navigate to the Amplify S3 Bucket's page. Click on the `Permissions` tab, then click `Edit` on the `Bucket policy`. Copy and paste the following into the text box:
 
-For our app to properly load images, we have to add permissions to the Amplify S3 bucket to give CloudFront access to display our images. We can do this through a script, similar to above. Run the following:
-
-```bash
-./scripts/update_bucket_policy.sh <AmplifyBucketName> <CloudFrontOriginAccessIdentity>
+```JSON
+{
+   "Statement": [
+      {
+         "Sid": "Statement1",
+         "Effect": "Allow",
+         "Principal": {
+            "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity <CloudFrontOriginAccessIdentity>"
+         },
+         "Action": "s3:GetObject",
+         "Resource": "arn:aws:s3:::<AmplifyBucketName>/*"
+      }
+   ]
+}
 ```
+Where `CloudFrontOriginAccessIdentity` and `AmplifyBucketName` are the outputs from CloudFormation. Press save, then you're done!
 
-Where AmplifyBucketName is the same as in the previous script, and CloudFrontOriginAccessIdentity can be found as a CloudFormation output.
-
-# Step 6: Wrap up Frontend Deployment
+# Step 5: Wrap up Frontend Deployment
 
 We need to add one more thing to our Amplify project before we are all done with deploying. 
 
@@ -213,27 +203,25 @@ We need to add one more thing to our Amplify project before we are all done with
 Congratulations, your web app is now deployed! You can find the website URL on the main screen of Amplify under `Hosting environments`, and then clicking on the  web-browser-esque image under `main`.
 ![Hosting environments page](images/backend/4.png)
 
-# Step 7: Register Admin Account
+# Step 6: Log into Admin Account
 
-Here, you'll learn how to register for an account on the web app, and how to set any user account to be an administrator for the app.
+To use the account created with CloudFormation, first navigate to the link of the app. This can be found on the Amplify page, under `Hosting environments`. Clicking on the image below `main` will take you to the website. Then, just log in to the account using the email you provided in the template. For the password, a temporary one will have been sent to your inbox. After logging in, you will be instructed to choose a brand new password. 
 
-1. At the login page for the Commit2Act website, click create an account \
-   ![alt text](images/webapp0.png)
-2. Enter Account Details and click Sign-up. A verification code will be sent to the email provided within the next minute \
-   ![alt text](images/webapp1.png)
-3. Retrieve the verification code from the email and enters it to Verify Account\
-   ![alt text](images/webapp2.png)
-4. At the [AWS online console](https://console.aws.amazon.com/console/home), enter `Cognito` in the search bar \
+# Step 7 (Optional): Set up other Admin Accounts
+
+To set up other accounts as an admin, you will need to do the following steps. (Note: this assumes the user has already been registered on the app)
+
+1. At the [AWS online console](https://console.aws.amazon.com/console/home), enter `Cognito` in the search bar \
    ![alt text](images/webapp3.png)
-5. Select `Manage User Pools` (or click `User pools` on the left of the screen), then select the user pool corresponding to the project name (ex. `commit2act-env`) \
+2. Select `Manage User Pools` (or click `User pools` on the left of the screen), then select the user pool corresponding to the project name (ex. `commit2act-env`) \
    ![alt text](images/webapp4.png)
-6. Click the `Users and Groups` tab on the menu on the left of the screen (if you are on the newer version of the Cognito Console you can scroll down to see the users), then select the user which you want to set to Admin \
+3. Click the `Users and Groups` tab on the menu on the left of the screen (if you are on the newer version of the Cognito Console you can scroll down to see the users), then select the user which you want to set to Admin \
    ![alt text](images/webapp5.png)
-7. Scroll down to User Attributes, and click `Edit` \
+4. Scroll down to User Attributes, and click `Edit` \
    ![alt text](images/webapp6.png)
-8. Scroll down to Option Attributes, and change the value in the `custom:type` field from _User_ to _Admin_. Click `Save Changes`\
+5. Scroll down to Option Attributes, and change the value in the `custom:type` field from _User_ to _Admin_. Click `Save Changes`\
    ![alt text](images/webapp7.png)
-9. You have set up login credentials. Return to Commit2Act web app, and login. Your user is now an admin! (If you are having issues, try relogging on the Commit2Act web app)
+6. You have set up login credentials. Return to Commit2Act web app, and login. Your user is now an admin! (If the user does not see the Admin Dashboard tab, try relogging on the Commit2Act web app)
 
 # Troubleshooting
 

@@ -5,6 +5,8 @@ async function conditionallyCreateDB(connection) {
   // if the database has not yet been made, make it
   // otherwise, this throws an error, which is caught in the handler and
   // the lambda handler function proceeds as usual
+  let adminName = process.env.ADMIN_NAME;
+  let adminEmail = process.env.ADMIN_EMAIL;
   let createDBSQL = `
   CREATE TABLE \`User\` (
     \`user_id\` int PRIMARY KEY AUTO_INCREMENT,
@@ -112,6 +114,8 @@ async function conditionallyCreateDB(connection) {
     // execute the sql statement on our database
     result = await executeSQL(connection, sql_statement);
   }
+
+  result = await executeSQL(connection, "INSERT INTO \`User\` (user_id, username, name, email) VALUES (0, 'admin', '" + adminName + "', '" + adminEmail + "')")
 
   return result;
 }
