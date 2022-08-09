@@ -1,14 +1,16 @@
 # Requirements
 
-Before you deploy, you must have the following installed on your device:
+Before you deploy, you must have the following accounts created:
 
 - [AWS Account](https://aws.amazon.com/account/)
 - [GitHub Account](https://github.com/)
+
+You will also need the following installed on your computer:
+
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-- [MySQL Shell](https://dev.mysql.com/downloads/shell/) (or `sudo apt install mysql-client-core-8.0` on Linux/WSL)
 
-If you are on a Windows device, it is recommended to install the [Windows Subsystem For Linux](https://docs.microsoft.com/en-us/windows/wsl/install), which lets you run a Linux terminal on your Windows computer natively. Some of the steps will require its use. [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) is also recommended for using WSL.
+If you are on a Windows device, it is recommended to install the [Windows Subsystem For Linux](https://docs.microsoft.com/en-us/windows/wsl/install), which lets you run a Linux terminal on your Windows computer natively. Step 4 will be significantly easier with WSL, however there will be an alternate manual process. [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) is also recommended for using WSL.
 
 # Step 1: Clone The Repository
 
@@ -72,15 +74,13 @@ cd backend
 
 From here, we are going to run the CloudFormation template. This template will automatically provision the backend resources in your AWS account.
 
-NOTE: We will need some information from the Amplify project for some of the inputs for the CloudFormation template, so make sure to have the Amplify project window open before running this command.
-
 ```bash
-sam deploy --guided --capabilities CAPABILITY_NAMED_IAM --stack-name <stack-name-of-your-choosing> (--profile <AWS PROFILE>)
+sam deploy --guided --capabilities CAPABILITY_NAMED_IAM --stack-name <stack-name-of-your-choosing>
 ```
 
-After running this, you will be prompted with a series of settings to fill in.
+NOTE: Be sure to include the `--profile <AWS PROFILE>` to the end of the command if you used it in the previous step!
 
-NOTE: when there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter. If
+After running this, you will be prompted with a series of settings to fill in. When there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter. 
 
 If at any point you make a typo, you can press CTRL+C to cancel the process, and then you can re-run the command
 
