@@ -58,7 +58,6 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
    Refer to [AWS's Page on Single Page Apps](https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html#redirects-for-single-page-web-apps-spa) for further information on why we did that
    ![alt text](images/amplify-console-05.png)
 
-
 The frontend is almost finished being set up, but first we need to deploy our backend.
 
 # Step 3: Backend Deployment
@@ -81,7 +80,7 @@ sam deploy --guided --capabilities CAPABILITY_NAMED_IAM --stack-name <stack-name
 
 After running this, you will be prompted with a series of settings to fill in.
 
-NOTE: when there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter. If 
+NOTE: when there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter. If
 
 If at any point you make a typo, you can press CTRL+C to cancel the process, and then you can re-run the command
 
@@ -95,7 +94,7 @@ Configuring SAM deploy
 
    Setting default arguments for 'sam deploy'
    =========================================
-   Stack Name [commit2act]: 
+   Stack Name [commit2act]:
       (This will be the name of the stack you entered when running sam deploy, just press enter)
    AWS Region []: <REGION YOU WANT TO DEPLOY TO>
       (Ensure that you enter the same exact region you used to deploy Amplify in)
@@ -150,16 +149,19 @@ Be sure to not close the window after this process has completed, as the Outputs
 In order for the project to work as intended, we need to set up a trigger for our image validation Lambda function that will let it be called whenever an image file is uploaded to our Amplify S3 Bucket. There are two ways to do this. If you are on an Apple Computer, Linux, or using the Windows Subsystem for Linux (ensuring that you have the AWS CLI set up on these systems), you can run a script to set this up. If you are on a standard Windows machine, you must follow a manual process.
 
 If on a Mac, Linux, or WSL instance (making sure you are in the backend directory), run the command that was outputted from the CloudFormation template. If you closed the Terminal window, the outputs can be found on the AWS Console by searching for `CloudFormation`, clicking on the stack you just deployed, then navigating to the `Outputs` tab (making sure you are in the same region that you deployed to). The command will be the last output, and should look somewhat like the following:
+
 ```bash
 ./scripts/lambda_trigger.sh commit2act-storage-4f79999d182128-devc arn:aws:lambda:us-west-2:053671316234:function:validateImageWithRekognition E3HJI8V3G54871
 ```
 
-*NOTE: Sometimes there is a bug where a space will appear within the command, which will break it. An example looks like the following, where there is a space after the first **-** character in us-west-2 in the Lambda ARN. If this occurs for you, delete the space before running the command*
+_NOTE: Sometimes there is a bug where a space will appear within the command, which will break it. An example looks like the following, where there is a space after the first **-** character in us-west-2 in the Lambda ARN. If this occurs for you, delete the space before running the command_
+
 ```bash
 ./scripts/lambda_trigger.sh commit2act-storage-4f79922d182128-devc arn:aws:lambda:us- west-2:053671316144:function:validateImageWithRekognition E3HJI8V4G54870
 ```
 
 If you encounter the error `/usr/bin/env: ‘bash\r’: No such file or directory`, something you can do to resolve the error on Linux/WSL is run the following commands
+
 ```bash
 sudo apt install dos2unix
 dos2unix ./scripts/lambda_trigger.sh
@@ -190,22 +192,29 @@ We also need to set up a bucket policy for the Amplify S3 Bucket to ensure that 
    ]
 }
 ```
+
 Where `CloudFrontOriginAccessIdentity` and `AmplifyBucketName` are the outputs from CloudFormation. Press save, then you're done!
 
 # Step 5: Wrap up Frontend Deployment
 
-We need to add one more thing to our Amplify project before we are all done with deploying. 
+We need to add one more thing to our Amplify project before we are all done with deploying.
 
 1. Copy the CloudFormation output called CloudFrontDistributionDomainName
 
 2. On the [AWS console](https://console.aws.amazon.com/console/home), Navigate back to the amplify console by entering **Amplify**. Under the App Settings heading on the left hand sidebar, click `Environment Variables`. Click on `Manage variables`, and create an environment variable with the Variable field as `REACT_APP_CLOUDFRONT_DOMAIN_NAME`, and the Value as the Distribution Domain Name that was copied in the previous step.
+   ![alt text](images/amplify-console-08.png)
 
-Congratulations, your web app is now deployed! You can find the website URL on the main screen of Amplify under `Hosting environments`, and then clicking on the  web-browser-esque image under `main`.
-![Hosting environments page](images/backend/4.png)
+3. Go back to the amplify console screen for the commit2act app. Under the `Hosting Environments` tab, click the **main** branch.
+   ![alt text](images/amplify-console-06.png)
+
+4. Click the `Redeploy this version` button to rebuild the app with the updated environment variables
+   ![alt text](images/amplify-console-07.png)
+
+Congratulations, your web app is now deployed! You can find the website URL on the main screen of Amplify under `Hosting environments`, and then clicking on the web-browser-esque image under `main`.
 
 # Step 6: Log into Admin Account
 
-To use the account created with CloudFormation, first navigate to the link of the app. This can be found on the Amplify page, under `Hosting environments`. Clicking on the image below `main` will take you to the website. Then, just log in to the account using the email you provided in the template. For the password, a temporary one will have been sent to your inbox. After logging in, you will be instructed to choose a brand new password. 
+To use the account created with CloudFormation, first navigate to the link of the app. This can be found on the Amplify page, under `Hosting environments`. Clicking on the image below `main` will take you to the website. Then, just log in to the account using the email you provided in the template. For the password, a temporary one will have been sent to your inbox. After logging in, you will be instructed to choose a brand new password.
 
 # Step 7 (Optional): Set up other Admin Accounts
 
