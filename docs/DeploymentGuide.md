@@ -1,3 +1,7 @@
+# Intro
+
+The Commit2Act solution can be deployed onto your AWS account through this guide. Using AWS Amplify and CloudFormation, we can create all the necessary resources in your own accounts in order to have the solution built in the cloud. This whole process should take around 45-60 minutes, with most of the time spent waiting for resources to provision and build in your account.
+
 # Requirements
 
 Before you deploy, you must have the following accounts created:
