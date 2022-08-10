@@ -156,20 +156,8 @@ connection = mysql.createPool({
   database : process.env.DBNAME
 });
 
-// // Load the AWS SDK
-// var AWS = require('aws-sdk'),  // to change
-//     region = "ca-central-1",
-//     secretName = "commit2actRDS",//"arn:aws:secretsmanager:ca-central-1:016942909762:secret:commit2actDB-OBJdoN",
-//     secret,
-//     decodedBinarySecret;
-
-// // Create a Secrets Manager client
-// var client = new AWS.SecretsManager({
-//     region: region
-// });
-
 exports.handler = async (event) => {
-  // called whenever a GraphQL event is recieved
+  // called whenever a GraphQL event is received
   console.log('Received event', JSON.stringify(event, null, 3));
 
   let result;
@@ -199,6 +187,6 @@ exports.handler = async (event) => {
       populateAndSanitizeSQL(event.responseSQL, event.variableMapping, connection);
     result = await executeSQL(connection, responseSQL);
   }
-  console.log("Finished exectution")
+  console.log("Finished execution")
   return result;
 };
