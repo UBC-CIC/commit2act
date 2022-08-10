@@ -108,7 +108,7 @@ Configuring SAM deploy
    Parameter DBUser [admin]:
       (Name of the username to log into the database with, must begin with a letter and contain only alphanumeric characters, and be 16 characters or less)
    Parameter DBPassword []: <YOUR DB PASSWORD>
-      (Password to use for the database, must contain only alphanumeric characters, and be 40 characters or less)
+      (Password to use for the database, must contain only alphanumeric characters, and be between 8-40 characters)
    Parameter DBInstanceClass [db.t4g.large]:
       (What size of database to use. This value can be changed later in RDS settings, however there will be some downtime associated with it. For more information visit https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html. The allowed values are db.t2.small, db.t2.medium, db.t3.small, db.t3.medium, db.t4g.medium, db.t4g.large, db.r4.large, db.r4.xlarge, db.r4.2xlarge, db.r4.4xlarge, db.r4.8xlarge, db.r4.16xlarge, db.r5.large, db.r5.xlarge, db.r5.2xlarge, db.r5.4xlarge, db.r5.8xlarge, db.r5.12xlarge, db.r5.16xlarge, db.r6g.large, db.r6g.xlarge, db.r6g.2xlarge, db.r6g.4xlarge, db.r6g.8xlarge, db.r6g.12xlarge, db.r6g.16xlarge)
    Parameter DBEngineVersion [5.7.mysql_aurora.2.09.2]:
@@ -169,7 +169,7 @@ Now you can run the `./scripts/lambda_trigger.sh <AmplifyBucketName> <Validation
 
 Running this will set up the trigger, and you can move on to step 5.
 
-If you are on a Windows machine, or for whatever reason you encounter errors with the script, the trigger can be added with relative ease through the AWS Console.
+If you are on a Windows machine, or for whatever reason you encounter errors with the script, the trigger can be added through the AWS Console.
 
 Navigate to the validateImageWithRekognition Lambda on the AWS Console (search for Lambda in the box, then click on the function name). From here, click on the tab labelled `Configuration`, then go into the section called `Triggers`, then click `Add trigger`. For the source, scroll until you find `S3`. From there, in the bucket field, select the Amplify Bucket (the bucket name can be found as an output from the CloudFormation stack). Event type will be `All object create events`, prefix is `public/validation/input/`, and don't enter anything for suffix. Be sure to click the acknowledgement checkbox, then press `Add`, and the trigger is set up!
 

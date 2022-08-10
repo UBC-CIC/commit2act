@@ -71,7 +71,7 @@ type User {
 	username: String
 }
 ```
-Here, we are defining the 5 columns in the SQL Table as a `type` with 5 different `fields`, with each field corresponding to a column in the database (the fields are user_id, username, name, email, and avatar). Each type has a `scalar type` (also known as a data type in most other langages) which defines what kind of data each field represents. GraphQL only has a few different scalar types, and these are String, Int, Float, Boolean, and ID. Since these have less resolution than MySQL data types, a GraphQL String just means anything string based. So for example, data types in MySQL like `TEXT`, `VARCHAR(255)`, `DATETIME` are all represented by `String` in GraphQL.
+Here, we are defining the 5 columns in the SQL Table as a `type` with 5 different `fields`, with each field corresponding to a column in the database (the fields are user_id, username, name, email, and avatar). Each type has a `scalar type` (also known as a data type in most other languages) which defines what kind of data each field represents. GraphQL only has a few different scalar types, and these are String, Int, Float, Boolean, and ID. Since these have less resolution than MySQL data types, a GraphQL String just means anything string based. So for example, data types in MySQL like `TEXT`, `VARCHAR(255)`, `DATETIME` are all represented by `String` in GraphQL.
 
 In the Schema Definition Language (SDL), an `!` means that the field cannot be null (so here, the fields user_id, name, and email cannot have null values after a query or mutation is called that returns the `type` User).
 
@@ -196,9 +196,9 @@ The left part lists all queries and mutations currently in the schema. When we s
 
 In the middle of the screen, you can type out exactly whichever queries and mutations you want to test. When selecting a query or mutation on the left of the screen, this middle section is automatically populated with the statement that will be executed.
 
-To execute a query or mutation, we just need to click the orange play button in the top middle of the screen. This will then ask us which query or mutation we want to run. The returned result will appear on the right. Before running, I recommend making sure the checkbox named `LOGS` is checked (located in the bottom right), as this will give you a quick link to access the CloudWatch logs for that statement's execution, which helps with debugging. This hyperlink appears on the `VIEW IN CLOUDWATCH` text that appears after execution (NOTE: make sure logging is enbled in the Settings tab on AppSync).
+To execute a query or mutation, we just need to click the orange play button in the top middle of the screen. This will then ask us which query or mutation we want to run. The returned result will appear on the right. Before running, I recommend making sure the checkbox named `LOGS` is checked (located in the bottom right), as this will give you a quick link to access the CloudWatch logs for that statement's execution, which helps with debugging. This hyperlink appears on the `VIEW IN CLOUDWATCH` text that appears after execution (NOTE: make sure logging is enabled in the Settings tab on AppSync).
 
-Also prior to running, it is important to be logged in via `Cognito User Groups`. Since the API is configured to be autheticated through Cognito User Groups, we need to log in as a user that is in the group in order to run any statements.
+Also prior to running, it is important to be logged in via `Cognito User Groups`. Since the API is configured to be authenticated through Cognito User Groups, we need to log in as a user that is in the group in order to run any statements.
 
 ### Custom Types
 
@@ -217,17 +217,15 @@ type UserGroupStats {
 }
 ```
 
-Since for the frontend, we decided that a query that gets these metrics for a user in a group would be important, I made a new type to return the values we actually need.
+Since for the frontend, we decided that a query that gets these metrics for a user in a group would be important, so I made a new type to return the values we actually need.
 
 ## Resolvers
-
-![The main screen of AppSync](../docs/images/AppSync/resolverstemp.png)
 
 Resolvers are an extremely important part of AppSync to know about, since resolvers are how queries and mutations get connected to the datasource in the backend. There are many different ways to configure resolvers, but this guide will just describe the setup used for this project.
 
 ### Creating and Accessing Resolvers
 
-To create a new resolver for a query or mutation, first navigate to the `Schema` tab on the AppSync console. On the right of the screen, there will be a large section devoted to resolvers. Scroll down the list until you find the query or mutation that you want to make the resolver for. There should be a button named called `Attach` next to the name of the query or mutation, and clicking that will bring you to a new screen with the resolver information.
+To create a new resolver for a query or mutation, first navigate to the `Schema` tab on the AppSync console. On the right of the screen, there will be a large section devoted to resolvers. Scroll down the list until you find the query or mutation that you want to make the resolver for. There should be a button named `Attach` next to the name of the query or mutation, and clicking that will bring you to a new screen with the resolver information.
 
 The first bit of information that is required to be entered is the `Data source name`. This is asking where exactly should AppSync look for the data when the query is executed. In this project, we have already configured a Lambda function as our data source (the Lambda code can be viewed under /lambda_functions/GraphQLMySQLResolver/index.js), and this is called `LambdaHandler`.
 
@@ -239,7 +237,7 @@ After filling in values for both mapping templates, press the `Save Resolver` bu
 
 #### Request Mapping Templates
 
-The `request mapping template` is a way to transform the data recieved from the GraphQL query/mutation into a form that our data source can understand. Since our data source is a Lambda function, we need to transform the data into a JSON object. The `payload` JSON object will be passed to the Lambda function as an input after VTL has evaluated any logic in our resolver. There is a very specific format required for the request mapping templates so that the Lambda will execute correctly, and it is the following:
+The `request mapping template` is a way to transform the data received from the GraphQL query/mutation into a form that our data source can understand. Since our data source is a Lambda function, we need to transform the data into a JSON object. The `payload` JSON object will be passed to the Lambda function as an input after VTL has evaluated any logic in our resolver. There is a very specific format required for the request mapping templates so that the Lambda will execute correctly, and it is the following:
 ```
 {
     "version" : "2017-02-28",
@@ -254,7 +252,7 @@ The `request mapping template` is a way to transform the data recieved from the 
 }
 ```
 
-This is the JSON object that the Lambda will recieve. Here is a concrete example of how it looks for the `addGroupMember` mutation:
+This is the JSON object that the Lambda will receive. Here is a concrete example of how it looks for the `addGroupMember` mutation:
 
 ```
 {
@@ -307,7 +305,7 @@ One really important thing to keep in mind when putting the variables in variabl
 }
 ```
 
-Above, the `item_name` argument is a `String`, so we have to wrap it with double quotes. The `sa_id` and `input_value` are both numberical, so we do not need quotes for them. A `Boolean` can be entered the same way as an `Int` or a `Float`.
+Above, the `item_name` argument is a `String`, so we have to wrap it with double quotes. The `sa_id` and `input_value` are both numerical, so we do not need quotes for them. A `Boolean` can be entered the same way as an `Int` or a `Float`.
 
 #### Response Mapping Templates
 
@@ -321,13 +319,13 @@ $util.toJson($context.result[0])
 
 This `$util.toJson` function is incredibly important for the response mapping templates, it essentially just turns the output from the Lambda into a format that GraphQL will be able to read. The `$context.result[0]` just means "get the first element from the result of the Lambda", since the Lambda returns everything in the form of an array `[0]` is important to include to get the return type to not be a list.
 
-If the returning type is an array of a certain type (like `getAllGroups`, this returns type `[Group]`), the reponse mapping template will just look like
+If the returning type is an array of a certain type (like `getAllGroups`, this returns type `[Group]`), the response mapping template will just look like
 
 ```
 $util.toJson($context.result)
 ```
 
-In the event that the return type is a scalar type (like in the query `getTotalGlobalCO2` the return type is `Float`), the reponse mapping template will look a little more complicated, and uses a bit of VTL logic to work:
+In the event that the return type is a scalar type (like in the query `getTotalGlobalCO2` the return type is `Float`), the response mapping template will look a little more complicated, and uses a bit of VTL logic to work:
 
 ```
 #if ($context.result[0].get("totalCO2"))
