@@ -19,28 +19,28 @@
 
 ## Landing Page
 
-The landing page contains 4 main sections.
+The Landing Page contains 4 main sections.
 
 ### 1. Alerts
 
 - The `New Actions in Need of Validation` alert is displayed when the user is an admin or a group owner and there are actions by their group members that they need to validate
-- The `Actions Pending Validation` alert is displayed if the user has any actions pending manual validation. This alert shows the potential impact of the user's pending actions.
+- The `Actions Pending Validation` alert is displayed if the user has any actions pending manual validation. This alert shows the potential impact of the user's pending actions
   ![alt text](images/landing/landing0.png)
 
 ### 2. Recent Progress
 
-- Displays collective CO2 impact of all users on the app, and the current user's weekly and cumulative CO2 saved
+- This section displays the collective CO2 impact of all users on the app, and the current user's weekly and cumulative CO2 saved
   ![alt text](images/landing/landing1.png)
 
 ### 3. Leaderboards
 
-- 2 tabs: Global Groups (ranks all groups in the app) and Global Users (ranks all users in the app)
+- There are 2 leaderboards to toggle between: Global Groups (ranks all groups in the app) and Group Users (ranks all users in the app)
 - Users can filter the metric they want to view by clicking the filter button (available metrics are Total CO2, Weekly CO2, Total Points and Weekly Points)
   ![alt text](images/landing/landing2.png)
 
 ### 4. My Groups
 
-- Displays card view of all the groups that the user belongs to
+- This section displays all the groups that the user belongs to
 - Clicking on the group name will redirect to the group's profile page
 - Clicking on the dropdown accordion opens up charts displaying the user's individual contribution for each group stat (hover over each colour in the graph to see labels - grey is the contribution of all other members, green is the user's contribution)
 - Users can also access the `Create Group` page by clicking the `Create Group` button (More information in [Create New Group](#Create-New-Group))
@@ -48,23 +48,23 @@ The landing page contains 4 main sections.
 
 ## Find Group
 
-- Searches through all public groups for the user-inputted search term and displays group card for matching groups
+- The search bar on this page searches through all public groups to return group cards for any groups with a name that matches the user-inputted search term
   ![alt text](images/find_group.png)
 
 ## Create New Group
 
-- A form for users to create a new group (an example use case would be a teacher creating a group for their class)
-- Required fields are `Group Name` and `Group Privacy` (private groups require a password for users to join the group, and will not be discoverable through the Find Group searchbar)
-- Successful creation of a group will redirect the user to the newly created group profile page
+- This page contains a form for users to create a new group (an example use case would be a teacher creating a group for their class)
+- The required fields are `Group Name` and `Group Privacy` (private groups require a password for users to join the group, and will not be discoverable through the Find Group searchbar)
+- The successful creation of a group will redirect the user to the newly created group's profile page
 
 ## Group Profile
 
-The group page has 3 sections
+The Group Profile page has 3 sections
 <br>
 
 ### 1. Group Overview
 
-- Displays the group's number of members, privacy and recent stats
+- This section displays the group's number of members, privacy and recent statistics
 - If a user is not part of the group, they can join the group by clicking on the `Join Group` button
 - If a user is already part of the group, they can leave the group by clicking on the `Leave Group` button
   ![alt text](images/groupProfile/group_profile0.png)
@@ -72,32 +72,35 @@ The group page has 3 sections
 
 ### 2. Leaderboards
 
-- The Global Groups tab displays the rankings of all the groups on the app, along with the group's current placement
+- There are 2 leaderboards to toggle between: Global Groups and Group Members
+- The `Global Groups` tab displays the rankings of all the groups on the app, along with the group's current placement
   ![alt text](images/groupProfile/group_profile1.png)
   <br>
-- The Group Members tab displays the rankings of the group's members, based on how much they have contributed to the group
+- The `Group Members` tab displays the rankings of the group's members, based on how much they have contributed to the group
 - If a user belongs to the group, they will see their individual contributions to each metric (Total CO2, Weekly CO2, Total Points and Weekly Points) in pie charts beside their current ranking
   ![alt text](images/groupProfile/group_profile2.png)
   <br>
 
 ### 3. Group Profile Tabs
 
+The group profile tabs display relevant group and group member information. Group owners and admin can also promote/demote/remove group members and edit group information (description, password, privacy, profile photo) here.
+<br>
 The 5 tabs are:
 
 #### 1. Group Info
 
-- Displays the group's description and list of owners
+- This tab displays the group's description and a list of all the group owners
   ![alt text](images/groupProfile/group_profile3.png)
 
 #### 2. Member Actions
 
-- Displays all validated actions submitted by members of the group
-- If the user is an admin, there will be an `Unapprove` button on the actions to override Rekognition's validation or the manual validation done by group owners. Admins can also unapprove actions on the user's profile page.
+- This tab displays all validated actions submitted by members of the group
+- Admin users will be able to view an `Unapprove` button on member actions to override Rekognition's validation or the manual validation done by group owners. Admin users can also unapprove actions on the user's profile page
   ![alt text](images/groupProfile/group_profile4.png)
 
 #### 3. Group Members
 
-- Displays all group members (group owners will have a star icon by their profile picture)
+- This tab displays all group members (group owners will have a star icon by their profile picture)
 - Clicking on any member profile picture will display their name and role, as well as an option to go to their user profile (More information in [User Profiles](#User-Profiles))
   ![alt text](images/groupProfile/group_profile5.png)
 - A user can view the option to leave the group by clicking on their own profile picture
@@ -109,7 +112,7 @@ The 5 tabs are:
 
 #### 4. Add Members (Only Displayed To Admin or Group Owners)
 
-- Group owners or admin can invite users to join a group by copy and pasting the group link found in this tab and sending it to the users that they want to add
+- Group owners or admin users can invite users to join a group by copy and pasting the group link found in this tab and sending it to the users that they want to add
 - Private groups will also have their group password available to copy and paste
 - More information about the join group process can be found under [Joining Groups From Group Links](#Joining-Groups-From-Group-Links)
   ![alt text](images/groupProfile/group_profile8.png)
@@ -130,7 +133,7 @@ The 5 tabs are:
 
 ## Log Action
 
-The log action flow has 7 steps
+Users can log their actions and submit their related action photo on the Log Action page. The log action flow has 7 steps:
 
 ### 1. Select Action
 
@@ -154,8 +157,8 @@ The log action flow has 7 steps
 
 ### 5. Validation
 
-- Users can upload an image relating to their action by dragging and dropping the image or by clicking the Browse button
-- This image will undergo Rekognition validation to determine if it contains any of the relevant image validation labels
+- Users can upload an image relating to their action by dragging and dropping the image or by clicking the `Browse` button
+- This image will undergo Rekognition validation to determine if it contains any of the action type's relevant image validation labels
   ![alt text](images/logAction/log_action4.png)
 
 ### 6. Bonus Question
@@ -174,17 +177,17 @@ The log action flow has 7 steps
 
 ## Validate Actions
 
-- Admin and group owners can validate actions through the Validate Actions page (admin can validate actions submitted by all users, while group owners can only validate the actions of members of their groups)
+- Admin users and group owners can validate actions through the Validate Actions page (admin can validate actions submitted by all users, while group owners can only validate the actions of members of their groups)
 - Unvalidated actions will be displayed with relevant information (date, name of user, action name, action items, co2 saved, total points earned, and the groups that the action was submitted to).
-- Admin and group owners can approve or reject an action by clicking on the `Approve` or `Reject` buttons on the right hand side of the action card
+- Admin users and group owners can approve or reject an action by clicking on the `Approve` or `Reject` buttons on the right hand side of the action card
   ![alt text](images/validateActions/validate_actions3.png)
 
 ### Admin View:
 
-- Admin have access to 3 tabs (My Groups, Users Without Groups, All Unvalidated Actions)
+- Admin users can toggle between 3 tabs: My Groups, Users Without Groups, All Unvalidated Actions
 - In the `My Groups` tab, users can filter their search by Group Name or Action Name
-- If the search toggle is set to Group Name, clicking on the search bar will display all groups that the user owns
-- If the search toggle is set to Action Name, clicking on the search bar will display all the possible actions within the app
+- If the search toggle is set to `Group Name`, clicking on the search bar will display all groups that the user owns
+- If the search toggle is set to `Action Name`, clicking on the search bar will display all the possible actions within the app
   ![alt text](images/validateActions/validate_actions0.png)
   ![alt text](images/validateActions/validate_actions1.png)
 - The `Users Without Groups` tab displays unvalidated actions from all users that are not a part of any groups
@@ -192,12 +195,12 @@ The log action flow has 7 steps
 
 ### Non Admin View:
 
-- Users that are group owners will only be able to validate the actions of members of their groups
+- Users that are not admin users but are group owners will only be able to validate the actions of members of their groups
   ![alt text](images/validateActions/validate_actions2.png)
 
 ## Admin Dashboard
 
-- Users can only navigate to this page through the navigation bar if they are admin. The admin dashboard is used for viewing overall app statistics, creating new action types and quiz questions, and managing existing action types and quiz questions.
+- Users can only navigate to this page through the navigation bar if they are admin users. The Admin Dashboard is used for viewing overall app statistics, creating new action types and quiz questions, and managing existing action types and quiz questions.
   <br>
 
 There are 4 tabs:
@@ -205,22 +208,22 @@ There are 4 tabs:
 
 ### 1. Dashboard
 
-- Displays app statistics
+- The Dashboard tab displays app statistics, such as the total number of users and groups, the total number of actions submitted with/without an image, the total CO2 saved and the total number of actions submitted by all users. All graphs can be filtered to show data for the past 7 days, 30 days, and year.
+
   ![alt text](images/adminDashboard/dashboard0.png)
   ![alt text](images/adminDashboard/dashboard1.png)
   ![alt text](images/adminDashboard/dashboard2.png)
   ![alt text](images/adminDashboard/dashboard3.png)
 
-- Graphs can be filtered to show data for the past 7 days, 30 days, and year
-- Hovering over a data point provides more specific information
+- To view more specific information about a point on a graph, hover over the data point and a popup will appear
   ![alt text](images/adminDashboard/dashboard5.png)
-- Users can filter and view data from only 1 label category by clicking on the label that they wish to hide
+- To filter and view data from only 1 label category on a graph, click on the label that you wish to hide
   ![alt text](images/adminDashboard/dashboard4.png)
   <br>
 
 ### 2. Create Action
 
-- A form to create a new action with required fields being the `Action Name`, at least 1 `Action Item`, and at least 1 `Image Validation Label`
+- The Create Action tab contains a form to create a new action with required fields being the `Action Name`, at least 1 `Action Item`, and at least 1 `Image Validation Label`
 - The `Fallback Text` field is what is shown by default in the Action Fact step of the Log Action Menu flow if there are no quiz questions created for that action (shown in image here)
   ![alt text](images/adminDashboard/create_action0.png)
 
@@ -230,7 +233,7 @@ There are 4 tabs:
 
 ![alt text](images/adminDashboard/manage_actions0.png)
 
-- Admin can click on an action icon to view the action and its corresponding information (Action Icon, Action Items, Fallback Text, Image Validation Labels)
+- Admin users can click on an action icon to view the action and its corresponding information (Action Icon, Action Items, Fallback Text, Image Validation Labels)
   ![alt text](images/adminDashboard/manage_actions1.png)
   <br>
 
@@ -242,12 +245,12 @@ There are 4 tabs:
 - To delete an action, click the `Delete` button. If an action is deleted, all user submitted content for that action will also be deleted
   <br>
   ![alt text](images/adminDashboard/manage_actions4.png)
-- To pause an action, click the `Pause` button. When an action is paused, it will not appear as an option on the Log Action Menu for users to submit to
+- To pause an action, click the `Pause` button. When an action is paused, it will not appear as an option on the Log Action menu for users to submit to
   <br>
   ![alt text](images/adminDashboard/manage_actions5.png)
 - Paused actions will appear with a greyed out icon on the Manage Actions menu
   ![alt text](images/adminDashboard/manage_actions6.png)
-- A paused action must be restored by clicking the `Restore Action` button before users can submit that action
+- A paused action must be restored by clicking the `Restore Action` button before users can submit content for that action
   ![alt text](images/adminDashboard/manage_actions7.png)
   <br>
 
@@ -257,12 +260,12 @@ There are 4 tabs:
 
 ![alt text](images/adminDashboard/manage_quizzes0.png)
 
-- Admin can click on an action icon to view and create action facts with quiz questions for that action
+- Admin users can click on an action icon to view and create action facts with quiz questions for that action
   ![alt text](images/adminDashboard/manage_quizzes1.png)
   <br>
 
 - To create a new quiz, click the `Add New Question` button
-- Required fields to create a new question are Fact Text, Question Text and at least 1 Possible Answer
+- The required fields for creating a new question are Fact Text, Question Text and at least 1 Possible Answer
   <br>
 
   ![alt text](images/adminDashboard/manage_quizzes2.png)
@@ -292,16 +295,15 @@ There are 4 tabs:
 - To edit existing quizzes, click the `Edit Existing Questions` Button. This will display all the quizzes for your selected action
   ![alt text](images/adminDashboard/manage_quizzes1.png)
   ![alt text](images/adminDashboard/manage_quizzes3.png)
-- Click the pencil icon on the upper right hand corner to edit
+- Click the pencil icon on the upper right hand corner to edit. This will change the card into a form, which has the same functionality as described in the Creating Quiz Questions section
   ![alt text](images/adminDashboard/manage_quizzes4.png)
-- Clicking the pencil icon will change the card into a form, which has the same functionality as described in the Creating Quiz Questions section.
 - To delete a question, click the `Delete` button on the bottom left hand corner
 - To apply changes, click the `Save` button on the bottom right hand corner
 - To switch out of the Edit View, click the pencil icon again
 
 ## Account Settings
 
-- Users can edit their information and view all their submitted actions on this page
+- Users can edit their information and view all their submitted actions on their Account Settings page
 
 ### Editing User Information
 
@@ -319,7 +321,7 @@ There are 4 tabs:
 
 ### Viewing Submitted Actions
 
-- Submitted actions are split into 3 tabs (Validated, Awaiting Validation, Did Not Pass Validation)
+- All the submitted actions for a user are split into 3 tabs (Validated, Awaiting Validation, Did Not Pass Validation)
 - The `Validated` tab displays all actions that have passed validation
   ![alt text](images/accountSettings/account_settings3.png)
 - The `Awaiting Validation` tab displays all actions that have failed Rekognition's validation and are now awaiting manual validation
