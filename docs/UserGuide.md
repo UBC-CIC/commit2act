@@ -19,7 +19,7 @@
 
 ## Landing Page
 
-The Landing Page contains 4 main sections.
+Once a user is logged in, the Landing Page displays relevant updates including alerts, the user's recent progress, leaderboards and a list of the groups a user belongs to. There are 4 main sections.
 
 ### 1. Alerts
 
@@ -59,7 +59,7 @@ The Landing Page contains 4 main sections.
 
 ## Group Profile
 
-The Group Profile page has 3 sections
+A group's profile page contains general group information, a list of group members and their actions, and a leaderboard showing how the group is progressing compared to other groups. Group owners and admin users can manage group members and group information on this page as well. This page contains 3 sections:
 <br>
 
 ### 1. Group Overview
@@ -83,7 +83,7 @@ The Group Profile page has 3 sections
 
 ### 3. Group Profile Tabs
 
-The group profile tabs display relevant group and group member information. Group owners and admin can also promote/demote/remove group members and edit group information (description, password, privacy, profile photo) here.
+The Group Profile tabs display relevant group and group member information. Group owners and admin users can also manage group members and edit group information (description, password, privacy, profile photo) here.
 <br>
 The 5 tabs are:
 
@@ -113,20 +113,21 @@ The 5 tabs are:
 #### 4. Add Members (Only Displayed To Admin or Group Owners)
 
 - Group owners or admin users can invite users to join a group by copy and pasting the group link found in this tab and sending it to the users that they want to add
-- Private groups will also have their group password available to copy and paste
+- Private groups will also have their group password available to copy and paste, as invited users will be prompted to enter the password to successfully join a private group
 - More information about the join group process can be found under [Joining Groups From Group Links](#Joining-Groups-From-Group-Links)
   ![alt text](images/groupProfile/group_profile8.png)
 
 #### 5. Edit Group Info (Only Displayed To Admin or Group Owners)
 
-- A form to edit the group's information (required fields are `Group Name` and `Group Privacy` - if a group is set to private, then the `Password` field is also required)
+- This tab contains a form to edit the group's information
+- The required fields are `Group Name` and `Group Privacy` - if a group is set to private, then the `Password` field is also required
 
 <br>
 
 ## Joining Groups From Group Links
 
-- When a user receives a join group link, they can paste it in their brower search bar and it will open a pop up with an invitation message, prompting them to join the group
-- A success message will then display and redirect the user to the group profile page
+- When a user receives a join group link, they can paste it in their browser search bar and it will open a pop up with an invitation message, prompting them to join the group
+- A success message will then display and redirect the user to the group's profile page
   ![alt text](images/joinGroup/join_group0.png)
 - For private groups, users must enter the group password to successfully join the group
   ![alt text](images/joinGroup/join_group1.png)
@@ -177,7 +178,7 @@ Users can log their actions and submit their related action photo on the Log Act
 
 ## Validate Actions
 
-- Admin users and group owners can validate actions through the Validate Actions page (admin can validate actions submitted by all users, while group owners can only validate the actions of members of their groups)
+- Admin users and group owners can validate actions through the Validate Actions page (admin users can validate actions submitted by all users, while group owners can only validate the actions of members of their groups)
 - Unvalidated actions will be displayed with relevant information (date, name of user, action name, action items, co2 saved, total points earned, and the groups that the action was submitted to).
 - Admin users and group owners can approve or reject an action by clicking on the `Approve` or `Reject` buttons on the right hand side of the action card
   ![alt text](images/validateActions/validate_actions3.png)
@@ -185,9 +186,9 @@ Users can log their actions and submit their related action photo on the Log Act
 ### Admin View:
 
 - Admin users can toggle between 3 tabs: My Groups, Users Without Groups, All Unvalidated Actions
-- In the `My Groups` tab, users can filter their search by Group Name or Action Name
+- In the `My Groups` tab, users can filter their search using the `Group Name` or `Action Name` toggle buttons
 - If the search toggle is set to `Group Name`, clicking on the search bar will display all groups that the user owns
-- If the search toggle is set to `Action Name`, clicking on the search bar will display all the possible actions within the app
+- If the search toggle is set to `Action Name`, clicking on the search bar will display all the possible action types within the app
   ![alt text](images/validateActions/validate_actions0.png)
   ![alt text](images/validateActions/validate_actions1.png)
 - The `Users Without Groups` tab displays unvalidated actions from all users that are not a part of any groups
@@ -223,13 +224,15 @@ There are 4 tabs:
 
 ### 2. Create Action
 
-- The Create Action tab contains a form to create a new action with required fields being the `Action Name`, at least 1 `Action Item`, and at least 1 `Image Validation Label`
-- The `Fallback Text` field is what is shown by default in the Action Fact step of the Log Action Menu flow if there are no quiz questions created for that action (shown in image here)
+- The Create Action tab contains a form to create a new action type with required fields being the `Action Name`, at least 1 `Action Item`, and at least 1 `Image Validation Label`
+- The `Fallback Text` field is what is shown by default in the Action Fact step of the Log Action menu flow if there are no quiz questions created for that action (shown in image here)
   ![alt text](images/adminDashboard/create_action0.png)
 
 <br>
 
 ### 3. Manage Actions
+
+In the Manage Actions tab, admin users can view and edit information about currently existing action types, as well as delete, pause and restore them.
 
 ![alt text](images/adminDashboard/manage_actions0.png)
 
@@ -256,6 +259,8 @@ There are 4 tabs:
 
 ### 4. Manage Quiz Questions
 
+In the Manage Quiz Questions tab, admin users can create new quiz questions or edit existing quiz questions for any action type.
+
 #### Creating Quiz Questions
 
 ![alt text](images/adminDashboard/manage_quizzes0.png)
@@ -265,7 +270,7 @@ There are 4 tabs:
   <br>
 
 - To create a new quiz, click the `Add New Question` button
-- The required fields for creating a new question are Fact Text, Question Text and at least 1 Possible Answer
+- The required fields for creating a new question are `Fact Text`, `Question Text` and at least 1 `Possible Answer`
   <br>
 
   ![alt text](images/adminDashboard/manage_quizzes2.png)
@@ -285,7 +290,7 @@ There are 4 tabs:
   - ![alt text](images/adminDashboard/manage_quizzes7.png)
 - The `Question Text` field will be the question that is displayed in step 6 of the Log Action menu, and the inputs to the `Possible Answers` field will be displayed as multiple choice options. If multiple answers were marked as correct options, the user will get the question right as long as they select 1 of those options.
   - ![alt text](images/adminDashboard/manage_quizzes8.png)
-- If an action has no quizzes and no fallback text (explained in the Creating An Action section), then a default message will be displayed in the Log Action menu, and the Bonus Question step will be skipped.
+- If an action has no quizzes and no fallback text, then a default message will be displayed in the Log Action menu, and the Bonus Question step will be skipped.
   - ![alt text](images/adminDashboard/manage_quizzes9.png)
 
 <br>
@@ -303,7 +308,7 @@ There are 4 tabs:
 
 ## Account Settings
 
-- Users can edit their information and view all their submitted actions on their Account Settings page
+Users can edit their information and view all their submitted actions on their Account Settings page.
 
 ### Editing User Information
 
@@ -332,7 +337,7 @@ There are 4 tabs:
 
 ## User Profiles
 
-- There are 3 sections that are displayed when viewing another user's profile
+There are 3 sections that are displayed when viewing another user's profile.
 
 1. The user's profile picture, name and email
 
