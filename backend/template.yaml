@@ -713,7 +713,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Join ['', ['arn:aws:s3:::','{{resolve:ssm:/BucketName:1}}']] 
+      SourceArn: !Join ['', ['arn:aws:s3:::','{{resolve:ssm:BucketName}}']] 
 
   validateImageWithRekognition:
     Type: AWS::Serverless::Function
@@ -786,7 +786,7 @@ Resources:
           Resource: '*' 
       Environment:
         Variables:
-          AMPLIFY_BUCKET: '{{resolve:ssm:/BucketName:1}}'
+          AMPLIFY_BUCKET: '{{resolve:ssm:BucketName}}'
           CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName 
           DBNAME: !Ref DBName
           ENDPOINT: !GetAtt RDSProxy.Endpoint
@@ -836,7 +836,7 @@ Resources:
         Origins:
           - ConnectionAttempts: 3
             ConnectionTimeout: 10
-            DomainName: !Join ['', ['{{resolve:ssm:/BucketName:1}}','.s3.', !Sub '${AWS::Region}', '.amazonaws.com']]
+            DomainName: !Join ['', ['{{resolve:ssm:BucketName}}','.s3.', !Sub '${AWS::Region}', '.amazonaws.com']]
             Id: AmplifyBucketCloudFrontDistribution
             OriginPath: "/public"
             S3OriginConfig: 
@@ -862,7 +862,7 @@ Resources:
   AdminCognitoUser:
     Type: AWS::Cognito::UserPoolUser
     Properties: 
-      UserPoolId: '{{resolve:ssm:/UserPoolId:1}}'
+      UserPoolId: '{{resolve:ssm:UserPoolId}}'
       Username: !Ref CognitoAdminEmail
       UserAttributes: 
         - Name: 'name'
@@ -923,7 +923,7 @@ Resources:
     - graphQLMySQLResolver
     - GraphQLApiSchema
     Properties:
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       Name: LambdaHandler
       Type: AWS_LAMBDA
       ServiceRoleArn: !GetAtt LambdaServiceRole.Arn
@@ -933,7 +933,7 @@ Resources:
   GraphQLApiSchema:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       Definition: |
         type Action {
           action_id: Int!
@@ -1371,7 +1371,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1398,7 +1398,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1442,7 +1442,7 @@ Resources:
         ## 	"fallback_quiz_media": $context.result.get("fallback_quiz_media"),
         ## 	"validation_label": null
         ## }
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1473,7 +1473,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1500,7 +1500,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1528,7 +1528,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1553,7 +1553,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1581,7 +1581,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1609,7 +1609,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1633,7 +1633,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1664,7 +1664,7 @@ Resources:
         $util.toJson($context.result)
         
         
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1699,7 +1699,7 @@ Resources:
         
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1725,7 +1725,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1753,7 +1753,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1781,7 +1781,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1808,7 +1808,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1836,7 +1836,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1864,7 +1864,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1892,7 +1892,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1920,7 +1920,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1949,7 +1949,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -1974,7 +1974,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2002,7 +2002,7 @@ Resources:
       ResponseMappingTemplate: |
         $util.toJson($context.result)
         
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2038,7 +2038,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2070,7 +2070,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2104,7 +2104,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2136,7 +2136,7 @@ Resources:
         #else
           0.0
         #end
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2172,7 +2172,7 @@ Resources:
         #else
           0.0
         #end
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2208,7 +2208,7 @@ Resources:
         #else
           0.0
         #end
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2244,7 +2244,7 @@ Resources:
           false
         #end
         
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2276,7 +2276,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2307,7 +2307,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2338,7 +2338,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2365,7 +2365,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2392,7 +2392,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2420,7 +2420,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2457,7 +2457,7 @@ Resources:
       ResponseMappingTemplate: |
         $util.toJson($context.result[0])
         
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2500,7 +2500,7 @@ Resources:
         }
 
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2549,7 +2549,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2588,7 +2588,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2640,7 +2640,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2689,7 +2689,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2729,7 +2729,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2757,7 +2757,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2803,7 +2803,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2838,7 +2838,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2866,7 +2866,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: "Deleted action with and its associated items"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2899,7 +2899,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Deleted action item"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2932,7 +2932,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Deleted validation label"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2959,7 +2959,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Deleted group!"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -2987,7 +2987,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: "Deleted user"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3018,7 +3018,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3049,7 +3049,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3080,7 +3080,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3111,7 +3111,7 @@ Resources:
         
       ResponseMappingTemplate: |
         "Rejected Submitted Action"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3163,7 +3163,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3205,7 +3205,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3235,7 +3235,7 @@ Resources:
         }
         
       ResponseMappingTemplate: "Removed user from group"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3269,7 +3269,7 @@ Resources:
         
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3346,7 +3346,7 @@ Resources:
         
         $util.toJson($context.result[0])
         
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3429,7 +3429,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3495,7 +3495,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3518,7 +3518,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3545,7 +3545,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3571,7 +3571,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3601,7 +3601,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3627,7 +3627,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $context.result[0].get("is_correct_answer")
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3657,7 +3657,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3690,7 +3690,7 @@ Resources:
 
         
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3729,7 +3729,7 @@ Resources:
         }
         
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3781,7 +3781,7 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3819,7 +3819,7 @@ Resources:
         }
 
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3848,7 +3848,7 @@ Resources:
         }
 
       ResponseMappingTemplate: "Deleted quiz"
-      ApiId: '{{resolve:ssm:/GraphQLAPIId:1}}'
+      ApiId: '{{resolve:ssm:GraphQLAPIId}}'
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT
       MaxBatchSize: 0
@@ -3859,7 +3859,7 @@ Resources:
 Outputs:
   AmplifyBucketName:
     Description: The name of the Amplify S3 bucket
-    Value: '{{resolve:ssm:/BucketName:1}}'
+    Value: '{{resolve:ssm:BucketName}}'
 
   ValidationLambdaArn:
     Description: The ARN of the Lambda function for image validation
@@ -3879,6 +3879,6 @@ Outputs:
     Description: 'Run the following command to set up the Lambda trigger! NOTE: This only works on Linux, Mac, or WSL'
     Value: !Sub
       - './scripts/lambda_trigger.sh ${Bucket} ${Lambda} ${Oai}'
-      - Bucket: '{{resolve:ssm:/BucketName:1}}'
+      - Bucket: '{{resolve:ssm:BucketName}}'
         Lambda: !GetAtt validateImageWithRekognition.Arn
         Oai: !Ref OriginAccessIdentity
