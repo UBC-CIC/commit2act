@@ -48,7 +48,6 @@ const GroupMemberDialog = ({
   const [dialogDisplay, setDialogDisplay] = useState(dialogDisplayInitial);
   const [membersUpdated, setMembersUpdated] = useState(false);
   const userType = cognitoUser && cognitoUser.attributes['custom:type'];
-  // const userId = cognitoUser && cognitoUser.attributes['custom:id'];
   const navigate = useNavigate();
 
   const promoteUser = async () => {
