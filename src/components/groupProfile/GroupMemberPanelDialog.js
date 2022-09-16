@@ -48,6 +48,7 @@ const GroupMemberDialog = ({
   const [dialogDisplay, setDialogDisplay] = useState(dialogDisplayInitial);
   const [membersUpdated, setMembersUpdated] = useState(false);
   const userType = cognitoUser && cognitoUser.attributes['custom:type'];
+  // const userId = cognitoUser && cognitoUser.attributes['custom:id'];
   const navigate = useNavigate();
 
   const promoteUser = async () => {
@@ -89,10 +90,15 @@ const GroupMemberDialog = ({
   };
 
   const removeUser = async () => {
-    if (
-      groupMembers.length === 1 ||
-      groupMembers.filter((member) => member.user_role === 'owner').length === 1
-    ) {
+    //check if leaving user is the only owner
+    const allOwners =
+      groupMembers &&
+      groupMembers.filter((member) => member.user_role === 'owner');
+    const isOnlyOwner =
+      allOwners.length === 1 &&
+      allOwners.some((owner) => owner.user_id === selectedMember.user_id);
+    //if there is only 1 group member, or if the user being removed is the only owner, show warning
+    if (groupMembers.length === 1 || isOnlyOwner) {
       setDialogDisplay({ ...dialogDisplay, leaveGroupWarning: true });
     } else {
       try {
