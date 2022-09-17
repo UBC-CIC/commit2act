@@ -3114,8 +3114,7 @@ Resources:
           }
         }
         
-      ResponseMappingTemplate: |
-        '"Rejected Submitted Action"'
+      ResponseMappingTemplate: '"Rejected Submitted Action"'
       ApiId: !GetAtt GraphQlApiIdParameter.Value
       DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
       Kind: UNIT

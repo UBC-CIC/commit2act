@@ -83,7 +83,7 @@ sam deploy --guided --capabilities CAPABILITY_NAMED_IAM --stack-name <stack-name
 
 NOTE: Be sure to include the `--profile <AWS PROFILE>` to the end of the command if you used it in the previous step!
 
-After running this, you will be prompted with a series of settings to fill in. When there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter. 
+After running this, you will be prompted with a series of settings to fill in. When there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter.
 
 If at any point you make a typo, you can press CTRL+C to cancel the process, and then you can re-run the command
 
@@ -173,13 +173,15 @@ Type the following commands in to set up the lambda trigger
 cd cdk
 ```
 
+NOTE: Be sure to include the `--profile <AWS PROFILE>` to the end the next command if you used it in step 2 (Frontend Deployment)!
+
 ```
 cdk bootstrap
 ```
 
 For the third command you need to input your Cloud Front Origin Access Identity into the command.
 This value should have been printed to the console in step 3.
-
+NOTE: Be sure to include the `--profile <AWS PROFILE>` to this command if you used it in step 2 (Frontend Deployment)!
 
 ```
 cdk deploy --parameters CloudFrontOriginAccessIdentity=<Your Cloud Front Origin Access Identity>
