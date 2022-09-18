@@ -23,7 +23,7 @@ export class CdkStack extends Stack {
     //const imageBucket = s3.Bucket.fromBucketName(this, "bucket-from-name", BucketName);
     
     imageBucket.addEventNotification(s3.EventType.OBJECT_CREATED, new s3n.LambdaDestination(validateImageWithRekognitionLambda), {
-      prefix: 'public/validation/input/*'
+      prefix: 'public/validation/input/'
     });
 
     const CloudFrontOriginAccessIdentity = new CfnParameter(this, 'CloudFrontOriginAccessIdentity', {
