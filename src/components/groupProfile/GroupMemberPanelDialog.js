@@ -283,6 +283,7 @@ const GroupMemberDialog = ({
               groupMembers={groupMembers}
               currentUserOwner={currentUserOwner}
               userId={selectedMember.user_id}
+              cognitoUser={cognitoUser}
             />
           )}
         </Dialog>
