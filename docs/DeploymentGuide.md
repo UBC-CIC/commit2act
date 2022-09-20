@@ -173,6 +173,10 @@ Type the following commands in to set up the lambda trigger
 cd cdk
 ```
 
+```
+npm i
+```
+
 NOTE: Be sure to include the `--profile <AWS PROFILE>` to the end the next command if you used it in step 2 (Frontend Deployment)!
 
 ```
