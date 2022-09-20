@@ -5,8 +5,8 @@
 - Fixed dynamic references over limit bug causing failed backend deployments 10-15% of the time
 - Fixed bug with getSingleGroup resolver by including table for group_id before WHERE clause
 - Fixed bug with faulty delete resolvers by changing response mapping template formatting
-- Fixed bug with no warning dialog displayed when non owner admin users try to remove the only group owner in a group
-- Fixed bug with incorrect warning dialog shown when removing a user from a group with 1 group owner
+- Fixed bug causing no warning dialog to be displayed when admin users try to remove the only group owner in a group
+- Fixed bug causing incorrect warning dialog shown when removing a user from a group with 1 group owner
 
 ## Added Features
 - Replaced lambda trigger and manual steps in step 4 of backend deployment with cdk stack
