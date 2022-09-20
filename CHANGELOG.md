@@ -7,6 +7,7 @@
 - Fixed bug with faulty delete resolvers by changing response mapping template formatting
 - Fixed bug causing no warning dialog to be displayed when admin users try to remove the only group owner in a group
 - Fixed bug causing incorrect warning dialog shown when removing a user from a group with 1 group owner
+- Fixed bug in template.yaml causing Cognito Admin user made by the cloudformation stack to not be added in the database on first login
 
 ## Added Features
 - Replaced lambda trigger and manual steps in step 4 of backend deployment with cdk stack
