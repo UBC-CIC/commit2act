@@ -18,22 +18,27 @@ const LeaveGroupWarningDialogContent = ({
   groupMembers,
   currentUserOwner,
   userId,
+  cognitoUser,
 }) => {
   const { group_id, group_name } = groupInfo;
   const [deleteGroupSuccess, setDeleteGroupSuccess] = useState(false);
   const [leaveGroupSuccess, setLeaveGroupSuccess] = useState(false);
+  const allOwners =
+    groupMembers &&
+    groupMembers.filter((member) => member.user_role === 'owner');
   const [userIsOnlyOwner, setUserIsOnlyOwner] = useState(
-    currentUserOwner &&
-      groupMembers.filter((member) => member.user_role === 'owner').length === 1
+    allOwners.some((owner) => owner.user_id === userId) &&
+      allOwners.length === 1
   );
   const navigate = useNavigate();
 
   //each time a member is updated, get the updated number of group owners and check if user is the only owner
   useEffect(() => {
-    const numOwners = groupMembers.filter(
-      (member) => member.user_role === 'owner'
-    ).length;
-    setUserIsOnlyOwner(currentUserOwner && numOwners === 1);
+    const isOnlyOwner =
+      allOwners.length === 1 &&
+      allOwners.some((owner) => owner.user_id === userId);
+    setUserIsOnlyOwner(isOnlyOwner);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserOwner, groupMembers]);
 
   //if there is more than 1 group member and the user is not the only group owner, remove the user from the group
@@ -92,7 +97,10 @@ const LeaveGroupWarningDialogContent = ({
           </DialogActions>
         </>
       );
-    } else if (userIsOnlyOwner) {
+    } else if (
+      userIsOnlyOwner &&
+      Number(cognitoUser.attributes['custom:id']) === userId
+    ) {
       return (
         <>
           <DialogTitle>Leave Group</DialogTitle>
@@ -100,6 +108,20 @@ const LeaveGroupWarningDialogContent = ({
           <DialogContent>
             You must promote another user to group owner before leaving the
             group.
+          </DialogContent>
+        </>
+      );
+    } else if (
+      userIsOnlyOwner &&
+      Number(cognitoUser.attributes['custom:id']) !== userId
+    ) {
+      return (
+        <>
+          <DialogTitle>Remove Group Owner</DialogTitle>
+          <WarningAmberIcon fontSize="large" />
+          <DialogContent>
+            You must promote another user to group owner before removing this
+            user.
           </DialogContent>
         </>
       );

@@ -13,8 +13,7 @@ You will also need the following installed on your computer:
 
 - [AWS CLI](https://aws.amazon.com/cli/)
 - [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-
-If you are on a Windows device, it is recommended to install the [Windows Subsystem For Linux](https://docs.microsoft.com/en-us/windows/wsl/install), which lets you run a Linux terminal on your Windows computer natively. Step 4 will be significantly easier with WSL, however there will be an alternate manual process. [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701) is also recommended for using WSL.
+- [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/cli.html)
 
 # Step 1: Clone The Repository
 
@@ -84,7 +83,7 @@ sam deploy --guided --capabilities CAPABILITY_NAMED_IAM --stack-name <stack-name
 
 NOTE: Be sure to include the `--profile <AWS PROFILE>` to the end of the command if you used it in the previous step!
 
-After running this, you will be prompted with a series of settings to fill in. When there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter. 
+After running this, you will be prompted with a series of settings to fill in. When there is text in `[square brackets]`, that means whatever is inside is the default value. If you are satisfied with that value for the input, you can just press enter.
 
 If at any point you make a typo, you can press CTRL+C to cancel the process, and then you can re-run the command
 
@@ -150,54 +149,53 @@ Be sure to not close the window after this process has completed, as the Outputs
 
 # Step 4: Set up Lambda Trigger
 
-In order for the project to work as intended, we need to set up a trigger for our image validation Lambda function that will let it be called whenever an image file is uploaded to our Amplify S3 Bucket. There are two ways to do this. If you are on an Apple Computer, Linux, or using the Windows Subsystem for Linux (ensuring that you have the AWS CLI set up on these systems), you can run a script to set this up. If you are on a standard Windows machine, you must follow a manual process.
+In order for the project to work as intended, we need to set up a trigger for our image validation Lambda function that will let it be called whenever an image file is uploaded to our Amplify S3 Bucket.
 
-If on a Mac, Linux, or WSL instance (making sure you are in the backend directory), run the command that was outputted from the CloudFormation template. If you closed the Terminal window, the outputs can be found on the AWS Console by searching for `CloudFormation`, clicking on the stack you just deployed, then navigating to the `Outputs` tab (making sure you are in the same region that you deployed to). The command will be the last output, and should look somewhat like the following:
+To do this we will use AWS CDK (Cloud Development Kit).
 
-```bash
-./scripts/lambda_trigger.sh commit2act-storage-4f79999d182128-devc arn:aws:lambda:us-west-2:053671316234:function:validateImageWithRekognition E3HJI8V3G54871
+Run the command
+
+```
+cdk --version
 ```
 
-_NOTE: Sometimes there is a bug where a space will appear within the command, which will break it. An example looks like the following, where there is a space after the first **-** character in us-west-2 in the Lambda ARN. If this occurs for you, delete the space before running the command_
+it will print a version like this:
 
-```bash
-./scripts/lambda_trigger.sh commit2act-storage-4f79922d182128-devc arn:aws:lambda:us- west-2:053671316144:function:validateImageWithRekognition E3HJI8V4G54870
+```
+2.41.0 (build 6ad48a3)
 ```
 
-If you encounter the error `/usr/bin/env: ‘bash\r’: No such file or directory`, something you can do to resolve the error on Linux/WSL is run the following commands
+If you do not have cdk installed please look at step 1 on how to install the cdk software.
 
-```bash
-sudo apt install dos2unix
-dos2unix ./scripts/lambda_trigger.sh
+Type the following commands in to set up the lambda trigger
+
+```
+cd cdk
 ```
 
-Now you can run the `./scripts/lambda_trigger.sh <AmplifyBucketName> <ValidationFunctionARN>` command.
-
-Running this will set up the trigger, and you can move on to step 5.
-
-If you are on a Windows machine, or for whatever reason you encounter errors with the script, the trigger can be added through the AWS Console.
-
-Navigate to the validateImageWithRekognition Lambda on the AWS Console (search for Lambda in the box, then click on the function name). From here, click on the tab labelled `Configuration`, then go into the section called `Triggers`, then click `Add trigger`. For the source, scroll until you find `S3`. From there, in the bucket field, select the Amplify Bucket (the bucket name can be found as an output from the CloudFormation stack). Event type will be `All object create events`, prefix is `public/validation/input/`, and don't enter anything for suffix. Be sure to click the acknowledgement checkbox, then press `Add`, and the trigger is set up!
-
-We also need to set up a bucket policy for the Amplify S3 Bucket to ensure that CloudFront can access and display images in the bucket. To do so, search for `S3` in the search box, then navigate to the Amplify S3 Bucket's page. Click on the `Permissions` tab, then click `Edit` on the `Bucket policy`. Copy and paste the following into the text box:
-
-```JSON
-{
-   "Statement": [
-      {
-         "Sid": "Statement1",
-         "Effect": "Allow",
-         "Principal": {
-            "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity <CloudFrontOriginAccessIdentity>"
-         },
-         "Action": "s3:GetObject",
-         "Resource": "arn:aws:s3:::<AmplifyBucketName>/*"
-      }
-   ]
-}
+```
+npm i
 ```
 
-Where `CloudFrontOriginAccessIdentity` and `AmplifyBucketName` are the outputs from CloudFormation. Press save, then you're done!
+NOTE: Be sure to include the `--profile <AWS PROFILE>` to the end the next command if you used it in step 2 (Frontend Deployment)!
+
+```
+cdk bootstrap
+```
+
+For the third command you need to input your Cloud Front Origin Access Identity into the command.
+This value should have been printed to the console in step 3.
+NOTE: Be sure to include the `--profile <AWS PROFILE>` to this command if you used it in step 2 (Frontend Deployment)!
+
+```
+cdk deploy --parameters CloudFrontOriginAccessIdentity=<Your Cloud Front Origin Access Identity>
+```
+
+An example of how the command should look is:
+
+```
+cdk deploy --parameters CloudFrontOriginAccessIdentity=EEXI7YLO7EN3A
+```
 
 # Step 5: Wrap up Frontend Deployment
 
