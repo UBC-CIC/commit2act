@@ -123,8 +123,8 @@ const NewQuizForm = ({ action_id, getQuizzes }) => {
         query: createQuiz,
         variables: {
           action_id: action_id,
-          fact_text: fact_text,
-          question_text: question_text,
+          fact_text: fact_text.trim(),
+          question_text: question_text.trim(),
         },
       });
 
