@@ -349,7 +349,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
           {/* render mobile view of group stats if screen width is less than 900px, otherwise render browser view */}
           {responsive ? renderResponsiveView() : renderBrowserView()}
           {group_description && (
-            <Box sx={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
+            <Box sx={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
               <Typography variant="subtitle1" sx={{ mt: '2em' }}>
                 {readMore
                   ? group_description

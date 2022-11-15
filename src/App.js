@@ -43,7 +43,7 @@ function App(props) {
   return (
     <StylesProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <div style={{ width: '100vw', height: '100vh' }}>
+        <div style={{ width: '100vw', height: '100vh', 'overflow-x': 'hidden' }}>
           {currentLoginState !== 'signedIn' && (
             /* Login component options:
              *
