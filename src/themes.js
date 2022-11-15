@@ -22,9 +22,9 @@ const theme = createTheme({
             variant: 'h1',
           },
           style: {
-            fontSize: 40,
+            fontSize: 65,
             color: '#112D4E',
-            fontWeight: 300,
+            fontWeight: 500,
           },
         },
         {
