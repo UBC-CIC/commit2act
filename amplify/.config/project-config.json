@@ -2,7 +2,7 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "commit2acttest",
+  "projectName": "commit2act",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {

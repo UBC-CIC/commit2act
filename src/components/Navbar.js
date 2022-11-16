@@ -19,6 +19,8 @@ import { Auth } from 'aws-amplify';
 import { connect } from 'react-redux';
 import { updateLoginState } from '../actions/loginActions';
 import { updateMenuState } from '../actions/menuActions';
+import LanguageHandler from "./LanguageHandler";
+import useTranslation from "./customHooks/translations";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -70,6 +72,7 @@ function Navbar(props) {
   } = props;
   const classes = useStyles();
   const navigate = useNavigate();
+  const translation = useTranslation();
 
   const [user, setUser] = useState('');
   const [loadingBackdrop, setLoadingBackdrop] = React.useState(false);
@@ -189,6 +192,10 @@ function Navbar(props) {
             Commit2Act
           </Typography>
           <div className={classes.grow} />
+          <div>
+		      <span>{translation.changeLanguage}</span> &nbsp;
+              <LanguageHandler />
+          </div>
           <div className={classes.sectionDesktop}>
             <IconButton
               edge="end"

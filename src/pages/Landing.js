@@ -26,6 +26,7 @@ import {
   getSingleUser,
 } from '../graphql/queries';
 import GlobalLeaderboard from '../components/GlobalLeaderboard';
+import useTranslation from "../components/customHooks/translations";
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -46,6 +47,7 @@ const Landing = ({ user, userType }) => {
   const [numActionsToValidate, setNumActionsToValidate] = useState();
   const [pendingActions, setPendingActions] = useState();
   const [pendingCO2Saved, setPendingCO2Saved] = useState();
+  const translation = useTranslation();
 
   useEffect(() => {
     if (user) {
@@ -160,7 +162,7 @@ const Landing = ({ user, userType }) => {
                 maxWidth: { xs: '400px', sm: '100%' },
               }}
             >
-              Welcome {user.name}!
+              {translation.formatString(translation.welcome, user.name)}
             </Typography>
             {numActionsToValidate > 0 && (
               <Alert
