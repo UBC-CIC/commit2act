@@ -10,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import Amplify from 'aws-amplify';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reducers from './reducers';
+import LanguageContextProvider from "./components/contexts/LanguageContext";
 
 Amplify.configure(awsExports);
 
@@ -17,7 +18,9 @@ const store = createStore(reducers, applyMiddleware(thunk));
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+	<LanguageContextProvider>
+    	<App />
+	</LanguageContextProvider>
   </Provider>,
   document.getElementById('root')
 );
