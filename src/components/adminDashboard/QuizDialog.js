@@ -36,8 +36,12 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
     const res = await API.graphql({
       query: getAllQuizzesForAction,
       variables: { action_id: action.action_id },
-    });
-    setAllQuizzes(res.data.getAllQuizzesForAction);
+    }).catch(e => {
+		console.log(e);
+	});
+	if (typeof res !== 'undefined') {
+		setAllQuizzes(res.data.getAllQuizzesForAction);
+	}
   };
 
   useEffect(() => {
@@ -76,19 +80,29 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
   };
 
   const renderQuizCards = () => {
-    return allQuizzes.length > 0 ? (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-        {allQuizzes.map((quiz, index) => (
-          <QuizCard key={index} quiz={quiz} getQuizzes={getQuizzes} />
-        ))}
-      </Box>
-    ) : (
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography variant="subtitle1">
-          There are currently no quizzes to display.
-        </Typography>
-      </Box>
-    );
+	if (typeof allQuizzes !== 'undefined') {
+		return allQuizzes.length > 0 ? (
+		<Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+			{allQuizzes.map((quiz, index) => (
+			<QuizCard key={index} quiz={quiz} getQuizzes={getQuizzes} />
+			))}
+		</Box>
+		) : (
+		<Box sx={{ textAlign: 'center' }}>
+			<Typography variant="subtitle1">
+			There are currently no quizzes to display.
+			</Typography>
+		</Box>
+		);
+	} else {
+		return (
+			<Box sx={{ textAlign: 'center' }}>
+				<Typography variant="subtitle1">
+				There are currently no quizzes to display.
+				</Typography>
+			</Box>
+		);
+	}
   };
 
   return (
