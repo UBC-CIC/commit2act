@@ -222,7 +222,6 @@ const UserProfile = () => {
               md={9}
               sx={{
                 width: '100%',
-                outline: '2px solid #3F72AF',
                 borderRadius: '5px',
                 padding: '1.5em',
                 display: 'flex',

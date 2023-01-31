@@ -135,7 +135,7 @@ const CO2SavedScreen = ({
               <Typography variant="h3">
                 Your action is awaiting admin approval
               </Typography>
-              <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
+              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em' }}>
                 The impact of your action is {totalCO2Saved} g of CO2 saved
               </Typography>
             </Box>

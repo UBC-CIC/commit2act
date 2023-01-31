@@ -18,7 +18,8 @@ const StyledImageListItemBar = styled(ImageListItemBar)`
     overflow: visible;
     white-space: normal;
     overflow-wrap: break-word;
-    font-size: 0.9rem;
+    font-size: 1.3rem;
+    color: #fff;
     text-align: center;
   }
 `;
@@ -26,7 +27,9 @@ const StyledImageListItemBar = styled(ImageListItemBar)`
 const StyledImageListItem = styled(ImageListItem)`
   .MuiImageListItem-img {
     border-radius: 7px;
-    height: 100px;
+    height: 278px;
+    margin-bottom: 8px;
+    width: 100%;
   }
 `;
 
@@ -62,6 +65,7 @@ const AllActions = ({ setSelectedAction }) => {
       <Box
         sx={{
           display: 'grid',
+          gap: '20px',
           gridTemplateColumns: {
             xs: 'repeat(2, 1fr)',
             md: 'repeat(3, 1fr)',
@@ -79,7 +83,7 @@ const AllActions = ({ setSelectedAction }) => {
             <StyledImageListItem
               key={index}
               sx={{
-                width: '100px',
+                width: '100%',
                 height: '100px',
                 cursor: 'pointer',
                 '&:hover': {
@@ -98,7 +102,7 @@ const AllActions = ({ setSelectedAction }) => {
                 <Box
                   sx={{
                     backgroundColor: '#B4EEB4	',
-                    width: '100px',
+                    width: '100%',
                     height: '100px',
                     borderRadius: '7px',
                   }}

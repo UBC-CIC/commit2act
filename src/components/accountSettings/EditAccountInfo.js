@@ -23,7 +23,6 @@ import PasswordRequirements from '../authentication/PasswordRequirements';
 
 const StyledDialogTitle = styled(DialogTitle)`
   font-size: 28px;
-  color: #455a7f;
   font-weight: 300;
 `;
 
@@ -403,7 +402,7 @@ const EditAccountInfo = ({
           >
             <Typography
               variant="h7"
-              sx={{ mb: '1em', color: '#455A7F', fontWeight: 400 }}
+              sx={{ mb: '1em', fontWeight: 400 }}
             >
               Change Password
             </Typography>

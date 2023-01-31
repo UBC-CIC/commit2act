@@ -150,14 +150,14 @@ const GroupProfile = ({ user }) => {
             container
             alignItems={{ xs: 'center' }}
             direction={{ xs: 'column', lg: 'row' }}
-            sx={{ mt: '2em' }}
+            sx={{ mt: '0'}}
             gap={{ xs: '2em', lg: '0' }}
             textAlign={{ xs: 'center', md: 'left' }}
           >
             <Grid
               container
               direction={{ xs: 'column', sm: 'row' }}
-              justifyContent={{ xs: 'center' }}
+              justifyContent={{ xs: 'center', sm:'flex-start' }}
               alignItems={{ xs: 'center' }}
               spacing={{ xs: 4, sm: 8 }}
               sx={{ mb: '1.5em', overflow: 'auto' }}
@@ -166,6 +166,11 @@ const GroupProfile = ({ user }) => {
                 <Avatar
                   variant="rounded"
                   sx={{
+                    background: '#5bc1ab',
+                    borderRadius: 5,
+                    boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
+                    border: '1px solid #000000',
+                    padding: '30px 30px 30px 30px',
                     width: 150,
                     height: 150,
                   }}
@@ -179,7 +184,7 @@ const GroupProfile = ({ user }) => {
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                   gap: '0.5em',
                   overflow: 'auto',
                 }}
@@ -187,28 +192,35 @@ const GroupProfile = ({ user }) => {
                 <Typography
                   variant="h1"
                   sx={{
-                    mb: '0.5em',
                     wordWrap: 'break-word',
                     maxWidth: { xs: '300px', sm: '100%' },
                   }}
                 >
                   {groupName}
                 </Typography>
-                <Stack direction="row" alignItems="center" gap={1}>
-                  <PeopleAlt />
-                  <Typography component="div" variant="subtitle2">
-                    Members: {groupMembers && groupMembers.length}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" alignItems="center" gap={1}>
-                  {groupInfo.is_public ? <Public /> : <Lock />}
-                  <Typography component="div" variant="subtitle2">
-                    {groupInfo.is_public ? 'Public' : 'Private'}
-                  </Typography>
-                </Stack>
+                <Grid
+                  container 
+                  sx={{
+                    display: 'flex',
+                    gap: '20px',
+                    color: '#BCF10C',
+                  }}>
+                  <Stack direction="row" alignItems="center" gap={1}>
+                    <PeopleAlt />
+                    <Typography component="div" variant="subtitle2">
+                      Members: {groupMembers && groupMembers.length}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" gap={1}>
+                    {groupInfo.is_public ? <Public /> : <Lock />}
+                    <Typography component="div" variant="subtitle2">
+                      {groupInfo.is_public ? 'Public' : 'Private'}
+                    </Typography>
+                  </Stack>
+                </Grid> 
                 {currentUserMember ? (
                   <Button
-                    variant="outlined"
+                    variant="contained"
                     sx={{ mt: { xs: '1em' } }}
                     onClick={() => setLeaveGroupWarning(true)}
                   >
@@ -216,7 +228,7 @@ const GroupProfile = ({ user }) => {
                   </Button>
                 ) : (
                   <Button
-                    variant="outlined"
+                    variant="contained"
                     sx={{ mt: { xs: '1em' } }}
                     onClick={() => {
                       navigate(groupLink);
@@ -240,19 +252,21 @@ const GroupProfile = ({ user }) => {
                     flexDirection: { xs: 'column', md: 'row' },
                     justifyContent: 'space-evenly',
                     backgroundColor: '#DBE2EF',
-                    borderRadius: '8px',
-                    padding: '1.5em',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
+                    padding: '1em',
+                    width: '100%',
                     gap: { xs: '0.5em', md: '2' },
                   }}
                 >
-                  <StyledPaper elevation={6}>
+                  <StyledPaper elevation={6} sx={{background: 'white', flex: '1'}}>
                     <Typography variant="h4">CO2 Saved This Week</Typography>
                     <Typography variant="h5" className="statValue">
                       <AutoGraphOutlined fontSize="large" />
                       {groupInfo.weekly_co2}g
                     </Typography>
                   </StyledPaper>
-                  <StyledPaper elevation={6}>
+                  <StyledPaper elevation={6} sx={{background: 'white', flex: '1'}}>
                     <Typography variant="h4">Total CO2 Saved</Typography>
                     <Typography variant="h5" className="statValue">
                       {groupInfo.total_co2}g

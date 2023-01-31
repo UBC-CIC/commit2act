@@ -37,7 +37,7 @@ import UserContributionDonutChart from '../UserContributionDonutChart';
 
 const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
-    background-color: #f6f6f6;
+    background: linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%);
   }
 `;
 

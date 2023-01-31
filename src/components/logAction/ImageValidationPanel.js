@@ -9,13 +9,12 @@ const Dropbox = styled('div')`
   justify-content: center;
   align-items: center;
   min-height: 20vh;
-  background-color: #dbe2ef;
   border-radius: 5px;
   padding: 2em;
   width: 80%;
   opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
+  background: #3d4445;
   #browse {
-    background: white;
     padding: 0.3em 1em;
     cursor: pointer;
     border-radius: 5px;
@@ -34,11 +33,9 @@ const Dropbox = styled('div')`
     flex-direction: column;
   }
   #delete {
-    background: #ffffff;
     border-radius: 50px;
     border: none;
     width: 100px;
-    color: #112d4e;
     opacity: 0.85;
     position: absolute;
     cursor: pointer;
@@ -126,7 +123,6 @@ const ImageValidationPanel = ({
           flexDirection: 'column',
           gap: '20px',
           alignItems: 'center',
-          backgroundColor: 'white',
           padding: '3em',
           width: '65%',
           borderRadius: '5px',
@@ -135,7 +131,7 @@ const ImageValidationPanel = ({
         <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
           Please upload an image related to your action item for verification
         </Typography>
-        <Typography sx={{ fontSize: '15px', color: '#595959' }}>
+        <Typography sx={{ fontSize: '15px' }}>
           Minimum dimensions 100x100 px
         </Typography>
         {fileTypeError && (
@@ -151,7 +147,7 @@ const ImageValidationPanel = ({
         >
           {selectedImage ? (
             <>
-              <Typography component="div" variant="h4" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
                 Image Selected!
               </Typography>
               <Box id="image-preview" sx={{ width: '100%' }}>
@@ -174,7 +170,7 @@ const ImageValidationPanel = ({
           ) : (
             <>
               <CloudUpload fontSize="large" />
-              <Typography component="div" variant="h4" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
                 Drop Your Image Here, Or{' '}
               </Typography>
 

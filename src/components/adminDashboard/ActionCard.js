@@ -43,7 +43,6 @@ const Input = styled('input')`
 
 const StyledDialogTitle = styled(DialogTitle)`
   font-size: 28px;
-  color: #455a7f;
   font-weight: 300;
 `;
 
