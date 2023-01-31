@@ -1,38 +1,40 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from 'tss-react/mui';
 import { green, red } from '@mui/material/colors';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { CheckCircle, Cancel } from '@mui/icons-material';
 
 const PasswordRequirements = ({ requirements }) => {
-  const styles = makeStyles((theme) => ({
-    valid: {
-      color: green[500],
-    },
-    invalid: {
-      color: red[500],
-    },
-    fontSize: {
-      fontSize: '0.9rem',
-    },
-  }));
+  const useStyles = makeStyles()((theme) => {
+    return{
+      valid: {
+        color: green[500],
+      },
+      invalid: {
+        color: red[500],
+      },
+      fontSize: {
+        fontSize: '0.9rem',
+      },
+    }
+  });
 
-  const localStyles = styles();
+  const { classes } = useStyles();
 
   return (
-    <List dense={true} className={localStyles.root}>
+    <List dense={true} className={classes.root}>
       {Object.entries(requirements).map((req) => {
         return (
           <ListItem key={req[0]}>
             <ListItemIcon>
               {req[1].error ? (
-                <CheckCircle className={localStyles.valid} />
+                <CheckCircle className={classes.valid} />
               ) : (
-                <Cancel className={localStyles.invalid} />
+                <Cancel className={classes.invalid} />
               )}
             </ListItemIcon>
             <ListItemText
-              className={localStyles.fontSize}
+              className={classes.fontSize}
               primary={req[1].description}
             />
           </ListItem>

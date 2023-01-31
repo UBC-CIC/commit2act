@@ -188,6 +188,7 @@ const CreateGroup = ({ user }) => {
               justifyContent: 'center',
               flexDirection: 'column',
               overflow: 'initial',
+              backgroundColor: '#131516',
             }}
           >
             <FormGroup>
@@ -224,7 +225,6 @@ const CreateGroup = ({ user }) => {
                   />
                   <Button
                     variant="outlined"
-                    component="span"
                     sx={{ m: { xs: '1.5em 0 0', md: '0' } }}
                   >
                     Upload Group Icon
@@ -241,7 +241,7 @@ const CreateGroup = ({ user }) => {
               >
                 <>
                   {' '}
-                  <SectionTitle variant="h4">Group Name</SectionTitle>
+                  <SectionTitle variant="h2">Group Name</SectionTitle>
                   <TextField
                     required
                     label="Group Name"
@@ -260,7 +260,7 @@ const CreateGroup = ({ user }) => {
                   />
                 </>
                 <>
-                  <SectionTitle variant="h4">Group Description</SectionTitle>
+                  <SectionTitle variant="h2">Group Description</SectionTitle>
                   <TextField
                     multiline
                     rows={4}
@@ -274,7 +274,7 @@ const CreateGroup = ({ user }) => {
                 </>
                 <>
                   {' '}
-                  <SectionTitle variant="h4">Group Privacy</SectionTitle>
+                  <SectionTitle variant="h2">Group Privacy</SectionTitle>
                   <RadioGroup
                     aria-labelledby="group-privacy-label"
                     defaultValue={createGroupForm.is_public}
@@ -359,7 +359,7 @@ const CreateGroup = ({ user }) => {
               <Button
                 sx={{
                   mt: '4em',
-                  backgroundColor: '#112D4E',
+                  padding: '1em',
                   width: '100%',
                   alignSelf: 'center',
                 }}

@@ -87,8 +87,8 @@ const BonusPointQuiz = ({
       <>
         {correctAnswersArray.includes(userAnswer) ? (
           <>
-            <Typography variant="h4">Correct!</Typography>
-            <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 80 }} />
+            <Typography variant="h2">Correct!</Typography>
+            <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 80, color: '#BCF10C' }} />
             <Typography variant="subtitle1" sx={{ mt: '1.5em' }}>
               {numTries > 1
                 ? '0 bonus points will be added to your entry'
@@ -106,8 +106,8 @@ const BonusPointQuiz = ({
           </>
         ) : (
           <>
-            <Typography variant="h4">Incorrect!</Typography>
-            <CancelOutlinedIcon sx={{ fontSize: 80 }} />
+            <Typography variant="h2">Incorrect!</Typography>
+            <CancelOutlinedIcon sx={{ fontSize: 80, color: '#BCF10C' }} />
             <StyledButton
               onClick={() => {
                 setNumTries(numTries + 1);

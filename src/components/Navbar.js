@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from 'tss-react/mui';
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -12,6 +12,7 @@ import {
   Backdrop,
   Menu,
   MenuItem,
+  Box
 } from '@mui/material';
 import { ExitToApp, More } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -22,45 +23,59 @@ import { updateMenuState } from '../actions/menuActions';
 import LanguageHandler from "./LanguageHandler";
 import useTranslation from "./customHooks/translations";
 
-const useStyles = makeStyles((theme) => ({
-  grow: {
-    flexGrow: 1,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
+const useStyles = makeStyles()((theme) => {
+  return{
+    grow: {
+      flexGrow: 1,
     },
-  },
-  logo: {
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      position: 'sticky',
+      top: '0'
     },
-    paddingLeft: '15px',
-  },
-  sectionDesktop: {
-    display: 'none',
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
+    topBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      background: '#262a2c',
+      boxShadow: 'none',
     },
-  },
-  sectionMobile: {
-    display: 'flex',
-    [theme.breakpoints.up('md')]: {
+    menuButton: {
+      marginRight: 22,
+      color: '#fff',
+      background: '#000',
+    },
+    title: {
+      [theme.breakpoints.up('sm')]: {
+        display: 'block',
+      },
+    },
+    avatar: {
+      background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+    },
+    logo: {
       display: 'none',
+      [theme.breakpoints.up('sm')]: {
+        display: 'block',
+      },
+      paddingLeft: '15px',
     },
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: 'pink',
-  },
-}));
+    sectionDesktop: {
+      display: 'none',
+      [theme.breakpoints.up('md')]: {
+        display: 'flex',
+      },
+    },
+    sectionMobile: {
+      display: 'flex',
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: 'pink',
+    },
+  };
+});
 
 function Navbar(props) {
   const {
@@ -70,7 +85,9 @@ function Navbar(props) {
     menuEnabled,
     showSideMenuButton,
   } = props;
-  const classes = useStyles();
+  
+  const { classes } = useStyles();
+
   const navigate = useNavigate();
   const translation = useTranslation();
 
@@ -169,7 +186,7 @@ function Navbar(props) {
 
   return (
     <Grid item xs={12} className={classes.appBar}>
-      <AppBar position="static" style={{ backgroundColor: '#3F72AF' }}>
+      <AppBar position="static" className={classes.topBar}>
         <Toolbar>
           {showSideMenuButton ? (
             <IconButton
@@ -182,18 +199,28 @@ function Navbar(props) {
               <MenuIcon />
             </IconButton>
           ) : null}
+          <Box
+            component="img"
+            sx={{
+              height: 36,
+              width: 36,
+              marginRight: 1,
+            }}
+            alt="" 
+            src='icon-192x192.png'  />
+
           <Typography
             className={classes.title}
             variant="h6"
-            component={'h1'}
+            component={'span'}
             noWrap
-            sx={{ fontWeight: 200 }}
           >
             Commit2Act
           </Typography>
+          
           <div className={classes.grow} />
           <div>
-		      <span>{translation.changeLanguage}</span> &nbsp;
+		      <label htmlFor="language">{translation.changeLanguage}</label> &nbsp;
               <LanguageHandler />
           </div>
           <div className={classes.sectionDesktop}>
@@ -205,7 +232,7 @@ function Navbar(props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
+              <Avatar className={classes.avatar}>{user.charAt(0).toUpperCase()}</Avatar>
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

@@ -28,7 +28,10 @@ import { styled } from '@mui/material/styles';
 
 const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
-    background-color: #f6f6f6;
+    background: linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%);
+    th,td {
+      color: #000;
+    }
   }
 `;
 
@@ -147,13 +150,13 @@ const GlobalLeaderboard = () => {
             mt: { xs: '2em', sm: '0' },
           }}
         ></Box>
-        <TableContainer component={Paper} sx={{ mt: '1em' }}>
+        <TableContainer component={Paper} sx={{ mt: '1em', backgroundColor: '#131516' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
               Leaderboard displaying {selectedTab} ranked by{' '}
               {selectedFilter.name}
             </caption>
-            <TableHead>
+            <TableHead sx={{ mt: '1em', backgroundColor: '#131516' }}>
               <TableRow>
                 <TableCell>Rank</TableCell>
                 <TableCell align="left">Name</TableCell>
@@ -183,7 +186,6 @@ const GlobalLeaderboard = () => {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ color: theme.palette.secondary.main }}
                     >
                       {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking  */}
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
@@ -215,7 +217,6 @@ const GlobalLeaderboard = () => {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ color: theme.palette.secondary.main }}
                     >
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>

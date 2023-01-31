@@ -1,14 +1,28 @@
 import React from "react";
 import { useLanguageContext } from "./contexts/LanguageContext";
+import {
+	Select,
+	MenuItem
+} from '@mui/material';
 
 export default function LanguageHandler() {
 	const { language, changeLanguage } = useLanguageContext();
 
 	return (
-		<select value={language} onChange={(e) => changeLanguage(e.target.value)}>
-			<option value="en">English</option>
-			<option value="fr">français</option>
-			<option value="es">Español</option>
-		</select>
+
+  <Select
+    id="language"
+    value={language}
+    onChange={(e) => changeLanguage(e.target.value)}
+    sx={{
+    	height: '40px',
+    	marginRight: '8px'
+
+    }}
+  >
+    <MenuItem value="en">English</MenuItem>
+    <MenuItem value="fr">français</MenuItem>
+    <MenuItem value="es">Español</MenuItem>
+  </Select>
 	);
 }

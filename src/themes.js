@@ -3,28 +3,81 @@ import blue from '@material-ui/core/colors/blue';
 
 const theme = createTheme({
   palette: {
+    mode:'dark',
     primary: {
-      main: '#1976d2',
+      main: '#BCF10C',
     },
     secondary: {
-      main: blue[500],
+      main: '#380FD1',
     },
     darkTheme: {
-      main: '#282c34',
-      card: '#4a4f59',
+      main: '#262a2c',
+      card: '#16191f',
     },
   },
+  typography: {
+    fontFamily: [
+      'Inter', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+
+    ].join(','),
+  },
   components: {
+    MuiButton: {
+      variants: [
+        {
+          props: {
+            variant: 'contained',
+          },
+          style: {
+            background: '#380FD1',
+            color: '#fff',
+            fontSize: 16,
+            fontWeight: 500,
+          },
+        },
+        {
+          props: {
+            variant: 'text',
+          },
+          style: {
+            textDecoration: 'underline',
+            fontSize: 17,
+            fontWeight: 500,
+          },
+        },
+      ],
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#131516', 
+        },
+      },
+    },
+     MuiIconButton: {
+      defaultProps: {
+        main: '#404642',
+      },
+    },
     MuiTypography: {
       variants: [
+        {
+          props: {
+            variant: 'p',
+          },
+          style: {
+            fontSize: 16,
+            color: '#fff',
+          },
+        },
         {
           props: {
             variant: 'h1',
           },
           style: {
-            fontSize: 65,
-            color: '#112D4E',
-            fontWeight: 500,
+            fontSize: 60,
+            color: '#fff',
+            fontWeight: 600,
           },
         },
         {
@@ -33,8 +86,9 @@ const theme = createTheme({
           },
           style: {
             fontSize: 30,
-            color: '#455A7F',
-            fontWeight: 300,
+            color: '#fff',
+            fontWeight: 500,
+            letterSpacing: -0.85,
           },
         },
         {
@@ -43,18 +97,19 @@ const theme = createTheme({
           },
           style: {
             fontSize: 18,
-            color: '#112D4E',
+            color: '#fff',
             fontWeight: 400,
           },
         },
+
         {
           props: {
             variant: 'h4',
           },
           style: {
             fontSize: 25,
-            color: 'black',
-            fontWeight: 100,
+            color: '#000',
+            fontWeight: 600,
           },
         },
         {
@@ -63,7 +118,16 @@ const theme = createTheme({
           },
           style: {
             fontSize: 'calc(2vw + 2vh)',
-            color: 'black',
+            color: '#000',
+            fontWeight: 400,
+          },
+        },
+        {
+          props: {
+            variant: 'h6',
+          },
+          style: {
+            color: '#5BD048',
             fontWeight: 400,
           },
         },
@@ -73,8 +137,8 @@ const theme = createTheme({
           },
           style: {
             fontSize: 20,
-            color: 'black',
-            fontWeight: 100,
+            color: '#fff',
+            fontWeight: 400,
           },
         },
         {
@@ -83,8 +147,8 @@ const theme = createTheme({
           },
           style: {
             fontSize: '10',
-            color: 'black',
-            fontWeight: 100,
+            color: '#fff',
+            fontWeight: 400,
           },
         },
         {
@@ -93,8 +157,8 @@ const theme = createTheme({
           },
           style: {
             fontSize: 17,
-            color: 'black',
-            fontWeight: 300,
+            color: '#BCF10C',
+            fontWeight: 400,
           },
         },
         {
@@ -102,18 +166,13 @@ const theme = createTheme({
             variant: 'body1',
           },
           style: {
-            fontSize: 15,
-            color: 'black',
-            fontWeight: 100,
+            fontSize: 16,
+            color: '#fff',
+            fontWeight: 400,
           },
         },
       ],
-    },
-    MuiButtonBase: {
-      defaultProps: {
-        color: '#112D4E',
-      },
-    },
+    }
   },
 });
 
