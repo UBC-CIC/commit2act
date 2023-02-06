@@ -200,7 +200,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
         <Divider orientation="vertical" flexItem />
         <Typography variant="body1">Total Points: {total_points}</Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">Weekly Points: {weekly_points}</Typography>
+        <Typography variant="body1">Weekly Points: <span sx={{color: '#33AF99'}}>{weekly_points}</span></Typography>
       </Box>
     ) : (
       <>
@@ -216,19 +216,19 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 width: '100%',
               }}
             >
-              <Typography variant="body1">Total CO2: {total_co2} g</Typography>
+              <Typography variant="body1">Total CO2: <Box component="span" sx={{color: '#33AF99'}}>{total_co2} g</Box></Typography>
 
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Weekly CO2: {weekly_co2} g{' '}
+                Weekly CO2: <Box component="span" sx={{color: '#33AF99'}}>{weekly_co2} g{' '}</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Total Points: {total_points}
+                Total Points: <Box component="span" sx={{color: '#33AF99'}}>{total_points}</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Weekly Points: {weekly_points}
+                Weekly Points: <Box component="span" sx={{color: '#33AF99'}}>{weekly_points}</Box>
               </Typography>
             </Box>
           </AccordionSummary>

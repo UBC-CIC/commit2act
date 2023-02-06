@@ -73,7 +73,14 @@ const BonusPointQuiz = ({
             onClick={() => {
               setActiveStep(activeStep + 1);
             }}
-            variant="contained"
+            variant="outlined"
+            color="error"
+            sx={{
+              width: '80%',
+              maxWidth: '300px',
+              padding: '1em 1em 1.3em',
+              fontSize: '1.2rem',
+            }}
           >
             Skip Quiz
           </StyledButton>

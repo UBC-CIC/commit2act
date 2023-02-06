@@ -550,7 +550,6 @@ const CreateAction = () => {
             sx={{
               mt: '4em',
               mb: '2em',
-              backgroundColor: '#112D4E',
               width: '100%',
               alignSelf: 'center',
             }}

@@ -124,7 +124,7 @@ const ActionPanel = ({
           width: '80%',
         }}
       >
-        <Typography variant="h2">{action_name}</Typography>
+        <Typography variant="subtitle2" sx={{marginTop:'-30px', fontSize:'1.2rem'}}>{action_name}</Typography>
         {inputError && (
           <Typography variant="subtitle2">
             Input must be a number or decimal greater than 0
@@ -135,6 +135,10 @@ const ActionPanel = ({
           onClick={calculateCO2}
           variant="contained"
           disabled={disableButton}
+          sx={{
+            padding: '1em 1em 1.3em',
+            fontSize: '1.2rem',
+          }}
         >
           Next
         </Button>

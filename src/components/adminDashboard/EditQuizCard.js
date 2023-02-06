@@ -293,8 +293,8 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
           mt: '1.5em',
         }}
       >
-        <Button onClick={deleteCurrentQuiz}>Delete</Button>
-        <Button onClick={saveQuiz}>Save</Button>
+        <Button onClick={deleteCurrentQuiz} color="error">Delete</Button>
+        <Button onClick={saveQuiz} variant="contained">Save</Button>
       </Box>
       <Snackbar
         open={updateQuizSuccess}

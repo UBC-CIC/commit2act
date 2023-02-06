@@ -10,14 +10,21 @@ const Dropbox = styled('div')`
   align-items: center;
   min-height: 20vh;
   border-radius: 5px;
-  padding: 2em;
+  padding: 1em 2em 2em;
   width: 80%;
   opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
-  background: #3d4445;
+  background: #1a1c1e;
+  svg {
+    color: #fff;
+  }
   #browse {
-    padding: 0.3em 1em;
+    padding: 0.3em 1.2em 0.5em;
     cursor: pointer;
     border-radius: 5px;
+    background: #380FD1;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
     :hover {
       opacity: 0.7;
     }
@@ -48,8 +55,10 @@ const Dropbox = styled('div')`
 `;
 
 const StyledButton = styled(Button)`
-  margin-top: 5em;
   width: 80%;
+  max-width: 300px;
+  padding: 1em 1em 1.3em;
+  font-size: 1.2rem;
 `;
 
 const ImageValidationPanel = ({
@@ -123,7 +132,7 @@ const ImageValidationPanel = ({
           flexDirection: 'column',
           gap: '20px',
           alignItems: 'center',
-          padding: '3em',
+          padding: '0 0 3em',
           width: '65%',
           borderRadius: '5px',
         }}
@@ -147,7 +156,7 @@ const ImageValidationPanel = ({
         >
           {selectedImage ? (
             <>
-              <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
                 Image Selected!
               </Typography>
               <Box id="image-preview" sx={{ width: '100%' }}>
@@ -187,9 +196,16 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      <StyledButton onClick={handleButtonClick} variant="contained">
-        {selectedImage ? 'Upload Image' : 'Skip'}
-      </StyledButton>
+      {selectedImage ? (
+        <StyledButton onClick={handleButtonClick} variant="contained">
+          Upload Image
+        </StyledButton>
+      ) : (
+        <StyledButton onClick={handleButtonClick} color="error" variant="outlined">
+          Skip
+        </StyledButton>
+      )}
+     
     </Box>
   );
 };

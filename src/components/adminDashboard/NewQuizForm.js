@@ -274,7 +274,7 @@ const NewQuizForm = ({ action_id, getQuizzes }) => {
       )}
       <Button
         variant="contained"
-        sx={{ my: '2em', backgroundColor: '#112D4E' }}
+        sx={{ my: '2em'}}
         onClick={submitQuiz}
       >
         Submit New Quiz

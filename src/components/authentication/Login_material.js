@@ -11,6 +11,7 @@ import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
 import PasswordRequirements from './PasswordRequirements';
+import LoginNavbar from './LoginNavbar';
 
 const initialFormState = {
   email: '',
@@ -485,6 +486,9 @@ function Login(props) {
             : { backgroundColor: themeColor, width: '100%', height: '100vh' }
         }
       >
+      
+        <LoginNavbar />
+
         {/* Please use a royalty free video or a video that you or the CIC owns */}
         {type === 'video' ? (
           <video playsInline autoPlay muted loop>
