@@ -8,10 +8,10 @@ const PasswordRequirements = ({ requirements }) => {
   const useStyles = makeStyles()((theme) => {
     return{
       valid: {
-        color: green[500],
+        color: '#5BD048',
       },
       invalid: {
-        color: red[500],
+        color: theme.palette.error.main,
       },
       fontSize: {
         fontSize: '0.9rem',

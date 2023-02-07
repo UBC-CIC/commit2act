@@ -74,6 +74,9 @@ const useStyles = makeStyles()((theme) => {
       zIndex: theme.zIndex.drawer + 1,
       color: 'pink',
     },
+    logOut: {
+      color: '#ff8512',
+    }
   };
 });
 
@@ -136,9 +139,9 @@ function Navbar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleLogout}>
+      <MenuItem className={classes.logOut} onClick={handleLogout}>
         <span>Logout </span>
-        <ExitToApp color={'secondary'} />
+        <ExitToApp color={'error'} />
       </MenuItem>
     </Menu>
   );
@@ -157,9 +160,9 @@ function Navbar(props) {
       <MenuItem disabled>
         <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
       </MenuItem>
-      <MenuItem onClick={handleLogout}>
+      <MenuItem className={classes.logOut} onClick={handleLogout}>
         <span>Logout </span>
-        <ExitToApp color={'secondary'} />
+        <ExitToApp color={'error'} />
       </MenuItem>
     </Menu>
   );

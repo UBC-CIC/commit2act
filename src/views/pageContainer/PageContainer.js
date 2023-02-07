@@ -62,6 +62,20 @@ const useStyles = makeStyles()((theme) => {
       },
       padding: theme.spacing(8),
     },
+    logAction: {
+      background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+      marginBottom: 10,
+      marginTop: 5,
+      '& span': {
+        color: '#000',
+        fontWeight: 500,
+      },
+      '& img': {
+        fontSize: 30,
+        color: '#000',
+        filter: 'invert(1)'
+      }
+    }
   };
 });
 
@@ -144,6 +158,23 @@ function PageContainer(props) {
       onKeyDown={handleSideMenuClose(false)}
     >
       <List>
+        <ListItem
+          button
+          key={'logAction'}
+          onClick={() => navigate('/log-action')}
+          className={classes.logAction}
+          >
+          <ListItemIcon>
+           <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-log.png'  />
+          </ListItemIcon>
+          <ListItemText primary={'Log Action'} />
+        </ListItem>
         <ListItem button key={'home'} onClick={() => navigate('/')}>
           <ListItemIcon>
            <Box
@@ -154,7 +185,7 @@ function PageContainer(props) {
             alt="" 
             src='./assets/images/icon-home.png'  />
           </ListItemIcon>
-          <ListItemText primary={'Home'} />
+          <ListItemText primary={'Dashboard'} />
         </ListItem>
         <ListItem
           button
@@ -192,23 +223,6 @@ function PageContainer(props) {
 
         <ListItem
           button
-          key={'logAction'}
-          onClick={() => navigate('/log-action')}
-        >
-          <ListItemIcon>
-           <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-log.png'  />
-          </ListItemIcon>
-          <ListItemText primary={'Log Action'} />
-        </ListItem>
-
-        <ListItem
-          button
           key={'validateActions'}
           onClick={() => navigate('/validate-actions')}
         >
@@ -238,7 +252,11 @@ function PageContainer(props) {
             </ListItem>
           </>
         )}
-        <Divider />
+        <Divider
+        sx={{
+          margin: '15px 0',
+        }}
+        />
         <ListItem
           button
           key={'myAccount'}
@@ -289,6 +307,11 @@ function PageContainer(props) {
           <Routes>
             <Route
               exact
+              path={'/log-action'}
+              element={<SelfReportMenu user={user} />}
+            />
+            <Route
+              exact
               path={'/'}
               element={<Landing user={user} userType={userType} />}
             />
@@ -296,11 +319,6 @@ function PageContainer(props) {
               exact
               path={'/find-group'}
               element={<FindGroup user={user} />}
-            />
-            <Route
-              exact
-              path={'/log-action'}
-              element={<SelfReportMenu user={user} />}
             />
             <Route
               exact

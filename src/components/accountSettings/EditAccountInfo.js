@@ -22,8 +22,10 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PasswordRequirements from '../authentication/PasswordRequirements';
 
 const StyledDialogTitle = styled(DialogTitle)`
-  font-size: 28px;
-  font-weight: 300;
+  color: #fff;
+  font-size: 2em;
+  padding: .5em 1.5em 1em;
+  font-weight: 600;
 `;
 
 const Input = styled('input')`
@@ -381,7 +383,7 @@ const EditAccountInfo = ({
                 }
               />
               <Button
-                variant="outlined"
+                variant="contained"
                 sx={{
                   mt: { xs: '1.5em', sm: '0em' },
                 }}
@@ -510,7 +512,7 @@ const EditAccountInfo = ({
               helperText={passwordsNotMatchError && 'Passwords do not match.'}
             />
             <Button
-              variant="outlined"
+              variant="contained"
               sx={{
                 mt: { xs: '1.5em', sm: '0em' },
               }}

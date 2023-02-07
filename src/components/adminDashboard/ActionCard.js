@@ -194,11 +194,11 @@ const ActionCard = ({
           </Box>
         </Box>
         {is_hidden ? (
-          <Button onClick={() => unPauseAction()} variant="outlined">
+          <Button onClick={() => unPauseAction()} variant="contained">
             Restore Action
           </Button>
         ) : (
-          <Button onClick={() => setEditAction(true)} variant="outlined">
+          <Button onClick={() => setEditAction(true)} variant="contained">
             Edit Action
           </Button>
         )}
@@ -680,12 +680,14 @@ const ActionCard = ({
           >
             <Button
               variant="outlined"
+              color="error"
               onClick={() => setShowDeleteWarning(true)}
             >
               Delete Action
             </Button>
             <Button
               variant="outlined"
+              color="error"
               onClick={() => setShowPauseWarning(true)}
             >
               Pause Action
@@ -783,7 +785,7 @@ const ActionCard = ({
           >
             Cancel
           </Button>
-          <Button variant="outlined" onClick={() => deleteSelectedAction()}>
+          <Button variant="outlined" color="error" onClick={() => deleteSelectedAction()}>
             Delete
           </Button>
         </DialogActions>

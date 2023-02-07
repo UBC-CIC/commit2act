@@ -10,6 +10,12 @@ const theme = createTheme({
     secondary: {
       main: '#380FD1',
     },
+    error: {
+      main: '#ff8512',
+    },
+    invalid: {
+      main: '#ff8512',
+    },
     darkTheme: {
       main: '#262a2c',
       card: '#16191f',
@@ -22,6 +28,25 @@ const theme = createTheme({
     ].join(','),
   },
   components: {
+    MuiSvgIcon: {
+     variants: [
+      {
+        props: {
+          variant: 'invalid',
+        },
+        style: {
+          color: '#ff8512',
+        },
+      },
+      ]
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#131516', 
+        },
+      },
+    },
     MuiButton: {
       variants: [
         {
@@ -54,9 +79,34 @@ const theme = createTheme({
         },
       },
     },
-     MuiIconButton: {
+    MuiFormLabel: {
+      fontSize: '18px'
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#212426', 
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          color: '#fff'
+        }
+      }
+    },
+    MuiIconButton: {
       defaultProps: {
         main: '#404642',
+      },
+    },
+    MuiCalendarPicker: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#0d0f0f', 
+        },
       },
     },
     MuiTypography: {

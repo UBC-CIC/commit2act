@@ -218,7 +218,12 @@ const SelfReportMenu = ({ user }) => {
               setActiveStep(activeStep + 1);
             }}
             variant="contained"
-            sx={{ mt: '5em', width: '80%' }}
+            sx={{
+              width: '80%',
+              padding: '1em 1em 1.3em',
+              fontSize: '1.2rem',
+              marginTop: '4em'
+            }}
           >
             Next
           </Button>
