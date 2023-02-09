@@ -163,7 +163,7 @@ const Landing = ({ user, userType }) => {
                 maxWidth: { xs: '400px', sm: '100%' },
               }}
             >
-              {translation.formatString(translation.welcome, user.name)}
+              {translation.formatString(translation.welcomeName, user.name)}
             </Typography>
             {numActionsToValidate > 0 && (
               <Alert
