@@ -1,15 +1,19 @@
-import { Button, CircularProgress, Divider, Grid } from '@material-ui/core';
+import { Button, CircularProgress, Divider, Grid, Snackbar } from '@mui/material';
 import { Alert } from '@mui/lab';
-import { ArrowBack, AlternateEmail, Lock, Dialpad } from '@mui/icons-material';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { ArrowBack, AlternateEmail, Lock, Dialpad, Person, Badge } from '@mui/icons-material';
+
+import { makeStyles } from 'tss-react/mui';
+
 import { Auth } from 'aws-amplify';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateLoginState } from '../../actions/loginActions';
 import TextFieldStartAdornment from './TextFieldStartAdornment';
 import './Login.css';
-import { Snackbar } from '@mui/material';
 import PasswordRequirements from './PasswordRequirements';
+import LoginNavbar from './LoginNavbar';
+
+import useTranslation from '../customHooks/translations';
 
 const initialFormState = {
   email: '',
@@ -21,74 +25,102 @@ const initialFormState = {
   resetCode: '',
 };
 
-const useStyles = makeStyles((theme) => ({
-  marginTop: {
-    margin: theme.spacing(2, 'auto', 'auto', 'auto'),
-  },
-  marginHorizontal: {
-    margin: theme.spacing(4, 'auto'),
-  },
-  padding: {
-    padding: theme.spacing(1.5),
-  },
-  textAlignCenter: {
-    textAlign: 'center',
-  },
-  flexDisplay: {
-    display: 'flex',
-  },
-  forgetPassword: {
-    justifyContent: 'flex-end',
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', 'sans-serif'",
-    fontWeight: 500,
-    lineHeight: 1.75,
-  },
-  activeButton: {
-    borderRadius: 50,
-    width: '100%',
-    fontSize: '1em',
-  },
-  themeColor: {
-    backgroundColor: '#012144',
-  },
-  errorMessage: {
-    color: 'red',
-  },
-  cursor: {
-    cursor: 'pointer',
-  },
-  underlineText: {
-    textDecoration: 'underline',
-  },
-  passwordReq: {
-    backgroundColor: '#ffc2c2',
-    borderRadius: 5,
-  },
-  centerBox: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-}));
-
-const DefaultButton = withStyles((theme) => ({
-  root: {
-    borderRadius: 50,
-    width: '100%',
-    fontSize: '1em',
-    padding: theme.spacing(1.5),
-    margin: theme.spacing(2, 'auto'),
-  },
-}))(Button);
-
-const SubmitButton = withStyles((theme) => ({
-  root: {
-    color: theme.palette.getContrastText('#012144'),
-    backgroundColor: '#012144',
-    '&:hover': {
-      backgroundColor: '#012144',
+const useStyles = makeStyles()((theme) => {
+  return{
+    marginTop: {
+      margin: theme.spacing(2, 'auto', 'auto', 'auto'),
     },
-  },
-}))(DefaultButton);
+    marginHorizontal: {
+      margin: theme.spacing(4, 'auto'),
+    },
+    padding: {
+      padding: theme.spacing(1.5),
+    },
+    textAlignCenter: {
+      textAlign: 'center',
+    },
+    flexDisplay: {
+      display: 'flex',
+    },
+    forgetPassword: {
+      justifyContent: 'flex-end',
+      fontWeight: 500,
+      lineHeight: 1.75,
+    },
+    activeButton: {
+      borderRadius: 50,
+      width: '100%',
+      fontSize: '1em',
+    },
+    themeColor: {
+      backgroundColor: '#380FD1',
+    },
+    errorMessage: {
+      color: '#8d0000',
+    },
+    cursor: {
+      cursor: 'pointer',
+    },
+    underlineText: {
+      textDecoration: 'underline',
+    },
+    passwordReq: {
+      backgroundColor: '#ffc2c2',
+      borderRadius: 5,
+    },
+    centerBox: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    defaultButton: {
+      borderRadius: 5,
+      width: '100%',
+      fontSize: '1em',
+      padding: theme.spacing(1.5),
+      margin: theme.spacing(2, 'auto'),
+      backgroundColor: '#262a2c',
+      color: '#BCF10C',
+      '&:hover': {
+        backgroundColor: '#262a2c',
+      },
+    },
+    submitButton: {
+      color: theme.palette.getContrastText('#380FD1'),
+      backgroundColor: '#380FD1',
+      '&:hover': {
+        backgroundColor: '#262a2c',
+      },
+    },
+    helpText: {
+      marginBottom: '20px',
+      color: '#000',
+      display: 'block',
+    },
+    textFieldStyle: {
+      marginBottom: '12px',
+      '& label' : {
+        color: '#262a2c',
+        fontSize: '1.3em',
+        paddingRight: '5px'
+      },
+      '& legend' : {
+        fontSize: '1em',
+      },
+      '& fieldset' : {
+        borderColor: '#262a2c',
+      },
+      '& input' : {
+        color: '#000',
+      },
+      '& svg': {
+        color: '#000'
+      },
+      '& p': {
+        color: '#000'
+      }
+    }
+  }
+});
 
 function Login(props) {
   const {
@@ -135,7 +167,9 @@ function Login(props) {
   const [passwordUnmatchError, setPasswordUnmatchError] = useState(false);
   const [confirmPasswordString, setConfirmPasswordString] = useState('');
 
-  const classes = useStyles();
+  const { classes } = useStyles();
+
+  const translation = useTranslation();
 
   useEffect(() => {
     async function retrieveUser() {
@@ -437,7 +471,7 @@ function Login(props) {
             ? themeColor === 'standard'
               ? {
                   backgroundColor: '#012144',
-                  backgroundImage: 'url(./assets/images/background.jpg)',
+                  backgroundImage: 'url(./assets/images/login-background.jpg)',
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no',
                   width: '100%',
@@ -445,7 +479,7 @@ function Login(props) {
                 }
               : {
                   backgroundColor: themeColor,
-                  backgroundImage: 'url(./assets/images/background.jpg)',
+                  backgroundImage: 'url(./assets/images/login-background.jpg)',
                   backgroundSize: 'cover',
                   backgroundRepeat: 'no',
                   width: '100%',
@@ -456,6 +490,9 @@ function Login(props) {
             : { backgroundColor: themeColor, width: '100%', height: '100vh' }
         }
       >
+      
+        <LoginNavbar />
+
         {/* Please use a royalty free video or a video that you or the CIC owns */}
         {type === 'video' ? (
           <video playsInline autoPlay muted loop>
@@ -507,6 +544,7 @@ function Login(props) {
             container
             item
             direction={'column'}
+			wrap={'nowrap'}
             xs={12}
             sm={11}
             md={9}
@@ -515,19 +553,19 @@ function Login(props) {
             <Grid className={'login-wrapper-top'}>
               <span className={'login-wrapper-top-header'}>
                 {loginState === 'signIn' ? (
-                  <span>Sign In</span>
+                  <span>{translation.signIn}</span>
                 ) : loginState === 'signUp' ? (
-                  <span>Create an Account</span>
+                  <span>{translation.createAccount}</span>
                 ) : loginState === 'confirmSignUp' ? (
-                  <span>Verify Account</span>
+                  <span>{translation.verifyAccount}</span>
                 ) : loginState === 'forgotPassword' ? (
-                  <span>Forgot your password?</span>
+                  <span>{translation.forgotPassword}</span>
                 ) : loginState === 'resetPassword' ? (
-                  <span>Password Reset</span>
+                  <span>{translation.passwordReset}</span>
                 ) : loginState === 'newUserPassword' ? (
-                  <span>Set New Password</span>
+                  <span>{translation.setNewPassword}</span>
                 ) : (
-                  <span>Welcome</span>
+                  <span>{translation.welcome}</span>
                 )}
               </span>
             </Grid>
@@ -541,23 +579,25 @@ function Login(props) {
                   onClose={() => setShowSuccessAlert(false)}
                 />
                 <BannerMessage type={'error'} typeCheck={accountLoginError}>
-                  Incorrect username or password.
+                  {translation.incorrectLogin}
                 </BannerMessage>
                 {/* username */}
                 <TextFieldStartAdornment
                   startIcon={<AlternateEmail />}
-                  placeholder={'Email'}
                   name={'email'}
                   type={'email'}
                   onChange={onChange}
+                  label={translation.email}
+                  className={classes.textFieldStyle}
                 />
                 {/* password */}
                 <TextFieldStartAdornment
                   startIcon={<Lock />}
-                  placeholder={'Password'}
                   name={'password'}
                   type={'password'}
                   onChange={onChange}
+                  label={translation.password}
+                  className={classes.textFieldStyle}
                 />
                 <Grid
                   className={`${classes.flexDisplay} ${classes.forgetPassword} ${classes.cursor}`}
@@ -566,7 +606,7 @@ function Login(props) {
                   {' '}
                   {/* forget */}
                   <span style={{ textAlign: 'end' }}>
-                    Forgot your password?
+				  	{translation.forgotPassword}
                   </span>
                 </Grid>
                 <Grid className={`input-box ${classes.marginTop}`}>
@@ -574,7 +614,7 @@ function Login(props) {
                   {/* sign in button */}
                   <SubmitButtonWithLoading
                     submitAction={signIn}
-                    submitMessage={'Sign In'}
+                    submitMessage={translation.signIn}
                     loadingState={loading}
                   />
                 </Grid>
@@ -586,7 +626,7 @@ function Login(props) {
                         <Divider />
                       </Grid>
                       <Grid item className={classes.padding}>
-                        Or
+                        {translation.or}
                       </Grid>
                       <Grid item xs>
                         <Divider />
@@ -594,13 +634,14 @@ function Login(props) {
                     </Grid>
                     {/* create an account button */}
                     <Grid className={`input-box`}>
-                      <DefaultButton
+                      <Button
                         variant="contained"
                         type="button"
                         onClick={() => resetStates('signUp')}
+                        className={classes.defaultButton}
                       >
-                        Create an Account
-                      </DefaultButton>
+                        {translation.createAccount}
+                      </Button>
                     </Grid>
                   </div>
                 )}
@@ -609,30 +650,30 @@ function Login(props) {
             {loginState === 'forgotPassword' && (
               <Grid>
                 <Grid container item xs={12}>
-                  <span>
-                    Enter your email address and we'll send you a code to help
-                    you reset your password.
+                  <span className={classes.helpText}>
+                    {translation.enterEmailAddress}
                   </span>
                 </Grid>
                 <TextFieldStartAdornment
                   startIcon={<AlternateEmail />}
-                  placeholder={'Email'}
+                  label={translation.email}
                   name={'email'}
                   type="email"
                   autoComplete={'new-password'}
                   variant="outlined"
                   error={forgotPasswordError}
                   onChange={onChange}
+                  className={classes.textFieldStyle}
                 />
                 {!!forgotPasswordError && (
                   <Grid container item xs={12} className={classes.errorMessage}>
                     <span>
-                      Please enter a valid email or create an account&nbsp;
+                      {translation.validEmailAccount}&nbsp;
                       <span
                         className={`${classes.cursor} ${classes.underlineText}`}
                         onClick={() => updateLoginState('signUp')}
                       >
-                        <strong>here</strong>
+                        <strong>{translation.here}</strong>
                       </span>
                       <span>.</span>
                     </span>
@@ -641,7 +682,7 @@ function Login(props) {
                 <BackAndSubmitButtons
                   backAction={() => resetStates('signIn')}
                   submitAction={forgotPassword}
-                  submitMessage={'Send reset code'}
+                  submitMessage={translation.sendResetCode}
                   loadingState={loading}
                 />
               </Grid>
@@ -649,41 +690,43 @@ function Login(props) {
             {loginState === 'resetPassword' && (
               <Grid>
                 <Grid>
-                  <span>
-                    Please check your email&nbsp;
+                  <span className={classes.helpText}>
+                    {translation.checkEmail}&nbsp;
                     <strong>{formState.email}</strong>
                     <br />
-                    for a reset code and create a new password.
+                    {translation.forResetCodeAndCreatePassword}
                   </span>
                 </Grid>
                 <BannerMessage
                   type={'error'}
                   typeCheck={emptyInputError || timeLimitError}
                 >
-                  {(!!emptyInputError && 'Please fill in all fields.') ||
+                  {(!!emptyInputError && translation.fillAllFields) ||
                     (timeLimitError !== '' && timeLimitError)}
                 </BannerMessage>
                 <TextFieldStartAdornment
                   startIcon={<Dialpad />}
-                  placeholder="Enter reset code"
+                  label={translation.enterResetCode}
                   variant="outlined"
                   name={'resetCode'}
                   type="text"
                   error={verificationError}
+                  className={classes.textFieldStyle}
                   helperText={
-                    !!verificationError && 'Please enter correct reset code.'
+                    !!verificationError && translation.enterCorrectResetCode
                   }
                   onChange={onChange}
                 />
                 <TextFieldStartAdornment
                   startIcon={<Lock />}
-                  placeholder="Create new password"
+                  label={translation.createNewPassword}
                   name={'password'}
                   type="password"
                   error={newPasswordError}
-                  helperText={'Your password must have the following:'}
+                  helperText={translation.passwordSettings}
                   autoComplete={'new-password'}
                   onChange={onChangePassword}
+                  className={classes.textFieldStyle}
                 />
                 <Grid
                   container
@@ -695,14 +738,16 @@ function Login(props) {
                 </Grid>
                 <TextFieldStartAdornment
                   startIcon={<Lock />}
-                  placeholder="Re-enter the password"
+                //   label="Password"
+                  label={translation.reEnterPassword}
                   name={'confirm-password'}
                   type="password"
                   error={passwordUnmatchError}
                   helperText={
-                    !!passwordUnmatchError && 'Passwords do not match'
+                    !!passwordUnmatchError && translation.passwordNotMatch
                   }
                   autoComplete={'new-password'}
+                  className={classes.textFieldStyle}
                   value={confirmPasswordString}
                   onChange={(e) => {
                     setConfirmPasswordString(e.target.value); // update current input state
@@ -715,7 +760,7 @@ function Login(props) {
                 <BackAndSubmitButtons
                   backAction={() => resetStates('signIn')}
                   submitAction={resetPassword}
-                  submitMessage={'Update Password'}
+                  submitMessage={translation.updatePassword}
                   loadingState={loading}
                 />
               </Grid>
@@ -723,47 +768,51 @@ function Login(props) {
             {loginState === 'signUp' && (
               <Grid>
                 <BannerMessage type={'error'} typeCheck={emptyInputError}>
-                  Please fill in all fields.
+                  {translation.fillAllFields}
                 </BannerMessage>
                 <TextFieldStartAdornment
-                  startIcon={false}
-                  label={'Name'}
+                  startIcon={<Badge />}
+                  label={translation.name}
                   name={'name'}
                   type="text"
                   autoComplete={'new-password'}
                   onChange={onChange}
+                  className={classes.textFieldStyle}
                 />
                 <TextFieldStartAdornment
-                  startIcon={false}
-                  label={'Username'}
+                  startIcon={<Person />}
+                  label={translation.username}
                   name={'preferred_username'}
                   type="text"
                   autoComplete={'new-password'}
                   onChange={onChange}
+                  className={classes.textFieldStyle}
                 />
                 <TextFieldStartAdornment
-                  startIcon={false}
-                  label={'Email'}
+                  className={classes.textFieldStyle}
+                  startIcon={<AlternateEmail />}
+                  label={translation.email}
                   name={'email'}
                   type="email"
                   autoComplete={'new-password'}
                   error={accountCreationEmailExistError || invalidEmailError}
                   helperText={
                     (!!accountCreationEmailExistError &&
-                      'An account with the given email already exists.') ||
-                    (!!invalidEmailError && 'Please enter a valid email.')
+                      translation.emailAlreadyExists) ||
+                    (!!invalidEmailError && translation.validEmail)
                   }
                   onChange={onChange}
                 />
                 <TextFieldStartAdornment
-                  startIcon={false}
-                  label={'Password'}
+                  startIcon={<Lock />}
+                  label={translation.password}
                   name={'password'}
                   type="password"
                   error={accountCreationPasswordError}
                   helperText={'Your password must have the following:'}
                   autoComplete={'new-password'}
                   onChange={onChangePassword}
+                  className={classes.textFieldStyle}
                 />
                 <Grid
                   container
@@ -776,16 +825,17 @@ function Login(props) {
                   <PasswordRequirements requirements={passwordRequirements} />
                 </Grid>
                 <TextFieldStartAdornment
-                  startIcon={false}
-                  label={'Confirm Password'}
+                  startIcon={<Lock />}
+                  label={translation.confirmPassword}
                   name={'confirm-password'}
                   type="password"
                   error={passwordUnmatchError}
                   helperText={
-                    !!passwordUnmatchError && 'Passwords do not match'
+                    !!passwordUnmatchError && translation.passwordNotMatch
                   }
                   autoComplete={'new-password'}
                   value={confirmPasswordString}
+                  className={classes.textFieldStyle}
                   onChange={(e) => {
                     setConfirmPasswordString(e.target.value); // update current input state
                     // check if "password" is the same as "confirm-password"
@@ -797,7 +847,7 @@ function Login(props) {
                 <BackAndSubmitButtons
                   backAction={() => resetStates('signIn')}
                   submitAction={signUp}
-                  submitMessage={'Sign Up'}
+                  submitMessage={translation.signUp}
                   loadingState={loading}
                 />
               </Grid>
@@ -806,18 +856,17 @@ function Login(props) {
               <Grid>
                 <Grid container item xs={12}>
                   <span>
-                    Please check your email for a confirmation code. This may
-                    take several minutes.
+                    {translation.checkEmailForConfirmationCode}
                   </span>
                 </Grid>
                 <BannerMessage type={'error'} typeCheck={verificationError}>
-                  Invalid verification code provided, please try again.
+                  {translation.invalidVerificationCode}
                 </BannerMessage>
                 <BannerMessage type={'error'} typeCheck={timeLimitError !== ''}>
                   {timeLimitError}
                 </BannerMessage>
                 <BannerMessage type={'success'} typeCheck={newVerification}>
-                  New verification code sent successfully.
+                  {translation.newVerificationCodeSentSuccesfully}
                 </BannerMessage>
                 <Grid
                   container
@@ -828,17 +877,18 @@ function Login(props) {
                 >
                   <TextFieldStartAdornment
                     startIcon={<Dialpad />}
-                    placeholder="Enter your confirmation code."
+                    Label={translation.enterConfirmationCode}
                     name={'authCode'}
                     type="text"
                     autoComplete={'new-password'}
                     onChange={onChange}
+                    className={classes.textFieldStyle}
                   />
                 </Grid>
                 <Grid>
-                  <span>Didn't receive your verification code?</span>
+                  <span>{translation.didNotReceiveCode}</span>
                   <Button onClick={resendConfirmationCode}>
-                    <span className={classes.underlineText}>Resend Code</span>
+                    <span className={classes.underlineText}>{translation.resendCode}</span>
                   </Button>
                 </Grid>
                 <BackAndSubmitButtons
@@ -853,8 +903,7 @@ function Login(props) {
               <Grid>
                 <Grid container item xs={12}>
                   <span>
-                    Please replace your temporary password with a new password
-                    for <strong>{formState.email}</strong>.
+                    {translation.replaceTemporaryPassword} <strong>{formState.email}</strong>.
                   </span>
                 </Grid>
                 <BannerMessage type={'error'} typeCheck={timeLimitError !== ''}>
@@ -863,14 +912,15 @@ function Login(props) {
                 <Grid className={`input-box`}>
                   <TextFieldStartAdornment
                     startIcon={false}
-                    placeholder={'Enter new password'}
-                    label={'Password'}
+                    // label={'Enter new password'}
+                    label={translation.password}
                     name={'password'}
                     type="password"
                     autoComplete={'new-password'}
                     error={newPasswordError || emptyInputError}
-                    helperText={'Your password must have the following:'}
+                    helperText={translation.passwordSettings}
                     onChange={onChangePassword}
+                    className={classes.textFieldStyle}
                   />
                   <Grid
                     container
@@ -886,13 +936,14 @@ function Login(props) {
                   </Grid>
                   <TextFieldStartAdornment
                     startIcon={false}
-                    placeholder={'Re-enter new password'}
-                    label={'Confirm Password'}
+                    // label={'Re-enter new password'}
+                    label={translation.confirmPassword}
                     name={'confirm-password'}
                     type="password"
                     error={passwordUnmatchError}
+                    className={classes.textFieldStyle}
                     helperText={
-                      !!passwordUnmatchError && 'Passwords do not match'
+                      !!passwordUnmatchError && translation.passwordNotMatch
                     }
                     autoComplete={'new-password'}
                     value={confirmPasswordString}
@@ -908,7 +959,7 @@ function Login(props) {
                 <BackAndSubmitButtons
                   backAction={() => resetStates('signIn')}
                   submitAction={setNewPassword}
-                  submitMessage={'Set Password'}
+                  submitMessage={translation.setPassword}
                   loadingState={loading}
                 />
               </Grid>
@@ -925,21 +976,23 @@ function Login(props) {
 const BannerMessage = (props) => {
   const { type, typeCheck, children } = props;
 
-  const styles = makeStyles((theme) => ({
-    root: {
-      width: '100%',
-      margin: theme.spacing(2, 'auto'),
-    },
-  }));
+  const useStyles = makeStyles()((theme) => {
+    return{
+      root: {
+        width: '100%',
+        margin: theme.spacing(2, 'auto'),
+      },
+    }
+  });
 
-  const localStyles = styles();
+  const { classes } = useStyles();
 
   return (
     <Grid>
       {!!typeCheck && (
         <Grid container item xs={12}>
           <Alert
-            className={localStyles.root}
+            className={classes.root}
             variant="filled"
             severity={type}
             elevation={3}
@@ -953,44 +1006,65 @@ const BannerMessage = (props) => {
 };
 
 const SubmitButtonWithLoading = (props) => {
-  const styles = makeStyles((theme) => ({
-    progress: {
-      display: 'flex',
-      padding: theme.spacing(0, 1),
-    },
-  }));
+  const useStyles = makeStyles()((theme) => {
+    return{
+      progress: {
+        display: 'flex',
+        padding: theme.spacing(0, 1),
+      },
+      submitButton: {
+        borderRadius: 5,
+        width: '100%',
+        fontSize: '1em',
+        padding: theme.spacing(1.5),
+        margin: theme.spacing(2, 'auto'),
+        color: theme.palette.getContrastText('#380FD1'),
+        backgroundColor: '#380FD1',
+        '&:hover': {
+          backgroundColor: '#380FD1',
+        },
+      }
+    }
+  });
 
   const { submitAction, submitMessage, loadingState } = props;
-  const localStyles = styles();
+  const { classes } = useStyles();
 
   return (
-    <SubmitButton
+    <Button
       variant="contained"
       disabled={!!loadingState}
       onClick={submitAction}
+      className={classes.submitButton}
     >
       {submitMessage}
       {/* if it is loading, show the loading indicator */}
       {!!loadingState && (
-        <Grid className={localStyles.progress}>
+        <Grid className={classes.progress}>
           <CircularProgress size={15} />
         </Grid>
       )}
-    </SubmitButton>
+    </Button>
   );
 };
 
 const BackAndSubmitButtons = ({ backAction, ...others }) => {
+
+  const { classes } = useStyles();
+
+  const translation = useTranslation();
+
   return (
     <Grid container item xs={12} justifyContent="space-between" spacing={1}>
       <Grid container item xs>
-        <DefaultButton
+        <Button
           variant="contained"
           startIcon={<ArrowBack />}
           onClick={backAction}
+          className={classes.defaultButton}
         >
-          Back
-        </DefaultButton>
+          {translation.back}
+        </Button>
       </Grid>
       <Grid container item md={7} justifyContent={'flex-end'}>
         <SubmitButtonWithLoading {...others} />

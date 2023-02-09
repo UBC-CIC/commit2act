@@ -9,16 +9,22 @@ const Dropbox = styled('div')`
   justify-content: center;
   align-items: center;
   min-height: 20vh;
-  background-color: #dbe2ef;
   border-radius: 5px;
-  padding: 2em;
+  padding: 1em 2em 2em;
   width: 80%;
   opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
+  background: #1a1c1e;
+  svg {
+    color: #fff;
+  }
   #browse {
-    background: white;
-    padding: 0.3em 1em;
+    padding: 0.3em 1.2em 0.5em;
     cursor: pointer;
     border-radius: 5px;
+    background: #380FD1;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
     :hover {
       opacity: 0.7;
     }
@@ -34,11 +40,9 @@ const Dropbox = styled('div')`
     flex-direction: column;
   }
   #delete {
-    background: #ffffff;
     border-radius: 50px;
     border: none;
     width: 100px;
-    color: #112d4e;
     opacity: 0.85;
     position: absolute;
     cursor: pointer;
@@ -51,8 +55,10 @@ const Dropbox = styled('div')`
 `;
 
 const StyledButton = styled(Button)`
-  margin-top: 5em;
   width: 80%;
+  max-width: 300px;
+  padding: 1em 1em 1.3em;
+  font-size: 1.2rem;
 `;
 
 const ImageValidationPanel = ({
@@ -126,8 +132,7 @@ const ImageValidationPanel = ({
           flexDirection: 'column',
           gap: '20px',
           alignItems: 'center',
-          backgroundColor: 'white',
-          padding: '3em',
+          padding: '0 0 3em',
           width: '65%',
           borderRadius: '5px',
         }}
@@ -135,7 +140,7 @@ const ImageValidationPanel = ({
         <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
           Please upload an image related to your action item for verification
         </Typography>
-        <Typography sx={{ fontSize: '15px', color: '#595959' }}>
+        <Typography sx={{ fontSize: '15px' }}>
           Minimum dimensions 100x100 px
         </Typography>
         {fileTypeError && (
@@ -151,7 +156,7 @@ const ImageValidationPanel = ({
         >
           {selectedImage ? (
             <>
-              <Typography component="div" variant="h4" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
                 Image Selected!
               </Typography>
               <Box id="image-preview" sx={{ width: '100%' }}>
@@ -174,7 +179,7 @@ const ImageValidationPanel = ({
           ) : (
             <>
               <CloudUpload fontSize="large" />
-              <Typography component="div" variant="h4" sx={{ my: '0.5em' }}>
+              <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
                 Drop Your Image Here, Or{' '}
               </Typography>
 
@@ -191,9 +196,16 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      <StyledButton onClick={handleButtonClick} variant="contained">
-        {selectedImage ? 'Upload Image' : 'Skip'}
-      </StyledButton>
+      {selectedImage ? (
+        <StyledButton onClick={handleButtonClick} variant="contained">
+          Upload Image
+        </StyledButton>
+      ) : (
+        <StyledButton onClick={handleButtonClick} color="error" variant="outlined">
+          Skip
+        </StyledButton>
+      )}
+     
     </Box>
   );
 };

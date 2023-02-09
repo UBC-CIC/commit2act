@@ -95,7 +95,7 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
               mr: { xs: '0em', sm: '3em' },
             }}
           >
-            <Button startIcon={<Clear />} onClick={rejectAction}>
+            <Button variant="outlined" startIcon={<Clear />} color={'error'} onClick={rejectAction}>
               Unapprove
             </Button>
           </CardActions>

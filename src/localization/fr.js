@@ -1,4 +1,7 @@
-export default {
+const translations = {
 	changeLanguage: "Langue: ",
-	welcome: "Bienvenue {0} !"
+	welcomeName: "Bienvenue {0} !",
+	signIn: "Se Connecter"
 };
+
+export default translations;

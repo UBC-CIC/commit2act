@@ -20,8 +20,8 @@ import { getAllQuizzesForAction } from '../../graphql/queries';
 
 const StyledDialogTitle = styled(DialogTitle)`
   font-size: 28px;
-  color: #455a7f;
   font-weight: 300;
+  color: #fff;
 `;
 
 const QuizDialog = ({ action, open, handleClose, getActions }) => {
@@ -61,7 +61,7 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
       >
         <Button
           onClick={() => setSelectedOption(dialogOptions[0])}
-          variant="outlined"
+          variant="contained"
           sx={{ width: { xs: '100%', sm: '50%' } }}
           startIcon={<AddIcon />}
         >

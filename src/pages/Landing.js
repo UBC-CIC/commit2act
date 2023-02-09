@@ -31,6 +31,7 @@ import useTranslation from "../components/customHooks/translations";
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
   text-align: center;
+  background: #fff;
   .statValue {
     margin-top: 0.5em;
   }
@@ -162,7 +163,7 @@ const Landing = ({ user, userType }) => {
                 maxWidth: { xs: '400px', sm: '100%' },
               }}
             >
-              {translation.formatString(translation.welcome, user.name)}
+              {translation.formatString(translation.welcomeName, user.name)}
             </Typography>
             {numActionsToValidate > 0 && (
               <Alert
@@ -228,8 +229,8 @@ const Landing = ({ user, userType }) => {
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
                 justifyContent: 'space-evenly',
-                backgroundColor: '#DBE2EF',
-                borderRadius: '8px',
+                background: 'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
+                borderRadius: '10px',
                 padding: '1.5em',
                 gap: { xs: '0.5em', lg: '0' },
               }}
@@ -278,7 +279,7 @@ const Landing = ({ user, userType }) => {
               >
                 <Typography variant="h2">My Groups</Typography>
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   onClick={() => {
                     navigate('/create-group');
                   }}

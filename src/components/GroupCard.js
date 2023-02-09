@@ -200,7 +200,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
         <Divider orientation="vertical" flexItem />
         <Typography variant="body1">Total Points: {total_points}</Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">Weekly Points: {weekly_points}</Typography>
+        <Typography variant="body1">Weekly Points: <span sx={{color: '#33AF99'}}>{weekly_points}</span></Typography>
       </Box>
     ) : (
       <>
@@ -216,19 +216,19 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 width: '100%',
               }}
             >
-              <Typography variant="body1">Total CO2: {total_co2} g</Typography>
+              <Typography variant="body1">Total CO2: <Box component="span" sx={{color: '#33AF99'}}>{total_co2} g</Box></Typography>
 
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Weekly CO2: {weekly_co2} g{' '}
+                Weekly CO2: <Box component="span" sx={{color: '#33AF99'}}>{weekly_co2} g{' '}</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Total Points: {total_points}
+                Total Points: <Box component="span" sx={{color: '#33AF99'}}>{total_points}</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Weekly Points: {weekly_points}
+                Weekly Points: <Box component="span" sx={{color: '#33AF99'}}>{weekly_points}</Box>
               </Typography>
             </Box>
           </AccordionSummary>
@@ -282,8 +282,8 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
           variant="square"
           sx={{
             width: {
-              xs: 100,
-              sm: 150,
+              xs: 150,
+              sm: 220,
             },
             height: {
               xs: 100,
@@ -291,6 +291,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
             },
             alignSelf: { xs: 'center' },
             mt: { xs: '1em', sm: 0 },
+            backgroundColor: '#fff',
           }}
           src={group_image ? group_image : null}
         >
@@ -299,13 +300,12 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
         <CardContent
           sx={{
             width: { xs: '80%', sm: '100%' },
-            p: '1.5em',
+            p: '.5em 1.5em 1.5em 1.5em',
           }}
         >
           <Box
             component="div"
             sx={{
-              borderBottom: '1px solid #3F72AF',
               mb: '0.625em',
               display: 'flex',
               alignItems: 'center',
@@ -328,7 +328,6 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                   ':hover': { opacity: '0.6', cursor: 'pointer' },
                   fontSize: 22,
                   fontWeight: '400',
-                  color: '#455A7F',
                 }}
               >
                 {group_name}
@@ -336,7 +335,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
             </Stack>
             {joinGroupOption && (
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={() => {
                   navigate(joinGroupLink);
                 }}

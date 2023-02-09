@@ -177,7 +177,7 @@ const SelfReportMenu = ({ user }) => {
       <Grid
         item
         sx={{
-          backgroundColor: '#e8f4f8',
+          backgroundColor: '#303839',
           width: { xs: '100%', md: '85%' },
           padding: '2em 2em 5em',
           borderRadius: '7px',
@@ -218,7 +218,12 @@ const SelfReportMenu = ({ user }) => {
               setActiveStep(activeStep + 1);
             }}
             variant="contained"
-            sx={{ mt: '5em', width: '80%' }}
+            sx={{
+              width: '80%',
+              padding: '1em 1em 1.3em',
+              fontSize: '1.2rem',
+              marginTop: '4em'
+            }}
           >
             Next
           </Button>

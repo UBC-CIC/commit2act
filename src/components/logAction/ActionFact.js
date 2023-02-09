@@ -39,16 +39,16 @@ const ActionFact = ({
   //if there are no possible quizzes, display fallback text. If there is no fallback text, display default message
   const renderFact = () => {
     if (quiz) {
-      return <Typography variant="body1">{quiz.fact_text}</Typography>;
+      return <Typography variant="p" sx={{color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5'}}>{quiz.fact_text}</Typography>;
     } else if (noPossibleQuizzes) {
       return selectedAction.fallback_quiz_media ? (
-        <Typography variant="body1">
+        <Typography variant="p" sx={{color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5'}}>
           {selectedAction.fallback_quiz_media}
         </Typography>
       ) : (
         <Typography variant="h3">
           Thank you for submitting an action!
-          <Typography variant="body1" sx={{ mt: '2em' }}>
+          <Typography variant="p" sx={{ mt: '2em' }}>
             You have viewed all the facts for this action
           </Typography>
         </Typography>
@@ -74,11 +74,9 @@ const ActionFact = ({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '2em',
-          backgroundColor: '#FFFFFF',
           width: '80%',
-          height: '20vh',
           overflow: 'auto',
+          fontSize: '1.8em',
         }}
       >
         {renderFact()}

@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Box
 } from '@mui/material';
 import {
   Assessment,
@@ -19,7 +20,7 @@ import {
   AdminPanelSettings,
   Create,
 } from '@mui/icons-material';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from 'tss-react/mui';
 import Navbar from '../../components/Navbar';
 import { connect } from 'react-redux';
 import { updateMenuState } from '../../actions/menuActions';
@@ -39,38 +40,50 @@ import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
 import PrivateRoute from './PrivateRoute';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
-  list: {
-    width: 250,
-  },
-  fullList: {
-    width: 'auto',
-  },
-  drawer: {
-    width: 240,
-    flexShrink: 0,
-  },
-  drawerContainer: {
-    overflow: 'auto',
-  },
-  drawerPaper: {
-    width: 240,
-  },
-  content: {
-    flexGrow: 1,
-    [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(3),
+const useStyles = makeStyles()((theme) => {
+  return{
+    drawerContainer: {
+      overflow: 'auto',
+      backgroundColor: '#303839',
+      height: '100%',
+      width: 312,
+      '& .MuiListItem-button': {
+        paddingTop: 16,
+        paddingBottom: 16,
+      },
+      '& svg': {
+        fontSize: 30,
+      }
     },
-    padding: theme.spacing(8),
-  },
-}));
+    content: {
+      flexGrow: 1,
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(3),
+      },
+      padding: theme.spacing(8),
+    },
+    logAction: {
+      background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+      marginBottom: 10,
+      marginTop: 5,
+      '& span': {
+        color: '#000',
+        fontWeight: 500,
+      },
+      '& img': {
+        fontSize: 30,
+        color: '#000',
+        filter: 'invert(1)'
+      }
+    }
+  };
+});
 
 function PageContainer(props) {
   const { menuEnabled, updateMenuState } = props;
-  const classes = useStyles();
+  
+  const { classes } = useStyles();
+  
   const navigate = useNavigate();
   const [user, setUser] = useState();
   const [userType, setUserType] = useState();
@@ -145,11 +158,34 @@ function PageContainer(props) {
       onKeyDown={handleSideMenuClose(false)}
     >
       <List>
+        <ListItem
+          button
+          key={'logAction'}
+          onClick={() => navigate('/log-action')}
+          className={classes.logAction}
+          >
+          <ListItemIcon>
+           <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-log.png'  />
+          </ListItemIcon>
+          <ListItemText primary={'Log Action'} />
+        </ListItem>
         <ListItem button key={'home'} onClick={() => navigate('/')}>
           <ListItemIcon>
-            <Home />
+           <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-home.png'  />
           </ListItemIcon>
-          <ListItemText primary={'Home'} />
+          <ListItemText primary={'Dashboard'} />
         </ListItem>
         <ListItem
           button
@@ -157,7 +193,13 @@ function PageContainer(props) {
           onClick={() => navigate('/find-group')}
         >
           <ListItemIcon>
-            <Group />
+            <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-find.png'  />
           </ListItemIcon>
           <ListItemText primary={'Find Group'} />
         </ListItem>
@@ -168,20 +210,15 @@ function PageContainer(props) {
           onClick={() => navigate('/create-group')}
         >
           <ListItemIcon>
-            <Create />
+          <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-create-group.png'  />
           </ListItemIcon>
           <ListItemText primary={'Create Group'} />
-        </ListItem>
-
-        <ListItem
-          button
-          key={'logAction'}
-          onClick={() => navigate('/log-action')}
-        >
-          <ListItemIcon>
-            <Assessment />
-          </ListItemIcon>
-          <ListItemText primary={'Log Action'} />
         </ListItem>
 
         <ListItem
@@ -190,7 +227,13 @@ function PageContainer(props) {
           onClick={() => navigate('/validate-actions')}
         >
           <ListItemIcon>
-            <AssignmentTurnedIn />
+           <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-validate.png'  />
           </ListItemIcon>
           <ListItemText primary={'Validate Actions'} />
         </ListItem>
@@ -209,14 +252,24 @@ function PageContainer(props) {
             </ListItem>
           </>
         )}
-        <Divider />
+        <Divider
+        sx={{
+          margin: '15px 0',
+        }}
+        />
         <ListItem
           button
           key={'myAccount'}
           onClick={() => navigate(`/account-settings`)}
         >
           <ListItemIcon>
-            <AccountCircle />
+          <Box
+            component="img"
+            sx={{
+              width: 28,
+            }}
+            alt="" 
+            src='./assets/images/icon-my-account.png'  />
           </ListItemIcon>
           <ListItemText primary={'My Account'} />
         </ListItem>
@@ -228,7 +281,7 @@ function PageContainer(props) {
     <Grid container direction="column">
       {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true} />
+      <Navbar showSideMenuButton={true} sx={{position: 'sticky'}} />
       {/* App content example below with sidebar */}
       <Grid item xs={12} className="App-header">
         {/* Side menu component */}
@@ -237,8 +290,9 @@ function PageContainer(props) {
           open={menuEnabled}
           onClose={handleSideMenuClose}
           style={{ zIndex: 2 }}
-          classes={{
-            paper: classes.drawerPaper,
+          sx={{
+            width: 312,
+            color: 'success.main',
           }}
           ModalProps={{ onBackdropClick: handleSideMenuClose() }}
         >
@@ -253,6 +307,11 @@ function PageContainer(props) {
           <Routes>
             <Route
               exact
+              path={'/log-action'}
+              element={<SelfReportMenu user={user} />}
+            />
+            <Route
+              exact
               path={'/'}
               element={<Landing user={user} userType={userType} />}
             />
@@ -260,11 +319,6 @@ function PageContainer(props) {
               exact
               path={'/find-group'}
               element={<FindGroup user={user} />}
-            />
-            <Route
-              exact
-              path={'/log-action'}
-              element={<SelfReportMenu user={user} />}
             />
             <Route
               exact

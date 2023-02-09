@@ -120,7 +120,7 @@ const CO2SavedScreen = ({
       {/* display after image validation and action submission have completed */}
       {!loading && (
         <>
-          <Typography variant="h2">Thank you!</Typography>
+          <Typography variant="h2" sx={{fontWeight: '700', fontSize: '1em'}}>Thank you!</Typography>
           {validationSuccess ? (
             <Box>
               <Typography variant="h3">
@@ -132,10 +132,10 @@ const CO2SavedScreen = ({
             </Box>
           ) : (
             <Box>
-              <Typography variant="h3">
+              <Typography variant="h3" component="p">
                 Your action is awaiting admin approval
               </Typography>
-              <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
+              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: '#34b198' }}>
                 The impact of your action is {totalCO2Saved} g of CO2 saved
               </Typography>
             </Box>
@@ -152,7 +152,12 @@ const CO2SavedScreen = ({
             setActionItemValues([]);
             setSelectedImage(null);
           }}
-          sx={{ mt: '3em', width: '80%' }}
+          sx={{
+            width: '80%',
+            maxWidth: '300px',
+            padding: '1em 1em 1.3em',
+            fontSize: '1.2rem',
+          }}
           variant="contained"
         >
           {!loading ? 'Add Another Action' : 'Skip'}
