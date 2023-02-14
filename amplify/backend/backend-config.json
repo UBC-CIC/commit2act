@@ -72,25 +72,23 @@
     "parameterstoreGraphQL": {
       "dependsOn": [
         {
-          "category": "api",
-          "resourceName": "commit2act",
           "attributes": [
             "GraphQLAPIKeyOutput",
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
-          ]
+          ],
+          "category": "api",
+          "resourceName": "commit2act"
         },
         {
-          "category": "storage",
-          "resourceName": "s3commit2actstorage4f79922d",
           "attributes": [
             "BucketName",
             "Region"
-          ]
+          ],
+          "category": "storage",
+          "resourceName": "s3commit2actstorage4f79922d"
         },
         {
-          "category": "auth",
-          "resourceName": "commit2act",
           "attributes": [
             "IdentityPoolId",
             "IdentityPoolName",
@@ -99,7 +97,9 @@
             "UserPoolName",
             "AppClientIDWeb",
             "AppClientID"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "commit2act"
         }
       ],
       "providerPlugin": "awscloudformation",
