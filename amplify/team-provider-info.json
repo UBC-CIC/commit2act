@@ -17,6 +17,12 @@
       },
       "storage": {
         "s3commit2actstorage4f79922d": {}
+      },
+      "api": {
+        "commit2act": {}
+      },
+      "custom": {
+        "parameterstoreGraphQL": {}
       }
     }
   }
