@@ -7,6 +7,7 @@ backend:
         - sed "s|%REGION%|$AWS_REGION|g" amplify/backend/api/commit2act/custom-roles.tmp > amplify/backend/api/commit2act/custom-roles.json
         - npm install -g @aws-amplify/cli
         - '# Execute Amplify CLI with the helper script'
+        - amplifyPush --simple
 frontend:
   phases:
     preBuild:
