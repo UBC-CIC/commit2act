@@ -16,8 +16,8 @@ export class cdkStack extends cdk.Stack {
     // Access other Amplify Resources 
     
     const dependencies:AmplifyDependentResourcesAttributes = AmplifyHelpers.addResourceDependency(this, 
-      amplifyResourceProps.category, 
-      amplifyResourceProps.resourceName, 
+      amplifyResourceProps?.category ? amplifyResourceProps?.category : '', 
+      amplifyResourceProps?.resourceName ? amplifyResourceProps?.resourceName : '', 
       [
         {category: 'api', resourceName: "commit2act"},
         {category: 'storage', resourceName: "s3commit2actstorage4f79922d"},
