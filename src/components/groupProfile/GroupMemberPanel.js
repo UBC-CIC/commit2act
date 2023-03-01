@@ -76,7 +76,7 @@ const GroupMemberPanel = ({
                       variant="rounded"
                       sx={{
                         background: '#5bc1ab',
-                        padding: 20,
+                        padding: '20px',
                         borderRadius: 5,
                         boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
                         border: '1px solid #000000',
