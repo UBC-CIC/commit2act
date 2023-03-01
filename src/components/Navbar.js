@@ -31,21 +31,32 @@ const useStyles = makeStyles()((theme) => {
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
       position: 'sticky',
-      top: '0'
+      top: '0',
     },
     topBar: {
       zIndex: theme.zIndex.drawer + 1,
       background: '#262a2c',
       boxShadow: 'none',
     },
+    languageLabel : {
+      display: 'none',
+      [theme.breakpoints.up('sm')]: {
+        display: 'inline',
+      },
+    },
     menuButton: {
-      marginRight: 22,
       color: '#fff',
       background: '#000',
+      marginRight: 5,
+      [theme.breakpoints.up('sm')]: {
+        marginRight: 22,
+      },
     },
     title: {
+      fontSize: '1.1em',
       [theme.breakpoints.up('sm')]: {
         display: 'block',
+        fontSize: '1.25em',
       },
     },
     avatar: {
@@ -223,7 +234,7 @@ function Navbar(props) {
           
           <div className={classes.grow} />
           <div>
-		      <label htmlFor="language">{translation.changeLanguage}</label> &nbsp;
+		      <label htmlFor="language" className={classes.languageLabel}>{translation.changeLanguage}</label>
               <LanguageHandler />
           </div>
           <div className={classes.sectionDesktop}>
