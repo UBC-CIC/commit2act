@@ -38,6 +38,9 @@ import UserContributionDonutChart from '../UserContributionDonutChart';
 const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
     background: linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%);
+    th,td {
+      color: #000;
+    }
   }
 `;
 
@@ -371,7 +374,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ color: theme.palette.secondary.main }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking  */}
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
