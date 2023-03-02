@@ -46,11 +46,12 @@ export class cdkStack extends cdk.Stack {
       amplifyResourceProps.resourceName, 
       [
         {category: 'api', resourceName: "commit2act"},
-        {category: 'storage', resourceName: "s3commit2actstorage4f79922d"},
+        {category: 'storage', resourceName: "storages3commit2actstorage4f79922dBucketName"},
+        // {category: 'storage', resourceName: "storages3commit2actstorage4f79922d"},
         {category: 'auth', resourceName: "commit2act" },
       ]
     );
-    
+
     console.log('supported dependencies: ', dependencies);
 
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
