@@ -239,7 +239,23 @@ const Landing = ({ user, userType }) => {
                   onClick={() => {
                     navigate('/log-action');
                   }}
+                  sx={{
+                    background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+                    color: '#000',
+                  }}
                 >
+              <Box
+                component="img"
+                sx={{
+                  width: 28,
+                  marginRight: '28px',
+                  fontSize: 30,
+                  color: '#000',
+                  filter: 'invert(1)'
+                }}
+                alt="" 
+                src='./assets/images/icon-log.png'  />
+  
                   Log A New Action
                 </Button>
               </Box>
