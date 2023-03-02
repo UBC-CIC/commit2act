@@ -217,12 +217,32 @@ const Landing = ({ user, userType }) => {
             justifyContent="center"
             sx={{ width: { xs: '70%', sm: '100%' } }}
           >
-            <Typography
-              variant="h2"
-              sx={{ m: { xs: '0.5em 0 1.25em', md: '1.5em 0 1.25em' } }}
+            <Box
+              component="div"
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                m: '0 0 1.25em',
+                flexDirection: { xs: 'column', md: 'row' },
+                gap: { xs: '1em' },
+              }}
             >
-              Recent Progress
-            </Typography>
+              <Typography
+                variant="h2"
+                sx={{ m: { xs: '0.5em 0 1.25em', md: '1.5em 0 1.25em' } }}
+              >
+                Recent Progress
+              </Typography>
+              <Button
+                  variant="contained"
+                  onClick={() => {
+                    navigate('/log-action');
+                  }}
+                >
+                  Log A New Action
+                </Button>
+              </Box>
             <Box
               component={Paper}
               sx={{
