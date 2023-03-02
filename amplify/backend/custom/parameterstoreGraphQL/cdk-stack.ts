@@ -16,14 +16,17 @@ export class cdkStack extends cdk.Stack {
     // Access other Amplify Resources 
     
     const dependencies:AmplifyDependentResourcesAttributes = AmplifyHelpers.addResourceDependency(this, 
-      amplifyResourceProps?.category ? amplifyResourceProps?.category : '', 
-      amplifyResourceProps?.resourceName ? amplifyResourceProps?.resourceName : '', 
+      amplifyResourceProps.category, 
+      amplifyResourceProps.resourceName, 
       [
         {category: 'api', resourceName: "commit2act"},
         {category: 'storage', resourceName: "s3commit2actstorage4f79922d"},
         {category: 'auth', resourceName: "commit2act" },
       ]
     );
+
+    console.log('supported dependencies: ', dependencies);
+
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
     const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIEndpointOutput)
     const BucketNameOutput = cdk.Fn.ref(dependencies.storage.s3commit2actstorage4f79922d.BucketName);
@@ -46,8 +49,5 @@ export class cdkStack extends cdk.Stack {
       parameterName: 'UserPoolId',
       stringValue: UserPoolIdOutput,
     });
-    
-    
   }  
-
   }
