@@ -23,7 +23,7 @@ type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "s3commit2actstorage4f79922d": {
+    "storages3commit2actstorage4f79922d": {
       "BucketName": "string",
       "Region": "string"
     }
@@ -46,7 +46,7 @@ export class cdkStack extends cdk.Stack {
       amplifyResourceProps.resourceName, 
       [
         {category: 'api', resourceName: "commit2act"},
-        {category: 'storage', resourceName: "s3commit2actstorage4f79922d"},
+        {category: 'storage', resourceName: "storages3commit2actstorage4f79922d"},
         {category: 'auth', resourceName: "commit2act" },
       ]
     );
@@ -55,7 +55,7 @@ export class cdkStack extends cdk.Stack {
 
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
     const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIEndpointOutput)
-    const BucketNameOutput = cdk.Fn.ref(dependencies.storage.s3commit2actstorage4f79922d.BucketName);
+    const BucketNameOutput = cdk.Fn.ref(dependencies.storage.storages3commit2actstorage4f79922d.BucketName);
     const UserPoolIdOutput = cdk.Fn.ref(dependencies.auth.commit2act.UserPoolId);
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
     new ssm.StringParameter(this, 'ParameterStoreGraphQLAPIId', {
