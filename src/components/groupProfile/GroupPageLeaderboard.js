@@ -36,6 +36,10 @@ import { styled } from '@mui/material/styles';
 import UserContributionDonutChart from '../UserContributionDonutChart';
 
 const StyledTableBody = styled(TableBody)`
+  td {
+    color: #33AF99;
+    font-weight: 600;
+  }
   .currentGroupOrUser {
     background: linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%);
     th,td {
