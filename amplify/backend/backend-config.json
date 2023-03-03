@@ -7,7 +7,7 @@
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "commit2acta78f9bad"
+          "resourceName": "commit2act480c60ba"
         }
       ],
       "output": {
@@ -16,7 +16,7 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authcommit2acta78f9bad"
+              "userPoolId": "authcommit2act480c60ba"
             }
           }
         }
@@ -26,7 +26,7 @@
     }
   },
   "auth": {
-    "commit2acta78f9bad": {
+    "commit2act480c60ba": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -42,7 +42,9 @@
           "EMAIL"
         ],
         "socialProviders": [],
-        "usernameAttributes": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
         "verificationMechanisms": [
           "EMAIL"
         ]

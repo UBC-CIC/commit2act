@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "commit2acta78f9bad_identitypool_a78f9bad",
+    "identityPoolName": "commit2act480c60ba_identitypool_480c60ba",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "commita78f9bad",
-    "userPoolName": "commit2acta78f9bad_userpool_a78f9bad",
+    "resourceNameTruncated": "commit480c60ba",
+    "userPoolName": "commit2act480c60ba_userpool_480c60ba",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -18,25 +18,31 @@
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
-    "passwordPolicyCharacters": [],
+    "passwordPolicyCharacters": [
+      "Requires Lowercase",
+      "Requires Numbers",
+      "Requires Symbols",
+      "Requires Uppercase"
+    ],
     "requiredAttributes": [
-      "email"
+      "name",
+      "preferred_username"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
-    "userpoolClientWriteAttributes": [
-      "email"
-    ],
-    "userpoolClientReadAttributes": [
-      "email"
-    ],
-    "userpoolClientLambdaRole": "commita78f9bad_userpoolclient_lambda_role",
+    "userpoolClientWriteAttributes": [],
+    "userpoolClientReadAttributes": [],
+    "userpoolClientLambdaRole": "commit480c60ba_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "a78f9bad",
-    "resourceName": "commit2acta78f9bad",
+    "sharedId": "480c60ba",
+    "resourceName": "commit2act480c60ba",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "default",
+    "useDefault": "manual",
+    "usernameAttributes": [
+      "email"
+    ],
+    "triggers": {},
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,

@@ -12,11 +12,11 @@
       "AmplifyAppId": "d1ha5pbjl3ysbn"
     },
     "categories": {
-      "auth": {
-        "commit2acta78f9bad": {}
-      },
       "storage": {
         "s3commit2act": {}
+      },
+      "auth": {
+        "commit2act480c60ba": {}
       }
     }
   },
