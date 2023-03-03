@@ -20,9 +20,6 @@
       },
       "api": {
         "commit2act": {}
-      },
-      "custom": {
-        "parameterstoreGraphQL": {}
       }
     }
   }

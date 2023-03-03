@@ -68,44 +68,7 @@
       "service": "Cognito"
     }
   },
-  "custom": {
-    "parameterstoreGraphQL": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "GraphQLAPIKeyOutput",
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput"
-          ],
-          "category": "api",
-          "resourceName": "commit2act"
-        },
-        {
-          "attributes": [
-            "BucketName",
-            "Region"
-          ],
-          "category": "storage",
-          "resourceName": "s3commit2actstorage4f79922d"
-        },
-        {
-          "attributes": [
-            "IdentityPoolId",
-            "IdentityPoolName",
-            "UserPoolId",
-            "UserPoolArn",
-            "UserPoolName",
-            "AppClientIDWeb",
-            "AppClientID"
-          ],
-          "category": "auth",
-          "resourceName": "commit2act"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "customCDK"
-    }
-  },
+  "custom": {},
   "storage": {
     "s3commit2actstorage4f79922d": {
       "dependsOn": [],
