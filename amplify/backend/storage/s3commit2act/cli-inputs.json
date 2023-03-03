@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3commit2act",
+  "policyUUID": "7a281379",
+  "bucketName": "commit2act-storage",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

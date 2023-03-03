@@ -1,24 +1,29 @@
 {
   "staging": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-commit2act-staging-213938-authRole",
-      "UnauthRoleArn": "arn:aws:iam::629952132002:role/amplify-commit2act-staging-213938-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::629952132002:role/amplify-commit2act-staging-213938-authRole",
+      "AuthRoleName": "amplify-commit2act-staging-14231-authRole",
+      "UnauthRoleArn": "arn:aws:iam::629952132002:role/amplify-commit2act-staging-14231-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::629952132002:role/amplify-commit2act-staging-14231-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-commit2act-staging-213938-deployment",
-      "UnauthRoleName": "amplify-commit2act-staging-213938-unauthRole",
-      "StackName": "amplify-commit2act-staging-213938",
-      "StackId": "arn:aws:cloudformation:us-east-1:629952132002:stack/amplify-commit2act-staging-213938/64299e20-3c51-11ed-b8ea-12baa9df8caf",
+      "DeploymentBucketName": "amplify-commit2act-staging-14231-deployment",
+      "UnauthRoleName": "amplify-commit2act-staging-14231-unauthRole",
+      "StackName": "amplify-commit2act-staging-14231",
+      "StackId": "arn:aws:cloudformation:us-east-1:629952132002:stack/amplify-commit2act-staging-14231/aa1d52b0-b964-11ed-a955-0eb304485ec5",
       "AmplifyAppId": "d1ha5pbjl3ysbn"
     },
     "categories": {
       "auth": {
-        "commit2act": {}
+        "commit2acta78f9bad": {}
       },
       "storage": {
-        "s3commit2actstorage4f79922d": {}
-      },
-      "api": {
+        "s3commit2act": {}
+      }
+    }
+  },
+  "danstage": {
+    "awscloudformation": {},
+    "categories": {
+      "auth": {
         "commit2act": {}
       }
     }

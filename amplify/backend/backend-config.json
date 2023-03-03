@@ -7,25 +7,16 @@
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "commit2act"
+          "resourceName": "commit2acta78f9bad"
         }
       ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "apiKeyConfig": {
-                "apiKeyExpirationDate": "2023-03-09T23:39:22.963Z",
-                "apiKeyExpirationDays": 7,
-                "description": "helloworld"
-              },
-              "authenticationType": "API_KEY"
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authcommit2act"
+              "userPoolId": "authcommit2acta78f9bad"
             }
           }
         }
@@ -35,7 +26,7 @@
     }
   },
   "auth": {
-    "commit2act": {
+    "commit2acta78f9bad": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -44,22 +35,14 @@
           "SMS"
         ],
         "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [
-            "REQUIRES_LOWERCASE",
-            "REQUIRES_NUMBERS",
-            "REQUIRES_SYMBOLS",
-            "REQUIRES_UPPERCASE"
-          ],
+          "passwordPolicyCharacters": [],
           "passwordPolicyMinLength": 8
         },
         "signupAttributes": [
-          "NAME",
-          "PREFERRED_USERNAME"
-        ],
-        "socialProviders": [],
-        "usernameAttributes": [
           "EMAIL"
         ],
+        "socialProviders": [],
+        "usernameAttributes": [],
         "verificationMechanisms": [
           "EMAIL"
         ]
@@ -70,7 +53,7 @@
   },
   "custom": {},
   "storage": {
-    "s3commit2actstorage4f79922d": {
+    "s3commit2act": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

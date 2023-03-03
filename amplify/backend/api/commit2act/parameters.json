@@ -4,9 +4,9 @@
   "DynamoDBEnableServerSideEncryption": false,
   "AuthCognitoUserPoolId": {
     "Fn::GetAtt": [
-      "authcommit2act",
+      "authcommit2acta78f9bad",
       "Outputs.UserPoolId"
     ]
   },
-  "AuthModeLastUpdated": "2023-03-02T23:39:23.459Z"
+  "AuthModeLastUpdated": "2023-03-03T00:35:03.153Z"
 }
