@@ -20,10 +20,20 @@ export class cdkStack extends cdk.Stack {
       amplifyResourceProps.resourceName, 
       [
         {category: 'api', resourceName: "commit2act"},
-        // {category: 'storage', resourceName: "s3commit2act"},
+        {category: 'storage', resourceName: "s3commit2act"},
         {category: 'auth', resourceName: "commit2act480c60ba" },
       ]
     );
+
+    if (!dependencies.storage){
+      dependencies.storage = {
+        s3commit2act: {
+          BucketName: 'commit2act-storage14231-staging' as "string",
+          Region: 'us-east-1' as "string"
+        }
+      };
+    }
+
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
     const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIEndpointOutput)
     // const BucketNameOutput = cdk.Fn.ref(dependencies.storage.s3commit2actstorage4f79922d.BucketName);
