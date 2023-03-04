@@ -64,8 +64,8 @@ export class cdkStack extends cdk.Stack {
 
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
     const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIEndpointOutput)
-    // const BucketNameOutput = cdk.Fn.ref(dependencies.storage.s3commit2actstorage4f79922d.BucketName);
-    const BucketNameOutput = cdk.Fn.ref('commit2act-storage14231-staging');
+    const BucketNameOutput = cdk.Fn.ref(dependencies.storage.s3commit2act.BucketName);
+    // const BucketNameOutput = cdk.Fn.ref('commit2act-storage14231-staging');
     const UserPoolIdOutput = cdk.Fn.ref(dependencies.auth.commit2act480c60ba.UserPoolId);
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
     new ssm.StringParameter(this, 'ParameterStoreGraphQLAPIId', {
