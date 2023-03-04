@@ -60,6 +60,8 @@ export class cdkStack extends cdk.Stack {
       };
     }
 
+    console.log('\nDependencies: \n', dependencies)
+
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
     const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIEndpointOutput)
     // const BucketNameOutput = cdk.Fn.ref(dependencies.storage.s3commit2actstorage4f79922d.BucketName);
