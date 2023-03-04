@@ -1,8 +1,34 @@
 import * as cdk from '@aws-cdk/core';
 import * as AmplifyHelpers from '@aws-amplify/cli-extensibility-helper';
 import * as ssm from '@aws-cdk/aws-ssm';
-import { AmplifyDependentResourcesAttributes } from '../../types/amplify-dependent-resources-ref';
+// import { AmplifyDependentResourcesAttributes } from '../../types/amplify-dependent-resources-ref';
 
+type AmplifyDependentResourcesAttributes = {
+  "api": {
+    "commit2act": {
+      "GraphQLAPIEndpointOutput": "string",
+      "GraphQLAPIIdOutput": "string",
+      "GraphQLAPIKeyOutput": "string"
+    }
+  },
+  "auth": {
+    "commit2act480c60ba": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
+    }
+  },
+  "storage": {
+    "s3commit2act": {
+      "BucketName": "string",
+      "Region": "string"
+    }
+  }
+}
 
 export class cdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps, amplifyResourceProps?: AmplifyHelpers.AmplifyResourceProps) {
