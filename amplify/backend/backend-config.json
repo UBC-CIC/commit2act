@@ -68,7 +68,12 @@
       "service": "Cognito"
     }
   },
-  "custom": {},
+  "custom": {
+    "parameterstoreGraphQL": {
+      "providerPlugin": "awscloudformation",
+      "service": "customCDK"
+    }
+  },
   "storage": {
     "s3commit2act": {
       "dependsOn": [],
