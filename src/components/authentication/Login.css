@@ -151,3 +151,8 @@ video {
 .input-box {
   padding: 6px 0;
 }
+
+/* Overriding the invalid colour from theme because of the green back, I don't love putting this here but here it is */
+.login-box .MuiList-root .MuiSvgIcon-root {
+  color: #000;
+}
