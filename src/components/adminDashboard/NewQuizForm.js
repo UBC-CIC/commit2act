@@ -147,16 +147,18 @@ const NewQuizForm = ({ action_id, getQuizzes }) => {
       setDuplicateAnswerError(false);
       getQuizzes();
     } catch (e) {
-      const errorMsg = e.message;
-      console.log(e);
-      if (errorMsg.includes('Empty field')) {
-        setEmptyFieldError(true);
-      } else if (errorMsg.includes('No answers')) {
-        setEmptyAnswerError(true);
-      } else if (errorMsg.includes('No correct answer')) {
-        setNoCorrectAnswerError(true);
-      } else if (errorMsg.includes('Duplicate answer')) {
-        setDuplicateAnswerError(true);
+      if (e) {
+        const errorMsg = e.message;
+        console.log(e);
+        if (errorMsg.includes('Empty field')) {
+          setEmptyFieldError(true);
+        } else if (errorMsg.includes('No answers')) {
+          setEmptyAnswerError(true);
+        } else if (errorMsg.includes('No correct answer')) {
+          setNoCorrectAnswerError(true);
+        } else if (errorMsg.includes('Duplicate answer')) {
+          setDuplicateAnswerError(true);
+        }
       }
     }
   };

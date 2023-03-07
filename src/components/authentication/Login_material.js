@@ -101,7 +101,10 @@ const useStyles = makeStyles()((theme) => {
       '& label' : {
         color: '#262a2c',
         fontSize: '1.3em',
-        paddingRight: '5px'
+        paddingRight: '5px',
+        '&.Mui-focused' : {
+          color: '#000',
+        }
       },
       '& legend' : {
         fontSize: '1em',

@@ -217,12 +217,48 @@ const Landing = ({ user, userType }) => {
             justifyContent="center"
             sx={{ width: { xs: '70%', sm: '100%' } }}
           >
-            <Typography
-              variant="h2"
-              sx={{ m: { xs: '0.5em 0 1.25em', md: '1.5em 0 1.25em' } }}
+            <Box
+              component="div"
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                m: '0 0 1.25em',
+                flexDirection: { xs: 'column', md: 'row' },
+                gap: { xs: '1em' },
+              }}
             >
-              Recent Progress
-            </Typography>
+              <Typography
+                variant="h2"
+                sx={{ m: { xs: '0.5em 0 1.25em', md: '1.5em 0 1.25em' } }}
+              >
+                Recent Progress
+              </Typography>
+              <Button
+                  variant="contained"
+                  onClick={() => {
+                    navigate('/log-action');
+                  }}
+                  sx={{
+                    background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+                    color: '#000',
+                  }}
+                >
+              <Box
+                component="img"
+                sx={{
+                  width: 28,
+                  marginRight: '28px',
+                  fontSize: 30,
+                  color: '#000',
+                  filter: 'invert(1)'
+                }}
+                alt="" 
+                src='./assets/images/icon-log.png'  />
+  
+                  Log A New Action
+                </Button>
+              </Box>
             <Box
               component={Paper}
               sx={{

@@ -224,7 +224,7 @@ const CreateGroup = ({ user }) => {
                     onChange={handleAvatarChange}
                   />
                   <Button
-                    variant="outlined"
+                    variant="outlined" component="span"
                     sx={{ m: { xs: '1.5em 0 0', md: '0' } }}
                   >
                     Upload Group Icon

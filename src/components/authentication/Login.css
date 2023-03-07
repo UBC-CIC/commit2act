@@ -60,21 +60,27 @@ video {
 
 /* when the screen size is bigger than phone size, englarge the header */
 
-@media only screen and (min-width: 1240px) {
+@media only screen and (max-width: 600px) {
   .typewriter > p {
-    font-size: 8rem;
+    font-size: 2rem;
   }
 }
 
-@media only screen and (min-width: 600px) and (max-width: 1240px) {
+@media only screen and (min-width: 600px) {
   .typewriter > p {
     font-size: 3rem;
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (min-width: 1240px) {
   .typewriter > p {
-    font-size: 2rem;
+    font-size: 5rem;
+  }
+}
+
+@media only screen and (min-width: 1540px) {
+  .typewriter > p {
+    font-size: 8rem;
   }
 }
 
@@ -144,4 +150,9 @@ video {
 
 .input-box {
   padding: 6px 0;
+}
+
+/* Overriding the invalid colour from theme because of the green back, I don't love putting this here but here it is */
+.login-box .MuiList-root .MuiSvgIcon-root {
+  color: #000;
 }

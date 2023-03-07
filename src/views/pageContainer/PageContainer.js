@@ -35,7 +35,7 @@ import CreateAction from '../../pages/CreateAction';
 import JoinGroup from '../../pages/JoinGroup';
 import UserProfile from '../../pages/UserProfile';
 import AdminDashboard from '../../pages/AdminDashboard';
-import { API, Auth } from 'aws-amplify';
+import { API, Auth, autoShowTooltip } from 'aws-amplify';
 import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
 import PrivateRoute from './PrivateRoute';
@@ -66,6 +66,10 @@ const useStyles = makeStyles()((theme) => {
       background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
       marginBottom: 10,
       marginTop: 5,
+      marginLeft: 10,
+      marginRight: 10,
+      borderRadius: 5,
+      width: 'auto',
       '& span': {
         color: '#000',
         fontWeight: 500,
@@ -74,7 +78,7 @@ const useStyles = makeStyles()((theme) => {
         fontSize: 30,
         color: '#000',
         filter: 'invert(1)'
-      }
+      },
     }
   };
 });

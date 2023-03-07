@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import blue from '@material-ui/core/colors/blue';
+// import blue from '@material-ui/core/colors/blue';
 
 const theme = createTheme({
   palette: {
@@ -9,6 +9,9 @@ const theme = createTheme({
     },
     secondary: {
       main: '#380FD1',
+    },
+    tertiary: {
+      main: '#33AF99',
     },
     error: {
       main: '#ff8512',
