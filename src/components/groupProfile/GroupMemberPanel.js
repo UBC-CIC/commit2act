@@ -34,13 +34,12 @@ const GroupMemberPanel = ({
           sx={{
             width: '100%',
             backgroundColor: '#DBE2EF',
-            height: '50vh',
+            minHeight: '50vh',
             borderRadius: '8px',
             padding: '1.5em',
             mt: '2em',
             alignItems: 'center',
-            flexWrap: 'wrap',
-            overflow: 'auto',
+            flexWrap: 'wrap'
           }}
         >
           {groupMembers.map((member, index) => (

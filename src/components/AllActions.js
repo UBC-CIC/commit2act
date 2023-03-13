@@ -51,8 +51,7 @@ const AllActions = ({ setSelectedAction }) => {
     <Grid
       item
       sx={{
-        height: '50vh',
-        overflow: 'auto',
+        minHeight: '50vh',
         display: displayDefaultMsg && 'flex',
         alignItems: displayDefaultMsg && 'center',
         justifyContent: displayDefaultMsg && 'center',

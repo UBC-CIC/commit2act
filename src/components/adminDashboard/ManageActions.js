@@ -58,8 +58,7 @@ const ManageActions = () => {
     <Grid
       item
       sx={{
-        height: '50vh',
-        overflow: 'auto',
+        minHeight: '50vh'
       }}
     >
       {!actionOptions && <CircularProgress />}
