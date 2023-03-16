@@ -96,7 +96,9 @@
             "UserPoolArn",
             "UserPoolName",
             "AppClientIDWeb",
-            "AppClientID"
+            "AppClientID",
+            "GoogleWebClient",
+            "FacebookWebClient"
           ],
           "category": "auth",
           "resourceName": "commit2act480c60ba"
@@ -104,24 +106,6 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "customCDK"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_auth_commit2act480c60ba_facebookAppId": {
-      "usedBy": [
-        {
-          "category": "auth",
-          "resourceName": "commit2act480c60ba"
-        }
-      ]
-    },
-    "AMPLIFY_auth_commit2act480c60ba_googleClientId": {
-      "usedBy": [
-        {
-          "category": "auth",
-          "resourceName": "commit2act480c60ba"
-        }
-      ]
     }
   },
   "storage": {

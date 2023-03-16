@@ -15,6 +15,8 @@ type AmplifyDependentResourcesAttributes = {
     "commit2act480c60ba": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
+      "FacebookWebClient": "string",
+      "GoogleWebClient": "string",
       "IdentityPoolId": "string",
       "IdentityPoolName": "string",
       "UserPoolArn": "string",
