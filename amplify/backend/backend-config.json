@@ -46,11 +46,11 @@
         "passwordProtectionSettings": {
           "passwordPolicyCharacters": [
             "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
             "REQUIRES_NUMBERS",
-            "REQUIRES_SYMBOLS",
-            "REQUIRES_UPPERCASE"
+            "REQUIRES_SYMBOLS"
           ],
-          "passwordPolicyMinLength": 8
+          "passwordPolicyMinLength": "8"
         },
         "signupAttributes": [
           "NAME",
@@ -104,6 +104,24 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "customCDK"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_commit2act480c60ba_facebookAppId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "commit2act480c60ba"
+        }
+      ]
+    },
+    "AMPLIFY_auth_commit2act480c60ba_googleClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "commit2act480c60ba"
+        }
+      ]
     }
   },
   "storage": {
