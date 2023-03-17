@@ -92,6 +92,8 @@
           "attributes": [
             "IdentityPoolId",
             "IdentityPoolName",
+            "HostedUIDomain",
+            "OAuthMetadata",
             "UserPoolId",
             "UserPoolArn",
             "UserPoolName",
