@@ -7,7 +7,7 @@ import awsExports from './aws-exports';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Amplify from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reducers from './reducers';
 import LanguageContextProvider from "./components/contexts/LanguageContext";
@@ -18,9 +18,9 @@ const store = createStore(reducers, applyMiddleware(thunk));
 
 ReactDOM.render(
   <Provider store={store}>
-	<LanguageContextProvider>
-    	<App />
-	</LanguageContextProvider>
+    <LanguageContextProvider>
+      <App />
+    </LanguageContextProvider>
   </Provider>,
   document.getElementById('root')
 );

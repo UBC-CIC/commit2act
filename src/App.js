@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import PageContainer from './views/pageContainer/PageContainer';
-import Amplify from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { StylesProvider } from '@material-ui/core/styles';
 import { ThemeProvider } from '@mui/material/styles';
@@ -13,9 +13,34 @@ import { updateLoginState } from './actions/loginActions';
 import theme from './themes';
 import ScrollToTop from './components/ScrollToTop';
 
-Amplify.configure(awsmobile);
+const isLocalhost = Boolean(
+  window.location.hostname === "localhost" ||
+  // [::1] is the IPv6 localhost address.
+  window.location.hostname === "[::1]" ||
+  // 127.0.0.1/8 is considered localhost for IPv4.
+  window.location.hostname.match(
+    /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+  )
+);
 
-function App(props) {
+// Assuming you have two redirect URIs, and the first is for localhost and second is for production
+const [
+  localRedirectURL,
+  productionRedirectURL,
+] = awsConfig.oauth.redirectSignIn.split(",");
+
+const updatedAwsConfig = {
+  ...awsConfig,
+  oauth: {
+    ...awsConfig.oauth,
+    redirectSignIn: isLocalhost ? localRedirectURL : productionRedirectURL,
+    redirectSignOut: isLocalhost ? localRedirectURL : productionRedirectURL,
+  }
+}
+
+Amplify.configure(updatedAwsConfig);
+
+function App (props) {
   const { loginState, updateLoginState } = props;
 
   const [currentLoginState, updateCurrentLoginState] = useState(loginState);
@@ -28,7 +53,7 @@ function App(props) {
     updateCurrentLoginState(loginState);
   }, [loginState]);
 
-  async function setAuthListener() {
+  async function setAuthListener () {
     Hub.listen('auth', (data) => {
       switch (data.payload.event) {
         case 'signOut':
