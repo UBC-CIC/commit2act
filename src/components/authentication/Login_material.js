@@ -14,6 +14,7 @@ import PasswordRequirements from './PasswordRequirements';
 import LoginNavbar from './LoginNavbar';
 
 import useTranslation from '../customHooks/translations';
+import { Box } from '@mui/system';
 
 const initialFormState = {
   email: '',
@@ -26,7 +27,7 @@ const initialFormState = {
 };
 
 const useStyles = makeStyles()((theme) => {
-  return{
+  return {
     marginTop: {
       margin: theme.spacing(2, 'auto', 'auto', 'auto'),
     },
@@ -98,21 +99,21 @@ const useStyles = makeStyles()((theme) => {
     },
     textFieldStyle: {
       marginBottom: '12px',
-      '& label' : {
+      '& label': {
         color: '#262a2c',
         fontSize: '1.3em',
         paddingRight: '5px',
-        '&.Mui-focused' : {
+        '&.Mui-focused': {
           color: '#000',
         }
       },
-      '& legend' : {
+      '& legend': {
         fontSize: '1em',
       },
-      '& fieldset' : {
+      '& fieldset': {
         borderColor: '#262a2c',
       },
-      '& input' : {
+      '& input': {
         color: '#000',
       },
       '& svg': {
@@ -125,7 +126,7 @@ const useStyles = makeStyles()((theme) => {
   }
 });
 
-function Login(props) {
+function Login (props) {
   const {
     loginState,
     updateLoginState,
@@ -146,6 +147,7 @@ function Login(props) {
   const [newPasswordError, setNewPasswordError] = useState(false);
   const [newVerification, setNewVerification] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [gLoading, setGLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [forgotPasswordError, setForgotPasswordError] = useState(false);
   const [emptyInputError, setEmptyInputError] = useState(false);
@@ -175,7 +177,7 @@ function Login(props) {
   const translation = useTranslation();
 
   useEffect(() => {
-    async function retrieveUser() {
+    async function retrieveUser () {
       try {
         Auth.currentAuthenticatedUser()
           .then((user) => {
@@ -184,13 +186,13 @@ function Login(props) {
           .catch((err) => {
             updateLoginState('signIn');
           });
-      } catch (e) {}
+      } catch (e) { }
     }
     retrieveUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function clearErrors() {
+  function clearErrors () {
     setAccountCreationEmailExistError(false);
     setAccountCreationPasswordError(false);
     setAccountLoginError(false);
@@ -200,14 +202,14 @@ function Login(props) {
     setInvalidEmailError(false);
   }
 
-  function onChange(e) {
+  function onChange (e) {
     e.persist();
     clearErrors();
 
     updateFormState({ ...formState, [e.target.name]: e.target.value });
   }
 
-  function onChangePassword(e) {
+  function onChangePassword (e) {
     const currPW = e.target.value;
     setPasswordRequirements(() => {
       passwordRequirements.uppercase.error = /[A-Z]/.test(currPW);
@@ -228,7 +230,7 @@ function Login(props) {
       : setPasswordUnmatchError(true);
   }
 
-  async function signUp() {
+  async function signUp () {
     try {
       // check if both passwords match first before signing up
       checkMatchingPasswords();
@@ -277,7 +279,7 @@ function Login(props) {
   }
 
   // confirmSignUp shows after signUp page
-  async function confirmSignUp() {
+  async function confirmSignUp () {
     // Verify Account with confirmation code after sign up page
     try {
       setNewVerification(false);
@@ -299,7 +301,7 @@ function Login(props) {
     }
   }
 
-  async function resendConfirmationCode() {
+  async function resendConfirmationCode () {
     try {
       const { email } = formState;
       setVerificationError(false);
@@ -315,7 +317,18 @@ function Login(props) {
     }
   }
 
-  async function signIn() {
+  async function signInGoogle () {
+    try {
+      setGLoading(true);
+      await Auth.federatedSignIn({ provider: 'Google' });
+      setGLoading(false);
+    } catch (e) {
+      setLoading(false);
+      const errorMsg = e.code;
+    }
+  }
+
+  async function signIn () {
     try {
       setLoading(true);
       const { email, password } = formState;
@@ -347,7 +360,7 @@ function Login(props) {
     }
   }
 
-  async function setNewPassword() {
+  async function setNewPassword () {
     try {
       // check if both passwords match first before setting new password
       checkMatchingPasswords();
@@ -374,7 +387,7 @@ function Login(props) {
     }
   }
 
-  async function forgotPassword() {
+  async function forgotPassword () {
     try {
       const { email } = formState;
       setLoading(true);
@@ -389,7 +402,7 @@ function Login(props) {
   }
 
   // resetPassword after forgotPassword page
-  async function resetPassword() {
+  async function resetPassword () {
     try {
       // check if both passwords match first before resetting password
       checkMatchingPasswords();
@@ -419,7 +432,7 @@ function Login(props) {
     }
   }
 
-  function checkMatchingPasswords() {
+  function checkMatchingPasswords () {
     // check if both passwords match
     if (!confirmPasswordString) {
       // empty field
@@ -429,14 +442,14 @@ function Login(props) {
     }
   }
 
-  function checkEmptyString(str) {
+  function checkEmptyString (str) {
     // check if string is empty after space trimmed
     if (str.replace(/\s+/g, '') === '') {
       throw new Error('empty');
     }
   }
 
-  function resetStates(state) {
+  function resetStates (state) {
     // clear states when hitting the back button
     updateFormState(() => initialFormState);
     clearErrors();
@@ -473,27 +486,27 @@ function Login(props) {
           type === 'image'
             ? themeColor === 'standard'
               ? {
-                  backgroundColor: '#012144',
-                  backgroundImage: 'url(./assets/images/login-background.jpg)',
-                  backgroundSize: 'cover',
-                  backgroundRepeat: 'no',
-                  width: '100%',
-                  height: '100vh',
-                }
+                backgroundColor: '#012144',
+                backgroundImage: 'url(./assets/images/login-background.jpg)',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no',
+                width: '100%',
+                height: '100vh',
+              }
               : {
-                  backgroundColor: themeColor,
-                  backgroundImage: 'url(./assets/images/login-background.jpg)',
-                  backgroundSize: 'cover',
-                  backgroundRepeat: 'no',
-                  width: '100%',
-                  height: '100vh',
-                }
+                backgroundColor: themeColor,
+                backgroundImage: 'url(./assets/images/login-background.jpg)',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no',
+                width: '100%',
+                height: '100vh',
+              }
             : themeColor === 'standard'
-            ? { backgroundColor: '#012144', width: '100%', height: '100vh' }
-            : { backgroundColor: themeColor, width: '100%', height: '100vh' }
+              ? { backgroundColor: '#012144', width: '100%', height: '100vh' }
+              : { backgroundColor: themeColor, width: '100%', height: '100vh' }
         }
       >
-      
+
         <LoginNavbar />
 
         {/* Please use a royalty free video or a video that you or the CIC owns */}
@@ -520,15 +533,14 @@ function Login(props) {
           >
             <Grid xs item className={`typewriter ${classes.marginHorizontal}`}>
               <p
-                className={`${classes.textAlignCenter} ${
-                  animateTitle
-                    ? darkMode
-                      ? 'line anim-typewriter'
-                      : 'line anim-typewriter-light lightMode'
-                    : darkMode
+                className={`${classes.textAlignCenter} ${animateTitle
+                  ? darkMode
+                    ? 'line anim-typewriter'
+                    : 'line anim-typewriter-light lightMode'
+                  : darkMode
                     ? 'line-static'
                     : 'line-static lightMode-static'
-                }`}
+                  }`}
               >
                 {title}
               </p>
@@ -547,7 +559,7 @@ function Login(props) {
             container
             item
             direction={'column'}
-			wrap={'nowrap'}
+            wrap={'nowrap'}
             xs={12}
             sm={11}
             md={9}
@@ -609,16 +621,26 @@ function Login(props) {
                   {' '}
                   {/* forget */}
                   <span style={{ textAlign: 'end' }}>
-				  	{translation.forgotPassword}
+                    {translation.forgotPassword}
                   </span>
                 </Grid>
-                <Grid className={`input-box ${classes.marginTop}`}>
+                <Grid className={`input-box`} style={{ marginTop: "0px" }}>
                   {' '}
                   {/* sign in button */}
                   <SubmitButtonWithLoading
                     submitAction={signIn}
                     submitMessage={translation.signIn}
                     loadingState={loading}
+
+                  />
+                </Grid>
+                <Grid className={`input-box`} style={{ marginTop: "0px" }}>
+                  {' '}
+                  {/* sign in button */}
+                  <GoogleSubmitButtonWithLoading
+                    submitAction={signInGoogle}
+                    submitMessage={translation.signInGoogle}
+                    loadingState={gLoading}
                   />
                 </Grid>
                 {!disableSignUp && ( // if sign up is not disabled, then show the create an account option
@@ -741,7 +763,7 @@ function Login(props) {
                 </Grid>
                 <TextFieldStartAdornment
                   startIcon={<Lock />}
-                //   label="Password"
+                  //   label="Password"
                   label={translation.reEnterPassword}
                   name={'confirm-password'}
                   type="password"
@@ -980,7 +1002,7 @@ const BannerMessage = (props) => {
   const { type, typeCheck, children } = props;
 
   const useStyles = makeStyles()((theme) => {
-    return{
+    return {
       root: {
         width: '100%',
         margin: theme.spacing(2, 'auto'),
@@ -1008,9 +1030,61 @@ const BannerMessage = (props) => {
   );
 };
 
+const GoogleSubmitButtonWithLoading = (props) => {
+  const useStyles = makeStyles()((theme) => {
+    return {
+      progress: {
+        display: 'flex',
+        padding: theme.spacing(0, 1),
+      },
+      submitButton: {
+        borderRadius: 5,
+        width: '100%',
+        fontSize: '1em',
+        padding: theme.spacing(1.5),
+        color: theme.palette.getContrastText('#FFFFFF'),
+        backgroundColor: '#FFFFFF',
+        '&:hover': {
+          backgroundColor: '#f2f2f2',
+        },
+      }
+    }
+  });
+
+  const { submitAction, submitMessage, loadingState } = props;
+  const { classes } = useStyles();
+
+  return (
+    <Button
+      variant="contained"
+      disabled={!!loadingState}
+      onClick={submitAction}
+      className={classes.submitButton}
+      style={props.style}
+    >
+      <Box
+        component="img"
+        sx={{
+          marginRight: '15px',
+          fontSize: 30,
+          color: '#000',
+        }}
+        alt=""
+        src='./assets/images/google-icon.svg' />
+      {submitMessage}
+      {/* if it is loading, show the loading indicator */}
+      {!!loadingState && (
+        <Grid className={classes.progress}>
+          <CircularProgress size={15} />
+        </Grid>
+      )}
+    </Button>
+  );
+};
+
 const SubmitButtonWithLoading = (props) => {
   const useStyles = makeStyles()((theme) => {
-    return{
+    return {
       progress: {
         display: 'flex',
         padding: theme.spacing(0, 1),
@@ -1039,6 +1113,7 @@ const SubmitButtonWithLoading = (props) => {
       disabled={!!loadingState}
       onClick={submitAction}
       className={classes.submitButton}
+      style={props.style}
     >
       {submitMessage}
       {/* if it is loading, show the loading indicator */}

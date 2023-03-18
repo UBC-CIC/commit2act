@@ -27,16 +27,17 @@ const isLocalhost = Boolean(
 const [
   localRedirectURL,
   productionRedirectURL,
-] = awsConfig.oauth.redirectSignIn.split(",");
+] = awsmobile.oauth.redirectSignIn.split(",");
 
 const updatedAwsConfig = {
-  ...awsConfig,
+  ...awsmobile,
   oauth: {
-    ...awsConfig.oauth,
+    ...awsmobile.oauth,
     redirectSignIn: isLocalhost ? localRedirectURL : productionRedirectURL,
     redirectSignOut: isLocalhost ? localRedirectURL : productionRedirectURL,
   }
 }
+
 
 Amplify.configure(updatedAwsConfig);
 

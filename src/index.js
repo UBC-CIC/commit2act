@@ -12,7 +12,7 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reducers from './reducers';
 import LanguageContextProvider from "./components/contexts/LanguageContext";
 
-Amplify.configure(awsExports);
+// Amplify.configure(awsExports);
 
 const store = createStore(reducers, applyMiddleware(thunk));
 

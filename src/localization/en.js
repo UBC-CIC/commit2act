@@ -2,6 +2,7 @@ const translations = {
 	changeLanguage: "Language: ",
 	welcomeName: "Welcome {0}!",
 	signIn: "Sign In",
+	signInGoogle: "Sign In with Google",
 	email: "Email",
 	password: "Password",
 	forgotPassword: "Forgot your password?",
