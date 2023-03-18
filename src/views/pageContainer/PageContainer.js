@@ -41,7 +41,7 @@ import { createUser } from '../../graphql/mutations';
 import PrivateRoute from './PrivateRoute';
 
 const useStyles = makeStyles()((theme) => {
-  return{
+  return {
     drawerContainer: {
       overflow: 'auto',
       backgroundColor: '#303839',
@@ -83,11 +83,11 @@ const useStyles = makeStyles()((theme) => {
   };
 });
 
-function PageContainer(props) {
+function PageContainer (props) {
   const { menuEnabled, updateMenuState } = props;
-  
+
   const { classes } = useStyles();
-  
+
   const navigate = useNavigate();
   const [user, setUser] = useState();
   const [userType, setUserType] = useState();
@@ -97,7 +97,7 @@ function PageContainer(props) {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     //on user's first login, create user entry in database, then update custom firstLogin attribute to false
     const firstLogin = cognitoUserEntry.attributes['custom:firstLogin'];
-    if (firstLogin === 'true') {
+    if (firstLogin) {
       await API.graphql({
         query: createUser,
         variables: {
@@ -167,27 +167,27 @@ function PageContainer(props) {
           key={'logAction'}
           onClick={() => navigate('/log-action')}
           className={classes.logAction}
-          >
+        >
           <ListItemIcon>
-           <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-log.png'  />
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-log.png' />
           </ListItemIcon>
           <ListItemText primary={'Log Action'} />
         </ListItem>
         <ListItem button key={'home'} onClick={() => navigate('/')}>
           <ListItemIcon>
-           <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-home.png'  />
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-home.png' />
           </ListItemIcon>
           <ListItemText primary={'Dashboard'} />
         </ListItem>
@@ -198,12 +198,12 @@ function PageContainer(props) {
         >
           <ListItemIcon>
             <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-find.png'  />
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-find.png' />
           </ListItemIcon>
           <ListItemText primary={'Find Group'} />
         </ListItem>
@@ -214,13 +214,13 @@ function PageContainer(props) {
           onClick={() => navigate('/create-group')}
         >
           <ListItemIcon>
-          <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-create-group.png'  />
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-create-group.png' />
           </ListItemIcon>
           <ListItemText primary={'Create Group'} />
         </ListItem>
@@ -231,13 +231,13 @@ function PageContainer(props) {
           onClick={() => navigate('/validate-actions')}
         >
           <ListItemIcon>
-           <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-validate.png'  />
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-validate.png' />
           </ListItemIcon>
           <ListItemText primary={'Validate Actions'} />
         </ListItem>
@@ -257,9 +257,9 @@ function PageContainer(props) {
           </>
         )}
         <Divider
-        sx={{
-          margin: '15px 0',
-        }}
+          sx={{
+            margin: '15px 0',
+          }}
         />
         <ListItem
           button
@@ -267,13 +267,13 @@ function PageContainer(props) {
           onClick={() => navigate(`/account-settings`)}
         >
           <ListItemIcon>
-          <Box
-            component="img"
-            sx={{
-              width: 28,
-            }}
-            alt="" 
-            src='./assets/images/icon-my-account.png'  />
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-my-account.png' />
           </ListItemIcon>
           <ListItemText primary={'My Account'} />
         </ListItem>
@@ -285,7 +285,7 @@ function PageContainer(props) {
     <Grid container direction="column">
       {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true} sx={{position: 'sticky'}} />
+      <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
       {/* App content example below with sidebar */}
       <Grid item xs={12} className="App-header">
         {/* Side menu component */}
