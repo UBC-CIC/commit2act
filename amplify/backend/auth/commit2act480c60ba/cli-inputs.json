@@ -68,7 +68,7 @@
     ],
     "userPoolGroups": false,
     "adminQueries": false,
-    "hostedUI": true,
+    "hostedUI": false,
     "hostedUIDomainName": "commit2act",
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"preferred_username\":\"email\"}}]",
     "authProvidersUserPool": [
