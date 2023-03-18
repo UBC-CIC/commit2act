@@ -97,7 +97,7 @@ function PageContainer (props) {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     //on user's first login, create user entry in database, then update custom firstLogin attribute to false
     const firstLogin = cognitoUserEntry.attributes['custom:firstLogin'];
-    if (firstLogin) {
+    if (firstLogin !== "false") {
       await API.graphql({
         query: createUser,
         variables: {
