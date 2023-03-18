@@ -46,8 +46,8 @@ const Landing = ({ user, userType }) => {
   });
   const [userGroups, setUserGroups] = useState([]);
   const [numActionsToValidate, setNumActionsToValidate] = useState();
-  const [pendingActions, setPendingActions] = useState();
-  const [pendingCO2Saved, setPendingCO2Saved] = useState();
+  const [pendingActions, setPendingActions] = useState([]);
+  const [pendingCO2Saved, setPendingCO2Saved] = useState(0);
   const translation = useTranslation();
 
   useEffect(() => {
@@ -108,19 +108,24 @@ const Landing = ({ user, userType }) => {
   };
 
   const getPendingActions = async () => {
-    const res = await API.graphql({
-      query: getAllUnvalidatedSubmittedActionsForUser,
-      variables: { user_id: user.user_id },
-    });
+    try {
+      const res = await API.graphql({
+        query: getAllUnvalidatedSubmittedActionsForUser,
+        variables: { user_id: user.user_id },
+      });
 
-    const unvalidatedSubmittedActions =
-      res.data.getAllUnvalidatedSubmittedActionsForUser;
-    const pendingCO2 = unvalidatedSubmittedActions
-      .map((action) => action.g_co2_saved)
-      .reduce((prev, next) => prev + next);
+      const unvalidatedSubmittedActions =
+        res.data.getAllUnvalidatedSubmittedActionsForUser;
+      if (unvalidatedSubmittedActions.length === 0) return;
+      const pendingCO2 = unvalidatedSubmittedActions
+        .map((action) => action.g_co2_saved)
+        .reduce((prev, next) => prev + next);
 
-    setPendingActions(unvalidatedSubmittedActions);
-    setPendingCO2Saved(pendingCO2);
+      setPendingActions(unvalidatedSubmittedActions);
+      setPendingCO2Saved(pendingCO2);
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   const renderGroupCards = () => {
@@ -235,30 +240,30 @@ const Landing = ({ user, userType }) => {
                 Recent Progress
               </Typography>
               <Button
-                  variant="contained"
-                  onClick={() => {
-                    navigate('/log-action');
-                  }}
-                  sx={{
-                    background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
-                    color: '#000',
-                  }}
-                >
-              <Box
-                component="img"
-                sx={{
-                  width: 28,
-                  marginRight: '28px',
-                  fontSize: 30,
-                  color: '#000',
-                  filter: 'invert(1)'
+                variant="contained"
+                onClick={() => {
+                  navigate('/log-action');
                 }}
-                alt="" 
-                src='./assets/images/icon-log.png'  />
-  
-                  Log A New Action
-                </Button>
-              </Box>
+                sx={{
+                  background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+                  color: '#000',
+                }}
+              >
+                <Box
+                  component="img"
+                  sx={{
+                    width: 28,
+                    marginRight: '28px',
+                    fontSize: 30,
+                    color: '#000',
+                    filter: 'invert(1)'
+                  }}
+                  alt=""
+                  src='./assets/images/icon-log.png' />
+
+                Log A New Action
+              </Button>
+            </Box>
             <Box
               component={Paper}
               sx={{
