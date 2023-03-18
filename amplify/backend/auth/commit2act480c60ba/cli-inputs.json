@@ -70,7 +70,6 @@
     "adminQueries": false,
     "hostedUI": false,
     "hostedUIDomainName": "commit2act",
-    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"preferred_username\":\"email\"}}]",
     "authProvidersUserPool": [
       "Google"
     ],
@@ -78,7 +77,6 @@
       "Ref": "AWS::StackId"
     },
     "permissions": [],
-    "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\"}]",
     "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://app.commit2act.org/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://app.commit2act.org/\"]}"
   }
 }
