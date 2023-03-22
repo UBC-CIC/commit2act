@@ -2729,7 +2729,7 @@ Resources:
                 ":8": $context.arguments.is_validated,
                 ":9": $context.arguments.points_earned,
             },
-            "responseSQL": "SELECT * FROM `SubmittedAction` WHERE user_id=:1 AND action_id=:2 AND g_co2_saved=:4 AND date_of_action=:5 AND first_quiz_answer_correct=:6 AND quiz_answered=:7 AND is_validated=:8 AND points_earned=:9  ORDER BY time_submitted DESC"
+            "responseSQL": "SELECT * FROM `SubmittedAction` WHERE user_id=:1 AND action_id=:2 AND ABS(g_co2_saved - :4) < 0.001 AND date_of_action=:5 AND first_quiz_answer_correct=:6 AND quiz_answered=:7 AND is_validated=:8 AND points_earned=:9  ORDER BY time_submitted DESC"
           }
         }
         
@@ -3142,8 +3142,8 @@ Resources:
         *#
         
         #set( $action_items = $context.arguments.action_items )
-        #set( $final_sql = 'DELETE FROM ActionItem WHERE action_id=$context.arguments.action_id ; ' )
-        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES ($context.arguments.action_id, '" )
+        #set( $final_sql = 'DELETE FROM ActionItem WHERE action_id=:1 ; ' )
+        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES (:1, '" )
         #set( $sep1 = "', '"  )
         #set( $sep2 = "', ")
         #set( $ending = "); " )
@@ -3154,15 +3154,16 @@ Resources:
           #set( $ai2 = $action_item.get('co2_saved_per_unit') )
           #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$sep2$ai2$ending" )
         #end
-        
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
             "sql": "$final_sql",
             "variableMapping": {
+              ":1": $context.arguments.action_id
             },
-            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=$context.arguments.action_id"
+            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=:1"
           }
         }
         
