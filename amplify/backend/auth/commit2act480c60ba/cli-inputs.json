@@ -52,13 +52,13 @@
     "adminQueries": false,
     "hostedUI": true,
     "hostedUIDomainName": "commit2act",
-    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"preferred_username\":\"email\",\"name\":\"name\"}},{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"preferred_username\":\"email\",\"name\":\"name\"}}]",
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"preferred_username\":\"email\",\"name\":\"name\"}},{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"openid email public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"preferred_username\":\"email\",\"name\":\"name\"}}]",
     "authProvidersUserPool": ["Google", "Facebook"],
     "parentStack": {
       "Ref": "AWS::StackId"
     },
     "permissions": [],
     "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\"},{\"ProviderName\":\"Facebook\"}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://app.commit2act.org/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://app.commit2act.org/\"]}"
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"public_profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://app.commit2act.org/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://app.commit2act.org/\"]}"
   }
 }
