@@ -70,7 +70,7 @@ const Landing = ({ user, userType }) => {
     ]);
     setProgressStats((prev) => ({
       ...prev,
-      globalCO2: globalCO2Res.data.getTotalGlobalCO2,
+      globalCO2: Math.ceil(globalCO2Res.data.getTotalGlobalCO2),
       totalCO2: userRes.data.getSingleUser.total_co2,
       weekCO2: userRes.data.getSingleUser.weekly_co2,
     }));
