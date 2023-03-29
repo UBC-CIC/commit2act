@@ -39,8 +39,8 @@ export function override(
           name: 'name',
         },
         ProviderDetails: {
-          client_id: '1250783402535608',
-          client_secret: 'a169008e6c7a335591360bf3b3549998',
+          client_id: '3404099616475325',
+          client_secret: '90deee13c20db733432407aae083123b',
           authorize_scopes: 'openid email public_profile',
         },
         ProviderName: 'Facebook',
