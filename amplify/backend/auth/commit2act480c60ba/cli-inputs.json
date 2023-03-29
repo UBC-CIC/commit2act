@@ -20,7 +20,7 @@
       "Requires Numbers",
       "Requires Symbols"
     ],
-    "requiredAttributes": ["name", "preferred_username", "email"],
+    "requiredAttributes": ["name", "preferred_username"],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
