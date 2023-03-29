@@ -1,9 +1,13 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { Doughnut } from 'react-chartjs-2';
+import transitions from '@material-ui/core/styles/transitions';
+
+import useTranslation from ".//customHooks/translations";
 
 const UserContributionDonutChart = ({ data, displayTitles }) => {
   const { groupTotal, contribution, title } = data;
+  const translation = useTranslation();
 
   return (
     <Box
@@ -14,7 +18,7 @@ const UserContributionDonutChart = ({ data, displayTitles }) => {
     >
       <Doughnut
         data={{
-          labels: ['All Other Members', 'My Contribution'],
+          labels: [translation.allOtherMembers, translation.myContribution],
           datasets: [
             {
               data: [groupTotal, contribution],

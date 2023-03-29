@@ -26,6 +26,8 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 
+import useTranslation from ".//customHooks/translations";
+
 const StyledTableBody = styled(TableBody)`
   td {
     color: #33AF99;
@@ -40,12 +42,13 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 const GlobalLeaderboard = () => {
+  const translation = useTranslation();
   const tabs = ['Global Groups', 'Global Users'];
   const filters = [
-    { name: 'Total CO2 Saved', property: 'total_co2' },
-    { name: 'Weekly CO2 Saved', property: 'weekly_co2' },
-    { name: 'Total Points', property: 'total_points' },
-    { name: 'Weekly Points', property: 'weekly_points' },
+    { name: translation.totalCO2Saved, property: 'total_co2' },
+    { name: translation.weeklyCO2Saved, property: 'weekly_co2' },
+    { name: translation.totalPoints, property: 'total_points' },
+    { name: translation.weeklyPoints, property: 'weekly_points' },
   ];
   const [groups, setGroups] = useState();
   const [users, setUsers] = useState();
@@ -157,17 +160,16 @@ const GlobalLeaderboard = () => {
         <TableContainer component={Paper} sx={{ mt: '1em', backgroundColor: '#131516' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
-              Leaderboard displaying {selectedTab} ranked by{' '}
-              {selectedFilter.name}
+              {translation.formatString(translation.leaderboardDisplaying, {tab: selectedTab})}{selectedFilter.name}
             </caption>
             <TableHead sx={{ mt: '1em', backgroundColor: '#131516' }}>
               <TableRow>
-                <TableCell>Rank</TableCell>
-                <TableCell align="left">Name</TableCell>
-                <TableCell align="right">Total CO2</TableCell>
-                <TableCell align="right">Total Points</TableCell>
-                <TableCell align="right">Weekly CO2</TableCell>
-                <TableCell align="right">Weekly Points</TableCell>
+                <TableCell>{translation.rank}</TableCell>
+                <TableCell align="left">{translation.name}</TableCell>
+                <TableCell align="right">{translation.totalCO2}</TableCell>
+                <TableCell align="right">{translation.totalPoints}</TableCell>
+                <TableCell align="right">{translation.weeklyCO2}</TableCell>
+                <TableCell align="right">{translation.weeklyPoints}</TableCell>
               </TableRow>
             </TableHead>
             <StyledTableBody>
@@ -191,15 +193,15 @@ const GlobalLeaderboard = () => {
                       component="th"
                       scope="row"
                     >
-                      {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking  */}
+                      {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking */}
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {group.group_name}
                     </TableCell>
-                    <TableCell align="right">{group.total_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
                     <TableCell align="right">{group.total_points}</TableCell>
-                    <TableCell align="right">{group.weekly_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(group.weekly_co2)}</TableCell>
                     <TableCell align="right">{group.weekly_points}</TableCell>
                   </TableRow>
                 ))}
@@ -227,9 +229,9 @@ const GlobalLeaderboard = () => {
                     <TableCell component="th" scope="row">
                       {user.name}
                     </TableCell>
-                    <TableCell align="right">{user.total_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(user.total_co2)}</TableCell>
                     <TableCell align="right">{user.total_points}</TableCell>
-                    <TableCell align="right">{user.weekly_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(user.weekly_co2)}</TableCell>
                     <TableCell align="right">{user.weekly_points}</TableCell>
                   </TableRow>
                 ))}
@@ -287,7 +289,7 @@ const GlobalLeaderboard = () => {
               width: '100%',
             }}
           >
-            <Typography variant="h2">Leaderboards</Typography>
+            <Typography variant="h2">{translation.leaderboards}</Typography>
             <Box
               sx={{
                 display: 'flex',
@@ -346,8 +348,8 @@ const GlobalLeaderboard = () => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label={tabs[0]} value={tabs[0]} />
-                <Tab label={tabs[1]} value={tabs[1]} />
+                <Tab label={translation.globalGroups} value={tabs[0]} />
+                <Tab label={translation.globalUsers} value={tabs[1]} />
               </TabList>
               <TabPanel
                 value={tabs[0]}

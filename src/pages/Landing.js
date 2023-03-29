@@ -137,7 +137,7 @@ const Landing = ({ user, userType }) => {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '2em' }}>
           <Typography variant="subtitle2">
-            No groups to display. Create or join a group to get started!
+            {translation.noMyGroups}
           </Typography>
         </Box>
       );
@@ -187,13 +187,12 @@ const Landing = ({ user, userType }) => {
                     size="small"
                     onClick={() => navigate('/validate-actions')}
                   >
-                    Start Validating
+                    {translation.startValidating}
                   </Button>
                 }
               >
-                <AlertTitle>New Actions In Need of Validation</AlertTitle>
-                You have <strong>{numActionsToValidate}</strong> actions to
-                validate!
+                <AlertTitle>{translation.alertNewActionTitle}</AlertTitle>
+                {translation.formatString(translation.alertNewActionText, <strong>{numActionsToValidate}</strong>)}
               </Alert>
             )}
             {pendingActions && pendingActions.length > 0 && pendingCO2Saved && (
@@ -209,10 +208,9 @@ const Landing = ({ user, userType }) => {
                 color="success"
               >
                 <AlertTitle>
-                  {pendingActions.length} Actions Pending Validation
+                  {translation.formatString(translation.alertActionsPendingTitle, pendingActions.length)}
                 </AlertTitle>
-                The impact of your pending actions is{' '}
-                <strong>{pendingCO2Saved}g</strong> of CO2 saved
+                {translation.formatString(translation.alertActionsPendingText, <strong>{pendingCO2Saved}g</strong>)}
               </Alert>
             )}
           </Grid>
@@ -237,7 +235,7 @@ const Landing = ({ user, userType }) => {
                 variant="h2"
                 sx={{ m: { xs: '0.5em 0 1.25em', md: '1.5em 0 1.25em' } }}
               >
-                Recent Progress
+                {translation.recentProgress}
               </Typography>
               <Button
                 variant="contained"
@@ -261,7 +259,7 @@ const Landing = ({ user, userType }) => {
                   alt=""
                   src='./assets/images/icon-log.png' />
 
-                Log A New Action
+                {translation.logANewAction}
               </Button>
             </Box>
             <Box
@@ -277,20 +275,20 @@ const Landing = ({ user, userType }) => {
               }}
             >
               <StyledPaper elevation={6}>
-                <Typography variant="h4">CO2 Saved This Week</Typography>
+                <Typography variant="h4">{translation.co2SavedWeek}</Typography>
                 <Typography variant="h5" className="statValue">
                   <AutoGraphOutlined fontSize="large" />
                   {progressStats.weekCO2}g
                 </Typography>
               </StyledPaper>
               <StyledPaper elevation={6}>
-                <Typography variant="h4">Total CO2 Saved</Typography>
+                <Typography variant="h4">{translation.totalCO2Saved}</Typography>
                 <Typography variant="h5" className="statValue">
                   {progressStats.totalCO2}g
                 </Typography>
               </StyledPaper>
               <StyledPaper elevation={6}>
-                <Typography variant="h4">Collective Impact</Typography>
+                <Typography variant="h4">{translation.collectiveImpact}</Typography>
                 <Typography variant="h5" className="statValue">
                   {progressStats.globalCO2}g
                 </Typography>
@@ -318,14 +316,14 @@ const Landing = ({ user, userType }) => {
                   gap: { xs: '1em' },
                 }}
               >
-                <Typography variant="h2">My Groups</Typography>
+                <Typography variant="h2">{translation.myGroups}</Typography>
                 <Button
                   variant="contained"
                   onClick={() => {
                     navigate('/create-group');
                   }}
                 >
-                  Create New Group
+                  {translation.createNewGroup}
                 </Button>
               </Box>
               {renderGroupCards()}

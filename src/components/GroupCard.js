@@ -21,7 +21,10 @@ import UserContributionDonutChart from './UserContributionDonutChart';
 import { API } from 'aws-amplify';
 import { getUserStatsForGroup } from '../graphql/queries';
 
+import useTranslation from ".//customHooks/translations";
+
 const GroupCard = ({ group, joinGroupOption, user }) => {
+  const translation = useTranslation();
   const {
     group_id,
     group_name,
@@ -61,41 +64,41 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
         {
           groupTotal: total_co2 - userStats.total_co2,
           contribution: userStats.total_co2,
-          title: 'Total CO2',
+          title: translation.totalCO2,
         },
         {
           groupTotal: weekly_co2 - userStats.weekly_co2,
           contribution: userStats.weekly_co2,
-          title: 'Weekly CO2',
+          title: translation.weeklyCO2,
         },
         {
           groupTotal: total_points - userStats.total_points,
           contribution: userStats.total_points,
-          title: 'Total Points',
+          title: translation.totalPoints,
         },
         {
           groupTotal: weekly_points - userStats.weekly_points,
           contribution: userStats.weekly_points,
-          title: 'Weekly Points',
+          title: translation.weeklyPoints,
         },
       ];
       setDonutChartsData(donutData);
 
       const percentageData = [
         {
-          title: 'Total CO2',
+          title: translation.totalCO2,
           value: Math.round((userStats.total_co2 / total_co2) * 100),
         },
         {
-          title: 'Weekly CO2',
+          title: translation.weeklyCO2,
           value: Math.round((userStats.weekly_co2 / weekly_co2) * 100),
         },
         {
-          title: 'Total Points',
+          title: translation.totalPoints,
           value: Math.round((userStats.total_points / total_points) * 100),
         },
         {
-          title: 'Weekly Points',
+          title: translation.weeklyPoints,
           value: Math.round((userStats.weekly_points / weekly_points) * 100),
         },
       ];
@@ -105,10 +108,10 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
   }, [userStats]);
 
   const groupStatsData = [
-    { title: 'Total CO2', value: total_co2 },
-    { title: 'Weekly CO2', value: weekly_co2 },
-    { title: 'Total Points', value: total_points },
-    { title: 'Weekly Points', value: weekly_points },
+    { title: translation.totalCO2, value: Math.ceil(total_co2) },
+    { title: translation.weeklyCO2, value: Math.ceil(weekly_co2) },
+    { title: translation.totalPoints, value: total_points },
+    { title: translation.weeklyPoints, value: weekly_points },
   ];
 
   const joinGroupLink =
@@ -159,7 +162,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
             expandIcon={<ExpandMore />}
             aria-controls="group-stats-content"
           >
-            <Typography>View Group Stats</Typography>
+            <Typography>{translation.viewGroupStats}</Typography>
           </AccordionSummary>
           <AccordionDetails sx={{ p: 0 }}>
             <List dense>{renderGroupStatListItems()}</List>
@@ -171,7 +174,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               expandIcon={<ExpandMore />}
               aria-controls="user-contributions-content"
             >
-              <Typography>My Contributions</Typography>
+              <Typography>{translation.myContributions}</Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ p: 0 }}>
               <List dense>{renderUserContributionListItems()}</List>
@@ -194,13 +197,13 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
           },
         }}
       >
-        <Typography variant="body1">Total CO2: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_co2} g{' '}</Box></Typography>
+        <Typography variant="body1">{translation.totalCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(total_co2)} g{' '}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">Weekly CO2: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_co2} g{' '}</Box></Typography>
+        <Typography variant="body1">{translation.weeklyCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(weekly_co2)} g{' '}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">Total Points: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_points}</Box></Typography>
+        <Typography variant="body1">{translation.totalPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_points}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">Weekly Points: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_points}</Box></Typography>
+        <Typography variant="body1">{translation.weeklyPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_points}</Box></Typography>
       </Box>
     ) : (
       <>
@@ -216,19 +219,20 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 width: '100%',
               }}
             >
-              <Typography variant="body1">Total CO2: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_co2} g</Box></Typography>
-
+              <Typography variant="body1">
+				{translation.totalCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(total_co2)} g</Box>
+			  </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Weekly CO2: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_co2} g{' '}</Box>
+			    {translation.weeklyCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(weekly_co2)} g</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Total Points: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_points}</Box>
+			    {translation.totalPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_points}</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                Weekly Points: <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_points}</Box>
+			    {translation.weeklyPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_points}</Box>
               </Typography>
             </Box>
           </AccordionSummary>
@@ -341,7 +345,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 }}
                 sx={{ my: { xs: '1em' } }}
               >
-                Join Group
+                {translation.joinGroup}
               </Button>
             )}
           </Box>
@@ -358,7 +362,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                 sx={{ p: 0, mt: { xs: '1em', sm: '1.5em' }, fontSize: 13 }}
                 onClick={() => setReadMore(!readMore)}
               >
-                Read {readMore ? 'Less' : 'More'}
+                {translation.read} {readMore ? translation.less : translation.more}
               </Button>
             </Box>
           )}

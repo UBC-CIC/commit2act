@@ -386,9 +386,9 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     <TableCell component="th" scope="row">
                       {group.group_name}
                     </TableCell>
-                    <TableCell align="right">{group.total_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
                     <TableCell align="right">{group.total_points}</TableCell>
-                    <TableCell align="right">{group.weekly_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(group.weekly_co2)}</TableCell>
                     <TableCell align="right">{group.weekly_points}</TableCell>
                   </TableRow>
                 ))}
