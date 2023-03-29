@@ -14,6 +14,7 @@ export function override(
         AttributeMapping: {
           preferred_username: 'email',
           name: 'name',
+          email: 'email',
         },
         ProviderDetails: {
           client_id:
