@@ -11,8 +11,10 @@ import {
 import { Clear } from '@mui/icons-material';
 import { rejectSubmittedAction } from '../graphql/mutations';
 import { API } from 'aws-amplify';
+import useTranslation from './customHooks/translations';
 
 const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
+  const translation = useTranslation();
   const {
     action_name,
     date_of_action,
@@ -79,9 +81,9 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
             <Typography sx={{ my: 1.5, color: '#7e7e7e' }}>
               {submitted_action_items}
             </Typography>
-            <Typography variant="body1">CO2 Saved: {g_co2_saved} g</Typography>
+            <Typography variant="body1">{translation.co2SavedColon} {g_co2_saved} g</Typography>
             <Typography variant="body1">
-              Total Points Earned: {points_earned}
+              {translation.totalPointsEarnedColon} {points_earned}
             </Typography>
           </CardContent>
         </Box>
@@ -96,7 +98,7 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
             }}
           >
             <Button variant="outlined" startIcon={<Clear />} color={'error'} onClick={rejectAction}>
-              Unapprove
+              {translation.unapprove}
             </Button>
           </CardActions>
         )}

@@ -37,6 +37,8 @@ import EditGroupPanel from '../components/groupProfile/EditGroupPanel';
 import { v4 as uuidv4 } from 'uuid';
 import LeaveGroupDialogContent from '../components/groupProfile/LeaveGroupDialogContent';
 
+import useTranslation from "../components/customHooks/translations";
+
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
   text-align: center;
@@ -46,6 +48,7 @@ const StyledPaper = styled(Paper)`
 `;
 
 const GroupProfile = ({ user }) => {
+  const translation = useTranslation();
   const { groupName } = useParams();
   const tabs = [
     'Group Info',
@@ -208,13 +211,13 @@ const GroupProfile = ({ user }) => {
                   <Stack direction="row" alignItems="center" gap={1}>
                     <PeopleAlt />
                     <Typography component="div" variant="subtitle2">
-                      Members: {groupMembers && groupMembers.length}
+                      {translation.membersColon} {groupMembers && groupMembers.length}
                     </Typography>
                   </Stack>
                   <Stack direction="row" alignItems="center" gap={1}>
                     {groupInfo.is_public ? <Public /> : <Lock />}
                     <Typography component="div" variant="subtitle2">
-                      {groupInfo.is_public ? 'Public' : 'Private'}
+                      {groupInfo.is_public ? translation.public : translation.private}
                     </Typography>
                   </Stack>
                 </Grid> 
@@ -224,7 +227,7 @@ const GroupProfile = ({ user }) => {
                     sx={{ mt: { xs: '1em' } }}
                     onClick={() => setLeaveGroupWarning(true)}
                   >
-                    Leave Group
+                    {translation.leaveGroup}
                   </Button>
                 ) : (
                   <Button
@@ -234,7 +237,7 @@ const GroupProfile = ({ user }) => {
                       navigate(groupLink);
                     }}
                   >
-                    Join Group
+                    {translation.joinGroup}
                   </Button>
                 )}
               </Grid>
@@ -260,16 +263,16 @@ const GroupProfile = ({ user }) => {
                   }}
                 >
                   <StyledPaper elevation={6} sx={{background: 'white', flex: '1'}}>
-                    <Typography variant="h4">CO2 Saved This Week</Typography>
+                    <Typography variant="h4">{translation.co2SavedWeek}</Typography>
                     <Typography variant="h5" className="statValue">
                       <AutoGraphOutlined fontSize="large" />
                       {groupInfo.weekly_co2}g
                     </Typography>
                   </StyledPaper>
                   <StyledPaper elevation={6} sx={{background: 'white', flex: '1'}}>
-                    <Typography variant="h4">Total CO2 Saved</Typography>
+                    <Typography variant="h4">{translation.totalCO2Saved}</Typography>
                     <Typography variant="h5" className="statValue">
-                      {groupInfo.total_co2}g
+                      {Math.ceil(groupInfo.total_co2)}g
                     </Typography>
                   </StyledPaper>
                 </Box>
@@ -318,15 +321,15 @@ const GroupProfile = ({ user }) => {
                     allowScrollButtonsMobile
                     variant="scrollable"
                   >
-                    <Tab label={tabs[0]} value={tabs[0]} />
-                    <Tab label={tabs[1]} value={tabs[1]} />
-                    <Tab label={tabs[2]} value={tabs[2]} />
+                    <Tab label={translation.groupInfo} value={tabs[0]} />
+                    <Tab label={translation.memberActions} value={tabs[1]} />
+                    <Tab label={translation.groupMembers} value={tabs[2]} />
                     {/* only display following tabs if current user is a group owner */}
                     {currentUserOwner && (
-                      <Tab label={tabs[3]} value={tabs[3]} />
+                      <Tab label={translation.addMembers} value={tabs[3]} />
                     )}
                     {currentUserOwner && (
-                      <Tab label={tabs[4]} value={tabs[4]} />
+                      <Tab label={translation.editGroupInfo} value={tabs[4]} />
                     )}
                   </TabList>
                 </Box>

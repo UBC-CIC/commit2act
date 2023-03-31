@@ -28,6 +28,8 @@ import { API } from 'aws-amplify';
 import { useNavigate } from 'react-router-dom';
 import LeaveGroupDialogContent from './LeaveGroupDialogContent';
 
+import useTranslation from '../customHooks/translations';
+
 const GroupMemberDialog = ({
   selectedMember,
   openDialog,
@@ -87,6 +89,7 @@ const GroupMemberDialog = ({
       setMembersUpdated(true);
     }
   };
+  const translation = useTranslation();
 
   const removeUser = async () => {
     //check if leaving user is the only owner
@@ -138,21 +141,21 @@ const GroupMemberDialog = ({
               <ListItemIcon>
                 <PersonAddAlt1 />
               </ListItemIcon>
-              <ListItemText>Promote User to Group Owner</ListItemText>
+              <ListItemText>{translation.promoteUserToOwner}</ListItemText>
             </ListItem>
           ) : (
             <ListItem autoFocus button onClick={demoteOwner}>
               <ListItemIcon>
                 <PersonRemove />
               </ListItemIcon>
-              <ListItemText>Demote User to Group Member</ListItemText>
+              <ListItemText>{translation.demoteUserToMember}</ListItemText>
             </ListItem>
           )}
           <ListItem autoFocus button onClick={removeUser}>
             <ListItemIcon>
               <GroupRemove />
             </ListItemIcon>
-            <ListItemText>Remove User From Group</ListItemText>
+            <ListItemText>{translation.removeUserFromGroup}</ListItemText>
           </ListItem>
         </>
       )
@@ -187,7 +190,7 @@ const GroupMemberDialog = ({
             <>
               <DialogTitle>{selectedMember.name}</DialogTitle>
               <DialogContent>
-                Your Role:{' '}
+                {translation.yourRoleColon}{' '}
                 {selectedMember.user_role.charAt(0).toUpperCase() +
                   selectedMember.user_role.slice(1)}
               </DialogContent>
@@ -205,7 +208,7 @@ const GroupMemberDialog = ({
                   <ListItemIcon>
                     <ExitToApp />
                   </ListItemIcon>
-                  <ListItemText>Leave Group</ListItemText>
+                  <ListItemText>{translation.leaveGroup}</ListItemText>
                 </ListItem>
               </List>
             </>
@@ -215,7 +218,7 @@ const GroupMemberDialog = ({
               <>
                 <DialogTitle>{selectedMember.name}</DialogTitle>
                 <DialogContent>
-                  Role:{' '}
+                  {translation.roleColon}{' '}
                   {selectedMember.user_role.charAt(0).toUpperCase() +
                     selectedMember.user_role.slice(1)}
                 </DialogContent>
@@ -230,7 +233,7 @@ const GroupMemberDialog = ({
                     <ListItemIcon>
                       <AccountCircle />
                     </ListItemIcon>
-                    <ListItemText>View User Profile</ListItemText>
+                    <ListItemText>{translation.viewUserProfile}</ListItemText>
                   </ListItem>
                   {renderOwnerAdminView()}
                 </List>
@@ -239,34 +242,34 @@ const GroupMemberDialog = ({
           )}
           {dialogDisplay.promoteUserSuccess && (
             <>
-              <DialogTitle> Success!</DialogTitle>
+              <DialogTitle>{translation.success}</DialogTitle>
               <DialogContent>
-                {selectedMember.name} is now a group owner
+                {translation.formatString(translation.successUserNowOwner, selectedMember.name)}
               </DialogContent>
             </>
           )}
           {dialogDisplay.demoteOwnerSuccess && (
             <>
-              <DialogTitle> Success!</DialogTitle>
+              <DialogTitle>{translation.success}</DialogTitle>
               <DialogContent>
-                {selectedMember.name} is now a group member
+                {translation.formatString(translation.successUserNowMember, selectedMember.name)}
               </DialogContent>
             </>
           )}
           {dialogDisplay.removeUserSuccess && (
             <>
-              <DialogTitle> Success!</DialogTitle>
+              <DialogTitle>{translation.success}</DialogTitle>
               <DialogContent>
-                {selectedMember.name} has been removed from the group
+                {translation.formatString(translation.successUserNowRemoved, selectedMember.name)}
               </DialogContent>
             </>
           )}
           {dialogDisplay.demoteWarning && (
             <>
-              <DialogTitle>Demotion Error</DialogTitle>
+              <DialogTitle>{translation.demotionErrorTitle}</DialogTitle>
               <ErrorOutline fontSize="large" />
               <DialogContent>
-                Groups must have at least 1 group owner
+                {translation.demotionErrorText}
               </DialogContent>
             </>
           )}

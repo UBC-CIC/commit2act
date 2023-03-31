@@ -21,7 +21,7 @@ import UserContributionDonutChart from './UserContributionDonutChart';
 import { API } from 'aws-amplify';
 import { getUserStatsForGroup } from '../graphql/queries';
 
-import useTranslation from ".//customHooks/translations";
+import useTranslation from "../components/customHooks/translations";
 
 const GroupCard = ({ group, joinGroupOption, user }) => {
   const translation = useTranslation();

@@ -192,6 +192,7 @@ const GlobalLeaderboard = () => {
                     <TableCell
                       component="th"
                       scope="row"
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking */}
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
@@ -223,6 +224,7 @@ const GlobalLeaderboard = () => {
                     <TableCell
                       component="th"
                       scope="row"
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
@@ -255,6 +257,12 @@ const GlobalLeaderboard = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
+			labelRowsPerPage={translation.labelRowsPerPage}
+			labelDisplayedRows={
+			  ({ from, to, count }) => {
+				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+			  }
+			}
           />
         )}
         {selectedTab === tabs[1] && users && (
@@ -268,6 +276,12 @@ const GlobalLeaderboard = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
+			labelRowsPerPage={translation.labelRowsPerPage}
+			labelDisplayedRows={
+			  ({ from, to, count }) => {
+				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+			  }
+			}
           />
         )}
       </>

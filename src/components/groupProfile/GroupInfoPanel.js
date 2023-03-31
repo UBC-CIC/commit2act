@@ -18,7 +18,10 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 
+import useTranslation from '../customHooks/translations';
+
 const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
+  const translation = useTranslation();
   const [ownerDialogOpen, setOwnerDialogOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -44,7 +47,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
           sx={{ wordWrap: 'break-word', whiteSpace: 'pre-line' }}
         >
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
-            About
+            {translation.about}
           </Typography>
           <Box
             display="flex"
@@ -61,7 +64,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
         </Grid>
         <Grid item xs={12} sm={5}>
           <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
-            Group Owners
+            {translation.groupOwners}
           </Typography>
           <Box
             display="flex"
@@ -103,7 +106,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
           <IconButton sx={{ alignSelf: 'flex-end' }} onClick={handleClose}>
             <CloseIcon />
           </IconButton>
-          <DialogTitle>Group Owners</DialogTitle>
+          <DialogTitle>{translation.groupOwners}</DialogTitle>
           <DialogContent>
             <List sx={{ pt: 0 }}>
               {groupOwners.map((groupOwner, index) => (

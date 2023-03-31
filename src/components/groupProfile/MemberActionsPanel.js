@@ -4,7 +4,10 @@ import { API } from 'aws-amplify';
 import { getAllValidatedSubmittedActionsInGroup } from '../../graphql/queries';
 import SubmittedActionCard from '../SubmittedActionCard';
 
+import useTranslation from '../customHooks/translations';
+
 const MemberActionsPanel = ({ groupInfo, cognitoUser }) => {
+  const translation = useTranslation();
   const [actions, setActions] = useState();
   const [showMore, setShowMore] = useState(false);
 
@@ -61,11 +64,11 @@ const MemberActionsPanel = ({ groupInfo, cognitoUser }) => {
             variant="outlined"
             onClick={() => setShowMore(!showMore)}
           >
-            View {showMore ? 'Less' : 'More'}
+            {translation.view} {showMore ? translation.less : translation.more}
           </Button>
         ) : (
           <Typography variant="subtitle2">
-            There are currently no actions to display.
+            {translation.noActions}
           </Typography>
         )}
       </Stack>

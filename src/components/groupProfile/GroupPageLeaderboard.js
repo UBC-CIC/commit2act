@@ -35,6 +35,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import UserContributionDonutChart from '../UserContributionDonutChart';
 
+import useTranslation from "../customHooks/translations";
+
 const StyledTableBody = styled(TableBody)`
   td {
     color: #33AF99;
@@ -49,12 +51,13 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
+  const translation = useTranslation();
   const tabs = ['Global Groups', 'Group Members'];
   const filters = [
-    { name: 'Total CO2 Saved', property: 'total_co2' },
-    { name: 'Weekly CO2 Saved', property: 'weekly_co2' },
-    { name: 'Total Points', property: 'total_points' },
-    { name: 'Weekly Points', property: 'weekly_points' },
+    { name: translation.totalCO2Saved, property: 'total_co2' },
+    { name: translation.weeklyCO2Saved, property: 'weekly_co2' },
+    { name: translation.totalPoints, property: 'total_points' },
+    { name: translation.weeklyPoints, property: 'weekly_points' },
   ];
   const [groups, setGroups] = useState();
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
@@ -80,47 +83,47 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
         {
           groupTotal: currentGroup.total_co2 - userStats.total_co2,
           contribution: userStats.total_co2,
-          title: 'Total CO2',
+          title: translation.totalCO2,
         },
         {
           groupTotal: currentGroup.weekly_co2 - userStats.weekly_co2,
           contribution: userStats.weekly_co2,
-          title: 'Weekly CO2',
+          title: translation.weeklyCO2,
         },
         {
           groupTotal: currentGroup.total_points - userStats.total_points,
           contribution: userStats.total_points,
-          title: 'Total Points',
+          title: translation.totalPoints,
         },
         {
           groupTotal: currentGroup.weekly_points - userStats.weekly_points,
           contribution: userStats.weekly_points,
-          title: 'Weekly Points',
+          title: translation.weeklyPoints,
         },
       ];
       setDonutChartsData(donutData);
 
       const percentageData = [
         {
-          title: 'Total CO2',
+          title: translation.totalCO2,
           value: Math.round(
             (userStats.total_co2 / currentGroup.total_co2) * 100
           ),
         },
         {
-          title: 'Weekly CO2',
+          title: translation.weeklyCO2,
           value: Math.round(
             (userStats.weekly_co2 / currentGroup.weekly_co2) * 100
           ),
         },
         {
-          title: 'Total Points',
+          title: translation.totalPoints,
           value: Math.round(
             (userStats.total_points / currentGroup.total_points) * 100
           ),
         },
         {
-          title: 'Weekly Points',
+          title: translation.weeklyPoints,
           value: Math.round(
             (userStats.weekly_points / currentGroup.weekly_points) * 100
           ),
@@ -258,7 +261,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                 justifyContent: 'center',
               }}
             >
-              Current Place
+              {translation.currentPlace}
               <Typography variant="h1" sx={{ mt: '0.2em' }}>
                 <AutoGraph />
                 {filteredGroups.findIndex(
@@ -290,7 +293,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     justifyContent: 'center',
                   }}
                 >
-                  Current Place
+                  {translation.currentPlace}
                   <Typography
                     variant="h1"
                     sx={{
@@ -319,7 +322,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                         expandIcon={<ExpandMore />}
                         aria-controls="user-contributions-content"
                       >
-                        <Typography>My Contributions</Typography>
+                        <Typography>{translation.myContributions}</Typography>
                       </AccordionSummary>
                       <AccordionDetails sx={{ p: 0 }}>
                         <List dense>{renderUserContributionListItems()}</List>
@@ -340,17 +343,16 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
         <TableContainer component={Paper} sx={{ mt: '1em' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
-              Leaderboard displaying {selectedTab} ranked by{' '}
-              {selectedFilter.name}
+              {translation.formatString(translation.leaderboardDisplaying, {tab: selectedTab})}{selectedFilter.name}
             </caption>
             <TableHead>
               <TableRow>
-                <TableCell>Rank</TableCell>
-                <TableCell align="left">Name</TableCell>
-                <TableCell align="right">Total CO2</TableCell>
-                <TableCell align="right">Total Points</TableCell>
-                <TableCell align="right">Weekly CO2</TableCell>
-                <TableCell align="right">Weekly Points</TableCell>
+                <TableCell>{translation.rank}</TableCell>
+                <TableCell align="left">{translation.name}</TableCell>
+                <TableCell align="right">{translation.totalCO2}</TableCell>
+                <TableCell align="right">{translation.totalPoints}</TableCell>
+                <TableCell align="right">{translation.weeklyCO2}</TableCell>
+                <TableCell align="right">{translation.weeklyPoints}</TableCell>
               </TableRow>
             </TableHead>
             <StyledTableBody>
@@ -380,7 +382,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                       scope="row"
                       sx={{ color: theme.palette.primary.main }}
                     >
-                      {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking  */}
+                      {/* if on page 1, add 1 to the index to get item rankings starting from 1. On further pages, add the number of items on all the pages prior to the item's index + 1 value to get the correct ranking */}
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
@@ -413,16 +415,16 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ color: theme.palette.secondary.main }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {member.name}
                     </TableCell>
-                    <TableCell align="right">{member.total_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(member.total_co2)}</TableCell>
                     <TableCell align="right">{member.total_points}</TableCell>
-                    <TableCell align="right">{member.weekly_co2}</TableCell>
+                    <TableCell align="right">{Math.ceil(member.weekly_co2)}</TableCell>
                     <TableCell align="right">{member.weekly_points}</TableCell>
                   </TableRow>
                 ))}
@@ -446,6 +448,12 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
+			labelRowsPerPage={translation.labelRowsPerPage}
+			labelDisplayedRows={
+			  ({ from, to, count }) => {
+				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+			  }
+			}
           />
         )}
         {selectedTab === tabs[1] && groupMembers && (
@@ -459,6 +467,12 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
+			labelRowsPerPage={translation.labelRowsPerPage}
+			labelDisplayedRows={
+			  ({ from, to, count }) => {
+				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+			  }
+			}
           />
         )}
       </>
@@ -480,7 +494,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
               width: '100%',
             }}
           >
-            <Typography variant="h2">Leaderboards</Typography>
+            <Typography variant="h2">{translation.leaderboards}</Typography>
             <Box
               sx={{
                 display: 'flex',
@@ -539,8 +553,8 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label="Global Groups" value={tabs[0]} />
-                <Tab label="Group Members" value={tabs[1]} />
+                <Tab label={translation.globalGroups} value={tabs[0]} />
+                <Tab label={translation.groupMembers} value={tabs[1]} />
               </TabList>
               <TabPanel
                 value={tabs[0]}
