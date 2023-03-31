@@ -35,13 +35,13 @@ export function override(
       type: 'AWS::Cognito::UserPoolIdentityProvider',
       properties: {
         AttributeMapping: {
-          preferred_username: 'email',
+          preferred_username: 'name',
           name: 'name',
         },
         ProviderDetails: {
           client_id: '3404099616475325',
           client_secret: '90deee13c20db733432407aae083123b',
-          authorize_scopes: 'openid email public_profile',
+          authorize_scopes: 'email public_profile',
         },
         ProviderName: 'Facebook',
         ProviderType: 'Facebook',
