@@ -40,6 +40,8 @@ import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
 import PrivateRoute from './PrivateRoute';
 
+import useTranslation from '../../components/customHooks/translations';
+
 const useStyles = makeStyles()((theme) => {
   return {
     drawerContainer: {
@@ -91,6 +93,8 @@ function PageContainer (props) {
   const navigate = useNavigate();
   const [user, setUser] = useState();
   const [userType, setUserType] = useState();
+
+  const translation = useTranslation();
 
   //gets currently authenticated cognito user
   const getCognitoUser = async () => {
@@ -177,7 +181,7 @@ function PageContainer (props) {
               alt=""
               src='./assets/images/icon-log.png' />
           </ListItemIcon>
-          <ListItemText primary={'Log Action'} />
+          <ListItemText primary={translation.logAction} />
         </ListItem>
         <ListItem button key={'home'} onClick={() => navigate('/')}>
           <ListItemIcon>
@@ -189,7 +193,7 @@ function PageContainer (props) {
               alt=""
               src='./assets/images/icon-home.png' />
           </ListItemIcon>
-          <ListItemText primary={'Dashboard'} />
+          <ListItemText primary={translation.dashboard} />
         </ListItem>
         <ListItem
           button
@@ -205,7 +209,7 @@ function PageContainer (props) {
               alt=""
               src='./assets/images/icon-find.png' />
           </ListItemIcon>
-          <ListItemText primary={'Find Group'} />
+          <ListItemText primary={translation.findGroup} />
         </ListItem>
 
         <ListItem
@@ -222,7 +226,7 @@ function PageContainer (props) {
               alt=""
               src='./assets/images/icon-create-group.png' />
           </ListItemIcon>
-          <ListItemText primary={'Create Group'} />
+          <ListItemText primary={translation.createGroup} />
         </ListItem>
 
         <ListItem
@@ -239,7 +243,7 @@ function PageContainer (props) {
               alt=""
               src='./assets/images/icon-validate.png' />
           </ListItemIcon>
-          <ListItemText primary={'Validate Actions'} />
+          <ListItemText primary={translation.validateActions} />
         </ListItem>
 
         {userType === 'Admin' && (
@@ -252,7 +256,7 @@ function PageContainer (props) {
               <ListItemIcon>
                 <AdminPanelSettings />
               </ListItemIcon>
-              <ListItemText primary={'Admin Dashboard'} />
+              <ListItemText primary={translation.adminDashboard} />
             </ListItem>
           </>
         )}
@@ -275,7 +279,7 @@ function PageContainer (props) {
               alt=""
               src='./assets/images/icon-my-account.png' />
           </ListItemIcon>
-          <ListItemText primary={'My Account'} />
+          <ListItemText primary={translation.myAccount} />
         </ListItem>
       </List>
     </div>

@@ -25,6 +25,8 @@ import { updateGroup, deleteGroup } from '../../graphql/mutations';
 import { getAllGroups } from '../../graphql/queries';
 import { useNavigate } from 'react-router-dom';
 
+import useTranslation from '../customHooks/translations';
+
 const Input = styled('input')`
   display: none;
 `;
@@ -59,6 +61,8 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
   const [emptyPasswordError, setEmptyPasswordError] = useState(false);
 
   const navigate = useNavigate();
+
+  const translation = useTranslation();
 
   //gets list of all group names
   useEffect(() => {
@@ -148,11 +152,11 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
       setAvatarPreview();
     } catch (e) {
       const errorMsg = e.message;
-      if (errorMsg.includes('Empty group name')) {
+      if (errorMsg.includes(translation.editGroupEmptyError)) {
         setEmptyGroupNameError(true);
-      } else if (errorMsg.includes('Group name is taken')) {
+      } else if (errorMsg.includes(translation.editGroupTakenError)) {
         setGroupNameTakenError(true);
-      } else if (errorMsg.includes('Empty password')) {
+      } else if (errorMsg.includes(translation.editGroupPasswordError)) {
         setEmptyPasswordError(true);
       }
     }
@@ -176,7 +180,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
   const renderEditGroupForm = () => {
     return (
       <>
-        <Typography variant="h2">Edit Group Info</Typography>
+        <Typography variant="h2">{translation.editGroupInfo}</Typography>
         <Box
           sx={{
             p: '1em',
@@ -218,7 +222,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                       onChange={handleAvatarChange}
                     />
                     <Button variant="outlined" component="span">
-                      Upload Group Icon
+                      {translation.groupUploadIcon}
                     </Button>
                   </label>
                 </>
@@ -252,7 +256,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                       onChange={handleAvatarChange}
                     />
                     <Button variant="outlined" component="span">
-                      Upload Group Icon
+                      {translation.groupUploadIcon}
                     </Button>
                   </label>
                 </>
@@ -268,20 +272,19 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
             >
               <TextField
                 required
-                label="Name"
+                label={translation.name}
                 name="group_name"
                 value={groupInfoForm.group_name}
                 InputLabelProps={{ shrink: true }}
                 onChange={updateForm}
                 error={emptyGroupNameError || groupNameTakenError}
                 helperText={
-                  (emptyGroupNameError && 'Field must be completed') ||
-                  (groupNameTakenError &&
-                    'A group already exists with the given name')
+                  (emptyGroupNameError && translation.groupNameEmptyError) ||
+                  (groupNameTakenError && translation.groupNameTakenError)
                 }
               />
               <TextField
-                label="Description"
+                label={translation.description}
                 name="group_description"
                 multiline
                 value={
@@ -294,7 +297,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                 onChange={updateForm}
               />
               <Typography variant="h7" sx={{ mt: '2em' }}>
-                Group Privacy
+                {translation.groupPrivacy}
               </Typography>
               <RadioGroup
                 aria-labelledby="group-privacy-label"
@@ -309,7 +312,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                 <FormControlLabel
                   value={true}
                   control={<Radio />}
-                  label="Public"
+                  label={translation.public}
                   checked={groupInfoForm.is_public === true}
                   onClick={() =>
                     setGroupInfoForm({
@@ -321,7 +324,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                 <FormControlLabel
                   value={false}
                   control={<Radio />}
-                  label="Private"
+                  label={translation.private}
                   checked={groupInfoForm.is_public === false}
                   onClick={() =>
                     setGroupInfoForm({
@@ -334,7 +337,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
               {/* only show private password text field if user selects private group */}
               {!groupInfoForm.is_public && (
                 <TextField
-                  label="Password"
+                  label={translation.password}
                   name="private_password"
                   value={
                     groupInfoForm.private_password
@@ -361,7 +364,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                   }}
                   error={emptyPasswordError}
                   helperText={
-                    emptyPasswordError && 'Private groups must have a password'
+                    emptyPasswordError && translation.groupPasswordEmptyError
                   }
                 ></TextField>
               )}
@@ -377,7 +380,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                   variant="outlined"
                   onClick={() => setShowDeleteWarning(true)}
                 >
-                  Delete Group
+                  {translation.deleteGroup}
                 </Button>
                 <Button
                   variant="contained"
@@ -386,7 +389,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                   }}
                   onClick={updateGroupInfo}
                 >
-                  Save Group Info
+                  {translation.saveGroupInfo}
                 </Button>
               </Box>
             </Box>
@@ -409,7 +412,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
               <>
                 <DialogTitle sx={{ textAlign: 'center' }}>
                   {' '}
-                  Success!
+                  {translation.success}
                 </DialogTitle>
                 <DialogContent
                   sx={{
@@ -420,29 +423,28 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
                   }}
                 >
                   <Typography>
-                    {group_name} has been deleted! <br></br>You will now be
-                    directed to the homepage
+                    {translation.formatString(translation.groupDeletedMsg, group_name)}<br></br>{translation.homepageRedirectMsg}
                   </Typography>
                   <CircularProgress sx={{ mt: '2em' }} />
                 </DialogContent>
               </>
             ) : (
               <>
-                <DialogTitle>Delete {group_name}?</DialogTitle>
+                <DialogTitle>{translation.formatString(translation.deleteGroupPrompt, group_name)}?</DialogTitle>
                 <WarningAmberIcon fontSize="large" />
-                <DialogContent>This is irreversible</DialogContent>
+                <DialogContent>{translation.deletePrompAlert}</DialogContent>
                 <DialogActions sx={{ display: 'flex', gap: '2em' }}>
                   <Button
                     variant="contained"
                     onClick={() => setShowDeleteWarning(false)}
                   >
-                    Cancel
+                    {translation.cancel}
                   </Button>
                   <Button
                     variant="outlined"
                     onClick={() => deleteCurrentGroup()}
                   >
-                    Delete
+                    {translation.delete}
                   </Button>
                 </DialogActions>
               </>
@@ -456,9 +458,9 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
   const renderSuccessMsg = () => {
     return (
       <>
-        <Typography variant="h2">Success!</Typography>
+        <Typography variant="h2">{translation.success}</Typography>
         <Typography variant="subtitle2" sx={{ mt: '1em' }}>
-          The group has been updated
+          {translation.groupUpdatedMsg}
         </Typography>
       </>
     );

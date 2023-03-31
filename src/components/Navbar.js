@@ -151,7 +151,7 @@ function Navbar(props) {
       onClose={handleMenuClose}
     >
       <MenuItem className={classes.logOut} onClick={handleLogout}>
-        <span>Logout </span>
+        <span>{translation.logout} </span>
         <ExitToApp color={'error'} />
       </MenuItem>
     </Menu>
@@ -172,7 +172,7 @@ function Navbar(props) {
         <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
       </MenuItem>
       <MenuItem className={classes.logOut} onClick={handleLogout}>
-        <span>Logout </span>
+        <span>{translation.logout} </span>
         <ExitToApp color={'error'} />
       </MenuItem>
     </Menu>

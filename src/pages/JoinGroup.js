@@ -20,6 +20,8 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+import useTranslation from '../components/customHooks/translations';
+
 const StyledDialog = styled(Dialog)`
   text-align: center;
   .MuiDialog-paper {
@@ -39,6 +41,8 @@ const JoinGroup = ({ user }) => {
   const [privateGroupForm, setPrivateGroupForm] = useState({ password: '' });
   const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
+
+  const translation = useTranslation();
 
   const renderAddMemberView = async () => {
     if (user.user_id) {
@@ -142,26 +146,26 @@ const JoinGroup = ({ user }) => {
     <div>
       {alreadyInGroup && (
         <StyledDialog aria-labelledby="already-member-dialog" open={true}>
-          <DialogTitle>You are already a member of this group!</DialogTitle>
+          <DialogTitle>{translation.joinGroupAlreadyMember}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Select Cancel to be redirected to home page
+              {translation.joinGroupSelectCancel}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={redirectHome}>Cancel</Button>
+            <Button onClick={redirectHome}>{translation.cancel}</Button>
           </DialogActions>
         </StyledDialog>
       )}
       {addPublicMember && (
         <StyledDialog aria-labelledby="add-public-member-dialog" open={true}>
-          <DialogTitle>You have been invited to join {groupName}</DialogTitle>
+          <DialogTitle>{translation.formatString(translation.joinGroupTitle, groupName)}</DialogTitle>
           {userAdded ? (
             <>
               <DialogContent>
                 <CircularProgress />
                 <Alert severity="success" sx={{ mt: '1em' }}>
-                  Success! Redirecting to {groupName}'s profile page
+                  {translation.formatString(translation.successRedirectProfilePage, groupName)}
                 </Alert>
               </DialogContent>
             </>
@@ -169,13 +173,12 @@ const JoinGroup = ({ user }) => {
             <>
               <DialogContent>
                 <DialogContentText>
-                  Please confirm by selecting Join. <br></br>Select Cancel to be
-                  redirected to the home page.
+                  {translation.joinGroupConfirm} <br></br>{translation.joinGroupSelectCancel}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={redirectHome}>Cancel</Button>
-                <Button onClick={addUser}>Join</Button>
+                <Button onClick={redirectHome}>{translation.cancel}</Button>
+                <Button onClick={addUser}>{translation.join}</Button>
               </DialogActions>
             </>
           )}
@@ -183,13 +186,13 @@ const JoinGroup = ({ user }) => {
       )}
       {addPrivateMember && (
         <StyledDialog aria-labelledby="add-private-member-dialog" open={true}>
-          <DialogTitle>You have been invited to join {groupName}</DialogTitle>
+          <DialogTitle>{translation.formatString(translation.joinGroupTitle, groupName)}</DialogTitle>
           {userAdded ? (
             <>
               <DialogContent>
                 <CircularProgress />
                 <Alert severity="success" sx={{ mt: '1em' }}>
-                  Success! Redirecting to {groupName}'s profile page
+                  {translation.formatString(translation.successRedirectProfilePage, groupName)}
                 </Alert>
               </DialogContent>
             </>
@@ -197,9 +200,7 @@ const JoinGroup = ({ user }) => {
             <>
               <DialogContent>
                 <DialogContentText>
-                  To join this group, please enter the group password and select
-                  Join. <br></br> Select Cancel to be redirected to the home
-                  page.
+                  {translation.joinGroupEnterPassword} <br></br> {translation.joinGroupSelectCancel}
                 </DialogContentText>
                 <TextField
                   autoFocus
@@ -214,11 +215,11 @@ const JoinGroup = ({ user }) => {
                 />
               </DialogContent>
               {passwordError && (
-                <Alert severity="error">Incorrect Password</Alert>
+                <Alert severity="error">{translation.incorrectPassword}</Alert>
               )}
               <DialogActions>
-                <Button onClick={redirectHome}>Cancel</Button>
-                <Button onClick={checkPassword}>Join</Button>
+                <Button onClick={redirectHome}>{translation.cancel}</Button>
+                <Button onClick={checkPassword}>{translation.join}</Button>
               </DialogActions>
             </>
           )}

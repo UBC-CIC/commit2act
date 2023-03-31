@@ -3,7 +3,10 @@ import { Typography, Tooltip, Box, IconButton, Alert } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
+import useTranslation from '../customHooks/translations';
+
 const AddMemberPanel = ({ groupInfo }) => {
+  const translation = useTranslation();
   const [copySuccess, setCopySuccess] = useState({
     link: false,
     password: false,
@@ -35,11 +38,10 @@ const AddMemberPanel = ({ groupInfo }) => {
       alignItems={{ xs: 'center', lg: 'flex-start' }}
     >
       <Typography component="div" variant="h2">
-        Add users to this group by sending them your group link{' '}
-        {!groupInfo.is_public && 'and password'}
+        {groupInfo.is_public ? translation.addMembersDescription : translation.addMembersDescriptionPassword}
       </Typography>
       <Typography component="div" variant="subtitle2" sx={{ m: '2em 0 1em 0' }}>
-        Your Group Link is:{' '}
+        {translation.groupLinkLabel}{' '}
       </Typography>
       <Box
         display="flex"
@@ -81,7 +83,7 @@ const AddMemberPanel = ({ groupInfo }) => {
             onClose={() => setCopySuccess((prev) => ({ ...prev, link: false }))}
             sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
           >
-            Link Copied!
+            {translation.linkCopied}
           </Alert>
         )}
       </Box>
@@ -92,7 +94,7 @@ const AddMemberPanel = ({ groupInfo }) => {
             variant="subtitle2"
             sx={{ m: '2em 0 1em 0' }}
           >
-            Your Group Password is:{' '}
+            {translation.groupPasswordLabel}{' '}
           </Typography>
           <Box
             display="flex"
@@ -136,7 +138,7 @@ const AddMemberPanel = ({ groupInfo }) => {
                 }
                 sx={{ ml: '1em', mt: { xs: '1em', md: '0' } }}
               >
-                Password Copied!
+                {translation.passwordCopied}
               </Alert>
             )}
           </Box>

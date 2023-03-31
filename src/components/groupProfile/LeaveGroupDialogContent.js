@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { deleteGroup, removeGroupMember } from '../../graphql/mutations';
 
+import useTranslation from '../customHooks/translations';
+
 const LeaveGroupWarningDialogContent = ({
   groupInfo,
   handleClose,
@@ -31,6 +33,7 @@ const LeaveGroupWarningDialogContent = ({
       allOwners.length === 1
   );
   const navigate = useNavigate();
+  const translation = useTranslation();
 
   //each time a member is updated, get the updated number of group owners and check if user is the only owner
   useEffect(() => {
@@ -82,17 +85,17 @@ const LeaveGroupWarningDialogContent = ({
     if (groupMembers.length === 1) {
       return (
         <>
-          <DialogTitle> Warning!</DialogTitle>
+          <DialogTitle>{translation.warning}</DialogTitle>
           <WarningAmberIcon fontSize="large" />
           <DialogContent>
-            This group will be deleted since there will be no group members.
+            {translation.leaveGroupLastMemberWarning}
           </DialogContent>
           <DialogActions sx={{ display: 'flex', gap: '3em' }}>
             <Button variant="contained" onClick={handleClose}>
-              Cancel
+              {translation.cancel}
             </Button>
             <Button variant="outlined" onClick={deleteCurrentGroup}>
-              Leave
+              {translation.leave}
             </Button>
           </DialogActions>
         </>
@@ -103,11 +106,10 @@ const LeaveGroupWarningDialogContent = ({
     ) {
       return (
         <>
-          <DialogTitle>Leave Group</DialogTitle>
+          <DialogTitle>{translation.leaveGroup}</DialogTitle>
           <WarningAmberIcon fontSize="large" />
           <DialogContent>
-            You must promote another user to group owner before leaving the
-            group.
+            {translation.promoteOtherUserBeforeLeavingGroup}
           </DialogContent>
         </>
       );
@@ -117,11 +119,10 @@ const LeaveGroupWarningDialogContent = ({
     ) {
       return (
         <>
-          <DialogTitle>Remove Group Owner</DialogTitle>
+          <DialogTitle>{translation.removeGroupOwner}</DialogTitle>
           <WarningAmberIcon fontSize="large" />
           <DialogContent>
-            You must promote another user to group owner before removing this
-            user.
+            {translation.promoteOtherUserBeforeRemovingUser}
           </DialogContent>
         </>
       );
@@ -132,7 +133,7 @@ const LeaveGroupWarningDialogContent = ({
     if (deleteGroupSuccess) {
       return (
         <>
-          <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
+          <DialogTitle sx={{ textAlign: 'center' }}>{translation.success}</DialogTitle>
           <DialogContent
             sx={{
               display: 'flex',
@@ -142,8 +143,7 @@ const LeaveGroupWarningDialogContent = ({
             }}
           >
             <Typography>
-              {group_name} has been deleted! <br></br>You will now be directed
-              to the homepage
+              {translation.formatString(translation.groupDeletedMsg, group_name)} <br></br>{translation.homepageRedirectMsg}
             </Typography>
             <CircularProgress sx={{ mt: '2em' }} />
           </DialogContent>
@@ -152,7 +152,7 @@ const LeaveGroupWarningDialogContent = ({
     } else if (leaveGroupSuccess) {
       return (
         <>
-          <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
+          <DialogTitle sx={{ textAlign: 'center' }}>{translation.success}</DialogTitle>
           <DialogContent
             sx={{
               display: 'flex',
@@ -162,8 +162,7 @@ const LeaveGroupWarningDialogContent = ({
             }}
           >
             <Typography>
-              You have left the the group! <br></br>You will now be directed to
-              the homepage
+              {translation.leftGroup} <br></br>{translation.homepageRedirectMsg}
             </Typography>
             <CircularProgress sx={{ mt: '2em' }} />
           </DialogContent>
