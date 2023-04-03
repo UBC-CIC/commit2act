@@ -12,7 +12,7 @@ frontend:
   phases:
     preBuild:
       commands:
-        - export NODE_OPTIONS=--max-old-space-size=5632
+        # - export NODE_OPTIONS=--max-old-space-size=5632
         - node -e 'console.log(v8.getHeapStatistics().total_available_size/(1024*1024))'
         - '# Execute Amplify CLI with the helper script'
         - amplifyPush --simple
