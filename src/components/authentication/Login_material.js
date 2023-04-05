@@ -558,12 +558,12 @@ function Login (props) {
             <Grid xs item className={`typewriter ${classes.marginHorizontal}`}>
               <p
                 className={`${classes.textAlignCenter} ${animateTitle
-                    ? darkMode
-                      ? 'line anim-typewriter'
-                      : 'line anim-typewriter-light lightMode'
-                    : darkMode
-                      ? 'line-static'
-                      : 'line-static lightMode-static'
+                  ? darkMode
+                    ? 'line anim-typewriter'
+                    : 'line anim-typewriter-light lightMode'
+                  : darkMode
+                    ? 'line-static'
+                    : 'line-static lightMode-static'
                   }`}
               >
                 {title}
@@ -666,15 +666,15 @@ function Login (props) {
                     loadingState={gLoading}
                   />
                 </Grid>
-                {/* <Grid className={`input-box`} style={{ marginTop: '0px' }}> */}
-                {' '}
-                {/* sign in button */}
-                {/* <FacebookSubmitButtonWithLoading
+                <Grid className={`input-box`} style={{ marginTop: '0px' }}>
+                  {' '}
+                  {/* sign in button */}
+                  <FacebookSubmitButtonWithLoading
                     submitAction={signInFacebook}
                     submitMessage={translation.signInFacebook}
                     loadingState={fbLoading}
-                  /> */}
-                {/* </Grid> */}
+                  />
+                </Grid>
                 {!disableSignUp && ( // if sign up is not disabled, then show the create an account option
                   <div>
                     {/* divider */}
