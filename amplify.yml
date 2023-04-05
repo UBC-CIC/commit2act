@@ -14,7 +14,7 @@ frontend:
       commands:
         - node -e 'console.log(v8.getHeapStatistics().total_available_size/(1024*1024))'
         - '# Execute Amplify CLI with the helper script'
-        - amplifyPush --simple
+        # - amplifyPush --simple
         - npm install
     # IMPORTANT - Please verify your build commands
     build:
@@ -26,7 +26,7 @@ frontend:
     baseDirectory: build
     files:
       - '**/*'
-  # cache:
-  #   paths:
-  #     - node_modules/**/*
-  #     - 'node_modules/.cache'
+  cache:
+    paths:
+      - node_modules/**/*
+      - 'node_modules/.cache'
