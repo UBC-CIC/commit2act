@@ -26,7 +26,7 @@ import {
   getSingleUser,
 } from '../graphql/queries';
 import GlobalLeaderboard from '../components/GlobalLeaderboard';
-import useTranslation from "../components/customHooks/translations";
+import useTranslation from '../components/customHooks/translations';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -71,8 +71,8 @@ const Landing = ({ user, userType }) => {
     setProgressStats((prev) => ({
       ...prev,
       globalCO2: Math.ceil(globalCO2Res.data.getTotalGlobalCO2),
-      totalCO2: userRes.data.getSingleUser.total_co2,
-      weekCO2: userRes.data.getSingleUser.weekly_co2,
+      totalCO2: userRes.data.getSingleUser.total_co2.toFixed(2),
+      weekCO2: userRes.data.getSingleUser.weekly_co2.toFixed(2),
     }));
   };
 
@@ -124,7 +124,7 @@ const Landing = ({ user, userType }) => {
       setPendingActions(unvalidatedSubmittedActions);
       setPendingCO2Saved(pendingCO2);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
@@ -136,9 +136,7 @@ const Landing = ({ user, userType }) => {
     } else {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: '2em' }}>
-          <Typography variant="subtitle2">
-            {translation.noMyGroups}
-          </Typography>
+          <Typography variant="subtitle2">{translation.noMyGroups}</Typography>
         </Box>
       );
     }
@@ -192,7 +190,10 @@ const Landing = ({ user, userType }) => {
                 }
               >
                 <AlertTitle>{translation.alertNewActionTitle}</AlertTitle>
-                {translation.formatString(translation.alertNewActionText, <strong>{numActionsToValidate}</strong>)}
+                {translation.formatString(
+                  translation.alertNewActionText,
+                  <strong>{numActionsToValidate}</strong>
+                )}
               </Alert>
             )}
             {pendingActions && pendingActions.length > 0 && pendingCO2Saved && (
@@ -208,9 +209,15 @@ const Landing = ({ user, userType }) => {
                 color="success"
               >
                 <AlertTitle>
-                  {translation.formatString(translation.alertActionsPendingTitle, pendingActions.length)}
+                  {translation.formatString(
+                    translation.alertActionsPendingTitle,
+                    pendingActions.length
+                  )}
                 </AlertTitle>
-                {translation.formatString(translation.alertActionsPendingText, <strong>{pendingCO2Saved}g</strong>)}
+                {translation.formatString(
+                  translation.alertActionsPendingText,
+                  <strong>{pendingCO2Saved}g</strong>
+                )}
               </Alert>
             )}
           </Grid>
@@ -243,7 +250,8 @@ const Landing = ({ user, userType }) => {
                   navigate('/log-action');
                 }}
                 sx={{
-                  background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+                  background:
+                    'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
                   color: '#000',
                 }}
               >
@@ -254,10 +262,11 @@ const Landing = ({ user, userType }) => {
                     marginRight: '28px',
                     fontSize: 30,
                     color: '#000',
-                    filter: 'invert(1)'
+                    filter: 'invert(1)',
                   }}
                   alt=""
-                  src='./assets/images/icon-log.png' />
+                  src="./assets/images/icon-log.png"
+                />
 
                 {translation.logANewAction}
               </Button>
@@ -268,7 +277,8 @@ const Landing = ({ user, userType }) => {
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
                 justifyContent: 'space-evenly',
-                background: 'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
+                background:
+                  'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
                 borderRadius: '10px',
                 padding: '1.5em',
                 gap: { xs: '0.5em', lg: '0' },
@@ -282,13 +292,17 @@ const Landing = ({ user, userType }) => {
                 </Typography>
               </StyledPaper>
               <StyledPaper elevation={6}>
-                <Typography variant="h4">{translation.totalCO2Saved}</Typography>
+                <Typography variant="h4">
+                  {translation.totalCO2Saved}
+                </Typography>
                 <Typography variant="h5" className="statValue">
                   {progressStats.totalCO2}g
                 </Typography>
               </StyledPaper>
               <StyledPaper elevation={6}>
-                <Typography variant="h4">{translation.collectiveImpact}</Typography>
+                <Typography variant="h4">
+                  {translation.collectiveImpact}
+                </Typography>
                 <Typography variant="h5" className="statValue">
                   {progressStats.globalCO2}g
                 </Typography>
