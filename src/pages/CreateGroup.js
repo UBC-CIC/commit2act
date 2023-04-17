@@ -283,7 +283,7 @@ const CreateGroup = ({ user }) => {
                     sx={{
                       display: 'flex',
                       flexDirection: 'row',
-                      justifyContent: 'space-evenly',
+                      justifyContent: 'flex-start',
                     }}
                   >
                     <FormControlLabel

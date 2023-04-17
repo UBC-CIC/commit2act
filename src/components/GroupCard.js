@@ -358,12 +358,14 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
                   ? group_description
                   : group_description.slice(0, descriptionLength)}
               </Typography>
-              <Button
+              {group_description.length > descriptionLength ? (
+                <Button
                 sx={{ p: 0, mt: { xs: '1em', sm: '1.5em' }, fontSize: 13 }}
                 onClick={() => setReadMore(!readMore)}
-              >
+                >
                 {translation.read} {readMore ? translation.less : translation.more}
-              </Button>
+                </Button>
+               ) : null }
             </Box>
           )}
         </CardContent>
