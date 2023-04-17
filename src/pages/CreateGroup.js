@@ -198,6 +198,9 @@ const CreateGroup = ({ user }) => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: '1em',
+                  maxWidth: '800px',
+                  margin: '0 auto',
+                  width: '100%'
                 }}
               >
                 {avatarPreview ? (
@@ -237,6 +240,9 @@ const CreateGroup = ({ user }) => {
                   flexDirection: 'column',
                   gap: '1em',
                   mt: '1em',
+                  maxWidth: '800px',
+                  margin: '0 auto',
+                  width: '100%'
                 }}
               >
                 <>
@@ -256,20 +262,24 @@ const CreateGroup = ({ user }) => {
                         'A group already exists with the given name')
                     }
                     onChange={updateForm}
-                    sx={{ width: '100%' }}
+                    sx={{ 
+                      width: '100%',
+                    }}
                   />
                 </>
                 <>
                   <SectionTitle variant="h2">Group Description</SectionTitle>
                   <TextField
                     multiline
-                    rows={4}
+                    rows={6}
                     label="Group description"
                     name="group_description"
                     value={createGroupForm.group_description}
                     InputLabelProps={{ shrink: true }}
                     onChange={updateForm}
-                    sx={{ width: '100%' }}
+                    sx={{ 
+                      width: '100%',
+                    }}
                   />
                 </>
                 <>
@@ -362,6 +372,7 @@ const CreateGroup = ({ user }) => {
                   padding: '1em',
                   width: '100%',
                   alignSelf: 'center',
+                  maxWidth: '800px',
                 }}
                 variant="contained"
                 type="submit"
