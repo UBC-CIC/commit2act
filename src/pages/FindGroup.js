@@ -25,6 +25,15 @@ const FindGroup = ({ user }) => {
       ]);
       setGroups(allGroupsRes.data.getAllGroups);
       setUsersGroups(usersGroupsRes.data.getAllGroupsForUser);
+
+      const filtered = allGroupsRes.data.getAllGroups.filter((group) => {
+        return group.is_public;
+      });
+
+      const sorted = filtered.sort((a, b) => {
+        return b.monthly_points - a.monthly_points;
+      });
+      setFilteredGroups(sorted);
     };
     user && getGroups();
   }, [user]);
