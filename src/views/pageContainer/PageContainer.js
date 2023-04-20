@@ -35,6 +35,7 @@ import GroupProfile from '../../pages/GroupProfile';
 import CreateAction from '../../pages/CreateAction';
 import JoinGroup from '../../pages/JoinGroup';
 import UserProfile from '../../pages/UserProfile';
+import Actions from '../../pages/Actions';
 import AdminDashboard from '../../pages/AdminDashboard';
 import { API, Auth, autoShowTooltip } from 'aws-amplify';
 import { getSingleUserByEmail } from '../../graphql/queries';
@@ -204,6 +205,23 @@ function PageContainer (props) {
           </ListItemIcon>
           <ListItemText primary={translation.logAction} />
         </ListItem>
+        <ListItem
+          button
+          key={'Actions'}
+          onClick={() => navigate('/actions')}
+          // className={classes.logAction}
+        >
+          <ListItemIcon>
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-validate.png' />
+          </ListItemIcon>
+          <ListItemText primary={translation.actions} />
+        </ListItem>
         <ListItem button key={'home'} onClick={() => navigate('/')}>
           <ListItemIcon>
             <Box
@@ -338,10 +356,19 @@ function PageContainer (props) {
                 with your app's contents */}
 
           <Routes>
-            <Route
+             <Route
               exact
               path={'/log-action'}
               element={<SelfReportMenu user={user} />}
+            />
+            <Route
+              exact
+              path={'/actions'}
+              element={<Actions    
+              databaseUser={user}
+              setUser={setUser}
+              userType={userType}
+               />}
             />
             <Route
               exact

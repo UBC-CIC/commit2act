@@ -167,6 +167,7 @@ const translations = {
   validateActions: 'Validate Actions',
   adminDashboard: 'Admin Dashboard',
   myAccount: 'My Account',
+  actions: 'Actions',
 };
 
 export default translations;
