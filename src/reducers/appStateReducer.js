@@ -1,5 +1,5 @@
 const initialState = {
-  showSideBar: false,
+  showSideBar: true,
 };
 
 const appStateReducer = (currentState = initialState, action) => {

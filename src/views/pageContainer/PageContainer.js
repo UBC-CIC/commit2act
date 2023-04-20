@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
   Drawer,
@@ -39,8 +40,12 @@ import { API, Auth, autoShowTooltip } from 'aws-amplify';
 import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
 import PrivateRoute from './PrivateRoute';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 import useTranslation from '../../components/customHooks/translations';
+const drawerWidth = 312;
 
 const useStyles = makeStyles()((theme) => {
   return {
@@ -48,7 +53,7 @@ const useStyles = makeStyles()((theme) => {
       overflow: 'auto',
       backgroundColor: '#303839',
       height: '100%',
-      width: 312,
+      width: drawerWidth,
       '& .MuiListItem-button': {
         paddingTop: 16,
         paddingBottom: 16,
@@ -63,6 +68,18 @@ const useStyles = makeStyles()((theme) => {
         padding: theme.spacing(3),
       },
       padding: theme.spacing(8),
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      marginLeft: -drawerWidth,
+    },
+    contentShift: {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: 0,
     },
     logAction: {
       background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
@@ -85,7 +102,10 @@ const useStyles = makeStyles()((theme) => {
   };
 });
 
+
 function PageContainer (props) {
+  const theme = useTheme();
+  const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
   const { menuEnabled, updateMenuState } = props;
 
   const { classes } = useStyles();
@@ -143,27 +163,28 @@ function PageContainer (props) {
     getCognitoUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  /*
-   * Handles closing side menu if an event occurs
-   * */
-  const handleSideMenuClose = () => (event) => {
-    if (
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
-    ) {
-      return;
-    }
-    updateMenuState(false);
+
+  const handleSideMenu = () => {
+    updateMenuState(!menuEnabled);
   };
 
+  useEffect(() => {
+    if (mobileView) {
+      handleSideMenu();
+    }
+  }, [mobileView]);
+
+  const handleChangePage = (event, newPage) => {
+    handleSideMenu();
+  }; 
   //   {
   //     /* Example side menu is provided below */
   //   }
   const list = () => (
     <div
       className={classes.drawerContainer}
-      onClick={handleSideMenuClose(false)}
-      onKeyDown={handleSideMenuClose(false)}
+      // onClick={handleSideMenuClose(false)}
+      // onKeyDown={handleSideMenuClose(false)}
     >
       <List>
         <ListItem
@@ -289,26 +310,30 @@ function PageContainer (props) {
     <Grid container direction="column">
       {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
+      <Navbar showSideMenuButton={true} 
+      sx={{ position: 'sticky' }} 
+      />
       {/* App content example below with sidebar */}
       <Grid item xs={12} className="App-header">
         {/* Side menu component */}
         <Drawer
           anchor={'left'}
           open={menuEnabled}
-          onClose={handleSideMenuClose}
+          // onClose={handleSideMenuClose}
+          variant="persistent"
           style={{ zIndex: 2 }}
           sx={{
             width: 312,
             color: 'success.main',
           }}
-          ModalProps={{ onBackdropClick: handleSideMenuClose() }}
         >
           <Toolbar />
           {/* Side menu items added for rendering */}
           {list()}
         </Drawer>
-        <main className={classes.content}>
+        <main className={clsx(classes.content, {
+          [classes.contentShift]: menuEnabled,
+        })}>
           {/* Routes are added here if you need multiple page views. otherwise this Switch can be deleted and replaced
                 with your app's contents */}
 
