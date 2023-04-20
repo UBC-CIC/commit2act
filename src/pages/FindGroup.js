@@ -38,7 +38,14 @@ const FindGroup = ({ user }) => {
     if (groups) {
       if (input === '') {
         setError(false);
-        setFilteredGroups([]);
+        const filtered = groups.filter((group) => {
+          return group.is_public;
+        });
+
+        const sorted = filtered.sort((a, b) => {
+          return b.monthly_points - a.monthly_points;
+        });
+        setFilteredGroups(sorted);
       } else {
         const filtered = groups.filter((group) => {
           return (
@@ -96,6 +103,23 @@ const FindGroup = ({ user }) => {
           </Typography>
         )}
       </Box>
+
+      {(() => {
+        if (input === '') {
+          return (
+            <Typography variant="subtitle2" my={'1rem'}>
+              Here are the top 5 public groups who you may want to be a part of
+            </Typography>
+          );
+        } else {
+          return (
+            <Typography variant="subtitle2" my={'1rem'}>
+              Search results
+            </Typography>
+          );
+        }
+      })()}
+
       {filteredGroups &&
         usersGroups &&
         filteredGroups.map((group, index) => (
