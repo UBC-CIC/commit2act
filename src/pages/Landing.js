@@ -27,6 +27,7 @@ import {
 } from '../graphql/queries';
 import GlobalLeaderboard from '../components/GlobalLeaderboard';
 import useTranslation from '../components/customHooks/translations';
+import UserActions from '../components/UserActions';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -355,6 +356,24 @@ const Landing = ({ user, userType }) => {
           <LinearProgress />
         </Box>
       )}
+      <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+        <Box
+          component="div"
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            m: '4em 0 1.25em',
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: { xs: '1em' },
+          }}
+        >
+          <Typography variant="h2">{translation.myActions}</Typography>
+        </Box>
+      </Grid>
+      <UserActions  
+        databaseUser={user}
+          />
     </>
   );
 };
