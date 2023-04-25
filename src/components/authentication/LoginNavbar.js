@@ -1,16 +1,13 @@
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
-import {
-  Grid,
-  Box
-} from '@mui/material';
+import { Grid, Box } from '@mui/material';
 
-
-import LanguageHandler from "../LanguageHandler";
-import useTranslation from "../customHooks/translations";
+import LanguageHandler from '../LanguageHandler';
+import useTranslation from '../customHooks/translations';
+// const icon192x192 = require('/public/icon-192x192.png');
 
 const useStyles = makeStyles()((theme) => {
-  return{
+  return {
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
       display: 'flex',
@@ -33,11 +30,8 @@ const useStyles = makeStyles()((theme) => {
 });
 
 function LoginNavbar(props) {
-  
   const { classes } = useStyles();
   const translation = useTranslation();
-
-
 
   return (
     <Grid item xs={12} className={classes.appBar}>
@@ -49,9 +43,13 @@ function LoginNavbar(props) {
           marginRight: 1,
         }}
         alt=""
-        src='icon-192x192.png'  />
+        src={`${process.env.PUBLIC_URL}/icon-192x192.png`}
+      />
       <div>
-        <label className={classes.label} htmlFor="language">{translation.changeLanguage}</label> &nbsp;
+        <label className={classes.label} htmlFor="language">
+          {translation.changeLanguage}
+        </label>{' '}
+        &nbsp;
         <LanguageHandler />
       </div>
     </Grid>

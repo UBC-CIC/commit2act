@@ -61,7 +61,7 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
                 width: 150,
                 filter: is_rejected && 'grayscale(100%)',
               }}
-              image={submitted_image}
+              image={submitted_image.replace(/(https?:\/\/)+/g, 'https://')}
               alt={`A submitted ${action_name} action image submitted at ${time_submitted}`}
             />
           )}
@@ -81,7 +81,9 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
             <Typography sx={{ my: 1.5, color: '#7e7e7e' }}>
               {submitted_action_items}
             </Typography>
-            <Typography variant="body1">{translation.co2SavedColon} {g_co2_saved} g</Typography>
+            <Typography variant="body1">
+              {translation.co2SavedColon} {g_co2_saved} g
+            </Typography>
             <Typography variant="body1">
               {translation.totalPointsEarnedColon} {points_earned}
             </Typography>
@@ -97,7 +99,12 @@ const SubmittedActionCard = ({ action, showUnapproveButton, getActions }) => {
               mr: { xs: '0em', sm: '3em' },
             }}
           >
-            <Button variant="outlined" startIcon={<Clear />} color={'error'} onClick={rejectAction}>
+            <Button
+              variant="outlined"
+              startIcon={<Clear />}
+              color={'error'}
+              onClick={rejectAction}
+            >
               {translation.unapprove}
             </Button>
           </CardActions>
