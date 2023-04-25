@@ -50,6 +50,9 @@ const drawerWidth = 312;
 
 const useStyles = makeStyles()((theme) => {
   return {
+    menuClosed: {
+      pointerEvents: 'none',
+    },
     drawerContainer: {
       overflow: 'auto',
       backgroundColor: '#303839',
@@ -344,6 +347,9 @@ function PageContainer (props) {
             width: 312,
             color: 'success.main',
           }}
+          className={clsx(classes.drawer,{
+            [classes.menuClosed]: !menuEnabled,
+          })}
         >
           <Toolbar />
           {/* Side menu items added for rendering */}
