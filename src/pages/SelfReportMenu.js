@@ -20,6 +20,8 @@ import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
 
+import useTranslation from '../components/customHooks/translations';
+
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
@@ -34,14 +36,16 @@ const SelfReportMenu = ({ user }) => {
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
 
+  const translation = useTranslation();
+
   const steps = [
-    'Select Action',
-    'Select Date',
-    'Action Fact',
-    'Action Items',
-    'Validation',
-    'Bonus Question',
-    'CO2 Saved',
+    translation.logActionStep1,
+    translation.logActionStep2,
+    translation.logActionStep3,
+    translation.logActionStep4,
+    translation.logActionStep5,
+    translation.logActionStep6,
+    translation.logActionStep7,
   ];
 
   //resets the form everytime a new action is selected
@@ -90,7 +94,7 @@ const SelfReportMenu = ({ user }) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label="Choose Date"
+                  label={translation.chooseDate}
                   value={parseISO(selectedDate)}
                   onChange={handleDateChange}
                   renderInput={(selectedDate) => (
@@ -172,7 +176,7 @@ const SelfReportMenu = ({ user }) => {
         variant="h1"
         sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
       >
-        Log New Action
+        {translation.logActionTitle}
       </Typography>
       <Grid
         item
@@ -225,7 +229,7 @@ const SelfReportMenu = ({ user }) => {
               marginTop: '4em'
             }}
           >
-            Next
+            {translation.next}
           </Button>
         )}
       </Grid>
