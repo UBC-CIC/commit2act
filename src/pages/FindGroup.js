@@ -33,7 +33,10 @@ const FindGroup = ({ user }) => {
       const sorted = filtered.sort((a, b) => {
         return b.monthly_points - a.monthly_points;
       });
-      setFilteredGroups(sorted);
+
+      sorted.length > 5
+        ? setFilteredGroups(sorted.slice(0, 5))
+        : setFilteredGroups(sorted);
     };
     user && getGroups();
   }, [user]);

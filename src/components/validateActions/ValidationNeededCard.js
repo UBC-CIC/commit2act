@@ -73,7 +73,10 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
             <CardMedia
               component="img"
               sx={{ width: 150 }}
-              image={action.submitted_image}
+              image={action.submitted_image.replace(
+                /(https?:\/\/)+/g,
+                'https://'
+              )}
               alt={`A submitted ${action.action_name} action image submitted at ${action.time_submitted}`}
             />
           )}
@@ -115,10 +118,19 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
           }}
         >
           <Stack spacing={2} direction={{ xs: 'row', sm: 'column' }}>
-            <Button variant="contained" startIcon={<Done />} onClick={approveAction}>
+            <Button
+              variant="contained"
+              startIcon={<Done />}
+              onClick={approveAction}
+            >
               Accept
             </Button>
-            <Button variant="outlined" startIcon={<Clear />} color={'error'} onClick={rejectAction}>
+            <Button
+              variant="outlined"
+              startIcon={<Clear />}
+              color={'error'}
+              onClick={rejectAction}
+            >
               Reject
             </Button>
           </Stack>
