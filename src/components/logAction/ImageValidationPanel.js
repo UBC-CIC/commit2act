@@ -3,6 +3,8 @@ import { Box, Typography, Alert, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloudUpload, Delete } from '@mui/icons-material';
 
+import useTranslation from '../customHooks/translations';
+
 const Dropbox = styled('div')`
   display: flex;
   flex-direction: column;
@@ -116,6 +118,8 @@ const ImageValidationPanel = ({
     }
   };
 
+  const translation = useTranslation();
+
   return (
     <Box
       sx={{
@@ -138,14 +142,14 @@ const ImageValidationPanel = ({
         }}
       >
         <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
-          Please upload an image related to your action item for verification
+          {translation.imageValidationText}
         </Typography>
         <Typography sx={{ fontSize: '15px' }}>
-          Minimum dimensions 100x100 px
+          {translation.imageValidationDimensions}
         </Typography>
         {fileTypeError && (
           <Alert severity="error" onClose={() => setFileTypeError(false)}>
-            This Is Not An Image File
+            {translation.imageValidationError}
           </Alert>
         )}
         <Dropbox
@@ -157,7 +161,7 @@ const ImageValidationPanel = ({
           {selectedImage ? (
             <>
               <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
-                Image Selected!
+                {translation.imageValidationSelected}
               </Typography>
               <Box id="image-preview" sx={{ width: '100%' }}>
                 <Box
@@ -172,7 +176,7 @@ const ImageValidationPanel = ({
                 ></Box>
                 <button id="delete" onClick={() => setSelectedImage(null)}>
                   <Delete />
-                  Delete
+                  {translation.delete}
                 </button>
               </Box>
             </>
@@ -180,11 +184,11 @@ const ImageValidationPanel = ({
             <>
               <CloudUpload fontSize="large" />
               <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
-                Drop Your Image Here, Or{' '}
+                {translation.imageValidationDrop}{' '}
               </Typography>
 
               <label htmlFor="image-upload" id="browse">
-                <Typography variant="subtitle2">Browse</Typography>
+                <Typography variant="subtitle2">{translation.browse}</Typography>
               </label>
               <input
                 accept="image/*"
@@ -198,11 +202,11 @@ const ImageValidationPanel = ({
       </Box>
       {selectedImage ? (
         <StyledButton onClick={handleButtonClick} variant="contained">
-          Upload Image
+          {translation.uploadImage}
         </StyledButton>
       ) : (
         <StyledButton onClick={handleButtonClick} color="error" variant="outlined">
-          Skip
+          {translation.skip}
         </StyledButton>
       )}
      

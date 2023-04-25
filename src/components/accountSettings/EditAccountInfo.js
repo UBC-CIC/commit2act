@@ -21,6 +21,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PasswordRequirements from '../authentication/PasswordRequirements';
 
+import useTranslation from '../customHooks/translations';
+
 const StyledDialogTitle = styled(DialogTitle)`
   color: #fff;
   font-size: 2em;
@@ -59,19 +61,20 @@ const EditAccountInfo = ({
     newPassword: '',
     confirmNewPassword: '',
   };
+  const translation = useTranslation();
   const [userInfoForm, setUserInfoForm] = useState(initialUserForm);
   const [passwordRequirements, setPasswordRequirements] = useState({
-    uppercase: { error: false, description: 'At least one uppercase letter' },
-    lowercase: { error: false, description: 'At least one lowercase letter' },
-    digit: { error: false, description: 'At least one digit' },
-    special: { error: false, description: 'At least one special character' },
+    uppercase: { error: false, description: translation.oneUppercase },
+    lowercase: { error: false, description: translation.oneLowercase },
+    digit: { error: false, description: translation.oneDigit },
+    special: { error: false, description: translation.oneSpecialCharacter },
     minLength: {
       error: false,
-      description: 'Should be more than 8 characters',
+      description: translation.more8Characters,
     },
     maxLength: {
       error: false,
-      description: 'Should be less than 16 characters',
+      description: translation.less16Characters,
     },
   });
   const [infoUpdateSuccess, setInfoUpdateSuccess] = useState(false);
@@ -475,7 +478,7 @@ const EditAccountInfo = ({
               sx={{ xs: { mt: '1.5em' } }}
               onChange={onChangePassword}
               error={accountPasswordError}
-              helperText={'Your password must have the following:'}
+              helperText={translation.passwordSettings}
             />
             <PasswordRequirements requirements={passwordRequirements} />
 
