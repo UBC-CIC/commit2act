@@ -319,7 +319,7 @@ const Landing = ({ user, userType }) => {
             }}
           >
             <GlobalLeaderboard />
-            <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+            <Grid item xs={12} justifyContent="center">
               <Box
                 component="div"
                 sx={{
@@ -356,7 +356,7 @@ const Landing = ({ user, userType }) => {
           <LinearProgress />
         </Box>
       )}
-      <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+      <Grid item xs={12} justifyContent="center">
         <Box
           component="div"
           sx={{

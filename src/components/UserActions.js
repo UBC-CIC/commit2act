@@ -14,6 +14,7 @@ import {
   getSingleUser,
 } from '../graphql/queries';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const UserActions = ({ databaseUser, setUser, userType }) => {
   const [showMore, setShowMore] = useState({
@@ -26,8 +27,8 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
   const [failedActions, setFailedActions] = useState();
   const tabs = ['Validated', 'Awaiting Validation', 'Did Not Pass Validation'];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
-
-  const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const theme = useTheme();
+  const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     if (databaseUser) {
@@ -237,23 +238,21 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
   return (
     <>
         <>
-          <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+          <Box sx={{ textAlign: { xs: 'center'} }}>
             <TabContext value={selectedTab}>
               <Box
                 sx={{
                   borderBottom: 1,
                   borderTop: 1,
                   borderColor: 'divider',
-                  maxWidth: { xs: 320, sm: '100%' },
+                  maxWidth: { sm: '100%' },
                 }}
               >
                 <TabList
                   onChange={handleTabChange}
                   aria-label="view user action tabs"
-                  scrollButtons
-                  allowScrollButtonsMobile
-                  variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
-                  centered={!scrollableTabs}
+                  variant='fullWidth'
+                  orientation={mobileView ? 'vertical' : 'horizontal'}
                 >
                   <Tab label={tabs[0]} value={tabs[0]} />
                   <Tab label={tabs[1]} value={tabs[1]} />

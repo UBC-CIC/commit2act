@@ -77,6 +77,7 @@ const useStyles = makeStyles()((theme) => {
         duration: theme.transitions.duration.leavingScreen,
       }),
       marginLeft: -drawerWidth,
+      maxWidth: '100%',
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
@@ -84,6 +85,7 @@ const useStyles = makeStyles()((theme) => {
         duration: theme.transitions.duration.enteringScreen,
       }),
       marginLeft: 0,
+      maxWidth: '70%',
     },
     logAction: {
       background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
