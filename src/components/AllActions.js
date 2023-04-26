@@ -30,7 +30,7 @@ const StyledImageListItem = styled(ImageListItem)`
     margin-bottom: 8px;
     height: 120px;
     width: 100%;
-    [theme.breakpoints.up('md')]: {
+    @media only screen and (min-width: 800px) {
       height: 278px;
     },
   }
