@@ -212,22 +212,50 @@ const SelfReportMenu = ({ user }) => {
           {steps[activeStep]}
         </Typography>
         {renderFormStep()}
-        {![0, 3, 4, 5, 6].includes(activeStep) && (
-          <Button
-            onClick={() => {
-              setActiveStep(activeStep + 1);
-            }}
-            variant="contained"
+        <Box
+            component="div"
             sx={{
-              width: '80%',
-              padding: '1em 1em 1.3em',
-              fontSize: '1.2rem',
-              marginTop: '4em'
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              m: '0 0 1.25em',
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: { xs: '1em' },
             }}
-          >
-            Next
-          </Button>
-        )}
+            >
+            {![0, 3, 5, 6].includes(activeStep) && (
+              <Button
+                onClick={() => {
+                  setActiveStep(activeStep - 1);
+                }}
+                variant="contained"
+                sx={{
+                  width: '80%',
+                  padding: '1em 1em 1em',
+                  fontSize: '1.2rem',
+                  marginTop: '2em'
+                }}
+              >
+                Previous
+              </Button>
+            )}
+            {![0, 3, 5, 6].includes(activeStep) && (
+              <Button
+                onClick={() => {
+                  setActiveStep(activeStep + 1);
+                }}
+                variant="contained"
+                sx={{
+                  width: '80%',
+                  padding: '1em 1em 1em',
+                  fontSize: '1.2rem',
+                  marginTop: '2em'
+                }}
+              >
+                Next
+              </Button>
+            )}
+        </Box>
       </Grid>
     </Grid>
   );
