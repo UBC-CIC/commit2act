@@ -27,9 +27,12 @@ const StyledImageListItemBar = styled(ImageListItemBar)`
 const StyledImageListItem = styled(ImageListItem)`
   .MuiImageListItem-img {
     border-radius: 7px;
-    height: 278px;
     margin-bottom: 8px;
+    height: 120px;
     width: 100%;
+    [theme.breakpoints.up('md')]: {
+      height: 278px;
+    },
   }
 `;
 

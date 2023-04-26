@@ -138,8 +138,8 @@ const ActionPanel = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             m: '0 0 1.25em',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: { xs: '1em' },
+            flexDirection: { xs: 'row' },
+            gap: {xs: '10px', md: '0'}
           }}
         >
           <Button

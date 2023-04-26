@@ -179,7 +179,7 @@ const SelfReportMenu = ({ user }) => {
         sx={{
           backgroundColor: '#303839',
           width: { xs: '100%', md: '85%' },
-          padding: '2em 2em 5em',
+          padding: {xs: '1em', md: '2em 2em 5em'},
           borderRadius: '7px',
         }}
       >
@@ -219,8 +219,8 @@ const SelfReportMenu = ({ user }) => {
               justifyContent: 'space-between',
               alignItems: 'center',
               m: '0 0 1.25em',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: { xs: '1em' },
+              flexDirection: { xs: 'row' },
+              gap: {xs: '10px', md: '0'}
             }}
             >
             {![0, 3, 5, 6].includes(activeStep) && (
@@ -230,10 +230,10 @@ const SelfReportMenu = ({ user }) => {
                 }}
                 variant="contained"
                 sx={{
-                  width: '80%',
                   padding: '1em 1em 1em',
                   fontSize: '1.2rem',
-                  marginTop: '2em'
+                  marginTop: '1em',
+                  minWidth: '50%',
                 }}
               >
                 Previous
@@ -246,10 +246,10 @@ const SelfReportMenu = ({ user }) => {
                 }}
                 variant="contained"
                 sx={{
-                  width: '80%',
                   padding: '1em 1em 1em',
                   fontSize: '1.2rem',
-                  marginTop: '2em'
+                  marginTop: '1em',
+                  minWidth: '50%',
                 }}
               >
                 Next
