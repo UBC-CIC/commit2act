@@ -97,8 +97,8 @@ const AllActions = ({ setSelectedAction }) => {
               {action.action_icon ? (
                 <img
                   src={`${action.action_icon}?w=248&fit=crop&auto=format`}
-                  alt={action.action_name}
                   loading="lazy"
+                  aria-hidden="true"
                 />
               ) : (
                 <Box
