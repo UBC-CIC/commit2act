@@ -284,6 +284,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
       >
         <Avatar
           variant="square"
+          aria-hidden="true"
           sx={{
             width: {
               xs: 150,

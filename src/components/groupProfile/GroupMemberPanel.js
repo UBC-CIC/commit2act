@@ -73,6 +73,7 @@ const GroupMemberPanel = ({
                   >
                     <Avatar
                       variant="rounded"
+                      aria-hidden="true"
                       sx={{
                         background: '#5bc1ab',
                         padding: '20px',
