@@ -30,7 +30,7 @@ const Input = styled('input')`
 `;
 
 const SectionTitle = styled(Typography)`
-  margin: 1.5em 0;
+  margin: 1.5em 0 0.5em 0;
 `;
 
 const CreateGroup = ({ user }) => {
@@ -184,7 +184,7 @@ const CreateGroup = ({ user }) => {
             component={Paper}
             sx={{
               display: 'flex',
-              p: '3em',
+              p: '1em',
               justifyContent: 'center',
               flexDirection: 'column',
               overflow: 'initial',
@@ -368,7 +368,7 @@ const CreateGroup = ({ user }) => {
               )}
               <Button
                 sx={{
-                  mt: '4em',
+                  mt: '2em',
                   padding: '1em',
                   width: '100%',
                   alignSelf: 'center',
