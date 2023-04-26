@@ -157,12 +157,13 @@ const Landing = ({ user, userType }) => {
             item
             xs={12}
             justifyContent="center"
-            sx={{ width: { xs: '70%', sm: '100%' } }}
+            sx={{ width: { xs: '98%' } }}
           >
             <Typography
               variant="h1"
               sx={{
-                mt: { xs: '1.5em', lg: '0' },
+                fontSize: {xs: '2em', md: '2.5em'},
+                mt: { xs: '1em', lg: '0' },
                 wordWrap: 'break-word',
                 maxWidth: { xs: '400px', sm: '100%' },
               }}
@@ -178,6 +179,7 @@ const Landing = ({ user, userType }) => {
                   flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                   alignItems: { xs: 'center', sm: 'flex-start' },
+                  textAlign: { xs: 'left'}
                 }}
                 color="info"
                 action={
@@ -206,6 +208,7 @@ const Landing = ({ user, userType }) => {
                   flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                   alignItems: { xs: 'center', sm: 'flex-start' },
+                  textAlign: { xs: 'left'}
                 }}
                 color="success"
               >
@@ -226,7 +229,7 @@ const Landing = ({ user, userType }) => {
             item
             xs={12}
             justifyContent="center"
-            sx={{ width: { xs: '70%', sm: '100%' } }}
+            sx={{ width: { xs: '98%'} }}
           >
             <Box
               component="div"
@@ -315,7 +318,7 @@ const Landing = ({ user, userType }) => {
             item
             sx={{
               mt: { xs: '2em', md: '3em' },
-              width: { xs: '70%', sm: '100%' },
+              width: { xs: '98%' },
             }}
           >
             <GlobalLeaderboard />
@@ -356,7 +359,7 @@ const Landing = ({ user, userType }) => {
           <LinearProgress />
         </Box>
       )}
-      <Grid item xs={12} justifyContent="center" sx={{ width: '70%' }}>
+      <Grid item xs={12} justifyContent="center">
         <Box
           component="div"
           sx={{

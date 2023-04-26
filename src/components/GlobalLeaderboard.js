@@ -163,7 +163,7 @@ const GlobalLeaderboard = () => {
               {translation.formatString(translation.leaderboardDisplaying, {tab: selectedTab})}{selectedFilter.name}
             </caption>
             <TableHead sx={{ mt: '1em', backgroundColor: '#131516' }}>
-              <TableRow>
+              <TableRow sx={{ position: 'relative', zIndex: '1'}}>
                 <TableCell>{translation.rank}</TableCell>
                 <TableCell align="left">{translation.name}</TableCell>
                 <TableCell align="right">{translation.totalCO2}</TableCell>
@@ -347,13 +347,15 @@ const GlobalLeaderboard = () => {
               }}
             >
               <TabList
-                orientation={mobileView ? 'horizontal' : 'vertical'}
-                variant="scrollable"
-                scrollButtons
-                allowScrollButtonsMobile
+                orientation='vertical'
+                // variant="scrollable"
+                // scrollButtons
+                // allowScrollButtonsMobile
                 onChange={handleTabChange}
                 aria-label="Leaderboard tabs"
                 sx={{
+                  width: {xs: '100%', md: 'auto'},
+                  margin: { xs: '0 auto' },
                   borderTop: { xs: 1, sm: 1 },
                   borderRight: { xs: 0, sm: 1 },
                   borderBottom: { xs: 1, sm: 1 },
