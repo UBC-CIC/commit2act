@@ -372,11 +372,7 @@ function PageContainer (props) {
             <Route
               exact
               path={'/actions'}
-              element={<Actions    
-              databaseUser={user}
-              setUser={setUser}
-              userType={userType}
-               />}
+              element={<Actions user={user} userType={userType} />}
             />
             <Route
               exact
@@ -414,7 +410,7 @@ function PageContainer (props) {
               path={'/account-settings'}
               element={
                 <AccountSettings
-                  databaseUser={user}
+                  user={user}
                   setUser={setUser}
                   userType={userType}
                 />

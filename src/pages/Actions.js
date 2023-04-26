@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState}  from 'react';
+
 import {
   Box,
   Typography,
@@ -6,21 +7,19 @@ import {
 import useTranslation from '../components/customHooks/translations';
 import UserActions from '../components/UserActions';
 
-const Actions = ({ databaseUser}) => {
+const Actions = ({user, userType}) => {
   const translation = useTranslation();
   return (
     <>
-      {databaseUser && (
-        <>
-          <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-            <Typography variant="h1" sx={{ m: '0 0 1.25em' }}>
-              {translation.myActions}
-            </Typography>
-            <UserActions />
-          </Box>
-        </>
-      )}
-    </>
+      <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+        <Typography variant="h1" sx={{ m: '0 0 1.25em' }}>
+          {translation.myActions}
+        </Typography>
+        <UserActions  
+          databaseUser={user}
+        />
+      </Box>
+   </>
   );
 };
 

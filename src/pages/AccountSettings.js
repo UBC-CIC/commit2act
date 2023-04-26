@@ -15,7 +15,7 @@ import EditAccountInfo from '../components/accountSettings/EditAccountInfo';
 import useTranslation from '../components/customHooks/translations';
 import UserActions from '../components/UserActions';
 
-const AccountSettings = ({ databaseUser, setUser, userType }) => {
+const AccountSettings = ({user, setUser, userType }) => {
   const translation = useTranslation();
   const [showMore, setShowMore] = useState({
     validated: false,
@@ -41,7 +41,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
 
   return (
     <>
-      {databaseUser && (
+      {user && (
         <>
           <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
             <Typography
@@ -67,7 +67,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                 >
                   <Avatar
                     variant="rounded"
-                    src={databaseUser.avatar + '?' + new Date()}
+                    src={user.avatar + '?' + new Date()}
                     sx={{
                       width: 120,
                       height: 120,
@@ -101,7 +101,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                     >
                       Name:
                     </Typography>
-                    {databaseUser.name}
+                    {user.name}
                   </Typography>
                   <Typography variant="h7" component="div">
                     <Typography
@@ -111,7 +111,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                     >
                       Email:
                     </Typography>
-                    {databaseUser.email}
+                    {user.email}
                   </Typography>
                 </Box>
                 <Button
@@ -125,10 +125,10 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
             </Grid>
 
             <Typography variant="h2" sx={{ mt: '1em', mb: '0.5em' }}>{translation.myActions}</Typography>
-            <UserActions />
+            <UserActions databaseUser={user}/>
             <EditAccountInfo
               open={editUser}
-              databaseUser={databaseUser}
+              databaseUser={user}
               setEditUser={setEditUser}
               editUser={editUser}
               getCurrentDatabaseUser={getCurrentDatabaseUser}
