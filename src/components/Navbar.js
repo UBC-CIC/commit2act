@@ -207,7 +207,7 @@ function Navbar(props) {
               edge="start"
               className={classes.menuButton}
               color="inherit"
-              aria-label="toggle drawer"
+              aria-label="Toggle menu drawer"
               onClick={handleSideMenu}
             >
               <MenuIcon />
