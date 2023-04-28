@@ -220,7 +220,7 @@ const SelfReportMenu = ({ user }) => {
               alignItems: 'center',
               m: '0 0 1.25em',
               flexDirection: { xs: 'row' },
-              gap: {xs: '10px', md: '0'}
+              gap: {xs: '10px', md: '10px'}
             }}
             >
             {![0, 3, 5, 6].includes(activeStep) && (

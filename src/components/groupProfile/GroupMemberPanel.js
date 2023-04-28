@@ -76,15 +76,15 @@ const GroupMemberPanel = ({
                       aria-hidden="true"
                       sx={{
                         background: '#5bc1ab',
-                        padding: '20px',
-                        borderRadius: 5,
+                        // padding: '20px',
+                        borderRadius: '99em',
                         boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
                         border: '1px solid #000000',
                         width: {
-                          xs: 100,
+                          xs: 120,
                         },
                         height: {
-                          xs: 100,
+                          xs: 120,
                         },
                         ':hover': { cursor: 'pointer' },
                       }}
