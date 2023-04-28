@@ -18,6 +18,8 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 import EditAccountInfo from '../components/accountSettings/EditAccountInfo';
 
+import useTranslation from '../components/customHooks/translations';
+
 const AccountSettings = ({ databaseUser, setUser, userType }) => {
   const [showMore, setShowMore] = useState({
     validated: false,
@@ -27,7 +29,8 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
-  const tabs = ['Validated', 'Awaiting Validation', 'Did Not Pass Validation'];
+  const translation = new useTranslation();
+  const tabs = [translation.validated, translation.awaitingValidation, translation.notPassValidation];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [editUser, setEditUser] = useState(false);
 
@@ -119,7 +122,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                   }))
                 }
               >
-                View {showMore.validated ? 'Less' : 'More'}
+                {translation.view} {showMore.validated ? translation.less : translation.more}
               </Button>
             )}
           </Stack>
@@ -129,7 +132,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
       return (
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="subtitle2">
-            There are no validated actions to show
+            {translation.noValidatedActions}
           </Typography>
         </Box>
       );
@@ -168,7 +171,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                   }))
                 }
               >
-                View {showMore.unvalidated ? 'Less' : 'More'}
+                {translation.view} {showMore.unvalidated ? translation.less : translation.more}
               </Button>
             )}
           </Stack>
@@ -178,7 +181,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
       return (
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="subtitle2">
-            There are no unvalidated actions to show
+            {translation.noUnvalidatedActions}
           </Typography>
         </Box>
       );
@@ -217,7 +220,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                   }))
                 }
               >
-                View {showMore.failed ? 'Less' : 'More'}
+                {translation.view} {showMore.failed ? translation.less : translation.more}
               </Button>
             )}
           </Stack>
@@ -227,7 +230,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
       return (
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="subtitle2">
-            There are no failed actions to show
+            {translation.noFailedActions}
           </Typography>
         </Box>
       );
@@ -247,7 +250,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
               variant="h1"
               sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
             >
-              My Account
+              {translation.myAccount}
             </Typography>
             <Grid
               container
@@ -298,7 +301,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                       component="span"
                       sx={{ mr: '1em' }}
                     >
-                      Name:
+                      {translation.nameC}
                     </Typography>
                     {databaseUser.name}
                   </Typography>
@@ -308,7 +311,7 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                       component="span"
                       sx={{ mr: '1em' }}
                     >
-                      Email:
+                      {translation.emailC}
                     </Typography>
                     {databaseUser.email}
                   </Typography>
@@ -318,13 +321,13 @@ const AccountSettings = ({ databaseUser, setUser, userType }) => {
                   sx={{ alignSelf: { md: 'flex-start' } }}
                   onClick={() => setEditUser(true)}
                 >
-                  Edit Info
+                  {translation.editInfo}
                 </Button>
               </Grid>
             </Grid>
 
             <Typography variant="h2" sx={{ m: '3.5em 0 1.25em' }}>
-              Logged Actions
+              {translation.loggedActions}
             </Typography>
             <TabContext value={selectedTab}>
               <Box

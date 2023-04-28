@@ -13,6 +13,8 @@ import { Search } from '@mui/icons-material';
 import { getAllActions, getAllGroupsUserOwns } from '../../graphql/queries';
 import ValidationNeededCard from './ValidationNeededCard';
 
+import useTranslation from '../customHooks/translations';
+
 const ActionNameSearchBar = ({
   user,
   getAllActionsToValidate,
@@ -28,6 +30,8 @@ const ActionNameSearchBar = ({
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState();
   const rowsPerPage = 5;
+
+  const translation = useTranslation();
 
   useEffect(() => {
     const getActionNamesAndAllActions = async () => {
@@ -131,7 +135,7 @@ const ActionNameSearchBar = ({
                 {...params}
                 variant="outlined"
                 fullWidth
-                label="Search"
+                label={translation.search}
                 sx={{ my: '3em' }}
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
@@ -156,14 +160,14 @@ const ActionNameSearchBar = ({
       )}
       {error && (
         <Typography variant="subtitle2">
-          Your search for "{input}" did not match any action type names
+          {translation.formatString(translation.actionNameSearchEmptySearch, input)}
         </Typography>
       )}
       <Box sx={{ mt: '1.5em' }}>
         {!error && allActionTypes && allActionTypes.length === 0 ? (
           <Box sx={{ textAlign: 'center' }}>
             <Typography component="div" variant="subtitle2">
-              There are currently no action types
+              {translation.actionNameSearchNoActions}
             </Typography>
           </Box>
         ) : (
@@ -177,13 +181,13 @@ const ActionNameSearchBar = ({
                 justifyContent: { xs: 'center', sm: 'flex-start' },
               }}
             >
-              Filtering By:&nbsp;
+              {translation.filteringBy}&nbsp;
               <Typography
                 component="span"
                 variant="subtitle2"
                 sx={{ color: '#7e7e7e', fontWeight: 500 }}
               >
-                {!selectedActionName ? 'All Action Types' : selectedActionName}
+                {!selectedActionName ? translation.actionNameSearchAllFilter : selectedActionName}
               </Typography>
             </Typography>
           )
@@ -194,7 +198,7 @@ const ActionNameSearchBar = ({
             variant="subtitle2"
             sx={{ textAlign: 'center', mt: '1em' }}
           >
-            There are no actions in need of validation
+            {translation.validateActionsNoActions}
           </Typography>
         )}
         <Stack spacing={2}>
