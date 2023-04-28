@@ -13,6 +13,8 @@ import { Search } from '@mui/icons-material';
 import { getAllGroupsUserOwns } from '../../graphql/queries';
 import ValidationNeededCard from './ValidationNeededCard';
 
+import useTranslation from '../customHooks/translations';
+
 const GroupNameSearchBar = ({
   user,
   getAllActionsToValidate,
@@ -27,6 +29,8 @@ const GroupNameSearchBar = ({
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState();
   const rowsPerPage = 5;
+
+  const translation = useTranslation();
 
   useEffect(() => {
     const getGroupsAndAllActions = async () => {
@@ -123,7 +127,7 @@ const GroupNameSearchBar = ({
                 {...params}
                 variant="outlined"
                 fullWidth
-                label="Search"
+                label={translation.search}
                 sx={{ my: '3em' }}
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
@@ -148,14 +152,14 @@ const GroupNameSearchBar = ({
       )}
       {error && (
         <Typography variant="subtitle2">
-          Your search for "{input}" did not match any of your groups
+          {translation.formatString(translation.groupNameSearchEmptySearch, input)}
         </Typography>
       )}
       <Box sx={{ mt: '1.5em' }}>
         {!error && groupsOwnedByUser && groupsOwnedByUser.length === 0 ? (
           <Box sx={{ textAlign: 'center' }}>
             <Typography component="div" variant="subtitle2">
-              You currently do not own any groups
+              {translation.groupNameSearchNoGroups}
             </Typography>
           </Box>
         ) : (
@@ -169,13 +173,13 @@ const GroupNameSearchBar = ({
                 justifyContent: { xs: 'center', sm: 'flex-start' },
               }}
             >
-              Filtering By:&nbsp;
+              {translation.filteringBy}&nbsp;
               <Typography
                 component="span"
                 variant="subtitle2"
                 sx={{ color: '#7e7e7e', fontWeight: 500 }}
               >
-                {!selectedGroup ? 'All My Groups' : selectedGroup}
+                {!selectedGroup ? translation.groupNameSearchAllFilter : selectedGroup}
               </Typography>
             </Typography>
           )
@@ -186,7 +190,7 @@ const GroupNameSearchBar = ({
             variant="subtitle2"
             sx={{ textAlign: 'center', mt: '1em' }}
           >
-            There are no actions in need of validation
+            {translation.validateActionsNoActions}
           </Typography>
         )}
         <Stack spacing={2}>

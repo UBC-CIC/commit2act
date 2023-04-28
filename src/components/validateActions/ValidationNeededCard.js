@@ -16,6 +16,8 @@ import {
 } from '../../graphql/mutations';
 import { API } from 'aws-amplify';
 
+import useTranslation from '../customHooks/translations';
+
 const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
   const [displayedGroups, setDisplayedGroups] = useState();
 
@@ -35,6 +37,8 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
 
     getAllActions();
   };
+
+  const translation = useTranslation();
 
   //filter submitted action's group names to only show the groups that match groupsOwnedByUser
   useEffect(() => {
@@ -96,14 +100,14 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
               {action.submitted_action_items}
             </Typography>
             <Typography variant="body1">
-              CO2 Saved: {action.g_co2_saved} g
+              {translation.co2SavedColon} {action.g_co2_saved} g
             </Typography>
             <Typography variant="body1">
-              Total Points Earned: {action.points_earned}
+              {translation.totalPointsEarnedColon} {action.points_earned}
             </Typography>
             {displayedGroups && (
               <Typography variant="body1">
-                Submitted in: {displayedGroups}
+                {translation.submittedInC} {displayedGroups}
               </Typography>
             )}
           </CardContent>
@@ -123,7 +127,7 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
               startIcon={<Done />}
               onClick={approveAction}
             >
-              Accept
+              {translation.accept}
             </Button>
             <Button
               variant="outlined"
@@ -131,7 +135,7 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
               color={'error'}
               onClick={rejectAction}
             >
-              Reject
+              {translation.reject}
             </Button>
           </Stack>
         </CardActions>

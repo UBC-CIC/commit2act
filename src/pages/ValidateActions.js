@@ -8,6 +8,8 @@ import UsersWithoutGroupPanel from '../components/validateActions/UsersWithoutGr
 import AllUnvalidatedActionsPanel from '../components/validateActions/AllUnvalidatedActionsPanel';
 import MyGroupsPanel from '../components/validateActions/MyGroupsPanel';
 
+import useTranslation from '../components/customHooks/translations';
+
 const ValidateActions = ({ user, userType }) => {
   const tabs = ['My Groups', 'Users Without Groups', 'All Unvalidated Actions'];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
@@ -17,11 +19,13 @@ const ValidateActions = ({ user, userType }) => {
     setSelectedTab(newValue);
   };
 
+  const translation = useTranslation();
+
   return (
     <>
       <Box sx={{ textAlign: { xs: 'center' } }}>
         <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-          Validate Actions
+          {translation.validateActions}
         </Typography>
       </Box>
       {/* render tab view if user is an Admin, render single page search bar view if user is not */}
@@ -47,9 +51,9 @@ const ValidateActions = ({ user, userType }) => {
                 variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
                 centered={!scrollableTabs}
               >
-                <Tab label={tabs[0]} value={tabs[0]} />
-                <Tab label={tabs[1]} value={tabs[1]} />
-                <Tab label={tabs[2]} value={tabs[2]} />
+                <Tab label={translation.myGroups} value={tabs[0]} />
+                <Tab label={translation.validateActionsUsersWithoutGroupsTab} value={tabs[1]} />
+                <Tab label={translation.validateActionsAllUnvalidatedActionsTab} value={tabs[2]} />
               </TabList>
             </Box>
             <TabPanel value={tabs[0]}>

@@ -5,12 +5,16 @@ import { getAllGroups, getAllGroupsForUser } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import GroupCard from '../components/GroupCard';
 
+import useTranslation from '../components/customHooks/translations';
+
 const FindGroup = ({ user }) => {
   const [groups, setGroups] = useState();
   const [usersGroups, setUsersGroups] = useState();
   const [input, setInput] = useState('');
   const [filteredGroups, setFilteredGroups] = useState();
   const [error, setError] = useState();
+
+  const translation = useTranslation();
 
   useEffect(() => {
     const getGroups = async () => {
@@ -80,10 +84,10 @@ const FindGroup = ({ user }) => {
     <>
       <Box sx={{ textAlign: { xs: 'center' } }}>
         <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-          Search For A Group
+          {translation.findGroupTitle}
         </Typography>
         <Typography variant="subtitle2" sx={{ mt: { xs: '3em' } }}>
-          Enter the group name of any public group
+          {translation.findGroupDescription}
         </Typography>
         <TextField
           id="outlined-basic"
@@ -111,7 +115,7 @@ const FindGroup = ({ user }) => {
         />
         {error && (
           <Typography variant="subtitle2">
-            Your search for "{input}" did not match any public groups
+            {translation.formatString(translation.findGroupErrorSearch, input)}
           </Typography>
         )}
       </Box>
@@ -120,13 +124,13 @@ const FindGroup = ({ user }) => {
         if (input === '') {
           return (
             <Typography variant="subtitle2" my={'1rem'}>
-              Here are the top 5 public groups who you may want to be a part of
+              {translation.findGroupTopGroups}
             </Typography>
           );
         } else {
           return (
             <Typography variant="subtitle2" my={'1rem'}>
-              Search results
+              {translation.searchResults}
             </Typography>
           );
         }
