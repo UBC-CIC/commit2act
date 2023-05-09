@@ -135,17 +135,43 @@ const ActionPanel = ({
           </Typography>
         )}
         {renderActionForm()}
-        <Button
-          onClick={calculateCO2}
-          variant="contained"
-          disabled={disableButton}
+        <Box
+          component="div"
           sx={{
-            padding: '1em 1em 1.3em',
-            fontSize: '1.2rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            m: '0 0 1.25em',
+            flexDirection: { xs: 'row' },
+            gap: {xs: '10px', md: '10px'}
           }}
         >
-          {translation.next}
-        </Button>
+          <Button
+            onClick={() => {
+              setActiveStep(activeStep - 1);
+            }}
+            variant="contained"
+            sx={{
+              width: '50%',
+              padding: '1em 1em 1em',
+              fontSize: '1.2rem',
+            }}
+          >
+            {translation.previous}
+          </Button>
+          <Button
+            onClick={calculateCO2}
+            variant="contained"
+            disabled={disableButton}
+            sx={{
+              width: '50%',
+              padding: '1em 1em 1em',
+              fontSize: '1.2rem',
+            }}
+          >
+            {translation.next}
+          </Button>
+        </Box>
       </Box>
     </Grid>
   );

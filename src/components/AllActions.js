@@ -27,9 +27,12 @@ const StyledImageListItemBar = styled(ImageListItemBar)`
 const StyledImageListItem = styled(ImageListItem)`
   .MuiImageListItem-img {
     border-radius: 7px;
-    height: 278px;
     margin-bottom: 8px;
+    height: 120px;
     width: 100%;
+    @media only screen and (min-width: 800px) {
+      height: 278px;
+    },
   }
 `;
 
@@ -94,8 +97,8 @@ const AllActions = ({ setSelectedAction }) => {
               {action.action_icon ? (
                 <img
                   src={`${action.action_icon}?w=248&fit=crop&auto=format`}
-                  alt={action.action_name}
                   loading="lazy"
+                  aria-hidden="true"
                 />
               ) : (
                 <Box

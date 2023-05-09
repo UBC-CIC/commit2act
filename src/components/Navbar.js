@@ -207,7 +207,7 @@ function Navbar(props) {
               edge="start"
               className={classes.menuButton}
               color="inherit"
-              aria-label="open drawer"
+              aria-label="Toggle menu drawer"
               onClick={handleSideMenu}
             >
               <MenuIcon />
@@ -241,6 +241,10 @@ function Navbar(props) {
             <LanguageHandler />
           </div>
           <div className={classes.sectionDesktop}>
+            <MenuItem className={classes.logOut} onClick={handleLogout}>
+              <span>{translation.logout} </span>
+              <ExitToApp color={'error'} />
+            </MenuItem>
             <IconButton
               edge="end"
               aria-label="account of current user"
@@ -265,7 +269,6 @@ function Navbar(props) {
               <More />
             </IconButton>
             {renderMobileMenu}
-            {renderMenu}
           </div>
         </Toolbar>
       </AppBar>

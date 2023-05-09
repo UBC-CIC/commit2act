@@ -64,6 +64,7 @@ const translations = {
   co2SavedWeek: 'CO2 Saved This Week',
   collectiveImpact: 'Collective Impact',
   myGroups: 'My Groups',
+  myActions: 'My Actions',
   createNewGroup: 'Create New Group',
   globalGroups: 'Global Groups',
   globalUsers: 'Global Users',
@@ -254,6 +255,7 @@ const translations = {
   submittedInC: 'Submitted in:',
   accept: 'Accept',
   reject: 'Reject',
+  actions: 'Actions',
 };
 
 export default translations;
