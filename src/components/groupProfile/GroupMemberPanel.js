@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Avatar, Tooltip, IconButton, Paper, Badge } from '@mui/material';
+import { Grid, Avatar, Tooltip, IconButton, Paper, Badge, Box } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import GroupMemberPanelDialog from './GroupMemberPanelDialog';
 
@@ -57,7 +57,7 @@ const GroupMemberPanel = ({
                   aria-label="user avatar"
                   disableRipple={true}
                   onClick={() => handleOpen(member)}
-                  sx={{ mb: { xs: '1.5em' } }}
+                  sx={{ mb: { xs: '0.25em' } }}
                 >
                   <Badge
                     overlap="rectangular"
@@ -73,17 +73,18 @@ const GroupMemberPanel = ({
                   >
                     <Avatar
                       variant="rounded"
+                      aria-hidden="true"
                       sx={{
                         background: '#5bc1ab',
-                        padding: '20px',
-                        borderRadius: 5,
+                        // padding: '20px',
+                        borderRadius: '99em',
                         boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
                         border: '1px solid #000000',
                         width: {
-                          xs: 100,
+                          xs: 120,
                         },
                         height: {
-                          xs: 100,
+                          xs: 120,
                         },
                         ':hover': { cursor: 'pointer' },
                       }}
@@ -94,6 +95,14 @@ const GroupMemberPanel = ({
                   </Badge>
                 </IconButton>
               </Tooltip>
+              <Box component="span" sx={{
+                      color: '#000',
+                      fontSize: '0.75rem',
+                      padding: '1em',
+                    }}
+                      >
+                      {member.name}
+                    </Box>
             </Grid>
           ))}
           {openDialog && (

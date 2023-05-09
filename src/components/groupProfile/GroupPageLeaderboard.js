@@ -34,6 +34,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import UserContributionDonutChart from '../UserContributionDonutChart';
+import { useNavigate } from 'react-router-dom';
 
 import useTranslation from "../customHooks/translations";
 
@@ -51,6 +52,7 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
+  const navigate = useNavigate();
   const translation = useTranslation();
   const tabs = ['Global Groups', 'Group Members'];
   const filters = [
@@ -386,7 +388,16 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
+                      <Typography
+                        onClick={() => {
+                          navigate(`/group-profile/${group.group_name}`);
+                        }}
+                        sx={{
+                          ':hover': { opacity: '0.6', cursor: 'pointer' },
+                        }}
+                      >
                       {group.group_name}
+                      </Typography>
                     </TableCell>
                     <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
                     <TableCell align="right">{group.total_points}</TableCell>

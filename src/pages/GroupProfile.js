@@ -284,7 +284,7 @@ const GroupProfile = ({ user }) => {
               item
               sx={{
                 mt: { xs: '2em', md: '3em' },
-                width: { xs: '70%', sm: '100%' },
+                width: { xs: '90%' },
               }}
             >
               <GroupPageLeaderboard
@@ -299,7 +299,7 @@ const GroupProfile = ({ user }) => {
               item
               sx={{
                 mt: { xs: '2em', md: '3em' },
-                width: { xs: '70%', sm: '100%' },
+                width: { xs: '90%' },
               }}
             >
               <TabContext value={selectedTab}>

@@ -183,7 +183,7 @@ const SelfReportMenu = ({ user }) => {
         sx={{
           backgroundColor: '#303839',
           width: { xs: '100%', md: '85%' },
-          padding: '2em 2em 5em',
+          padding: {xs: '1em', md: '2em 2em 5em'},
           borderRadius: '7px',
         }}
       >
@@ -216,22 +216,50 @@ const SelfReportMenu = ({ user }) => {
           {steps[activeStep]}
         </Typography>
         {renderFormStep()}
-        {![0, 3, 4, 5, 6].includes(activeStep) && (
-          <Button
-            onClick={() => {
-              setActiveStep(activeStep + 1);
-            }}
-            variant="contained"
+        <Box
+            component="div"
             sx={{
-              width: '80%',
-              padding: '1em 1em 1.3em',
-              fontSize: '1.2rem',
-              marginTop: '4em'
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              m: '0 0 1.25em',
+              flexDirection: { xs: 'row' },
+              gap: {xs: '10px', md: '10px'}
             }}
-          >
-            {translation.next}
-          </Button>
-        )}
+            >
+            {![0, 3, 5, 6].includes(activeStep) && (
+              <Button
+                onClick={() => {
+                  setActiveStep(activeStep - 1);
+                }}
+                variant="contained"
+                sx={{
+                  padding: '1em 1em 1em',
+                  fontSize: '1.2rem',
+                  marginTop: '1em',
+                  minWidth: '50%',
+                }}
+              >
+                Previous
+              </Button>
+            )}
+            {![0, 3, 5, 6].includes(activeStep) && (
+              <Button
+                onClick={() => {
+                  setActiveStep(activeStep + 1);
+                }}
+                variant="contained"
+                sx={{
+                  padding: '1em 1em 1em',
+                  fontSize: '1.2rem',
+                  marginTop: '1em',
+                  minWidth: '50%',
+                }}
+              >
+                {translation.next}
+              </Button>
+            )}
+        </Box>
       </Grid>
     </Grid>
   );
