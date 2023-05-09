@@ -64,6 +64,7 @@ const translations = {
   co2SavedWeek: 'CO2 Saved This Week',
   collectiveImpact: 'Collective Impact',
   myGroups: 'My Groups',
+  myActions: 'My Actions',
   createNewGroup: 'Create New Group',
   globalGroups: 'Global Groups',
   globalUsers: 'Global Users',
@@ -176,6 +177,7 @@ const translations = {
   logActionStep6: 'Bonus Question',
   logActionStep7: 'CO2 Saved',
   next: 'Next',
+  previous: 'Previous',
   chooseDate: 'Choose Date',
   mustBeNumber: 'Input must be a number or decimal greater than 0',
   imageValidationText: 'Please upload an image related to your action item for verification',
@@ -254,6 +256,7 @@ const translations = {
   submittedInC: 'Submitted in:',
   accept: 'Accept',
   reject: 'Reject',
+  actions: 'Actions',
 };
 
 export default translations;

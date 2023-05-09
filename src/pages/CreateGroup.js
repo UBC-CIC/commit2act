@@ -32,7 +32,7 @@ const Input = styled('input')`
 `;
 
 const SectionTitle = styled(Typography)`
-  margin: 1.5em 0;
+  margin: 1.5em 0 0.5em 0;
 `;
 
 const CreateGroup = ({ user }) => {
@@ -188,7 +188,7 @@ const CreateGroup = ({ user }) => {
             component={Paper}
             sx={{
               display: 'flex',
-              p: '3em',
+              p: '1em',
               justifyContent: 'center',
               flexDirection: 'column',
               overflow: 'initial',
@@ -202,6 +202,9 @@ const CreateGroup = ({ user }) => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: '1em',
+                  maxWidth: '800px',
+                  margin: '0 auto',
+                  width: '100%'
                 }}
               >
                 {avatarPreview ? (
@@ -241,6 +244,9 @@ const CreateGroup = ({ user }) => {
                   flexDirection: 'column',
                   gap: '1em',
                   mt: '1em',
+                  maxWidth: '800px',
+                  margin: '0 auto',
+                  width: '100%'
                 }}
               >
                 <>
@@ -260,20 +266,24 @@ const CreateGroup = ({ user }) => {
                         'A group already exists with the given name')
                     }
                     onChange={updateForm}
-                    sx={{ width: '100%' }}
+                    sx={{ 
+                      width: '100%',
+                    }}
                   />
                 </>
                 <>
                   <SectionTitle variant="h2">{translation.groupDescription}</SectionTitle>
                   <TextField
                     multiline
-                    rows={4}
+                    rows={6}
                     label={translation.groupDescription}
                     name="group_description"
                     value={createGroupForm.group_description}
                     InputLabelProps={{ shrink: true }}
                     onChange={updateForm}
-                    sx={{ width: '100%' }}
+                    sx={{ 
+                      width: '100%',
+                    }}
                   />
                 </>
                 <>
@@ -287,7 +297,7 @@ const CreateGroup = ({ user }) => {
                     sx={{
                       display: 'flex',
                       flexDirection: 'row',
-                      justifyContent: 'space-evenly',
+                      justifyContent: 'flex-start',
                     }}
                   >
                     <FormControlLabel
@@ -362,10 +372,11 @@ const CreateGroup = ({ user }) => {
               )}
               <Button
                 sx={{
-                  mt: '4em',
+                  mt: '2em',
                   padding: '1em',
                   width: '100%',
                   alignSelf: 'center',
+                  maxWidth: '800px',
                 }}
                 variant="contained"
                 type="submit"

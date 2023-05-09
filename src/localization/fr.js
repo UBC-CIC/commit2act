@@ -66,6 +66,7 @@ const translations = {
   co2SavedWeek: 'CO2 économisé cette semaine',
   collectiveImpact: 'Impact collectif',
   myGroups: 'Mes groupes',
+  myActions: 'Mes actions',
   createNewGroup: 'Créer un nouveau groupe',
   globalGroups: 'Groupes globaux',
   globalUsers: 'Utilisateurs globaux',
@@ -178,6 +179,7 @@ const translations = {
   logActionStep6: 'Question bonus',
   logActionStep7: 'CO2 économisé',
   next: 'Suivant',
+  previous: 'Précédente',
   chooseDate: 'Choisir une date',
   mustBeNumber: 'La valeur doit être un nombre ou un décimal supérieur à 0',
   imageValidationText: "Veuillez télécharger une image liée à l'élément d'action pour la vérification",
@@ -256,6 +258,7 @@ const translations = {
   submittedInC: 'Soumis dans :',
   accept: 'Accepter',
   reject: 'Rejeter',
+  actions: 'Actions',
 };
 
 export default translations;
