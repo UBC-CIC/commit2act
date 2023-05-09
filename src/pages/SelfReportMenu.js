@@ -240,7 +240,7 @@ const SelfReportMenu = ({ user }) => {
                   minWidth: '50%',
                 }}
               >
-                Previous
+                {translation.previous}
               </Button>
             )}
             {![0, 3, 5, 6].includes(activeStep) && (

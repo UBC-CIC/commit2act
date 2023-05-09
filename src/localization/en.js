@@ -177,6 +177,7 @@ const translations = {
   logActionStep6: 'Bonus Question',
   logActionStep7: 'CO2 Saved',
   next: 'Next',
+  previous: 'Previous',
   chooseDate: 'Choose Date',
   mustBeNumber: 'Input must be a number or decimal greater than 0',
   imageValidationText: 'Please upload an image related to your action item for verification',
