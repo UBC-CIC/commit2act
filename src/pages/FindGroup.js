@@ -5,12 +5,16 @@ import { getAllGroups, getAllGroupsForUser } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import GroupCard from '../components/GroupCard';
 
+import useTranslation from '../components/customHooks/translations';
+
 const FindGroup = ({ user }) => {
   const [groups, setGroups] = useState();
   const [usersGroups, setUsersGroups] = useState();
   const [input, setInput] = useState('');
   const [filteredGroups, setFilteredGroups] = useState();
   const [error, setError] = useState();
+
+  const translation = useTranslation();
 
   useEffect(() => {
     const getGroups = async () => {
@@ -25,6 +29,18 @@ const FindGroup = ({ user }) => {
       ]);
       setGroups(allGroupsRes.data.getAllGroups);
       setUsersGroups(usersGroupsRes.data.getAllGroupsForUser);
+
+      const filtered = allGroupsRes.data.getAllGroups.filter((group) => {
+        return group.is_public;
+      });
+
+      const sorted = filtered.sort((a, b) => {
+        return b.monthly_points - a.monthly_points;
+      });
+
+      sorted.length > 5
+        ? setFilteredGroups(sorted.slice(0, 5))
+        : setFilteredGroups(sorted);
     };
     user && getGroups();
   }, [user]);
@@ -38,7 +54,14 @@ const FindGroup = ({ user }) => {
     if (groups) {
       if (input === '') {
         setError(false);
-        setFilteredGroups([]);
+        const filtered = groups.filter((group) => {
+          return group.is_public;
+        });
+
+        const sorted = filtered.sort((a, b) => {
+          return b.monthly_points - a.monthly_points;
+        });
+        setFilteredGroups(sorted);
       } else {
         const filtered = groups.filter((group) => {
           return (
@@ -61,10 +84,10 @@ const FindGroup = ({ user }) => {
     <>
       <Box sx={{ textAlign: { xs: 'center' } }}>
         <Typography variant="h1" sx={{ mt: { xs: '1.5em', md: '0' } }}>
-          Search For A Group
+          {translation.findGroupTitle}
         </Typography>
         <Typography variant="subtitle2" sx={{ mt: { xs: '3em' } }}>
-          Enter the group name of any public group
+          {translation.findGroupDescription}
         </Typography>
         <TextField
           id="outlined-basic"
@@ -92,10 +115,27 @@ const FindGroup = ({ user }) => {
         />
         {error && (
           <Typography variant="subtitle2">
-            Your search for "{input}" did not match any public groups
+            {translation.formatString(translation.findGroupErrorSearch, input)}
           </Typography>
         )}
       </Box>
+
+      {(() => {
+        if (input === '') {
+          return (
+            <Typography variant="subtitle2" my={'1rem'}>
+              {translation.findGroupTopGroups}
+            </Typography>
+          );
+        } else {
+          return (
+            <Typography variant="subtitle2" my={'1rem'}>
+              {translation.searchResults}
+            </Typography>
+          );
+        }
+      })()}
+
       {filteredGroups &&
         usersGroups &&
         filteredGroups.map((group, index) => (

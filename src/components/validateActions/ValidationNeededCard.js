@@ -16,6 +16,8 @@ import {
 } from '../../graphql/mutations';
 import { API } from 'aws-amplify';
 
+import useTranslation from '../customHooks/translations';
+
 const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
   const [displayedGroups, setDisplayedGroups] = useState();
 
@@ -35,6 +37,8 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
 
     getAllActions();
   };
+
+  const translation = useTranslation();
 
   //filter submitted action's group names to only show the groups that match groupsOwnedByUser
   useEffect(() => {
@@ -73,7 +77,10 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
             <CardMedia
               component="img"
               sx={{ width: 150 }}
-              image={action.submitted_image}
+              image={action.submitted_image.replace(
+                /(https?:\/\/)+/g,
+                'https://'
+              )}
               alt={`A submitted ${action.action_name} action image submitted at ${action.time_submitted}`}
             />
           )}
@@ -93,14 +100,14 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
               {action.submitted_action_items}
             </Typography>
             <Typography variant="body1">
-              CO2 Saved: {action.g_co2_saved} g
+              {translation.co2SavedColon} {action.g_co2_saved} g
             </Typography>
             <Typography variant="body1">
-              Total Points Earned: {action.points_earned}
+              {translation.totalPointsEarnedColon} {action.points_earned}
             </Typography>
             {displayedGroups && (
               <Typography variant="body1">
-                Submitted in: {displayedGroups}
+                {translation.submittedInC} {displayedGroups}
               </Typography>
             )}
           </CardContent>
@@ -115,11 +122,20 @@ const ValidationNeededCard = ({ action, getAllActions, groupsOwnedByUser }) => {
           }}
         >
           <Stack spacing={2} direction={{ xs: 'row', sm: 'column' }}>
-            <Button variant="contained" startIcon={<Done />} onClick={approveAction}>
-              Accept
+            <Button
+              variant="contained"
+              startIcon={<Done />}
+              onClick={approveAction}
+            >
+              {translation.accept}
             </Button>
-            <Button variant="outlined" startIcon={<Clear />} color={'error'} onClick={rejectAction}>
-              Reject
+            <Button
+              variant="outlined"
+              startIcon={<Clear />}
+              color={'error'}
+              onClick={rejectAction}
+            >
+              {translation.reject}
             </Button>
           </Stack>
         </CardActions>

@@ -3,6 +3,8 @@ import { Typography, Box, Grid, TextField, Button } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getActionItemsForAction } from '../../graphql/queries';
 
+import useTranslation from '../customHooks/translations';
+
 const ActionPanel = ({
   selectedAction,
   actionItemValues,
@@ -15,6 +17,8 @@ const ActionPanel = ({
   const [actionItems, setActionItems] = useState();
   const [inputError, setInputError] = useState(false);
   const [disableButton, setDisableButton] = useState(true);
+
+  const translation = useTranslation();
 
   useEffect(() => {
     getActionItems();
@@ -127,7 +131,7 @@ const ActionPanel = ({
         <Typography variant="subtitle2" sx={{marginTop:'-30px', fontSize:'1.2rem'}}>{action_name}</Typography>
         {inputError && (
           <Typography variant="subtitle2">
-            Input must be a number or decimal greater than 0
+            {translation.mustBeNumber}
           </Typography>
         )}
         {renderActionForm()}
@@ -153,7 +157,7 @@ const ActionPanel = ({
               fontSize: '1.2rem',
             }}
           >
-            Previous
+            {translation.previous}
           </Button>
           <Button
             onClick={calculateCO2}
@@ -165,7 +169,7 @@ const ActionPanel = ({
               fontSize: '1.2rem',
             }}
           >
-            Next
+            {translation.next}
           </Button>
         </Box>
       </Box>

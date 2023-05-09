@@ -301,6 +301,7 @@ export const getAllGroups = /* GraphQL */ `
       total_points
       weekly_co2
       weekly_points
+      monthly_points
     }
   }
 `;

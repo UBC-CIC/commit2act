@@ -168,27 +168,28 @@ function Login (props) {
   const [invalidEmailError, setInvalidEmailError] = useState(false);
   const [timeLimitError, setTimeLimitError] = useState('');
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  const translation = useTranslation();
+
   // password check
   const [passwordRequirements, setPasswordRequirements] = useState({
-    uppercase: { error: false, description: 'At least one uppercase letter' },
-    lowercase: { error: false, description: 'At least one lowercase letter' },
-    digit: { error: false, description: 'At least one digit' },
-    special: { error: false, description: 'At least one special character' },
+    uppercase: { error: false, description: translation.oneUppercase },
+    lowercase: { error: false, description: translation.oneLowercase },
+    digit: { error: false, description: translation.oneDigit },
+    special: { error: false, description: translation.oneSpecialCharacter },
     minLength: {
       error: false,
-      description: 'Should be more than 8 characters',
+      description: translation.more8Characters,
     },
     maxLength: {
       error: false,
-      description: 'Should be less than 16 characters',
+      description: translation.less16Characters,
     },
   });
   const [passwordUnmatchError, setPasswordUnmatchError] = useState(false);
   const [confirmPasswordString, setConfirmPasswordString] = useState('');
 
   const { classes } = useStyles();
-
-  const translation = useTranslation();
 
   useEffect(() => {
     async function retrieveUser () {
@@ -866,7 +867,7 @@ function Login (props) {
                   name={'password'}
                   type="password"
                   error={accountCreationPasswordError}
-                  helperText={'Your password must have the following:'}
+                  helperText={translation.passwordSettings}
                   autoComplete={'new-password'}
                   onChange={onChangePassword}
                   className={classes.textFieldStyle}

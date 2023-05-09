@@ -13,6 +13,8 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { styled } from '@mui/material/styles';
 
+import useTranslation from '../customHooks/translations';
+
 const StyledButton = styled(Button)`
   margin-top: 5em;
   width: 80%;
@@ -33,12 +35,14 @@ const BonusPointQuiz = ({
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
   const [numTries, setNumTries] = useState(1);
 
+  const translation = useTranslation();
+
   const displayQuiz = () => {
     return (
       <>
         <Typography variant="subtitle2">{question_text}</Typography>
         <FormControl>
-          <FormLabel id="bonus-quiz-answer-choices">Answer Choices</FormLabel>
+          <FormLabel id="bonus-quiz-answer-choices">{translation.bonusQuizChoicesLabel}</FormLabel>
           <RadioGroup
             aria-labelledby="bonus-quiz-answer-choices"
             name="quiz-answer-choices-group"
@@ -66,7 +70,7 @@ const BonusPointQuiz = ({
             }}
             variant="contained"
           >
-            Submit Quiz
+            {translation.bonusQuizSubmit}
           </StyledButton>
         ) : (
           <StyledButton
@@ -82,7 +86,7 @@ const BonusPointQuiz = ({
               fontSize: '1.2rem',
             }}
           >
-            Skip Quiz
+            {translation.bonusQuizSkip}
           </StyledButton>
         )}
       </>
@@ -94,7 +98,7 @@ const BonusPointQuiz = ({
       <>
         {correctAnswersArray.includes(userAnswer) ? (
           <>
-            <Typography variant="h2">Correct!</Typography>
+            <Typography variant="h2">{translation.correct}</Typography>
             <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 80, color: '#BCF10C' }} />
             <Typography variant="subtitle1" sx={{ mt: '1.5em' }}>
               {numTries > 1
@@ -108,12 +112,12 @@ const BonusPointQuiz = ({
               }}
               variant="contained"
             >
-              Finish
+              {translation.finish}
             </StyledButton>
           </>
         ) : (
           <>
-            <Typography variant="h2">Incorrect!</Typography>
+            <Typography variant="h2">{translation.incorrect}</Typography>
             <CancelOutlinedIcon sx={{ fontSize: 80, color: '#BCF10C' }} />
             <StyledButton
               onClick={() => {
@@ -122,7 +126,7 @@ const BonusPointQuiz = ({
               }}
               variant="contained"
             >
-              Try Again
+              {translation.tryAgain}
             </StyledButton>
           </>
         )}

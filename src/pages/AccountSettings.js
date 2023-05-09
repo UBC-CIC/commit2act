@@ -25,7 +25,7 @@ const AccountSettings = ({user, setUser, userType }) => {
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
-  const tabs = ['Validated', 'Awaiting Validation', 'Did Not Pass Validation'];
+  const tabs = [translation.validated, translation.awaitingValidation, translation.notPassValidation];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [editUser, setEditUser] = useState(false);
 
@@ -48,7 +48,7 @@ const AccountSettings = ({user, setUser, userType }) => {
               variant="h1"
               sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
             >
-              My Account
+              {translation.myAccount}
             </Typography>
             <Grid
               container
@@ -99,7 +99,7 @@ const AccountSettings = ({user, setUser, userType }) => {
                       component="span"
                       sx={{ mr: '1em' }}
                     >
-                      Name:
+                      {translation.nameC}
                     </Typography>
                     {user.name}
                   </Typography>
@@ -109,7 +109,7 @@ const AccountSettings = ({user, setUser, userType }) => {
                       component="span"
                       sx={{ mr: '1em' }}
                     >
-                      Email:
+                      {translation.emailC}
                     </Typography>
                     {user.email}
                   </Typography>
@@ -119,7 +119,7 @@ const AccountSettings = ({user, setUser, userType }) => {
                   sx={{ alignSelf: { md: 'flex-start' } }}
                   onClick={() => setEditUser(true)}
                 >
-                  Edit Info
+                  {translation.editInfo}
                 </Button>
               </Grid>
             </Grid>

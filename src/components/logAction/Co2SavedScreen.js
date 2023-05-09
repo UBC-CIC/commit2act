@@ -7,6 +7,8 @@ import {
 } from '../../graphql/mutations';
 import { getSingleSubmittedAction } from '../../graphql/queries';
 
+import useTranslation from '../customHooks/translations';
+
 const CO2SavedScreen = ({
   actionId,
   actionDate,
@@ -25,6 +27,8 @@ const CO2SavedScreen = ({
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
   const [validationSuccess, setValidationSuccess] = useState(false);
+
+  const translation = useTranslation();
 
   useEffect(() => {
     submitAction();
@@ -106,12 +110,12 @@ const CO2SavedScreen = ({
       {loading && (
         <>
           <Typography variant="h3">
-            Your action is currently being{' '}
-            {actionSubmitting ? 'submitted' : 'validated'}
+            {translation.co2SavedScreenState}{' '}
+            {actionSubmitting ? translation.submitted : translation.validated}
           </Typography>
           {!actionSubmitting && (
             <Typography variant="subtitle2">
-              Press skip to view validation results at a later time
+              {translation.skip}
             </Typography>
           )}
           <CircularProgress sx={{ mt: '1em' }} />
@@ -124,19 +128,19 @@ const CO2SavedScreen = ({
           {validationSuccess ? (
             <Box>
               <Typography variant="h3">
-                Your action has been validated
+                {translation.co2SavedScreenValidated}
               </Typography>
               <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
-                You have saved {totalCO2Saved} g of CO2
+			  {translation.formatString(translation.co2SavedScreenSaved, totalCO2Saved)}
               </Typography>
             </Box>
           ) : (
             <Box>
               <Typography variant="h3" component="p">
-                Your action is awaiting admin approval
+                {translation.co2SavedScreenApproval}
               </Typography>
               <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: '#34b198' }}>
-                The impact of your action is {totalCO2Saved} g of CO2 saved
+                {translation.formatString(translation.co2SavedScreenImpact, totalCO2Saved)}
               </Typography>
             </Box>
           )}
@@ -160,7 +164,7 @@ const CO2SavedScreen = ({
           }}
           variant="contained"
         >
-          {!loading ? 'Add Another Action' : 'Skip'}
+          {!loading ? translation.co2SavedScreenAnother : 'Skip'}
         </Button>
       )}
     </Box>

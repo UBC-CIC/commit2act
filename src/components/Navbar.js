@@ -12,7 +12,7 @@ import {
   Backdrop,
   Menu,
   MenuItem,
-  Box
+  Box,
 } from '@mui/material';
 import { ExitToApp, More } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -20,11 +20,11 @@ import { Auth } from 'aws-amplify';
 import { connect } from 'react-redux';
 import { updateLoginState } from '../actions/loginActions';
 import { updateMenuState } from '../actions/menuActions';
-import LanguageHandler from "./LanguageHandler";
-import useTranslation from "./customHooks/translations";
+import LanguageHandler from './LanguageHandler';
+import useTranslation from './customHooks/translations';
 
 const useStyles = makeStyles()((theme) => {
-  return{
+  return {
     grow: {
       flexGrow: 1,
     },
@@ -38,7 +38,7 @@ const useStyles = makeStyles()((theme) => {
       background: '#262a2c',
       boxShadow: 'none',
     },
-    languageLabel : {
+    languageLabel: {
       display: 'none',
       [theme.breakpoints.up('sm')]: {
         display: 'inline',
@@ -87,7 +87,7 @@ const useStyles = makeStyles()((theme) => {
     },
     logOut: {
       color: '#ff8512',
-    }
+    },
   };
 });
 
@@ -99,7 +99,7 @@ function Navbar(props) {
     menuEnabled,
     showSideMenuButton,
   } = props;
-  
+
   const { classes } = useStyles();
 
   const navigate = useNavigate();
@@ -220,8 +220,9 @@ function Navbar(props) {
               width: 36,
               marginRight: 1,
             }}
-            alt="" 
-            src='icon-192x192.png'  />
+            alt=""
+            src={`${process.env.PUBLIC_URL}/icon-192x192.png`}
+          />
 
           <Typography
             className={classes.title}
@@ -231,11 +232,13 @@ function Navbar(props) {
           >
             Commit2Act
           </Typography>
-          
+
           <div className={classes.grow} />
           <div>
-		      <label htmlFor="language" className={classes.languageLabel}>{translation.changeLanguage}</label>
-              <LanguageHandler />
+            <label htmlFor="language" className={classes.languageLabel}>
+              {translation.changeLanguage}
+            </label>
+            <LanguageHandler />
           </div>
           <div className={classes.sectionDesktop}>
             <MenuItem className={classes.logOut} onClick={handleLogout}>
@@ -250,7 +253,9 @@ function Navbar(props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar className={classes.avatar}>{user.charAt(0).toUpperCase()}</Avatar>
+              <Avatar className={classes.avatar}>
+                {user.charAt(0).toUpperCase()}
+              </Avatar>
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

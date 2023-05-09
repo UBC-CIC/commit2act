@@ -10,6 +10,8 @@ import ActionNameSearchBar from './ActionNameSearchBar';
 import { API } from 'aws-amplify';
 import { getAllSubmittedActionsToValidate } from '../../graphql/queries';
 
+import useTranslation from '../customHooks/translations';
+
 const MyGroupsPanel = ({ user }) => {
   const [allActions, setAllActions] = useState();
   const [filterOption, setFilterOption] = useState('Group Name');
@@ -25,6 +27,8 @@ const MyGroupsPanel = ({ user }) => {
     });
     setAllActions(res.data.getAllSubmittedActionsToValidate);
   };
+
+  const translation = useTranslation();
 
   useEffect(() => {
     user && getAllActionsToValidate();
@@ -42,15 +46,15 @@ const MyGroupsPanel = ({ user }) => {
           flexDirection: { xs: 'column', md: 'row' },
         }}
       >
-        <Typography variant="subtitle2">Search By:</Typography>
+        <Typography variant="subtitle2">{translation.searchByC}</Typography>
         <ToggleButtonGroup
           color="primary"
           value={filterOption}
           exclusive
           onChange={handleFilterChange}
         >
-          <ToggleButton value="Group Name">Group Name</ToggleButton>
-          <ToggleButton value="Action Type Name">Action Name</ToggleButton>
+          <ToggleButton value="Group Name">{translation.groupName}</ToggleButton>
+          <ToggleButton value="Action Type Name">{translation.actionName}</ToggleButton>
         </ToggleButtonGroup>
       </Box>
       {filterOption === 'Group Name' ? (

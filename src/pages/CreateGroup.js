@@ -25,6 +25,8 @@ import { createGroupAndOwner } from '../graphql/mutations';
 import { getAllGroups } from '../graphql/queries';
 import { useNavigate } from 'react-router-dom';
 
+import useTranslation from '../components/customHooks/translations';
+
 const Input = styled('input')`
   display: none;
 `;
@@ -52,6 +54,8 @@ const CreateGroup = ({ user }) => {
   const [createGroupSuccess, setCreateGroupSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  const translation = useTranslation();
 
   //gets list of all group names to make sure submitted group isn't a duplicate
   useEffect(() => {
@@ -177,7 +181,7 @@ const CreateGroup = ({ user }) => {
               variant="h1"
               sx={{ mt: { xs: '1.5em', sm: '0em' }, mb: '1.5em' }}
             >
-              Create New Group
+              {translation.createGroupTitle}
             </Typography>
           </Box>
           <Box
@@ -230,7 +234,7 @@ const CreateGroup = ({ user }) => {
                     variant="outlined" component="span"
                     sx={{ m: { xs: '1.5em 0 0', md: '0' } }}
                   >
-                    Upload Group Icon
+                    {translation.uploadGroupIcon}
                   </Button>
                 </label>
               </Box>
@@ -247,10 +251,10 @@ const CreateGroup = ({ user }) => {
               >
                 <>
                   {' '}
-                  <SectionTitle variant="h2">Group Name</SectionTitle>
+                  <SectionTitle variant="h2">{translation.groupName}</SectionTitle>
                   <TextField
                     required
-                    label="Group Name"
+                    label={translation.groupName}
                     name="group_name"
                     InputLabelProps={{ shrink: true }}
                     value={createGroupForm.group_name}
@@ -268,11 +272,11 @@ const CreateGroup = ({ user }) => {
                   />
                 </>
                 <>
-                  <SectionTitle variant="h2">Group Description</SectionTitle>
+                  <SectionTitle variant="h2">{translation.groupDescription}</SectionTitle>
                   <TextField
                     multiline
                     rows={6}
-                    label="Group description"
+                    label={translation.groupDescription}
                     name="group_description"
                     value={createGroupForm.group_description}
                     InputLabelProps={{ shrink: true }}
@@ -284,7 +288,7 @@ const CreateGroup = ({ user }) => {
                 </>
                 <>
                   {' '}
-                  <SectionTitle variant="h2">Group Privacy</SectionTitle>
+                  <SectionTitle variant="h2">{translation.groupPrivacy}</SectionTitle>
                   <RadioGroup
                     aria-labelledby="group-privacy-label"
                     defaultValue={createGroupForm.is_public}
@@ -299,7 +303,7 @@ const CreateGroup = ({ user }) => {
                     <FormControlLabel
                       value={true}
                       control={<Radio />}
-                      label="Public"
+                      label={translation.public}
                       checked={createGroupForm.is_public}
                       onClick={() =>
                         setCreateGroupForm({
@@ -312,7 +316,7 @@ const CreateGroup = ({ user }) => {
                     <FormControlLabel
                       value={false}
                       control={<Radio />}
-                      label="Private"
+                      label={translation.private}
                       checked={!createGroupForm.is_public}
                       onClick={() =>
                         setCreateGroupForm({
@@ -378,7 +382,7 @@ const CreateGroup = ({ user }) => {
                 type="submit"
                 onClick={submitGroup}
               >
-                Create Group
+                {translation.createGroup}
               </Button>
             </FormGroup>
             <Dialog
@@ -394,7 +398,7 @@ const CreateGroup = ({ user }) => {
               }}
               open={createGroupSuccess}
             >
-              <DialogTitle sx={{ textAlign: 'center' }}> Success!</DialogTitle>
+              <DialogTitle sx={{ textAlign: 'center' }}> {translation.success}</DialogTitle>
               <DialogContent
                 sx={{
                   display: 'flex',
@@ -404,7 +408,7 @@ const CreateGroup = ({ user }) => {
                 }}
               >
                 <Typography>
-                  You will now be redirected to the group page
+                  {translation.redirectGroupPage}
                 </Typography>
                 <CircularProgress sx={{ mt: '2em' }} />
               </DialogContent>

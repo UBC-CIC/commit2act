@@ -21,6 +21,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PasswordRequirements from '../authentication/PasswordRequirements';
 
+import useTranslation from '../customHooks/translations';
+
 const StyledDialogTitle = styled(DialogTitle)`
   color: #fff;
   font-size: 2em;
@@ -59,19 +61,20 @@ const EditAccountInfo = ({
     newPassword: '',
     confirmNewPassword: '',
   };
+  const translation = useTranslation();
   const [userInfoForm, setUserInfoForm] = useState(initialUserForm);
   const [passwordRequirements, setPasswordRequirements] = useState({
-    uppercase: { error: false, description: 'At least one uppercase letter' },
-    lowercase: { error: false, description: 'At least one lowercase letter' },
-    digit: { error: false, description: 'At least one digit' },
-    special: { error: false, description: 'At least one special character' },
+    uppercase: { error: false, description: translation.oneUppercase },
+    lowercase: { error: false, description: translation.oneLowercase },
+    digit: { error: false, description: translation.oneDigit },
+    special: { error: false, description: translation.oneSpecialCharacter },
     minLength: {
       error: false,
-      description: 'Should be more than 8 characters',
+      description: translation.more8Characters,
     },
     maxLength: {
       error: false,
-      description: 'Should be less than 16 characters',
+      description: translation.less16Characters,
     },
   });
   const [infoUpdateSuccess, setInfoUpdateSuccess] = useState(false);
@@ -263,7 +266,7 @@ const EditAccountInfo = ({
           <CloseIcon />
         </IconButton>
         <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-          Edit Account Information
+          {translation.editAccountInfoTitle}
         </StyledDialogTitle>
         <DialogContent
           sx={{
@@ -306,7 +309,7 @@ const EditAccountInfo = ({
                       onChange={handleAvatarChange}
                     />
                     <Button variant="outlined" component="span">
-                      Upload Profile Photo
+                      {translation.uploadProfilePhoto}
                     </Button>
                   </label>
                 </>
@@ -340,7 +343,7 @@ const EditAccountInfo = ({
                       onChange={handleAvatarChange}
                     />
                     <Button variant="outlined" component="span">
-                      Upload Profile Photo
+                      {translation.uploadProfilePhoto}
                     </Button>
                   </label>
                 </>
@@ -356,12 +359,12 @@ const EditAccountInfo = ({
             >
               {requiredAttributeError && (
                 <Alert severity="error">
-                  Please fill out all required fields
+                  {translation.requiredFieldsMessage}
                 </Alert>
               )}
               <TextField
                 required
-                label="Name"
+                label={translation.name}
                 name="name"
                 value={userInfoForm.name}
                 InputLabelProps={{ shrink: true }}
@@ -369,7 +372,7 @@ const EditAccountInfo = ({
               />
               <TextField
                 required
-                label="Email"
+                label={translation.email}
                 name="email"
                 value={userInfoForm.email}
                 InputLabelProps={{ shrink: true }}
@@ -378,8 +381,8 @@ const EditAccountInfo = ({
                 error={accountEmailExistError || invalidEmailError}
                 helperText={
                   (accountEmailExistError &&
-                    'An account with the given email already exists.') ||
-                  (invalidEmailError && 'Please enter a valid email.')
+                    translation.emailAlreadyExists) ||
+                  (invalidEmailError && translation.validEmail)
                 }
               />
               <Button
@@ -389,7 +392,7 @@ const EditAccountInfo = ({
                 }}
                 onClick={updateUserInfo}
               >
-                Save Name, Email, Photo
+                {translation.saveNameEmailPhoto}
               </Button>
             </Box>
           </FormGroup>
@@ -406,16 +409,16 @@ const EditAccountInfo = ({
               variant="h7"
               sx={{ mb: '1em', fontWeight: 400 }}
             >
-              Change Password
+              {translation.changePassword}
             </Typography>
             {requiredPasswordError && (
               <Alert severity="error">
-                Please fill out all required fields
+                {translation.requiredFieldsMessage}
               </Alert>
             )}
             <TextField
               required
-              label="Current Password"
+              label={translation.currentPassword}
               name="currentPassword"
               value={userInfoForm.password}
               InputLabelProps={{ shrink: true }}
@@ -424,7 +427,7 @@ const EditAccountInfo = ({
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle current password visibility"
+                      aria-label={translation.toggleCurrentPassword}
                       onClick={() =>
                         setShowCurrentPassword(!showCurrentPassword)
                       }
@@ -444,12 +447,12 @@ const EditAccountInfo = ({
               onChange={updateForm}
               error={currentPassIncorrectError}
               helperText={
-                currentPassIncorrectError && 'Current password is incorrect'
+                currentPassIncorrectError && translation.currentPasswordMessage
               }
             />
             <TextField
               required
-              label="New Password"
+              label={translation.newPassword}
               name="newPassword"
               value={userInfoForm.password}
               InputLabelProps={{ shrink: true }}
@@ -458,7 +461,7 @@ const EditAccountInfo = ({
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle new password visibility"
+                      aria-label={translation.toggleNewPassword}
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
@@ -475,13 +478,13 @@ const EditAccountInfo = ({
               sx={{ xs: { mt: '1.5em' } }}
               onChange={onChangePassword}
               error={accountPasswordError}
-              helperText={'Your password must have the following:'}
+              helperText={translation.passwordSettings}
             />
             <PasswordRequirements requirements={passwordRequirements} />
 
             <TextField
               required
-              label="Confirm New Password"
+              label={translation.confirmNewPassword}
               name="confirmNewPassword"
               value={userInfoForm.confirmPassword}
               InputLabelProps={{ shrink: true }}
@@ -490,7 +493,7 @@ const EditAccountInfo = ({
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle confirm new password visibility"
+                      aria-label={translation.toggleConfirmNewPassword}
                       onClick={() =>
                         setShowConfirmNewPassword(!showConfirmNewPassword)
                       }
@@ -509,7 +512,7 @@ const EditAccountInfo = ({
               sx={{ xs: { mt: '1.5em' } }}
               onChange={onChangePassword}
               error={passwordsNotMatchError}
-              helperText={passwordsNotMatchError && 'Passwords do not match.'}
+              helperText={passwordsNotMatchError && translation.passwordsDontMatch}
             />
             <Button
               variant="contained"
@@ -518,7 +521,7 @@ const EditAccountInfo = ({
               }}
               onClick={updatePassword}
             >
-              Save Password
+              {translation.savePassword}
             </Button>
           </FormGroup>
         </DialogContent>

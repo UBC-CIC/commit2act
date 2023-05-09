@@ -3,6 +3,8 @@ import { Grid, Box, Typography, CircularProgress } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getQuizPoolForUser } from '../../graphql/queries';
 
+import useTranslation from '../customHooks/translations';
+
 const ActionFact = ({
   selectedAction,
   setQuiz,
@@ -11,6 +13,8 @@ const ActionFact = ({
   setSkipBonusQuestion,
 }) => {
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
+
+  const translation = useTranslation();
 
   useEffect(() => {
     const getFact = async () => {
@@ -47,9 +51,9 @@ const ActionFact = ({
         </Typography>
       ) : (
         <Typography variant="h3">
-          Thank you for submitting an action!
+          {translation.actionFactResponse}
           <Typography variant="p" sx={{ mt: '2em' }}>
-            You have viewed all the facts for this action
+            {translation.actionFactAllFacts}
           </Typography>
         </Typography>
       );

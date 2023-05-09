@@ -152,7 +152,7 @@ def detect_labels(bucket, key):
     print(f'{time.time() - t:.3f} seconds since invocation. Moved image to Amplify bucket')
 
     # update the submitted action to include the cloudfront url of the image for display
-    sql = f'UPDATE SubmittedAction SET submitted_image="{"https://" + CLOUDFRONT_URL + "/" + bucket_key_name}", is_validated={1 if pass_or_fail == "pass" else 0} where sa_id={submitted_action_id};'
+    sql = f'UPDATE SubmittedAction SET submitted_image="{ CLOUDFRONT_URL + "/" + bucket_key_name}", is_validated={1 if pass_or_fail == "pass" else 0} where sa_id={submitted_action_id};'
     print('Executing statement', sql)
     cur.execute(sql) 
     
