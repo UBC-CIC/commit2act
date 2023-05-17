@@ -34,6 +34,7 @@ import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';
 import CreateAction from '../../pages/CreateAction';
 import JoinGroup from '../../pages/JoinGroup';
+import MyGroups from '../../pages/MyGroups';
 import UserProfile from '../../pages/UserProfile';
 import Actions from '../../pages/Actions';
 import AdminDashboard from '../../pages/AdminDashboard';
@@ -217,7 +218,6 @@ function PageContainer (props) {
           button
           key={'Actions'}
           onClick={() => navigate('/actions')}
-          // className={classes.logAction}
         >
           <ListItemIcon>
             <Box
@@ -241,6 +241,22 @@ function PageContainer (props) {
               src='./assets/images/icon-home.png' />
           </ListItemIcon>
           <ListItemText primary={translation.dashboard} />
+        </ListItem>
+        <ListItem
+          button
+          key={'mygroups'}
+          onClick={() => navigate('/my-groups')}
+        >
+          <ListItemIcon>
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-create-group.png' />
+          </ListItemIcon>
+          <ListItemText primary={translation.myGroups} />
         </ListItem>
         <ListItem
           button
@@ -381,6 +397,11 @@ function PageContainer (props) {
               exact
               path={'/'}
               element={<Landing user={user} userType={userType} />}
+            />
+            <Route
+              exact
+              path={'/my-groups'}
+              element={<MyGroups user={user} />}
             />
             <Route
               exact
