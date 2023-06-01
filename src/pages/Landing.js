@@ -285,7 +285,10 @@ const Landing = ({ user, userType }) => {
                   'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
                 borderRadius: '10px',
                 padding: '1.5em',
-                gap: { xs: '0.5em', lg: '0' },
+                gap: { xs: '0.5em', lg: '0.5em' },
+                '> div': {
+                  flex: '1',
+                }
               }}
             >
               <StyledPaper elevation={6}>

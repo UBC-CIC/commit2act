@@ -157,13 +157,6 @@ const GlobalLeaderboard = () => {
   const renderTable = () => {
     return (
       <>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            mt: { xs: '2em', sm: '0' },
-          }}
-        ></Box>
         <TableContainer component={Paper} sx={{ mt: '1em', backgroundColor: '#131516' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
@@ -380,17 +373,19 @@ const GlobalLeaderboard = () => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label={translation.globalGroups} value={tabs[0]} />
-                <Tab label={translation.globalUsers} value={tabs[1]} />
+                <Tab label={translation.globalGroups} value={tabs[0]} id={tabs[0]}/>
+                <Tab label={translation.globalUsers} value={tabs[1]} id={tabs[1]}/>
               </TabList>
               <TabPanel
                 value={tabs[0]}
+                aria-labelledby={tabs[0]}
                 sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
               >
                 {renderTable()}
               </TabPanel>
               <TabPanel
                 value={tabs[1]}
+                aria-labelledby={tabs[1]}
                 sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
               >
                 {renderTable()}

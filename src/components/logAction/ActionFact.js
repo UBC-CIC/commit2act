@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Box, Typography, CircularProgress } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getQuizPoolForUser } from '../../graphql/queries';
+import Modal from 'react-modal';
 
 import useTranslation from '../customHooks/translations';
+Modal.setAppElement('#root');
 
 const ActionFact = ({
   selectedAction,
@@ -13,7 +15,24 @@ const ActionFact = ({
   setSkipBonusQuestion,
 }) => {
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
+  
+  // Modal.setAppElement('#yourAppElement');
 
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   const translation = useTranslation();
 
   useEffect(() => {
@@ -83,8 +102,20 @@ const ActionFact = ({
           fontSize: '1.8em',
         }}
       >
+        <button onClick={openModal}>Open Modal</button>
         {renderFact()}
       </Box>
+      <Modal
+        isOpen={modalIsOpen}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={closeModal}
+        contentLabel="Example Modal"
+        className="sourceModal"
+      >
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
+        <button onClick={closeModal}>close</button>
+        <div>I am a modal</div>
+      </Modal>
     </Grid>
   );
 };
