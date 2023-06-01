@@ -80,7 +80,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
       return (
         <Box
           sx={{
-            height: '110vh',
+            height: '100%',
             overflow: 'auto',
             padding: '0.25em',
           }}
@@ -139,7 +139,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
       return (
         <Box
           sx={{
-            height: '110vh',
+            height: '100%',
             overflow: 'auto',
             padding: '0.25em',
           }}
@@ -259,13 +259,29 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
                   <Tab label={tabs[2]} value={tabs[2]} />
                 </TabList>
               </Box>
-              <TabPanel value={tabs[0]}>
+              <TabPanel 
+                value={tabs[0]}
+                sx={{
+                  height:{xs: '500px', md: 'auto'},
+                }}
+              > 
                 {renderValidatedActionCards()}
               </TabPanel>
-              <TabPanel value={tabs[1]}>
+              <TabPanel 
+                value={tabs[1]}
+                sx={{
+                  height:{xs: '500px', md: 'auto'},
+                }}
+              >
                 {renderUnvalidatedActionCards()}
               </TabPanel>
-              <TabPanel value={tabs[2]}>{renderFailedActionCards()}</TabPanel>
+              <TabPanel 
+                value={tabs[2]}
+                sx={{
+                  height:{xs: '500px', md: 'auto'},
+                }}
+              >
+                {renderFailedActionCards()}</TabPanel>
             </TabContext>
           </Box>
         </>
