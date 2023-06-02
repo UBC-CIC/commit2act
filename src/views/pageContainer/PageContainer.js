@@ -213,6 +213,18 @@ function PageContainer (props) {
           </ListItemIcon>
           <ListItemText primary={translation.logAction} />
         </ListItem>
+        <ListItem button key={'home'} onClick={() => navigate('/')}>
+          <ListItemIcon>
+            <Box
+              component="img"
+              sx={{
+                width: 28,
+              }}
+              alt=""
+              src='./assets/images/icon-home.png' />
+          </ListItemIcon>
+          <ListItemText primary={translation.dashboard} />
+        </ListItem>
         <ListItem
           button
           key={'Actions'}
@@ -229,18 +241,6 @@ function PageContainer (props) {
               src='./assets/images/icon-validate.png' />
           </ListItemIcon>
           <ListItemText primary={translation.actions} />
-        </ListItem>
-        <ListItem button key={'home'} onClick={() => navigate('/')}>
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src='./assets/images/icon-home.png' />
-          </ListItemIcon>
-          <ListItemText primary={translation.dashboard} />
         </ListItem>
         <ListItem
           button
