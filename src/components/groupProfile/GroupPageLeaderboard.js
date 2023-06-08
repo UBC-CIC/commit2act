@@ -19,6 +19,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   List,
+  Link,
   Divider,
   ListItem,
   ListItemText,
@@ -46,6 +47,9 @@ const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
     background: linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%);
     th,td {
+      color: #000;
+    }
+    a {
       color: #000;
     }
   }
@@ -388,16 +392,19 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      <Typography
+                      <Link
                         onClick={() => {
                           navigate(`/group-profile/${group.group_name}`);
                         }}
                         sx={{
+                            color: '#fff',
+                            fontSize: '1.1em',
+                            textDecorationColor: '#33AF99',
                           ':hover': { opacity: '0.6', cursor: 'pointer' },
                         }}
                       >
                       {group.group_name}
-                      </Typography>
+                      </Link>
                     </TableCell>
                     <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
                     <TableCell align="right">{group.total_points}</TableCell>

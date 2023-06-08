@@ -99,6 +99,7 @@ const AllActions = ({ setSelectedAction }) => {
                   src={`${action.action_icon}?w=248&fit=crop&auto=format`}
                   loading="lazy"
                   aria-hidden="true"
+                  alt=""
                 />
               ) : (
                 <Box

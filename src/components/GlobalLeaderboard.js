@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -38,6 +39,9 @@ const StyledTableBody = styled(TableBody)`
   .currentGroupOrUser {
     background: linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%);
     th,td {
+      color: #000;
+    }
+    a {
       color: #000;
     }
   }
@@ -153,13 +157,6 @@ const GlobalLeaderboard = () => {
   const renderTable = () => {
     return (
       <>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            mt: { xs: '2em', sm: '0' },
-          }}
-        ></Box>
         <TableContainer component={Paper} sx={{ mt: '1em', backgroundColor: '#131516' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
@@ -201,16 +198,19 @@ const GlobalLeaderboard = () => {
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                    <Typography
+                    <Link
                         onClick={() => {
                           navigate(`/group-profile/${group.group_name}`);
                         }}
                         sx={{
+                            color: '#fff',
+                            fontSize: '1.1em',
+                            textDecorationColor: '#33AF99',
                           ':hover': { opacity: '0.6', cursor: 'pointer' },
                         }}
                       >
                       {group.group_name}
-                      </Typography>
+                      </Link>
                     </TableCell>
                     <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
                     <TableCell align="right">{group.total_points}</TableCell>
@@ -373,17 +373,19 @@ const GlobalLeaderboard = () => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label={translation.globalGroups} value={tabs[0]} />
-                <Tab label={translation.globalUsers} value={tabs[1]} />
+                <Tab label={translation.globalGroups} value={tabs[0]} id={tabs[0]}/>
+                <Tab label={translation.globalUsers} value={tabs[1]} id={tabs[1]}/>
               </TabList>
               <TabPanel
                 value={tabs[0]}
+                aria-labelledby={tabs[0]}
                 sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
               >
                 {renderTable()}
               </TabPanel>
               <TabPanel
                 value={tabs[1]}
+                aria-labelledby={tabs[1]}
                 sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
               >
                 {renderTable()}
