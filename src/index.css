@@ -21,3 +21,16 @@ root {
 @supports (font-variation-settings: normal) {
   :root { font-family: 'Inter', sans-serif; }
 }
+
+.sourceModal {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #262a2c;
+  color: #fff;
+  padding: 2em;
+  z-index: 2;
+}
