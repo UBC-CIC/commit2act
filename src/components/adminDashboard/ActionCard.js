@@ -97,9 +97,14 @@ const ActionCard = ({
         query: getActionItemsForAction,
         variables: { action_id: action_id },
       });
+
+      const modifiedActionItems = res.data.getActionItemsForAction.map((actionItem, index) => {
+        return actionItem = { ...actionItem, index: index };
+      });
+
       setActionForm((prev) => ({
         ...prev,
-        action_items: res.data.getActionItemsForAction,
+        action_items: modifiedActionItems,
       }));
     };
     getActionItems();
@@ -206,13 +211,45 @@ const ActionCard = ({
     );
   };
 
-  /** functions for rendering the editable action card */
+  const updateActionItemWithNewValue = (event) => {
+    let updatedActionItemIndex = event.target.attributes.index.value;
 
+    return actionForm.action_items.map((item) => {
+      if (item.index === parseInt(updatedActionItemIndex)) {
+        if (event.target.name.includes('item_name')) {
+          return {
+            ...item,
+            item_name: event.target.value,
+          };
+        } else if (event.target.name.includes('item_description')) {
+          return {
+            ...item,
+            item_description: event.target.value,
+          };
+        } else if (event.target.name.includes('item_co2')) {
+          return {
+            ...item,
+            co2_saved_per_unit: event.target.value,
+          };
+        }
+      }
+      return item;
+    });
+  }
+
+  /** functions for rendering the editable action card */
   const updateForm = (e) => {
+    e.preventDefault();
     if (e.target.name in actionItemsForm) {
       setActionItemsForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
+      }));
+    } else if (e.target.name.includes('edit')) {
+      let updatedActionItems = updateActionItemWithNewValue(e)
+      setActionForm((prev) => ({
+        ...prev,
+        action_items: updatedActionItems,
       }));
     } else {
       setActionForm((prev) => ({
@@ -333,11 +370,18 @@ const ActionCard = ({
         }
       }
 
+      // remove index from action_items
+      let actionItemsWithoutIndex = actionForm.action_items;
+      actionItemsWithoutIndex.forEach((item) => {
+        delete item.index;
+      });
+
       await Promise.all([
         API.graphql({
           query: updateAction,
           variables: {
             action_id: action_id,
+            action_name: actionForm.action_name,
             fallback_quiz_media: actionForm.fallback_quiz_media,
             action_icon: actionIconFile ? iconLink : action_icon,
           },
@@ -346,7 +390,7 @@ const ActionCard = ({
           query: remakeActionItems,
           variables: {
             action_id: action_id,
-            action_items: actionForm.action_items,
+            action_items: actionItemsWithoutIndex,
           },
         }),
         API.graphql({
@@ -482,7 +526,7 @@ const ActionCard = ({
           </Typography>
           {actionForm.action_items &&
             actionForm.action_items.map((item) => (
-              <Accordion key={item.item_name}>
+              <Accordion key={item.index}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="action-item-content"
@@ -502,20 +546,41 @@ const ActionCard = ({
                 <AccordionDetails sx={{ p: 0 }}>
                   <List dense>
                     <ListItem>
-                      <ListItemText primary="Name" secondary={item.item_name} />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="Description"
-                        secondary={item.item_description}
+                      <TextField
+                        required
+                        value={item.item_name}
+                        label="Name"
+                        name='item_name_edit'
+                        property=''
+                        inputProps={{ 'index': item.index }}
+                        onChange={updateForm}
+                        sx={{ width: '100%' }}
                       />
                     </ListItem>
                     <Divider flexItem />
                     <ListItem>
-                      <ListItemText
-                        primary="CO2 Saved Per Unit"
-                        secondary={item.co2_saved_per_unit}
+                      <TextField
+                        required
+                        value={item.item_description}
+                        label="Description"
+                        name='item_description_edit'
+                        property=''
+                        inputProps={{ 'index': item.index }}
+                        onChange={updateForm}
+                        sx={{ width: '100%' }}
+                      />
+                    </ListItem>
+                    <Divider flexItem />
+                    <ListItem>
+                      <TextField
+                        required
+                        value={item.co2_saved_per_unit}
+                        label="CO2 Saved Per Unit"
+                        name='item_co2_edit'
+                        property=''
+                        inputProps={{ 'index': item.index }}
+                        onChange={updateForm}
+                        sx={{ width: '100%' }}
                       />
                     </ListItem>
                   </List>
@@ -721,9 +786,30 @@ const ActionCard = ({
             <CloseIcon />
           </IconButton>
         )}
-        <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-          {action_name}
-        </StyledDialogTitle>
+        {
+          editAction ? (
+            <TextField
+              required
+              value={actionForm.action_name}
+              InputLabelProps={{ shrink: true }}
+              label="Action Name"
+              name="action_name"
+              onChange={updateForm}
+              sx={{
+                textAlign: { xs: 'center', sm: 'left' },
+                fontSize: '28px',
+                fontWeight: '300',
+                marginLeft: '1em',
+                marginRight: '1em',
+              }}
+            />
+
+          ) : (
+            <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+              {action_name}
+            </StyledDialogTitle>
+          )
+        }
         <DialogContent sx={{ mt: '1em', p: '3em' }}>
           {editAction ? renderEditActionContent() : renderActionContent()}
         </DialogContent>
