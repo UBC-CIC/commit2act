@@ -102,7 +102,7 @@ const ActionFact = ({
           fontSize: '1.8em',
         }}
       >
-        <button onClick={openModal}>Open Modal</button>
+        {/* <button onClick={openModal}>Open Modal</button> */}
         {renderFact()}
       </Box>
       <Modal
