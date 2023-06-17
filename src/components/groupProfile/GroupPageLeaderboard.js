@@ -145,10 +145,10 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
     page <= 0
       ? 0
       : selectedTab === tabs[0]
-      ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
-      : selectedTab === tabs[1]
-      ? Math.max(0, (1 + page) * rowsPerPage - groupMembers.length)
-      : 0;
+        ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
+        : selectedTab === tabs[1]
+          ? Math.max(0, (1 + page) * rowsPerPage - groupMembers.length)
+          : 0;
 
   useEffect(() => {
     const getUserStats = async () => {
@@ -281,7 +281,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
           {filteredMembers &&
             selectedTab === tabs[1] &&
             groupMembers.findIndex((member) => member.user_id === userId) !==
-              -1 && (
+            -1 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -349,7 +349,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
         <TableContainer component={Paper} sx={{ mt: '1em' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
-              {translation.formatString(translation.leaderboardDisplaying, {tab: selectedTab})}{selectedFilter.name}
+              {translation.formatString(translation.leaderboardDisplaying, { tab: selectedTab })}{selectedFilter.name}
             </caption>
             <TableHead>
               <TableRow>
@@ -367,9 +367,9 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                 filteredGroups &&
                 (rowsPerPage > 0
                   ? filteredGroups.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : filteredGroups
                 ).map((group, index) => (
                   <TableRow
@@ -394,16 +394,16 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     <TableCell component="th" scope="row">
                       <Link
                         onClick={() => {
-                          navigate(`/group-profile/${group.group_name}`);
+                          navigate(`/group-profile/${encodeURI(group.group_name)}`);
                         }}
                         sx={{
-                            color: '#fff',
-                            fontSize: '1.1em',
-                            textDecorationColor: '#33AF99',
+                          color: '#fff',
+                          fontSize: '1.1em',
+                          textDecorationColor: '#33AF99',
                           ':hover': { opacity: '0.6', cursor: 'pointer' },
                         }}
                       >
-                      {group.group_name}
+                        {group.group_name}
                       </Link>
                     </TableCell>
                     <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
@@ -418,9 +418,9 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                 filteredMembers &&
                 (rowsPerPage > 0
                   ? filteredMembers.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : filteredMembers
                 ).map((member, index) => (
                   <TableRow
@@ -466,12 +466,12 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
-			labelRowsPerPage={translation.labelRowsPerPage}
-			labelDisplayedRows={
-			  ({ from, to, count }) => {
-				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
-			  }
-			}
+            labelRowsPerPage={translation.labelRowsPerPage}
+            labelDisplayedRows={
+              ({ from, to, count }) => {
+                return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+              }
+            }
           />
         )}
         {selectedTab === tabs[1] && groupMembers && (
@@ -485,12 +485,12 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
-			labelRowsPerPage={translation.labelRowsPerPage}
-			labelDisplayedRows={
-			  ({ from, to, count }) => {
-				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
-			  }
-			}
+            labelRowsPerPage={translation.labelRowsPerPage}
+            labelDisplayedRows={
+              ({ from, to, count }) => {
+                return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+              }
+            }
           />
         )}
       </>

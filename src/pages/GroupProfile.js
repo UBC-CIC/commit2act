@@ -71,7 +71,7 @@ const GroupProfile = ({ user }) => {
   const groupLink =
     groupInfo &&
     '/group-profile/'.concat(
-      groupInfo.group_name.replaceAll(' ', '%20'),
+      encodeURI(groupInfo.group_name),
       '/add/',
       uuidv4(),
       '-',
@@ -96,7 +96,7 @@ const GroupProfile = ({ user }) => {
     };
     getGroupAndUserInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [groupName]);
 
   useEffect(() => {
     //gets list of all users, checks to see if current user is a group member
@@ -153,14 +153,14 @@ const GroupProfile = ({ user }) => {
             container
             alignItems={{ xs: 'center' }}
             direction={{ xs: 'column', lg: 'row' }}
-            sx={{ mt: '0'}}
+            sx={{ mt: '0' }}
             gap={{ xs: '2em', lg: '0' }}
             textAlign={{ xs: 'center', md: 'left' }}
           >
             <Grid
               container
               direction={{ xs: 'column', sm: 'row' }}
-              justifyContent={{ xs: 'center', sm:'flex-start' }}
+              justifyContent={{ xs: 'center', sm: 'flex-start' }}
               alignItems={{ xs: 'center' }}
               spacing={{ xs: 4, sm: 8 }}
               sx={{ mb: '1.5em', overflow: 'auto' }}
@@ -202,7 +202,7 @@ const GroupProfile = ({ user }) => {
                   {groupName}
                 </Typography>
                 <Grid
-                  container 
+                  container
                   sx={{
                     display: 'flex',
                     gap: '20px',
@@ -220,7 +220,7 @@ const GroupProfile = ({ user }) => {
                       {groupInfo.is_public ? translation.public : translation.private}
                     </Typography>
                   </Stack>
-                </Grid> 
+                </Grid>
                 {currentUserMember ? (
                   <Button
                     variant="contained"
@@ -262,14 +262,14 @@ const GroupProfile = ({ user }) => {
                     gap: { xs: '0.5em', md: '2' },
                   }}
                 >
-                  <StyledPaper elevation={6} sx={{background: 'white', flex: '1'}}>
+                  <StyledPaper elevation={6} sx={{ background: 'white', flex: '1' }}>
                     <Typography variant="h4">{translation.co2SavedWeek}</Typography>
                     <Typography variant="h5" className="statValue">
                       <AutoGraphOutlined fontSize="large" />
                       {groupInfo.weekly_co2}g
                     </Typography>
                   </StyledPaper>
-                  <StyledPaper elevation={6} sx={{background: 'white', flex: '1'}}>
+                  <StyledPaper elevation={6} sx={{ background: 'white', flex: '1' }}>
                     <Typography variant="h4">{translation.totalCO2Saved}</Typography>
                     <Typography variant="h5" className="statValue">
                       {Math.ceil(groupInfo.total_co2)}g
