@@ -160,7 +160,7 @@ const translations = {
   joinGroupTitle: 'Vous avez été invité à rejoindre {0}',
   successRedirectProfilePage: 'Succès ! Redirection vers la page de profil de {0}',
   joinGroupConfirm: 'Veuillez confirmer en sélectionnant Rejoindre.',
-  joinGroupSelectCancel: "Sélectionnez Annuler pour être redirigé vers la page d'accueil.",
+  joinGroupSelectCancel: "Sélectionnez Annuler pour être redirigé vers la page du groupe.",
   joinGroupEnterPassword: 'Pour rejoindre ce groupe, veuillez entrer le mot de passe du groupe et sélectionner Rejoindre.',
   incorrectPassword: 'Mot de passe incorrect',
   logAction: "Enregistrer l'action",

@@ -158,7 +158,7 @@ const translations = {
   joinGroupTitle: 'You have been invited to join {0}',
   successRedirectProfilePage: "Success! Redirecting to {0}'s profile page",
   joinGroupConfirm: 'Please confirm by selecting Join.',
-  joinGroupSelectCancel: 'Select Cancel to be redirected to the home page.',
+  joinGroupSelectCancel: 'Select Cancel to be redirected to the group page.',
   joinGroupEnterPassword: 'To join this group, please enter the group password and select Join.',
   incorrectPassword: 'Incorrect Password',
   logAction: 'Log Action',
