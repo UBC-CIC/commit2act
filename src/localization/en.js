@@ -256,6 +256,7 @@ const translations = {
   accept: 'Accept',
   reject: 'Reject',
   actions: 'Actions',
+  clearSearch: 'Clear Search',
 };
 
 export default translations;

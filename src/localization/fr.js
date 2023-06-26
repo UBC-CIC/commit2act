@@ -256,6 +256,7 @@ const translations = {
   submittedInC: 'Soumis dans :',
   accept: 'Accepter',
   reject: 'Rejeter',
+  clearSearch: '',
 };
 
 export default translations;
