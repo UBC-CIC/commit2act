@@ -37,7 +37,7 @@ const AddMemberPanel = ({ groupInfo }) => {
       flexDirection="column"
       alignItems={{ xs: 'center', lg: 'flex-start' }}
     >
-      <Typography component="div" variant="h2">
+      <Typography component="div" variant="h3">
         {groupInfo.is_public ? translation.addMembersDescription : translation.addMembersDescriptionPassword}
       </Typography>
       <Typography component="div" variant="subtitle2" sx={{ m: '2em 0 1em 0' }}>

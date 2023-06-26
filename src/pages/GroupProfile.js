@@ -302,6 +302,7 @@ const GroupProfile = ({ user }) => {
                 width: { xs: '90%' },
               }}
             >
+              <Typography variant="h2" paddingBottom={4}>{translation.groupInfo}</Typography>
               <TabContext value={selectedTab}>
                 <Box
                   sx={{
