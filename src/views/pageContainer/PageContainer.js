@@ -108,6 +108,21 @@ const useStyles = makeStyles()((theme) => {
         color: '#000',
         filter: 'invert(1)'
       },
+    },
+    skip_button: {
+      position: 'absolute',
+      background: '#fff',
+      color: '#262a2c',
+      textDecoration: 'none',
+      borderRadius: '0.25em',
+      padding: '0.5em 1em',
+      margin: '0.25em',
+      transform: 'translateY(-150%)',
+      transition: 'transform 0.3s',
+      "&:focus": {
+        transform: 'translateY(0%)',
+        zIndex: '2000',
+      }
     }
   };
 });
@@ -350,6 +365,9 @@ function PageContainer (props) {
 
   return (
     <Grid container direction="column">
+      <a className={classes.skip_button} href="#main">
+        Skip to Content
+      </a>
       {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
       <Navbar showSideMenuButton={true} 
@@ -376,7 +394,7 @@ function PageContainer (props) {
           {/* Side menu items added for rendering */}
           {list()}
         </Drawer>
-        <main className={clsx(classes.content, {
+        <main id="main" className={clsx(classes.content, {
           [classes.contentShift]: menuEnabled,
         })}>
           {/* Routes are added here if you need multiple page views. otherwise this Switch can be deleted and replaced
