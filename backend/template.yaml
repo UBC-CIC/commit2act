@@ -948,6 +948,7 @@ Resources:
           action_icon: String
           fallback_quiz_media: String
           is_hidden: Boolean
+          translations: AWSJSON
         }
 
         type ActionItem {
@@ -1010,6 +1011,7 @@ Resources:
           fallback_quiz_media: String
           validation_labels: String
           is_hidden: Boolean
+          translations: AWSJSON
         }
 
         type Group {
@@ -1072,7 +1074,8 @@ Resources:
             action_name: String!,
             page_media: String,
             action_icon: String,
-            fallback_quiz_media: String
+            fallback_quiz_media: String,
+            translations: AWSJSON
           ): Action
           createActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
           createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
@@ -1114,7 +1117,8 @@ Resources:
             action_name: String,
             page_media: String,
             action_icon: String,
-            fallback_quiz_media: String
+            fallback_quiz_media: String,
+            translations: AWSJSON
           ): Action
           remakeActionItems(action_id: Int!, action_items: [ActionItemInputId!]!): [ActionItem]
           remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
@@ -1426,6 +1430,7 @@ Resources:
           action_icon: String
           fallback_quiz_media: String
           validation_label: [String]
+          translations: AWSJSON
         }
         *#
         
@@ -1447,6 +1452,7 @@ Resources:
         ## 	"page_media": $context.result.get("page_media"),
         ## 	"action_icon": $context.result.get("action_icon"),
         ## 	"fallback_quiz_media": $context.result.get("fallback_quiz_media"),
+        ## "translations": $context.result.get("translations"),
         ## 	"validation_label": null
         ## }
       ApiId: !GetAtt GraphQlApiIdParameter.Value
@@ -2489,17 +2495,19 @@ Resources:
         #set( $context.arguments.page_media = $context.arguments.page_media.replace(":::::::", "::::::: ") )
         #set( $context.arguments.action_icon = $context.arguments.action_icon.replace(":::::::", "::::::: ") )
         #set( $context.arguments.fallback_quiz_media = $context.arguments.fallback_quiz_media.replace(":::::::", "::::::: ") )
+        #set( $context.arguments.translations = $context.arguments.translations.replace(":::::::", "::::::: ") )
 
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden ) VALUES (:::::::1, :::::::2, :::::::3, :::::::4, false)",
+            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden, translations ) VALUES (:::::::1, :::::::2, :::::::3, :::::::4, false, :::::::5)",
             "variableMapping": {
                 ":::::::1": "$context.arguments.action_name", 
                 ":::::::2": "$context.arguments.page_media", 
                 ":::::::3": "$context.arguments.action_icon",
-                ":::::::4": "$context.arguments.fallback_quiz_media"
+                ":::::::4": "$context.arguments.fallback_quiz_media",
+                ":::::::5": "$context.arguments.translations"
             },
             "responseSQL": "SELECT * FROM `Action` WHERE action_name=:::::::1"
           }
@@ -3298,6 +3306,7 @@ Resources:
           page_media: String
           action_icon: String
           fallback_quiz_media: String
+          translations: AWSJSON
         }
 
         This only updates fields that actually are needing to be updated
@@ -3331,18 +3340,23 @@ Resources:
           #set( $fallback_quiz_media = 'fallback_quiz_media=:4' )
         #else
           #set( $fallback_quiz_media = '' )
+        #if( $context.arguments.translations )
+          #set( $translations = 'translations=:5' )
+        #else
+          #set( $translations = '' )
         #end
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "UPDATE `Action` SET $action_name $page_media $action_icon $fallback_quiz_media WHERE action_id=:0",
+            "sql": "UPDATE `Action` SET $action_name $page_media $action_icon $fallback_quiz_media $translations WHERE action_id=:0",
             "variableMapping": {
               ":0": $context.arguments.action_id,
                 ":1": "$context.arguments.action_name", 
                 ":2": "$context.arguments.page_media", 
                 ":3": "$context.arguments.action_icon",
-                ":4": "$context.arguments.fallback_quiz_media"
+                ":4": "$context.arguments.fallback_quiz_media",
+                ":5": "$context.arguments.translations"
             },
             "responseSQL": "SELECT * FROM `Action` WHERE action_id=:0"
           }
