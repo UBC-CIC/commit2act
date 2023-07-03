@@ -5,6 +5,7 @@ type Action {
   action_icon: String
   fallback_quiz_media: String
   is_hidden: Boolean
+  translations: AWSJSON
 }
 
 type ActionItem {
@@ -53,6 +54,7 @@ type ActionWithLabels {
   fallback_quiz_media: String
   validation_labels: String
   is_hidden: Boolean
+  translations: AWSJSON
 }
 
 type Group {
@@ -114,7 +116,8 @@ type Mutation {
     action_name: String!,
     page_media: String,
     action_icon: String,
-    fallback_quiz_media: String
+    fallback_quiz_media: String,
+    translations: AWSJSON
   ): Action
   createActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
   createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
@@ -156,7 +159,8 @@ type Mutation {
     action_name: String,
     page_media: String,
     action_icon: String,
-    fallback_quiz_media: String
+    fallback_quiz_media: String,
+    translations: AWSJSON
   ): Action
   remakeActionItems(action_id: Int!, action_items: [ActionItemInputId!]!): [ActionItem]
   remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
