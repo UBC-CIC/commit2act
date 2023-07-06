@@ -99,7 +99,7 @@ const Landing = ({ user, userType }) => {
       });
       const numUserWithoutGroupActions =
         userWithoutGroupActionRes.data
-          .getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin.length;
+          .getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin?.length;
       setNumActionsToValidate(
         numGroupSubmittedActions + numUserWithoutGroupActions
       );
@@ -162,7 +162,7 @@ const Landing = ({ user, userType }) => {
             <Typography
               variant="h1"
               sx={{
-                fontSize: {xs: '2em', md: '2.5em'},
+                fontSize: { xs: '2em', md: '2.5em' },
                 mt: { xs: '1em', lg: '0' },
                 wordWrap: 'break-word',
                 maxWidth: { xs: '400px', sm: '100%' },
@@ -179,7 +179,7 @@ const Landing = ({ user, userType }) => {
                   flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                   alignItems: { xs: 'center', sm: 'flex-start' },
-                  textAlign: { xs: 'left'}
+                  textAlign: { xs: 'left' }
                 }}
                 color="info"
                 action={
@@ -208,7 +208,7 @@ const Landing = ({ user, userType }) => {
                   flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                   alignItems: { xs: 'center', sm: 'flex-start' },
-                  textAlign: { xs: 'left'}
+                  textAlign: { xs: 'left' }
                 }}
                 color="success"
               >
@@ -229,7 +229,7 @@ const Landing = ({ user, userType }) => {
             item
             xs={12}
             justifyContent="center"
-            sx={{ width: { xs: '98%'} }}
+            sx={{ width: { xs: '98%' } }}
           >
             <Box
               component="div"
@@ -378,9 +378,9 @@ const Landing = ({ user, userType }) => {
           <Typography variant="h2">{translation.myActions}</Typography>
         </Box>
       </Grid>
-      <UserActions  
+      <UserActions
         databaseUser={user}
-          />
+      />
     </>
   );
 };
