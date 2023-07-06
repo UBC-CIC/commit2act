@@ -3340,6 +3340,7 @@ Resources:
           #set( $fallback_quiz_media = 'fallback_quiz_media=:4' )
         #else
           #set( $fallback_quiz_media = '' )
+        #end
         #if( $context.arguments.translations )
           #set( $translations = 'translations=:5' )
         #else
