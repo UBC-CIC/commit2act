@@ -68,6 +68,7 @@ type Group {
   total_points: Int
   weekly_co2: Float
   weekly_points: Int
+  monthly_points: Int
 }
 
 type GroupInfo {
