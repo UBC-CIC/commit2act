@@ -246,7 +246,7 @@ const SelfReportMenu = ({ user }) => {
           {![0, 3, 5, 6].includes(activeStep) && (
             <Button
               onClick={() => {
-                if (skipBonusQuestion && activeStep === 4) {
+                if (activeStep === 4 && skipBonusQuestion) {
                   setActiveStep(activeStep + 2);
                 } else {
                   setActiveStep(activeStep + 1);
