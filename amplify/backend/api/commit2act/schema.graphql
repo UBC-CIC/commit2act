@@ -5,7 +5,7 @@ type Action {
   action_icon: String
   fallback_quiz_media: String
   is_hidden: Boolean
-  translations: AWSJSON
+  translations: String
 }
 
 type ActionItem {
@@ -32,13 +32,27 @@ type ActionQuiz {
   quiz_id: Int!
   fact_text: String!
   question_text: String!
-  action_id: ID!
+  action_id: Int!
 }
 
 type ActionQuizAnswer {
   quiz_id: Int!
   answer: String!
   is_correct_answer: Boolean!
+}
+
+input ActionQuizAnswerNoId {
+  answer: String!
+  is_correct_answer: Boolean!
+}
+
+type ActionQuizWithAnswers {
+  quiz_id: Int!
+  fact_text: String!
+  question_text: String!
+  action_id: Int!
+  answers: String
+  correct_answers: String
 }
 
 type ActionValidationLabel {
@@ -54,7 +68,7 @@ type ActionWithLabels {
   fallback_quiz_media: String
   validation_labels: String
   is_hidden: Boolean
-  translations: AWSJSON
+  translations: String
 }
 
 type Group {
@@ -68,6 +82,7 @@ type Group {
   total_points: Int
   weekly_co2: Float
   weekly_points: Int
+  monthly_points: Int
 }
 
 type GroupInfo {
@@ -117,7 +132,7 @@ type Mutation {
     page_media: String,
     action_icon: String,
     fallback_quiz_media: String,
-    translations: AWSJSON
+    translations: String
   ): Action
   createActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
   createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
@@ -160,7 +175,7 @@ type Mutation {
     page_media: String,
     action_icon: String,
     fallback_quiz_media: String,
-    translations: AWSJSON
+    translations: String
   ): Action
   remakeActionItems(action_id: Int!, action_items: [ActionItemInputId!]!): [ActionItem]
   remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
@@ -168,10 +183,14 @@ type Mutation {
   deleteActionValidationLabel(action_id: Int!, validation_label: String!): String
   graveyardAction(action_id: Int!): Action
   restoreAction(action_id: Int!): Action
+  createQuiz(action_id: Int!, fact_text: String!, question_text: String!): ActionQuiz
+  createQuizAnswers(quiz_id: Int!, answers: [ActionQuizAnswerNoId!]!): [ActionQuizAnswer]
+  updateQuiz(quiz_id: Int, fact_text: String, question_text: String): ActionQuiz
+  remakeQuizAnswers(quiz_id: Int!, answers: [ActionQuizAnswerNoId!]!): [ActionQuizAnswer]
+  deleteQuiz(quiz_id: Int!): String
 }
 
 type Query {
-  # Get a single value of type 'User' by primary key.
   getSingleUser(user_id: Int!): UserWithStats
   getSingleUserByUsername(username: String!): UserWithStats
   getSingleUserByEmail(email: String!): UserWithStats
@@ -180,9 +199,7 @@ type Query {
   getSingleAction(action_id: Int!): ActionWithLabels
   getTotalGlobalCO2: Float
   getUsersTotalCO2(user_id: Int!): Float
-  getGroupsTotalCO2(group_id: Int!): Float
   getUsersWeekCO2(user_id: Int!): Float
-  getGroupsWeekCO2(group_id: Int!): Float
   getAllUsers: [UserWithStats]
   getAllActions: [ActionWithLabels]
   getAllUngraveyardedActions: [ActionWithLabels]
@@ -199,12 +216,19 @@ type Query {
   getAllUsersInGroup(group_id: Int): [UserWithRoleAndStats]
   getAllOwnersInGroup(group_id: Int): [User]
   getAllMembersInGroup(group_id: Int): [User]
-  getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbedded]
+  getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbeddedAndUser]
   getAllGroupsForUser(user_id: Int): [Group]
   getAllGroupsUserOwns(user_id: Int): [Group]
-  getGroupTotalCO2(group_id: Int!): Float
   isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
   getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
+  getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
+  getAllSubmittedActionsToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
+  getAllQuizzes: [ActionQuizWithAnswers]
+  getAllQuizzesForAction(action_id: Int!): [ActionQuizWithAnswers]
+  getQuizPoolForUser(user_id: Int!, action_id: Int!): [ActionQuizWithAnswers]
+  getSingleQuiz(quiz_id: Int!): ActionQuizWithAnswers
+  isQuizAnswerCorrect(quiz_id: Int!, answer: String!): Boolean
+  getUserStatsForGroup(user_id: Int!, group_id: Int!): UserGroupStats
 }
 
 type Role {
@@ -277,6 +301,26 @@ type SubmittedActionWithItemsEmbedded {
   is_image_explicit: Boolean
 }
 
+type SubmittedActionWithItemsEmbeddedAndUser {
+  sa_id: Int!
+  user_id: Int!
+  action_id: Int!
+  quiz_id: Int
+  g_co2_saved: Float!
+  date_of_action: String!
+  time_submitted: String
+  first_quiz_answer_correct: Boolean!
+  quiz_answered: Boolean!
+  is_validated: Boolean!
+  points_earned: Int!
+  submitted_action_items: String
+  name_of_user: String
+  action_name: String
+  submitted_image: String
+  is_rejected: Boolean
+  is_image_explicit: Boolean
+}
+
 type SubmittedActionWithItemsEmbeddedAndUserAndGroup {
   sa_id: Int!
   user_id: Int!
@@ -304,6 +348,15 @@ type User {
   email: String!
   avatar: String
   username: String
+}
+
+type UserGroupStats {
+  user_id: Int
+  group_id: Int
+  total_co2: Float
+  total_points: Int
+  weekly_co2: Float
+  weekly_points: Int
 }
 
 enum UserRole {
