@@ -3670,7 +3670,7 @@ Resources:
         #end
         #if( $context.arguments.page_media )
           #set( $page_media = 'page_media=:2' )
-          #if( $ctx.args.action_icon || $ctx.args.fallback_quiz_media )
+          #if( $ctx.args.action_icon || $ctx.args.fallback_quiz_media || $ctx.args.translations )
             #set( $page_media = 'page_media=:2,' )
           #end
         #else
@@ -3678,7 +3678,7 @@ Resources:
         #end
         #if( $context.arguments.action_icon )
           #set( $action_icon = 'action_icon=:3' )
-          #if(  $ctx.args.fallback_quiz_media )
+          #if(  $ctx.args.fallback_quiz_media || $ctx.args.translations )
             #set( $action_icon = 'action_icon=:3,' )
           #end
         #else
@@ -3686,11 +3686,14 @@ Resources:
         #end
         #if( $context.arguments.fallback_quiz_media )
           #set( $fallback_quiz_media = 'fallback_quiz_media=:4' )
+          #if( $ctx.args.translations )
+            #set( $fallback_quiz_media = 'fallback_quiz_media=:4,' )
+          #end
         #else
           #set( $fallback_quiz_media = '' )
         #end
         #if( $context.arguments.translations )
-         #set( $translations = 'translations=:5' )
+        #set( $translations = 'translations=:5' )
         #else
           #set( $translations = '' )
         #end
