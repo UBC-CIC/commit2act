@@ -1,17 +1,5 @@
-# This is the SAM template that represents the architecture of your serverless application
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
-
-# The AWSTemplateFormatVersion identifies the capabilities of the template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
-AWSTemplateFormatVersion: '2010-09-09'
-Description: >-
-  Commit2Act SAM deployment
-
-# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
-Transform:
-- AWS::Serverless-2016-10-31
-
+AWSTemplateFormatVersion: 2010-09-09
+Description: Commit2Act SAM deployment
 Parameters:
   ProjectName:
     Type: String
@@ -20,20 +8,13 @@ Parameters:
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     MinLength: 1
     MaxLength: 32
-    ConstraintDescription: must begin with a letter, and only contain alphanumeric characters (1-32 characters)
+    ConstraintDescription: >-
+      must begin with a letter, and only contain alphanumeric characters (1-32
+      characters)
   EnvironmentName:
     Type: String
     Default: dev
-    Description: A name to identify the environment (ex. dev, prod, test)
-  # AmplifyBucket:
-  #   Type: String
-  #   Description: "The name of the S3 bucket for the Amplify project (ex. projectname-storage-0123456789-dev)"
-  # AppSyncApiId:
-  #   Type: String
-  #   Description: "The ID of the AppSync API for the Amplify project (ex. AbcdeF1234567)"
-  # AmplifyCognitoUserPoolId:
-  #   Type: String
-  #   Description: "The ID of the Cognito User Pool for the Amplify project (ex. us-east-1_aBcDeFgh)"
+    Description: 'A name to identify the environment (ex. dev, prod, test)'
   DBName:
     Default: sys
     Description: The database name
@@ -61,23 +42,78 @@ Parameters:
     Description: The database instance type
     Type: String
     Default: db.t4g.large
-    AllowedValues: [db.t2.small, db.t2.medium, db.t3.small, db.t3.medium, db.t4g.medium, db.t4g.large, db.r4.large, db.r4.xlarge, db.r4.2xlarge, db.r4.4xlarge, db.r4.8xlarge, db.r4.16xlarge, db.r5.large, db.r5.xlarge, db.r5.2xlarge, db.r5.4xlarge, db.r5.8xlarge, db.r5.12xlarge, db.r5.16xlarge, db.r6g.large, db.r6g.xlarge, db.r6g.2xlarge, db.r6g.4xlarge, db.r6g.8xlarge, db.r6g.12xlarge, db.r6g.16xlarge]
+    AllowedValues:
+      - db.t2.small
+      - db.t2.medium
+      - db.t3.small
+      - db.t3.medium
+      - db.t4g.medium
+      - db.t4g.large
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+      - db.r4.16xlarge
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.8xlarge
+      - db.r5.12xlarge
+      - db.r5.16xlarge
+      - db.r6g.large
+      - db.r6g.xlarge
+      - db.r6g.2xlarge
+      - db.r6g.4xlarge
+      - db.r6g.8xlarge
+      - db.r6g.12xlarge
+      - db.r6g.16xlarge
   DBEngineVersion:
     Description: The version of Aurora MySQL for the database
     Type: String
     Default: 5.7.mysql_aurora.2.09.2
-    AllowedValues: [5.7.mysql_aurora.2.07.0, 5.7.mysql_aurora.2.07.1, 5.7.mysql_aurora.2.07.1, 5.7.mysql_aurora.2.07.2, 5.7.mysql_aurora.2.07.3, 5.7.mysql_aurora.2.07.4, 5.7.mysql_aurora.2.07.5, 5.7.mysql_aurora.2.07.6, 5.7.mysql_aurora.2.07.7, 5.7.mysql_aurora.2.08.0, 5.7.mysql_aurora.2.08.1, 5.7.mysql_aurora.2.08.2, 5.7.mysql_aurora.2.08.3, 5.7.mysql_aurora.2.08.4, 5.7.mysql_aurora.2.09.0, 5.7.mysql_aurora.2.09.1, 5.7.mysql_aurora.2.09.2, 5.7.mysql_aurora.2.09.3, 5.7.mysql_aurora.2.10.0, 5.7.mysql_aurora.2.10.1, 5.7.mysql_aurora.2.10.2, 5.7.mysql_aurora.2.11.1,  8.0.mysql_aurora.3.01.0, 8.0.mysql_aurora.3.01.1, 8.0.mysql_aurora.3.02.0]
+    AllowedValues:
+      - 5.7.mysql_aurora.2.07.0
+      - 5.7.mysql_aurora.2.07.1
+      - 5.7.mysql_aurora.2.07.1
+      - 5.7.mysql_aurora.2.07.2
+      - 5.7.mysql_aurora.2.07.3
+      - 5.7.mysql_aurora.2.07.4
+      - 5.7.mysql_aurora.2.07.5
+      - 5.7.mysql_aurora.2.07.6
+      - 5.7.mysql_aurora.2.07.7
+      - 5.7.mysql_aurora.2.08.0
+      - 5.7.mysql_aurora.2.08.1
+      - 5.7.mysql_aurora.2.08.2
+      - 5.7.mysql_aurora.2.08.3
+      - 5.7.mysql_aurora.2.08.4
+      - 5.7.mysql_aurora.2.09.0
+      - 5.7.mysql_aurora.2.09.1
+      - 5.7.mysql_aurora.2.09.2
+      - 5.7.mysql_aurora.2.09.3
+      - 5.7.mysql_aurora.2.10.0
+      - 5.7.mysql_aurora.2.10.1
+      - 5.7.mysql_aurora.2.10.2
+      - 5.7.mysql_aurora.2.11.1
+      - 8.0.mysql_aurora.3.01.0
+      - 8.0.mysql_aurora.3.01.1
+      - 8.0.mysql_aurora.3.02.0
   DeletionProtection:
-    Description: When deletion proteciton is enabled, when you request the deletion of a database instance in the AWS Console you are blocked and may not continue without first modifying the instance and disabling deletion protection (recommended for production)
+    Description: >-
+      When deletion proteciton is enabled, when you request the deletion of a
+      database instance in the AWS Console you are blocked and may not continue
+      without first modifying the instance and disabling deletion protection
+      (recommended for production)
     Type: String
-    Default: True
+    Default: true
   EncryptDatabase:
     Description: Enable encryption of the database
     Type: String
-    Default: True
+    Default: true
   CloudFrontPriceClass:
     Type: String
-    Description: "The price class for CloudFront distribution"
+    Description: The price class for CloudFront distribution
     Default: PriceClass_100
     AllowedValues:
       - PriceClass_100
@@ -85,7 +121,9 @@ Parameters:
       - PriceClass_All
   MinConfidenceThreshold:
     Type: Number
-    Description: The minimum percent confidence required to accept a label during image validation with Rekognition (ex. 70)
+    Description: >-
+      The minimum percent confidence required to accept a label during image
+      validation with Rekognition (ex. 70)
     Default: 70
     MinValue: 30
     MaxValue: 100
@@ -96,227 +134,277 @@ Parameters:
   CognitoAdminEmail:
     Type: String
     Description: The email of the admin user to use
-  
-
+Outputs:
+  AmplifyBucketName:
+    Description: The name of the Amplify S3 bucket
+    Value: '{{resolve:ssm:BucketName:1:1677894839400}}'
+  ValidationLambdaArn:
+    Description: The ARN of the Lambda function for image validation
+    Value: !GetAtt 
+      - validateImageWithRekognition
+      - Arn
+  CloudFrontDistributionDomainName:
+    Description: The domain name of our CloudFront distibution
+    Value: !Sub 
+      - 'https://${Domain}/'
+      - Domain: !GetAtt 
+          - CloudFrontDistribution
+          - DomainName
+  CloudFrontOriginAccessIdentity:
+    Description: The origin access identity ID for CloudFront
+    Value: !Ref OriginAccessIdentity
+  ShellScript:
+    Description: >-
+      Run the following command to set up the Lambda trigger! NOTE: This only
+      works on Linux, Mac, or WSL
+    Value: !Sub 
+      - './scripts/lambda_trigger.sh ${Bucket} ${Lambda} ${Oai}'
+      - Bucket: '{{resolve:ssm:BucketName:1:1677894839400}}'
+        Lambda: !GetAtt 
+          - validateImageWithRekognition
+          - Arn
+        Oai: !Ref OriginAccessIdentity
 Resources:
   GraphQlApiIdParameter:
-      Type: AWS::SSM::Parameter
-      Properties: 
-        Name: "/Commit2Act/GraphqlApiId"
-        Type: String 
-        Value: "{{resolve:ssm:GraphQLAPIId:1}}"
-        Description: Commit2Act GraphQL Api Id
-
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: /Commit2Act/GraphqlApiId
+      Type: String
+      Value: '{{resolve:ssm:GraphQLAPIId:1}}'
+      Description: Commit2Act GraphQL Api Id
+    Metadata:
+      SamResourceId: GraphQlApiIdParameter
   IGW:
-    Type: AWS::EC2::InternetGateway
-    Properties: 
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: IGW
   VPC:
-    Type: AWS::EC2::VPC
-    Properties: 
+    Type: 'AWS::EC2::VPC'
+    Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsHostnames: true
       EnableDnsSupport: true
       InstanceTenancy: default
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-        - Key: "Name"
-          Value: !Sub ${ProjectName} VPC
-
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+        - Key: Name
+          Value: !Sub '${ProjectName} VPC'
+    Metadata:
+      SamResourceId: VPC
   IGWAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
+    Type: 'AWS::EC2::VPCGatewayAttachment'
     DependsOn:
-    - IGW
-    - VPC
+      - IGW
+      - VPC
     Properties:
       InternetGatewayId: !Ref IGW
       VpcId: !Ref VPC
-  
+    Metadata:
+      SamResourceId: IGWAttachment
   PublicSubnet1:
-    Type: AWS::EC2::Subnet
+    Type: 'AWS::EC2::Subnet'
     DependsOn:
-    - VPC
+      - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      AvailabilityZone: !Select 
+        - 0
+        - !GetAZs ''
       CidrBlock: 10.0.0.0/24
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+          Value: !Sub '${EnvironmentName} Public Subnet (AZ1)'
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: PublicSubnet1
   PublicSubnet2:
-    Type: AWS::EC2::Subnet
+    Type: 'AWS::EC2::Subnet'
     DependsOn:
-    - VPC
+      - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      AvailabilityZone: !Select 
+        - 1
+        - !GetAZs ''
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+          Value: !Sub '${EnvironmentName} Public Subnet (AZ2)'
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: PublicSubnet2
   PrivateSubnet1:
-    Type: AWS::EC2::Subnet
+    Type: 'AWS::EC2::Subnet'
     DependsOn:
-    - VPC
+      - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      AvailabilityZone: !Select 
+        - 0
+        - !GetAZs ''
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
-
+          Value: !Sub '${EnvironmentName} Private Subnet (AZ1)'
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: PrivateSubnet1
   PrivateSubnet2:
-    Type: AWS::EC2::Subnet
+    Type: 'AWS::EC2::Subnet'
     DependsOn:
-    - VPC
+      - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      AvailabilityZone: !Select 
+        - 1
+        - !GetAZs ''
       CidrBlock: 10.0.3.0/24
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
-
+          Value: !Sub '${EnvironmentName} Private Subnet (AZ2)'
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: PrivateSubnet2
   PublicRouteTable:
-    Type: AWS::EC2::RouteTable
+    Type: 'AWS::EC2::RouteTable'
     DependsOn:
-    - VPC
+      - VPC
     Properties:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Public Routes
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+          Value: !Sub '${EnvironmentName} Public Routes'
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: PublicRouteTable
   PublicRoute1:
-    Type: AWS::EC2::Route
-    DependsOn: 
+    Type: 'AWS::EC2::Route'
+    DependsOn:
       - IGWAttachment
       - PublicRouteTable
     Properties:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref IGW
-
+    Metadata:
+      SamResourceId: PublicRoute1
   PublicSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PublicSubnet1
       RouteTableId: !Ref PublicRouteTable
-
+    Metadata:
+      SamResourceId: PublicSubnet1RouteTableAssociation
   PublicSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
-
-
+    Metadata:
+      SamResourceId: PublicSubnet2RouteTableAssociation
   PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
+    Type: 'AWS::EC2::RouteTable'
     DependsOn:
-    - VPC
+      - VPC
     Properties:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName} Private Routes
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+          Value: !Sub '${EnvironmentName} Private Routes'
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: PrivateRouteTable
   PrivateSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PrivateSubnet1
       RouteTableId: !Ref PrivateRouteTable
-
+    Metadata:
+      SamResourceId: PrivateSubnet1RouteTableAssociation
   PrivateSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateRouteTable
-
+    Metadata:
+      SamResourceId: PrivateSubnet2RouteTableAssociation
   OpenSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties: 
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
       GroupDescription: A security group that allows all traffic in and out
       GroupName: open-security-group
-      SecurityGroupEgress: 
+      SecurityGroupEgress:
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
-      SecurityGroupIngress: 
+      SecurityGroupIngress:
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
       VpcId: !Ref VPC
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: OpenSecurityGroup
   ClosedSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties: 
-      GroupDescription: A security group that allows no traffic in, but all traffic out
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'A security group that allows no traffic in, but all traffic out'
       GroupName: closed-security-group
-      SecurityGroupEgress: 
+      SecurityGroupEgress:
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
       VpcId: !Ref VPC
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-  
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: ClosedSecurityGroup
   SGProxy:
-    Type: AWS::EC2::SecurityGroup
+    Type: 'AWS::EC2::SecurityGroup'
     DependsOn:
       - ClosedSecurityGroup
-    Properties: 
+    Properties:
       GroupDescription: A security group for RDS that allows all traffic in on port 3306
       GroupName: Proxy-security-group
       VpcId: !Ref VPC
@@ -330,14 +418,17 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
-
+    Metadata:
+      SamResourceId: SGProxy
   SGRds:
-    Type: AWS::EC2::SecurityGroup
+    Type: 'AWS::EC2::SecurityGroup'
     DependsOn:
       - ClosedSecurityGroup
       - SGProxy
-    Properties: 
-      GroupDescription: A security group for RDS that allows all traffic in on port 3306 from the proxy and other vpc resources
+    Properties:
+      GroupDescription: >-
+        A security group for RDS that allows all traffic in on port 3306 from
+        the proxy and other vpc resources
       GroupName: RDS-security-group
       VpcId: !Ref VPC
       SecurityGroupIngress:
@@ -354,592 +445,439 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
-
+    Metadata:
+      SamResourceId: SGRds
   MySQLAuroraInboundSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties: 
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
       GroupDescription: A security group for RDS that allows all traffic in on port 3306
       GroupName: MySQLAurora-security-group
-      SecurityGroupIngress:  # traffic in
+      SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
           CidrIp: 0.0.0.0/0
-      SecurityGroupEgress: 
+      SecurityGroupEgress:
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
       VpcId: !Ref VPC
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
-
-# RDS #########################################
-  
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: MySQLAuroraInboundSG
   DBSubnetGrouping:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties: 
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
       DBSubnetGroupDescription: Subnet group!
       DBSubnetGroupName: subnet-group-1-2
-      SubnetIds: 
+      SubnetIds:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
-
+    Metadata:
+      SamResourceId: DBSubnetGrouping
   DBPrivateSubnetGrouping:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties: 
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
       DBSubnetGroupDescription: Subnet grouping for private subnets
       DBSubnetGroupName: subnet-group-private-1-2
-      SubnetIds: 
+      SubnetIds:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
-
+    Metadata:
+      SamResourceId: DBPrivateSubnetGrouping
   MainDBCluster:
-    Type: AWS::RDS::DBCluster
+    Type: 'AWS::RDS::DBCluster'
     DependsOn:
-    - VPC
-    - PrivateSubnet1
-    - PrivateSubnet2
-    - DBPrivateSubnetGrouping
-    Properties: 
-      DatabaseName: !Ref 'DBName'
+      - VPC
+      - PrivateSubnet1
+      - PrivateSubnet2
+      - DBPrivateSubnetGrouping
+    Properties:
+      DatabaseName: !Ref DBName
       DBClusterIdentifier: db-cluster
       DBSubnetGroupName: !Ref DBPrivateSubnetGrouping
-      DeletionProtection: !Ref 'DeletionProtection'
-      EnableCloudwatchLogsExports: 
+      DeletionProtection: !Ref DeletionProtection
+      EnableCloudwatchLogsExports:
         - general
         - error
-      EnableHttpEndpoint: true 
-      EnableIAMDatabaseAuthentication: false 
+      EnableHttpEndpoint: true
+      EnableIAMDatabaseAuthentication: false
       Engine: aurora-mysql
-      EngineVersion: !Ref 'DBEngineVersion'
-      MasterUsername: !Ref 'DBUser'
-      MasterUserPassword: !Ref 'DBPassword'
+      EngineVersion: !Ref DBEngineVersion
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
       Port: 3306
-      StorageEncrypted: !Ref 'EncryptDatabase' 
+      StorageEncrypted: !Ref EncryptDatabase
       SourceRegion: !Sub '${AWS::Region}'
-      Tags: 
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-      VpcSecurityGroupIds:  
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+      VpcSecurityGroupIds:
         - !Ref MySQLAuroraInboundSG
-
+    Metadata:
+      SamResourceId: MainDBCluster
   MainDBInstance:
-    Type: AWS::RDS::DBInstance
+    Type: 'AWS::RDS::DBInstance'
     DependsOn:
-    - MainDBCluster
-    Properties: 
+      - MainDBCluster
+    Properties:
       DBClusterIdentifier: db-cluster
-      Engine: aurora-mysql 
-      DBInstanceClass: !Ref 'DBInstanceClass'
+      Engine: aurora-mysql
+      DBInstanceClass: !Ref DBInstanceClass
       DBInstanceIdentifier: !Sub '${ProjectName}-${EnvironmentName}-instance'
-      PubliclyAccessible: false 
-      Tags: 
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+      PubliclyAccessible: false
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: MainDBInstance
   RDSCredentialsSecret:
-    Type: AWS::SecretsManager::Secret
+    Type: 'AWS::SecretsManager::Secret'
     DependsOn:
-    - MainDBCluster
-    - IGWAttachment
-    - MainDBInstance
-    Properties: 
+      - MainDBCluster
+      - IGWAttachment
+      - MainDBInstance
+    Properties:
       Description: Stores the credentials for the RDS instance
       Name: RDSCredentials
-      SecretString: !Sub '{"username":"${DBUser}","password":"${DBPassword}","engine":"mysql","host":"${MainDBCluster.Endpoint.Address}","port":3306,"region":"${AWS::Region}"}'
+      SecretString: !Sub >-
+        {"username":"${DBUser}","password":"${DBPassword}","engine":"mysql","host":"${MainDBCluster.Endpoint.Address}","port":3306,"region":"${AWS::Region}"}
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: RDSCredentialsSecret
   LambdaServiceRole:
-    Type: AWS::IAM::Role
+    Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !Sub 'Lambda-ServiceRole-${AWS::Region}'    
+      RoleName: !Sub 'Lambda-ServiceRole-${AWS::Region}'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: 2012-10-17
         Statement:
           - Effect: Allow
             Principal:
               Service:
-                - 'appsync.amazonaws.com'
+                - appsync.amazonaws.com
             Action:
               - 'sts:AssumeRole'
       Policies:
         - PolicyName: allow-lambda-access-from-appsync
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: 2012-10-17
             Statement:
               - Effect: Allow
-                Action: appsync:GraphQL
+                Action: 'appsync:GraphQL'
                 Resource: '*'
               - Effect: Allow
-                Action: lambda:InvokeAsync
+                Action: 'lambda:InvokeAsync'
                 Resource: '*'
               - Effect: Allow
-                Action: lambda:InvokeFunction
+                Action: 'lambda:InvokeFunction'
                 Resource: '*'
-
+    Metadata:
+      SamResourceId: LambdaServiceRole
   EndpointSSM:
-    Type: AWS::EC2::VPCEndpoint
+    Type: 'AWS::EC2::VPCEndpoint'
     Properties:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.ssm'
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - !Ref OpenSecurityGroup
       SubnetIds:
-        # - !Ref PublicSubnet1
-        # - !Ref PublicSubnet2
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
-
-  # EndpointKMS:
-  #   Type: AWS::EC2::VPCEndpoint
-  #   Properties:
-  #     ServiceName: !Sub 'com.amazonaws.${AWS::Region}.kms'
-  #     PrivateDnsEnabled: true
-      # SecurityGroupIds:
-      #   - !Ref ClosedSecurityGroup
-  #     SubnetIds:
-  #       - !Ref PublicSubnet1
-  #       - !Ref PublicSubnet2
-  #     VpcEndpointType: Interface
-  #     VpcId: !Ref VPC
-
+    Metadata:
+      SamResourceId: EndpointSSM
   EndpointRekognition:
-    Type: AWS::EC2::VPCEndpoint
+    Type: 'AWS::EC2::VPCEndpoint'
     Properties:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.rekognition'
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - !Ref OpenSecurityGroup
       SubnetIds:
-        # - !Ref PublicSubnet1
-        # - !Ref PublicSubnet2
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
-  
+    Metadata:
+      SamResourceId: EndpointRekognition
   EndpointRDS:
-    Type: AWS::EC2::VPCEndpoint
+    Type: 'AWS::EC2::VPCEndpoint'
     Properties:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.rds'
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - !Ref ClosedSecurityGroup
       SubnetIds:
-        # - !Ref PublicSubnet1
-        # - !Ref PublicSubnet2
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcEndpointType: Interface
       VpcId: !Ref VPC
-
+    Metadata:
+      SamResourceId: EndpointRDS
   EndpointGatewayS3:
-    Type: AWS::EC2::VPCEndpoint
+    Type: 'AWS::EC2::VPCEndpoint'
     Properties:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
-      RouteTableIds: 
+      RouteTableIds:
         - !Ref PublicRouteTable
         - !Ref PrivateRouteTable
       VpcEndpointType: Gateway
       VpcId: !Ref VPC
-
+    Metadata:
+      SamResourceId: EndpointGatewayS3
   RDSProxyRole:
-    Type: AWS::IAM::Role
+    Type: 'AWS::IAM::Role'
     DependsOn:
       - RDSCredentialsSecret
       - MainDBInstance
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: 2012-10-17
         Statement:
           - Effect: Allow
             Principal:
               Service:
-                - 'rds.amazonaws.com'
+                - rds.amazonaws.com
             Action:
               - 'sts:AssumeRole'
       Policies:
         - PolicyName: rdsproxypolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: 2012-10-17
             Statement:
               - Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
                 Resource: !Ref RDSCredentialsSecret
               - Effect: Allow
-                Action: rds-db:connect
-                Resource: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${MainDBCluster}"
+                Action: 'rds-db:connect'
+                Resource: !Sub >-
+                  arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${MainDBCluster}
               - Effect: Allow
-                Action: rds-db:connect
-                Resource: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:db:${MainDBInstance}"
-
+                Action: 'rds-db:connect'
+                Resource: !Sub >-
+                  arn:aws:rds:${AWS::Region}:${AWS::AccountId}:db:${MainDBInstance}
+    Metadata:
+      SamResourceId: RDSProxyRole
   RDSProxy:
-    Type: AWS::RDS::DBProxy
+    Type: 'AWS::RDS::DBProxy'
     DependsOn:
-    - MainDBInstance
-    - RDSCredentialsSecret
-    - PrivateSubnet1
-    - PrivateSubnet2
-    - RDSProxyRole
+      - MainDBInstance
+      - RDSCredentialsSecret
+      - PrivateSubnet1
+      - PrivateSubnet2
+      - RDSProxyRole
     Properties:
       DebugLogging: true
       DBProxyName: RDS-Proxy
       EngineFamily: MYSQL
       IdleClientTimeout: 120
       RequireTLS: false
-      RoleArn: !GetAtt RDSProxyRole.Arn
+      RoleArn: !GetAtt 
+        - RDSProxyRole
+        - Arn
       Auth:
-        - {AuthScheme: SECRETS, SecretArn: !Ref RDSCredentialsSecret, IAMAuth: DISABLED}
+        - AuthScheme: SECRETS
+          SecretArn: !Ref RDSCredentialsSecret
+          IAMAuth: DISABLED
       VpcSubnetIds:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       VpcSecurityGroupIds:
         - !Ref SGProxy
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: RDSProxy
   RDSProxyTargetGroup:
-    Type: AWS::RDS::DBProxyTargetGroup
+    Type: 'AWS::RDS::DBProxyTargetGroup'
     DependsOn:
-    - MainDBCluster
-    - RDSProxy
+      - MainDBCluster
+      - RDSProxy
     Properties:
       DBProxyName: !Ref RDSProxy
-      DBClusterIdentifiers: [!Ref MainDBCluster] 
+      DBClusterIdentifiers:
+        - !Ref MainDBCluster
       TargetGroupName: default
       ConnectionPoolConfigurationInfo:
-          MaxConnectionsPercent: 100
-          MaxIdleConnectionsPercent: 50
-          ConnectionBorrowTimeout: 120
-
+        MaxConnectionsPercent: 100
+        MaxIdleConnectionsPercent: 50
+        ConnectionBorrowTimeout: 120
+    Metadata:
+      SamResourceId: RDSProxyTargetGroup
   MinConfidenceThresholdSSM:
-    Type: AWS::SSM::Parameter
-    Properties: 
+    Type: 'AWS::SSM::Parameter'
+    Properties:
       Type: String
-      Description: A percentage that represents the minimum required confidence in Rekognition in order to count as a hit, for use in validateImageWithRekognition
+      Description: >-
+        A percentage that represents the minimum required confidence in
+        Rekognition in order to count as a hit, for use in
+        validateImageWithRekognition
       Name: MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD
       Value: !Ref MinConfidenceThreshold
-
-
-  # Lambda functions ####################################
-  
-  graphQLMySQLResolverLayers:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      LayerName: graphQLMySQLResolverLayers
-      Description: Dependency for Lambda
-      ContentUri: ./lambda_functions/graphQLMySQLResolver/node_modules/
-
-  graphQLMySQLResolver:
-    Type: AWS::Serverless::Function
-    DependsOn:
-    - RDSProxy
-    - ClosedSecurityGroup
-    - MainDBInstance
-    - LambdaServiceRole
-    Properties:
-      FunctionName: graphQL-MySQL-Resolver
-      Layers:
-        - !Ref graphQLMySQLResolverLayers
-      Handler: index.handler
-      CodeUri: ./lambda_functions/graphQLMySQLResolver/
-      Runtime: nodejs14.x
-      Architectures:
-        - x86_64
-      MemorySize: 1000
-      Timeout: 100
-      Description: Called by AppSync to resolve SQL statements in the form of a request mapping
-      Policies:
-        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
-        - arn:aws:iam::aws:policy/AmazonRDSFullAccess
-        - arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess
-        - Version: '2012-10-17'  # in line policies for lambda
-          Statement:
-          - Effect: Allow
-            Action: logs:CreateLogGroup
-            Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
-          - Effect: Allow
-            Action:
-            - logs:CreateLogStream
-            - logs:PutLogEvents
-            Resource:
-            - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/GraphQL-MySQL-Resolver:*
-          - Effect: Allow
-            Action: rds-db:connect
-            Resource: !GetAtt RDSProxy.DBProxyArn
-          - Effect: Allow
-            Action:
-            - "ec2:CreateNetworkInterface"
-            - "ec2:DeleteNetworkInterface"
-            - "ec2:DescribeNetworkInterfaces"
-            Resource: '*'
-      Environment:
-        Variables:
-          DBNAME: !Ref 'DBName'
-          PASSWORD: !Ref 'DBPassword'
-          USERNAME: !Ref 'DBUser'
-          RDSPROXY_ENDPOINT: !GetAtt RDSProxy.Endpoint
-          ADMIN_NAME: !Ref CognitoAdminName
-          ADMIN_EMAIL: !Ref CognitoAdminEmail
-      VpcConfig:
-        SecurityGroupIds:
-          - !Ref ClosedSecurityGroup
-        SubnetIds:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
-
+    Metadata:
+      SamResourceId: MinConfidenceThresholdSSM
   graphQLMySQLResolverLogs:
-    Type: AWS::Logs::LogGroup
+    Type: 'AWS::Logs::LogGroup'
     DependsOn: graphQLMySQLResolver
     Properties:
-      LogGroupName: !Join ["", ["/aws/lambda/", !Ref graphQLMySQLResolver]]
+      LogGroupName: !Join 
+        - ''
+        - - /aws/lambda/
+          - !Ref graphQLMySQLResolver
       RetentionInDays: 14
-
+    Metadata:
+      SamResourceId: graphQLMySQLResolverLogs
   LambdaInvokePermission:
     Type: 'AWS::Lambda::Permission'
     DependsOn: validateImageWithRekognition
     Properties:
-      FunctionName: !GetAtt validateImageWithRekognition.Arn
+      FunctionName: !GetAtt 
+        - validateImageWithRekognition
+        - Arn
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Join ['', ['arn:aws:s3:::','{{resolve:ssm:BucketName}}']] 
-
-  validateImageWithRekognition:
-    Type: AWS::Serverless::Function
-    DependsOn:
-    - CloudFrontDistribution
-    - RDSProxy
-    - ClosedSecurityGroup
-    - MainDBInstance
-    Properties:
-      FunctionName: validateImageWithRekognition
-      Handler: lambda_function.lambda_handler
-      CodeUri: ./lambda_functions/validateImageWithRekognition
-      Runtime: python3.8
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: Validates images uploaded through the submitted action pipeline
-      Policies:
-        Version: '2012-10-17' # in line policies
-        Statement:
-        - Effect: Allow
-          Action: logs:CreateLogGroup
-          Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
-        - Effect: Allow
-          Action:
-          - logs:CreateLogStream
-          - logs:PutLogEvents
-          Resource:
-          - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/validateImageWithRekognition:*
-        - Effect: Allow
-          Action:
-          - rekognition:DetectLabels
-          - rekognition:DetectFaces
-          - rekognition:DetectModerationLabels
-          - rekognition:CompareFaces
-          Resource: "*"
-        - Effect: Allow
-          Action:
-          - rekognition:CreateCollection
-          - rekognition:IndexFaces
-          Resource: "*"
-        - Effect: Allow
-          Action:
-          - s3:PutObject
-          - s3:GetObject
-          - s3:DeleteObject
-          Resource: arn:aws:s3:::*
-        - Effect: Allow
-          Action:
-          - ssm:GetParameter
-          - ssm:GetParameters
-          Resource:
-          - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD
-        - Effect: Allow
-          Action:
-          - ssm:UpdateInstanceInformation
-          - ssmmessages:CreateControlChannel
-          - ssmmessages:CreateDataChannel
-          - ssmmessages:OpenControlChannel
-          - ssmmessages:OpenDataChannel
-          Resource: "*"
-        - Effect: Allow
-          Action:
-          - s3:GetEncryptionConfiguration
-          Resource: "*"
-        - Effect: Allow
-          Action:
-          - kms:Decrypt
-          Resource: '*' 
-      Environment:
-        Variables:
-          AMPLIFY_BUCKET: '{{resolve:ssm:BucketName}}'
-          CLOUDFRONT_URL: !GetAtt CloudFrontDistribution.DomainName 
-          DBNAME: !Ref DBName
-          ENDPOINT: !GetAtt RDSProxy.Endpoint
-          PASSWORD: !Ref DBPassword
-          USERNAME: !Ref DBUser
-      VpcConfig:
-        SecurityGroupIds:
-          - !Ref ClosedSecurityGroup
-        SubnetIds:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
-      
-      # Events:
-      #   FileUpload:
-      #     Type: S3
-      #     Properties:
-      #       Bucket: !Ref AmplifyBucket ####################
-      #       Events: s3:ObjectCreated:*
-      #       Filter:
-      #         S3Key:
-      #           Rules:
-      #             - Name: prefix
-      #               Value: "public/validation/input/"
-
+      SourceArn: !Join 
+        - ''
+        - - 'arn:aws:s3:::'
+          - '{{resolve:ssm:BucketName:1:1677894839400}}'
+    Metadata:
+      SamResourceId: LambdaInvokePermission
   validateImageWithRekognitionLogs:
-    Type: AWS::Logs::LogGroup
+    Type: 'AWS::Logs::LogGroup'
     DependsOn: validateImageWithRekognition
     Properties:
-      LogGroupName: !Join ["", ["/aws/lambda/", !Ref validateImageWithRekognition]]
+      LogGroupName: !Join 
+        - ''
+        - - /aws/lambda/
+          - !Ref validateImageWithRekognition
       RetentionInDays: 14
-
-
-# Cloudfront ##########################################
-
+    Metadata:
+      SamResourceId: validateImageWithRekognitionLogs
   OriginAccessIdentity:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: !Ref AWS::StackName
-
+        Comment: !Ref 'AWS::StackName'
+    Metadata:
+      SamResourceId: OriginAccessIdentity
   CloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
+    Type: 'AWS::CloudFront::Distribution'
     DependsOn:
-    - OriginAccessIdentity
+      - OriginAccessIdentity
     Properties:
       DistributionConfig:
         Origins:
           - ConnectionAttempts: 3
             ConnectionTimeout: 10
-            DomainName: !Join ['', ['{{resolve:ssm:BucketName}}','.s3.', !Sub '${AWS::Region}', '.amazonaws.com']]
+            DomainName: !Join 
+              - ''
+              - - '{{resolve:ssm:BucketName:1:1677894839400}}'
+                - .s3.
+                - !Sub '${AWS::Region}'
+                - .amazonaws.com
             Id: AmplifyBucketCloudFrontDistribution
-            OriginPath: "/public"
-            S3OriginConfig: 
+            OriginPath: /public
+            S3OriginConfig:
               OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${OriginAccessIdentity}'
         Enabled: 'true'
         PriceClass: !Ref CloudFrontPriceClass
         HttpVersion: http2
-        Comment: !Sub "Distribution for the ${EnvironmentName} ${AWS::Region} project"
+        Comment: !Sub 'Distribution for the ${EnvironmentName} ${AWS::Region} project'
         DefaultCacheBehavior:
           CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-          AllowedMethods: 
+          AllowedMethods:
             - GET
             - HEAD
           TargetOriginId: AmplifyBucketCloudFrontDistribution
           ViewerProtocolPolicy: redirect-to-https
       Tags:
-        - Key: "Project"
-          Value: !Ref 'ProjectName'
-        - Key: "EnvironmentName"
-          Value: !Ref 'EnvironmentName'
-
-
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: EnvironmentName
+          Value: !Ref EnvironmentName
+    Metadata:
+      SamResourceId: CloudFrontDistribution
   AdminCognitoUser:
-    Type: AWS::Cognito::UserPoolUser
-    Properties: 
-      UserPoolId: '{{resolve:ssm:UserPoolId}}'
+    Type: 'AWS::Cognito::UserPoolUser'
+    Properties:
+      UserPoolId: '{{resolve:ssm:UserPoolId:1:1677894829617}}'
       Username: !Ref CognitoAdminEmail
-      UserAttributes: 
-        - Name: 'name'
+      UserAttributes:
+        - Name: name
           Value: !Ref CognitoAdminName
-        - Name: 'email'
+        - Name: email
           Value: !Ref CognitoAdminEmail
-        - Name: 'preferred_username'
+        - Name: preferred_username
           Value: !Ref CognitoAdminEmail
-        - Name: 'email_verified'
-          Value: True
+        - Name: email_verified
+          Value: true
         - Name: 'custom:type'
-          Value: 'Admin'
+          Value: Admin
         - Name: 'custom:firstLogin'
           Value: 'true'
-
-  # APPSYNC #####################################################
-
+    Metadata:
+      SamResourceId: AdminCognitoUser
   AppSyncLogsRole:
-    Type: AWS::IAM::Role
+    Type: 'AWS::IAM::Role'
     Properties:
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+        - 'arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs'
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: 2012-10-17
         Statement:
           - Effect: Allow
             Action:
-              - sts:AssumeRole
+              - 'sts:AssumeRole'
             Principal:
               Service:
                 - appsync.amazonaws.com
-
-  # AppSyncAPI:
-  #   Type: AWS::AppSync::GraphQLApi
-  #   DependsOn: 
-  #     - AppSyncLogsRole
-  #   Properties:
-  #     Name: !Sub '${ProjectName}-GraphQL-API-${EnvironmentName}'
-  #     AuthenticationType: AMAZON_COGNITO_USER_POOLS
-  #     UserPoolConfig:
-  #       AwsRegion: !Sub '${AWS::Region}'
-  #       DefaultAction: ALLOW
-  #       UserPoolId: !Ref AmplifyCognitoUserPoolId
-  #     LogConfig:
-  #       CloudWatchLogsRoleArn: !GetAtt AppSyncLogsRole.Arn
-  #       FieldLogLevel: ALL
-  #     Tags:
-  #       - Key: "Project"
-  #         Value: !Ref 'ProjectName'
-  #       - Key: "EnvironmentName"
-  #         Value: !Ref 'EnvironmentName'
-
+    Metadata:
+      SamResourceId: AppSyncLogsRole
   LambdaAppSyncDataSource:
-    Type: AWS::AppSync::DataSource
+    Type: 'AWS::AppSync::DataSource'
     DependsOn:
-    - graphQLMySQLResolver
-    - GraphQLApiSchema
+      - graphQLMySQLResolver
+      - GraphQLApiSchema
     Properties:
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
       Name: LambdaHandler
       Type: AWS_LAMBDA
-      ServiceRoleArn: !GetAtt LambdaServiceRole.Arn
+      ServiceRoleArn: !GetAtt 
+        - LambdaServiceRole
+        - Arn
       LambdaConfig:
-        LambdaFunctionArn: !GetAtt graphQLMySQLResolver.Arn
-
+        LambdaFunctionArn: !GetAtt 
+          - graphQLMySQLResolver
+          - Arn
+    Metadata:
+      SamResourceId: LambdaAppSyncDataSource
   GraphQLApiSchema:
-    Type: AWS::AppSync::GraphQLSchema
+    Type: 'AWS::AppSync::GraphQLSchema'
     Properties:
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
       Definition: |
         type Action {
           action_id: Int!
@@ -948,7 +886,7 @@ Resources:
           action_icon: String
           fallback_quiz_media: String
           is_hidden: Boolean
-          translations: AWSJSON
+         translations: String
         }
 
         type ActionItem {
@@ -1011,7 +949,7 @@ Resources:
           fallback_quiz_media: String
           validation_labels: String
           is_hidden: Boolean
-          translations: AWSJSON
+         translations: String
         }
 
         type Group {
@@ -1075,8 +1013,8 @@ Resources:
             page_media: String,
             action_icon: String,
             fallback_quiz_media: String,
-            translations: AWSJSON
-          ): Action
+         translations: String
+        ): Action
           createActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
           createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
           deleteAction(action_id: Int!): String
@@ -1118,8 +1056,8 @@ Resources:
             page_media: String,
             action_icon: String,
             fallback_quiz_media: String,
-            translations: AWSJSON
-          ): Action
+         translations: String
+         ): Action
           remakeActionItems(action_id: Int!, action_items: [ActionItemInputId!]!): [ActionItem]
           remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
           deleteActionItem(action_id: Int!, item_name: String): String
@@ -1359,13 +1297,12 @@ Resources:
           item_description: String
           co2_saved_per_unit: Float
         }
-
-
-
+    Metadata:
+      SamResourceId: GraphQLApiSchema
   getActionItemsForActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getActionItemsForAction
@@ -1380,17 +1317,21 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getActionItemsForActionResolver
   getAllActionItemsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllActionItems
@@ -1409,15 +1350,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllActionItemsResolver
   getAllActionsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllActions
@@ -1430,10 +1376,10 @@ Resources:
           action_icon: String
           fallback_quiz_media: String
           validation_label: [String]
-          translations: AWSJSON
+         translations: String
         }
         *#
-        
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -1443,33 +1389,27 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: |
-        $util.toJson($context.result)
-        ## {
-        ## 	"action_id": $context.result.get("action_id"),
-        ## 	"action_name": $context.result.get("action_name"),
-        ## 	"page_media": $context.result.get("page_media"),
-        ## 	"action_icon": $context.result.get("action_icon"),
-        ## 	"fallback_quiz_media": $context.result.get("fallback_quiz_media"),
-        ## "translations": $context.result.get("translations"),
-        ## 	"validation_label": null
-        ## }
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: "$util.toJson($context.result)\n## {\n## \t\"action_id\": $context.result.get(\"action_id\"),\n## \t\"action_name\": $context.result.get(\"action_name\"),\n## \t\"page_media\": $context.result.get(\"page_media\"),\n## \t\"action_icon\": $context.result.get(\"action_icon\"),\n## \t\"fallback_quiz_media\": $context.result.get(\"fallback_quiz_media\"),\n## \t\"translations\": $context.result.get(\"translations\"),\n## \t\"validation_label\": null\n## }\n"
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllActionsResolver
   getAllGraveyardedSubmittedActionsForUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllGraveyardedSubmittedActionsForUser
       RequestMappingTemplate: |
-        
-        
+
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -1484,17 +1424,21 @@ Resources:
             }
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllGraveyardedSubmittedActionsForUserResolver
   getAllGroupsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllGroups
@@ -1507,21 +1451,26 @@ Resources:
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "SELECT `Group`.* ,MP.monthly_points, TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id  LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC  ON TC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP  ON TP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1  AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined  AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 MONTH) and now() THEN points_earned ELSE 0 END) as monthly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as MP ON MP.group_id=`Group`.group_id GROUP BY `Group`.group_id",
+            "sql": "SELECT `Group`.* ,MP.monthly_points, TC.total_co2, TP.total_points, WC.weekly_co2, WP.weekly_points FROM `Group` INNER JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN g_co2_saved ELSE 0 END) as total_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TC ON TC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined THEN points_earned ELSE 0 END) as total_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as TP ON TP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN g_co2_saved ELSE 0 END) as weekly_co2 from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WC ON WC.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 WEEK) and now() THEN points_earned ELSE 0 END) as weekly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as WP ON WP.group_id=`Group`.group_id LEFT JOIN ( select `Group`.group_id, SUM(CASE WHEN SubmittedAction.is_validated = 1 AND SubmittedAction.time_submitted > GroupUser.date_joined AND SubmittedAction.time_submitted between date_sub(now(),INTERVAL 1 MONTH) and now() THEN points_earned ELSE 0 END) as monthly_points from `Group` LEFT JOIN GroupUser on `Group`.group_id=GroupUser.group_id LEFT JOIN SubmittedAction on SubmittedAction.user_id=GroupUser.user_id GROUP BY GroupUser.group_id order by `Group`.group_id ) as MP ON MP.group_id=`Group`.group_id GROUP BY `Group`.group_id",
             "variableMapping": {
             },
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllGroupsResolver
   getAllGroupsForUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllGroupsForUser
@@ -1541,13 +1490,18 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllGroupsForUserResolver
   getAllGroupsUserOwnsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn: LambdaAppSyncDataSource
     Properties:
       TypeName: Query
@@ -1563,15 +1517,19 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllGroupsUserOwnsResolver
   getAllMembersInGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
       - LambdaAppSyncDataSource
     Properties:
@@ -1593,15 +1551,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllMembersInGroupResolver
   getAllOwnersInGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllOwnersInGroup
@@ -1621,15 +1584,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllOwnersInGroupResolver
   getAllSubmittedActionsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllSubmittedActions
@@ -1643,17 +1611,21 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllSubmittedActionsResolver
   getAllSubmittedActionsForUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllSubmittedActionsForUser
@@ -1674,23 +1646,26 @@ Resources:
         }
       ResponseMappingTemplate: |
         $util.toJson($context.result)
-        
-        
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllSubmittedActionsForUserResolver
   getAllSubmittedActionsToValidateResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllSubmittedActionsToValidate
       RequestMappingTemplate: |
-        
-        
+
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -1705,27 +1680,27 @@ Resources:
             }
           }
         }
-        
-        
-        
-        
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllSubmittedActionsToValidateResolver
   getAllUngraveyardedActionsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllUngraveyardedActions
       RequestMappingTemplate: |
-        
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -1735,17 +1710,21 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllUngraveyardedActionsResolver
   getAllUnvalidatedSubmittedActionsForUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllUnvalidatedSubmittedActionsForUser
@@ -1765,15 +1744,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllUnvalidatedSubmittedActionsForUserResolver
   getAllUsersResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllUsers
@@ -1791,17 +1775,21 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllUsersResolver
   getAllUsersInGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllUsersInGroup
@@ -1820,15 +1808,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllUsersInGroupResolver
   getAllValidatedSubmittedActionsForUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllValidatedSubmittedActionsForUser
@@ -1848,15 +1841,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllValidatedSubmittedActionsForUserResolver
   getAllValidatedSubmittedActionsInGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllValidatedSubmittedActionsInGroup
@@ -1876,15 +1874,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllValidatedSubmittedActionsInGroupResolver
   getSingleActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleAction
@@ -1903,16 +1906,21 @@ Resources:
             },
           }
         }
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleActionResolver
   getSingleGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleGroup
@@ -1931,16 +1939,21 @@ Resources:
             },
           }
         }
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleGroupResolver
   getSingleGroupByNameResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleGroupByName
@@ -1959,17 +1972,21 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleGroupByNameResolver
   getSingleSubmittedActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleSubmittedAction
@@ -1984,23 +2001,27 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleSubmittedActionResolver
   getSingleSubmittedActionWithItemsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleSubmittedActionWithItems
       RequestMappingTemplate: |
-        
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2013,31 +2034,49 @@ Resources:
         }
       ResponseMappingTemplate: |
         $util.toJson($context.result)
-        
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleSubmittedActionWithItemsResolver
   getSingleUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleUser
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        The reason for this query's length is because it is essentially 5 seperate SQL queries turning into
-        Frankenstein's SQL Monster. It is a combined "get user's information" query, "get user's total co2" query,
-        "get user's total points" query, "get user's co2 for the last week" query, and "get user's points for the last week" query
-        all just in one package so on the frontend we only have to run this query to get all that information.
+
+        The reason for this query's length is because it is essentially 5
+        seperate SQL queries turning into
+
+        Frankenstein's SQL Monster. It is a combined "get user's information"
+        query, "get user's total co2" query,
+
+        "get user's total points" query, "get user's co2 for the last week"
+        query, and "get user's points for the last week" query
+
+        all just in one package so on the frontend we only have to run this
+        query to get all that information.
+
         Hopefully you do not have to modify this! 
 
+
         TABLES ACCESSED: User, SubmittedAction
+
         ARGS: user_id
+
         RETURNS: total_co2, total_points, weekly_co2, weekly_points, User.*
+
         *#
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2048,28 +2087,39 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleUserResolver
   getSingleUserByEmailResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleUserByEmail
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        This is essentially the same query as getSingleUser but instead using an email as an input
+
+        This is essentially the same query as getSingleUser but instead using an
+        email as an input
+
 
         TABLES ACCESSED: User, SubmittedAction
+
         ARGS: email
+
         RETURNS: total_co2, total_points, weekly_co2, weekly_points, User.*
+
         *#
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2080,30 +2130,45 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleUserByEmailResolver
   getSingleUserByUsernameResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleUserByUsername
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        This is essentially the same query as getSingleUser but instead using an username as an input
-        I would not recommend using this query, as we cannot actually enforce username uniqueness
-        due to Cognito being a little bit strange, querying by email is peferred.
+
+        This is essentially the same query as getSingleUser but instead using an
+        username as an input
+
+        I would not recommend using this query, as we cannot actually enforce
+        username uniqueness
+
+        due to Cognito being a little bit strange, querying by email is
+        peferred.
+
 
         TABLES ACCESSED: User, SubmittedAction
+
         ARGS: username
+
         RETURNS: total_co2, total_points, weekly_co2, weekly_points, User.*
+
         *#
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2114,17 +2179,21 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleUserByUsernameResolver
   getTotalGlobalCO2Resolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getTotalGlobalCO2
@@ -2148,15 +2217,20 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getTotalGlobalCO2Resolver
   getUsersTotalCO2Resolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getUsersTotalCO2
@@ -2175,24 +2249,26 @@ Resources:
             },
           }
         }
-        
-        
-        
       ResponseMappingTemplate: |
         #if ($context.result[0].get("CO2"))
           $util.toJson($context.result[0].get("CO2"))
         #else
           0.0
         #end
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getUsersTotalCO2Resolver
   getUsersWeekCO2Resolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getUsersWeekCO2
@@ -2211,32 +2287,38 @@ Resources:
             },
           }
         }
-        
-        
-        
       ResponseMappingTemplate: |
         #if ($context.result[0].get("CO2"))
           $util.toJson($context.result[0].get("CO2"))
         #else
           0.0
         #end
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getUsersWeekCO2Resolver
   isPrivateGroupPasswordCorrectResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: isPrivateGroupPasswordCorrect
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        checking the password in the resolver means we don't have to send the password to the user!
+
+        checking the password in the resolver means we don't have to send the
+        password to the user!
+
         *#
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2248,37 +2330,53 @@ Resources:
             },
           }
         }
-        
-      ResponseMappingTemplate: |
-        #if ($context.arguments.private_password == $context.result[0].get("private_password"))
+      ResponseMappingTemplate: >
+        #if ($context.arguments.private_password ==
+        $context.result[0].get("private_password"))
           true
         #else
           false
         #end
-        
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
-  getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdminResolver: 
-    Type: AWS::AppSync::Resolver
+    Metadata:
+      SamResourceId: isPrivateGroupPasswordCorrectResolver
+  getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdminResolver:
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        Gets the all the submitted actions for users who do not belong to a group
-        Used for an admin page to let admin validate their actions, since these people
+
+        Gets the all the submitted actions for users who do not belong to a
+        group
+
+        Used for an admin page to let admin validate their actions, since these
+        people
+
         would not have a group owner to validate their actions.
 
-        The group_concat serves to combine all of the submitted action items from an action into 1 string
+
+        The group_concat serves to combine all of the submitted action items
+        from an action into 1 string
+
         for display
 
-        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action, GroupUser, User
+
+        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action,
+        GroupUser, User
+
         *#
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2288,27 +2386,41 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
-  getAllSubmittedActionsToValidateForAdminResolver: 
-    Type: AWS::AppSync::Resolver
+    Metadata:
+      SamResourceId: getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdminResolver
+  getAllSubmittedActionsToValidateForAdminResolver:
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllSubmittedActionsToValidateForAdmin
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        Gets the all the submitted actions for all users, used for admin validation
 
-        The group_concat serves to combine all of the submitted action items from an action into 1 string
+        Gets the all the submitted actions for all users, used for admin
+        validation
+
+
+        The group_concat serves to combine all of the submitted action items
+        from an action into 1 string
+
         for display
 
-        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action, GroupUser, User
+
+        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action,
+        GroupUser, User
+
         *#
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2317,17 +2429,21 @@ Resources:
             "variableMapping": {}
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllSubmittedActionsToValidateForAdminResolver
   getUserStatsForGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getUserStatsForGroup
@@ -2348,17 +2464,21 @@ Resources:
             }
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getUserStatsForGroupResolver
   addGroupMemberResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: addGroupMember
@@ -2375,17 +2495,21 @@ Resources:
             "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: addGroupMemberResolver
   addGroupOwnerResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: addGroupOwner
@@ -2402,17 +2526,21 @@ Resources:
             "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: addGroupOwnerResolver
   addGroupUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: addGroupUser
@@ -2430,17 +2558,21 @@ Resources:
             "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: addGroupUserResolver
   approveSubmittedActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: approveSubmittedAction
@@ -2460,75 +2592,101 @@ Resources:
             "responseSQL": "SELECT * FROM `SubmittedAction` WHERE sa_id=:1"
           }
         }
-        
-        
-        
-        
-        
-        
       ResponseMappingTemplate: |
         $util.toJson($context.result[0])
-        
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: approveSubmittedActionResolver
   createActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createAction
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        This looks very peculiar because we have to insert particular string values, meaning we need to use
-        variableMapping to pass them into the SQL statement. Using this method means that if one of the keys of VM is used,
-        an error will occur, so we make the keys unlikely to be enterred, and if someone does enter one of the keys we
+
+        This looks very peculiar because we have to insert particular string
+        values, meaning we need to use
+
+        variableMapping to pass them into the SQL statement. Using this method
+        means that if one of the keys of VM is used,
+
+        an error will occur, so we make the keys unlikely to be enterred, and if
+        someone does enter one of the keys we
+
         just add a space so no error will occur
 
-        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action, GroupUser, User
+
+        TABLES ACCESSED: SubmittedAction, SubmittedActionItem, Action,
+        GroupUser, User
+
         *#
 
-        #set( $context.arguments.action_name = $context.arguments.action_name.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.page_media = $context.arguments.page_media.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.action_icon = $context.arguments.action_icon.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.fallback_quiz_media = $context.arguments.fallback_quiz_media.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.translations = $context.arguments.translations.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.action_name =
+        $context.arguments.action_name.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.page_media =
+        $context.arguments.page_media.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.action_icon =
+        $context.arguments.action_icon.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.fallback_quiz_media =
+        $context.arguments.fallback_quiz_media.replace(":::::::", "::::::: "
+
+        #set( $context.arguments.translations =
+        $context.arguments.translations.replace(":::::::", "::::::: ") )) )
+
 
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
-            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden, translations ) VALUES (:::::::1, :::::::2, :::::::3, :::::::4, false, :::::::5)",
+            "sql": "INSERT INTO `Action` ( action_name, page_media, action_icon, fallback_quiz_media, is_hidden, translations ) VALUES (:::::::1, :::::::2, :::::::3, :::::::4, false, , :::::::5)",
             "variableMapping": {
                 ":::::::1": "$context.arguments.action_name", 
                 ":::::::2": "$context.arguments.page_media", 
                 ":::::::3": "$context.arguments.action_icon",
                 ":::::::4": "$context.arguments.fallback_quiz_media",
-                ":::::::5": "$context.arguments.translations"
-            },
+            ":::::::5": "$context.arguments.translations"
+        },
             "responseSQL": "SELECT * FROM `Action` WHERE action_name=:::::::1"
           }
         }
-
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createActionResolver
   createActionItemsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createActionItems
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        action_items is an array of JSON objects, in this case it looks like this:
+
+        action_items is an array of JSON objects, in this case it looks like
+        this:
+
         [
           {
               action_name: "name",
@@ -2536,14 +2694,24 @@ Resources:
                 co2_saved_per_unit: 5.5
             }, ...
         ]
+
         *#
 
+
         #set( $action_items = $context.arguments.action_items )
+
         #set( $final_sql = ' ' )
-        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES ($context.arguments.action_id, '" )
+
+        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name,
+        item_description, co2_saved_per_unit) VALUES
+        ($context.arguments.action_id, '" )
+
         #set( $sep1 = "', '"  )
+
         #set( $sep2 = "', ")
+
         #set( $ending = "); " )
+
 
         #foreach( $action_item in $action_items )
           #set( $ai0 = $action_item.get('item_name') )
@@ -2551,6 +2719,7 @@ Resources:
           #set( $ai2 = $action_item.get('co2_saved_per_unit') )
           #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$sep2$ai2$ending" )
         #end
+
 
         {
           "version": "2018-05-29",
@@ -2563,33 +2732,51 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createActionItemsResolver
   createActionValidationLabelsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createActionValidationLabels
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
+
         The value of 'payload' after the template has been evaluated
+
         will be passed as the event to AWS Lambda.
-        createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+
+        createActionValidationLabels(action_id: Int!, validation_labels:
+        [String!]!): [ActionValidationLabel]
+
         ActionValidationLabel
+
         *#
+
         #set( $val_list = $context.arguments.validation_labels )
+
         #set( $final_sql = '' )
-        #set( $beginning = "INSERT INTO ActionValidationLabel (action_id, validation_label) VALUES (:1, '" )
+
+        #set( $beginning = "INSERT INTO ActionValidationLabel (action_id,
+        validation_label) VALUES (:1, '" )
+
         #set( $ending = "'); " )
+
         #foreach( $val_label in $val_list )
           #set( $final_sql = "$final_sql$beginning$val_label$ending" )
         #end
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2602,22 +2789,29 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createActionValidationLabelsResolver
   createGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createGroup
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        This is to ensure that if there is no inputted parameter, it gets set to null in the insert in the lambda by sending it an empty string
-        
+
+        This is to ensure that if there is no inputted parameter, it gets set to
+        null in the insert in the lambda by sending it an empty string
+
           createGroup(
             group_name: String!,
             group_description: String,
@@ -2627,16 +2821,20 @@ Resources:
           ): Group
             
         *#
-        
+
+
         #if( !$context.arguments.group_description )
           #set( $context.arguments.group_description = '""' )  #** VTL evaluates this to an empty string "" **#
         #end
+
         #if( !$context.arguments.group_image )
           #set( $context.arguments.group_image = '""' )  #** VTL evaluates this to an empty string "" **#
         #end
+
         #if( !$context.arguments.private_password )
           #set( $context.arguments.private_password = '""' )  #** VTL evaluates this to an empty string "" **#
         #end
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2652,38 +2850,63 @@ Resources:
             "responseSQL": "SELECT * FROM `Group` WHERE group_name=:1"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createGroupResolver
   createGroupAndOwnerResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createGroupAndOwner
-      RequestMappingTemplate: |
-        #set( $context.arguments.group_name = $context.arguments.group_name.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.group_name = $context.arguments.group_name.replace("%20", "20 Percent") )  ## it is possible to create a group with the same name as one that already exists by replacing any spaces in the original name with %20, so this will prevent any glitches, and we are going to assume that nobody will try to put %20 into a group name
-        #set( $context.arguments.group_description = $util.escapeJavaScript($context.arguments.group_description) )
-        #set( $context.arguments.group_description = $context.arguments.group_description.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.group_description = $context.arguments.group_description.replace("\'", "'") )
-        #set( $context.arguments.group_image = $context.arguments.group_image.replace(":::::::", "::::::: ") )
-        #set( $context.arguments.private_password = $context.arguments.private_password.replace(":::::::", "::::::: ") )
+      RequestMappingTemplate: >
+        #set( $context.arguments.group_name =
+        $context.arguments.group_name.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.group_name =
+        $context.arguments.group_name.replace("%20", "20 Percent") )  ## it is
+        possible to create a group with the same name as one that already exists
+        by replacing any spaces in the original name with %20, so this will
+        prevent any glitches, and we are going to assume that nobody will try to
+        put %20 into a group name
+
+        #set( $context.arguments.group_description =
+        $util.escapeJavaScript($context.arguments.group_description) )
+
+        #set( $context.arguments.group_description =
+        $context.arguments.group_description.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.group_description =
+        $context.arguments.group_description.replace("\'", "'") )
+
+        #set( $context.arguments.group_image =
+        $context.arguments.group_image.replace(":::::::", "::::::: ") )
+
+        #set( $context.arguments.private_password =
+        $context.arguments.private_password.replace(":::::::", "::::::: ") )
+
 
         #if( !$context.arguments.group_description )
           #set( $context.arguments.group_description = '' ) 
         #end
+
         #if( !$context.arguments.group_image )
           #set( $context.arguments.group_image = '' )  
         #end
+
         #if( !$context.arguments.private_password )
           #set( $context.arguments.private_password = '' )  
         #end
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2700,28 +2923,36 @@ Resources:
             "responseSQL": "SELECT * FROM `Group` WHERE group_name=:::::::1"
           }
         }
-
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createGroupAndOwnerResolver
   createSubmittedActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createSubmittedAction
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        This is to ensure that if there is no inputted quiz_id, it gets set to null in the lambda by sending it an empty string
+
+        This is to ensure that if there is no inputted quiz_id, it gets set to
+        null in the lambda by sending it an empty string
+
         *#
+
         #if( !$context.arguments.quiz_id )
           #set( $context.arguments.quiz_id = '""' )  #** VTL evaluates this to an empty string "" **#
         #end
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2738,20 +2969,24 @@ Resources:
                 ":8": $context.arguments.is_validated,
                 ":9": $context.arguments.points_earned,
             },
-            "responseSQL": "SELECT * FROM `SubmittedAction` WHERE user_id=:1 AND action_id=:2 AND ABS(g_co2_saved - :4) < 0.001 AND date_of_action=:5 AND first_quiz_answer_correct=:6 AND quiz_answered=:7 AND is_validated=:8 AND points_earned=:9  ORDER BY time_submitted DESC"
+            "responseSQL": "SELECT * FROM `SubmittedAction` WHERE user_id=:1 AND action_id=:2 AND g_co2_saved=:4 AND date_of_action=:5 AND first_quiz_answer_correct=:6 AND quiz_answered=:7 AND is_validated=:8 AND points_earned=:9  ORDER BY time_submitted DESC"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createSubmittedActionResolver
   createSubmittedActionItemResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createSubmittedActionItem
@@ -2769,42 +3004,59 @@ Resources:
             "responseSQL": "SELECT * FROM `SubmittedActionItem` WHERE item_name=:1 AND sa_id=:2"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createSubmittedActionItemResolver
   createSubmittedActionItemsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createSubmittedActionItems
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
-        submitted_action_items is an array of JSON objects, in this case it looks like this:
+
+        submitted_action_items is an array of JSON objects, in this case it
+        looks like this:
+
         [
           {
               item_name: "name",
                 input_value: 5.5
             }, ...
         ]
+
         *#
 
-        #set( $submitted_action_items = $context.arguments.submitted_action_items )
+
+        #set( $submitted_action_items =
+        $context.arguments.submitted_action_items )
+
         #set( $final_sql = ' ' )
-        #set( $beginning = "INSERT INTO SubmittedActionItem (sa_id, item_name, input_value) VALUES ($context.arguments.sa_id, '" )
+
+        #set( $beginning = "INSERT INTO SubmittedActionItem (sa_id, item_name,
+        input_value) VALUES ($context.arguments.sa_id, '" )
+
         #set( $sep2 = "', ")
+
         #set( $ending = "); " )
+
 
         #foreach( $action_item in $submitted_action_items )
           #set( $ai1 = $action_item.get('item_name') )
           #set( $ai2 = $action_item.get('input_value') )
           #set( $final_sql = "$final_sql$beginning$ai1$sep2$ai2$ending" )
         #end
+
 
         {
           "version": "2018-05-29",
@@ -2817,25 +3069,36 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createSubmittedActionItemsResolver
   createUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createUser
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
+
         The value of 'payload' after the template has been evaluated
+
         will be passed as the event to AWS Lambda.
 
-        the variableMapping names are to ensure nobody will accidentally enter one of the :x:x:x:x:x:x:x:x:x:x:x:x
+
+        the variableMapping names are to ensure nobody will accidentally enter
+        one of the :x:x:x:x:x:x:x:x:x:x:x:x
+
         *#
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2850,17 +3113,21 @@ Resources:
             "responseSQL": "SELECT * FROM `User` WHERE email=:3:3:3:3:3:3:3:3:3:3:3:3"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createUserResolver
   deleteActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: deleteAction
@@ -2880,22 +3147,27 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted action with and its associated items"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: deleteActionResolver
   deleteActionItemResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: deleteActionItem
       RequestMappingTemplate: |
-        
-        
-        
+
+
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -2911,24 +3183,28 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: '"Deleted action item"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: deleteActionItemResolver
   deleteActionValidationLabelResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: deleteActionValidationLabel
       RequestMappingTemplate: |
-        
-        
-        
+
+
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -2944,23 +3220,27 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: '"Deleted validation label"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: deleteActionValidationLabelResolver
   deleteGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: deleteGroup
       RequestMappingTemplate: |
-        
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -2971,17 +3251,21 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: '"Deleted group!"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: deleteGroupResolver
   deleteUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: deleteUser
@@ -3001,15 +3285,20 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted user"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: deleteUserResolver
   demoteGroupOwnerResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: demoteGroupOwner
@@ -3030,22 +3319,26 @@ Resources:
             "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: demoteGroupOwnerResolver
   graveyardActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: graveyardAction
       RequestMappingTemplate: |
-        
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -3061,17 +3354,21 @@ Resources:
           "responseSQL": "SELECT * FROM `Action` WHERE action_id=:1"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: graveyardActionResolver
   promoteGroupMemberResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: promoteGroupMember
@@ -3092,22 +3389,26 @@ Resources:
             "responseSQL": "SELECT * FROM `GroupUser` WHERE group_id=:1 AND user_id=:2"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: promoteGroupMemberResolver
   rejectSubmittedActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: rejectSubmittedAction
       RequestMappingTemplate: |
-        
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -3122,41 +3423,61 @@ Resources:
             }
           }
         }
-        
       ResponseMappingTemplate: '"Rejected Submitted Action"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: rejectSubmittedActionResolver
   remakeActionItemsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: remakeActionItems
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
+
         The value of 'payload' after the template has been evaluated
+
         will be passed as the event to AWS Lambda.
-        remakeActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
-        
+
+        remakeActionItems(action_id: Int!, action_items: [ActionItemInput!]!):
+        [ActionItem]
+
+
         input ActionItemInput {
           item_name: String!
           item_description: String!
           co2_saved_per_unit: Float!
         }
-        
+
+
         *#
-        
+
+
         #set( $action_items = $context.arguments.action_items )
-        #set( $final_sql = 'DELETE FROM ActionItem WHERE action_id=:1 ; ' )
-        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name, item_description, co2_saved_per_unit) VALUES (:1, '" )
+
+        #set( $final_sql = 'DELETE FROM ActionItem WHERE
+        action_id=$context.arguments.action_id ; ' )
+
+        #set( $beginning = "INSERT INTO ActionItem (action_id, item_name,
+        item_description, co2_saved_per_unit) VALUES
+        ($context.arguments.action_id, '" )
+
         #set( $sep1 = "', '"  )
+
         #set( $sep2 = "', ")
+
         #set( $ending = "); " )
-        
+
+
         #foreach( $action_item in $action_items )
           #set( $ai0 = $action_item.get('item_name') )
           #set( $ai1 = $action_item.get('item_description') )
@@ -3164,48 +3485,65 @@ Resources:
           #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$sep2$ai2$ending" )
         #end
 
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
           "payload": {
             "sql": "$final_sql",
             "variableMapping": {
-              ":1": $context.arguments.action_id
             },
-            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=:1"
+            "responseSQL": "SELECT * FROM `ActionItem` WHERE action_id=$context.arguments.action_id"
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: remakeActionItemsResolver
   remakeActionValidationLabelsResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: remakeActionValidationLabels
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
+
         The value of 'payload' after the template has been evaluated
+
         will be passed as the event to AWS Lambda.
-        
-        remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
-        
+
+
+        remakeActionValidationLabels(action_id: Int!, validation_labels:
+        [String!]!): [ActionValidationLabel]
+
+
         *#
-        
+
+
         #set( $val_list = $context.arguments.validation_labels )
-        #set( $final_sql = 'DELETE FROM ActionValidationLabel WHERE action_id=:1 ; ' )
-        #set( $beginning = "INSERT INTO ActionValidationLabel (action_id, validation_label) VALUES (:1, '" )
+
+        #set( $final_sql = 'DELETE FROM ActionValidationLabel WHERE action_id=:1
+        ; ' )
+
+        #set( $beginning = "INSERT INTO ActionValidationLabel (action_id,
+        validation_label) VALUES (:1, '" )
+
         #set( $ending = "'); " )
+
         #foreach( $val_label in $val_list )
           #set( $final_sql = "$final_sql$beginning$val_label$ending" )
         #end
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -3217,17 +3555,21 @@ Resources:
             "responseSQL": "SELECT * FROM `ActionValidationLabel` WHERE action_id=:1"
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: remakeActionValidationLabelsResolver
   removeGroupMemberResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: removeGroupMember
@@ -3247,23 +3589,27 @@ Resources:
             },
           }
         }
-        
       ResponseMappingTemplate: '"Removed user from group"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: removeGroupMemberResolver
   restoreActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: restoreAction
       RequestMappingTemplate: |
-        
-        
+
+
         #**
         The value of 'payload' after the template has been evaluated
         will be passed as the event to AWS Lambda.
@@ -3279,19 +3625,21 @@ Resources:
           "responseSQL": "SELECT * FROM `Action` WHERE action_id=:1"
           }
         }
-        
-        
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: restoreActionResolver
   updateActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: updateAction
@@ -3306,7 +3654,7 @@ Resources:
           page_media: String
           action_icon: String
           fallback_quiz_media: String
-          translations: AWSJSON
+          translations: String
         }
 
         This only updates fields that actually are needing to be updated
@@ -3366,27 +3714,34 @@ Resources:
           }
         }
       ResponseMappingTemplate: |
-        
-        
+
+
         $util.toJson($context.result[0])
-        
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: updateActionResolver
   updateGroupResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: updateGroup
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
+
         This only updates fields that actually are needing to be updated
+
         *#
-        
+
+
         #if( $context.arguments.group_name )
           #if( $context.arguments.group_description || $context.arguments.group_image || $context.arguments.is_public == true || $context.arguments.is_public == false || $context.arguments.private_password )
             #set( $group_name = 'group_name=:1,' )
@@ -3396,9 +3751,10 @@ Resources:
         #else
           #set( $group_name = '' )
         #end
-        
+
+
         #if( $context.arguments.group_description )
-        
+
           #if( $context.arguments.group_image || $context.arguments.is_public == true || $context.arguments.is_public == false || $context.arguments.private_password )
             #set( $group_description = 'group_description=:2,' )
           #else
@@ -3407,7 +3763,8 @@ Resources:
         #else
           #set( $group_description = '' )
         #end
-        
+
+
         #if( $context.arguments.group_image )
           #if( $context.arguments.is_public == true || $context.arguments.is_public == false || $context.arguments.private_password )
             #set( $group_image = 'group_image=:3,' )
@@ -3417,8 +3774,10 @@ Resources:
         #else
           #set( $group_image = '' )
         #end
-        
-        #if( $context.arguments.is_public == true || $context.arguments.is_public == false )
+
+
+        #if( $context.arguments.is_public == true ||
+        $context.arguments.is_public == false )
           #if( $context.arguments.private_password )
             #set( $is_public = 'is_public=:4,' )
           #else
@@ -3428,13 +3787,15 @@ Resources:
           #set( $is_public = '' )
           #set( $context.arguments.is_public = '""' )
         #end
-        
+
+
         #if( $context.arguments.private_password )
           #set( $private_password = 'private_password=:5' )
         #else
           #set( $private_password = '' )
         #end
-        
+
+
         {
           "version": "2018-05-29",
           "operation": "Invoke",
@@ -3451,17 +3812,21 @@ Resources:
             "responseSQL": "SELECT * FROM `Group` WHERE group_id=:6"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: updateGroupResolver
   updateUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: updateUser
@@ -3517,17 +3882,21 @@ Resources:
             "responseSQL": "SELECT * FROM `User` WHERE user_id=:1"
           }
         }
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-  
+    Metadata:
+      SamResourceId: updateUserResolver
   getAllQuizzesResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllQuizzes
@@ -3540,17 +3909,21 @@ Resources:
             "variableMapping": {}
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllQuizzesResolver
   getAllQuizzesForActionResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getAllQuizzesForAction
@@ -3567,17 +3940,21 @@ Resources:
             "variableMapping": { ":1": $context.args.action_id }
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getAllQuizzesForActionResolver
   getQuizPoolForUserResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getQuizPoolForUser
@@ -3593,17 +3970,21 @@ Resources:
             }
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getQuizPoolForUserResolver
   getSingleQuizResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: getSingleQuiz
@@ -3622,18 +4003,21 @@ Resources:
             }
           }
         }
-
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: getSingleQuizResolver
   isQuizAnswerCorrectResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Query
       FieldName: isQuizAnswerCorrect
@@ -3649,47 +4033,21 @@ Resources:
             }
           }
         }
-        
-      ResponseMappingTemplate: $context.result[0].get("is_correct_answer")
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$context.result[0].get("is_correct_answer")'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-  
-  getSingleQuizResolver:
-    Type: AWS::AppSync::Resolver
-    DependsOn:
-    - LambdaAppSyncDataSource
-    Properties:
-      TypeName: Query
-      FieldName: getSingleQuiz
-      RequestMappingTemplate: |
-        #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
-        *#
-        {
-          "version" : "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "sql": "SELECT *, group_concat('', answer, '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as answers, group_concat(IF(is_correct_answer = true, answer, NULL), '' ORDER BY ActionQuizAnswer.answer DESC SEPARATOR '\n') as correct_answers FROM ActionQuiz left join ActionQuizAnswer on ActionQuiz.quiz_id = ActionQuizAnswer.quiz_id  WHERE ActionQuiz.quiz_id=:1 GROUP BY ActionQuiz.quiz_id",
-            "variableMapping": {
-              ":1": $context.arguments.quiz_id
-            }
-          }
-        }
-
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
-      Kind: UNIT
-      MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: isQuizAnswerCorrectResolver
   createQuizResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createQuiz
@@ -3711,33 +4069,43 @@ Resources:
             "responseSQL": "SELECT * FROM ActionQuiz WHERE action_id=:1 AND fact_text=:2 AND question_text=:3"
           }
         }
-
-        
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createQuizResolver
   createQuizAnswersResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: createQuizAnswers
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #set( $answers = $context.arguments.answers )
+
         #set( $final_sql = '' )
-        #set( $beginning = "INSERT INTO ActionQuizAnswer (quiz_id, answer, is_correct_answer) VALUES (:1, '" )
+
+        #set( $beginning = "INSERT INTO ActionQuizAnswer (quiz_id, answer,
+        is_correct_answer) VALUES (:1, '" )
+
         #set( $sep1 = "', "  )
+
         #set( $ending = "); " )
+
 
         #foreach( $ans in $answers )
           #set( $ai0 = $ans.get('answer') )
           #set( $ai1 = $ans.get('is_correct_answer') )
           #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$ending" )
         #end
+
 
         {
           "version" : "2017-02-28",
@@ -3751,29 +4119,42 @@ Resources:
             "responseSQL": "SELECT * FROM ActionQuizAnswer WHERE quiz_id=$context.arguments.quiz_id"
           }
         }
-        
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: createQuizAnswersResolver
   updateQuizResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: updateQuiz
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #**
+
         The value of 'payload' after the template has been evaluated
+
         will be passed as the event to AWS Lambda.
-        updateQuiz(quiz_id: Int, fact_text: String, question_text: String): ActionQuiz
+
+        updateQuiz(quiz_id: Int, fact_text: String, question_text: String):
+        ActionQuiz
+
         *#
+
         #**
+
         This only updates fields that actually are needing to be updated
+
         *#
+
 
         #if( $context.arguments.fact_text )
           #if( $context.arguments.question_text )
@@ -3785,11 +4166,13 @@ Resources:
           #set( $fact_text = '' )
         #end
 
+
         #if( $context.arguments.question_text )
           #set( $question_text = 'question_text=:3' )
         #else
           #set( $question_text = '' )
         #end
+
 
         {
           "version": "2018-05-29",
@@ -3804,31 +4187,43 @@ Resources:
             "responseSQL": "SELECT * FROM `ActionQuiz` WHERE quiz_id=:1"
           }
         }
-      ResponseMappingTemplate: $util.toJson($context.result[0])
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ResponseMappingTemplate: '$util.toJson($context.result[0])'
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: updateQuizResolver
   remakeQuizAnswersResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: remakeQuizAnswers
-      RequestMappingTemplate: |
+      RequestMappingTemplate: >
         #set( $answers = $context.arguments.answers )
+
         #set( $final_sql = 'DELETE FROM ActionQuizAnswer WHERE quiz_id=:1 ; ' )
-        #set( $beginning = "INSERT INTO ActionQuizAnswer (quiz_id, answer, is_correct_answer) VALUES (:1, '" )
+
+        #set( $beginning = "INSERT INTO ActionQuizAnswer (quiz_id, answer,
+        is_correct_answer) VALUES (:1, '" )
+
         #set( $sep1 = "', "  )
+
         #set( $ending = "); " )
+
 
         #foreach( $ans in $answers )
           #set( $ai0 = $ans.get('answer') )
           #set( $ai1 = $ans.get('is_correct_answer') )
           #set( $final_sql = "$final_sql$beginning$ai0$sep1$ai1$ending" )
         #end
+
 
         {
           "version": "2018-05-29",
@@ -3841,17 +4236,21 @@ Resources:
             "responseSQL": "SELECT * FROM `ActionQuizAnswer` WHERE quiz_id=:1"
           }
         }
-
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
+    Metadata:
+      SamResourceId: remakeQuizAnswersResolver
   deleteQuizResolver:
-    Type: AWS::AppSync::Resolver
+    Type: 'AWS::AppSync::Resolver'
     DependsOn:
-    - LambdaAppSyncDataSource
+      - LambdaAppSyncDataSource
     Properties:
       TypeName: Mutation
       FieldName: deleteQuiz
@@ -3870,39 +4269,236 @@ Resources:
             },
           }
         }
-
       ResponseMappingTemplate: '"Deleted quiz"'
-      ApiId: !GetAtt GraphQlApiIdParameter.Value
-      DataSourceName: !GetAtt LambdaAppSyncDataSource.Name
+      ApiId: !GetAtt 
+        - GraphQlApiIdParameter
+        - Value
+      DataSourceName: !GetAtt 
+        - LambdaAppSyncDataSource
+        - Name
       Kind: UNIT
       MaxBatchSize: 0
-
-
-# OUTPUTS ######################
-
-Outputs:
-  AmplifyBucketName:
-    Description: The name of the Amplify S3 bucket
-    Value: '{{resolve:ssm:BucketName}}'
-
-  ValidationLambdaArn:
-    Description: The ARN of the Lambda function for image validation
-    Value: !GetAtt validateImageWithRekognition.Arn
-
-  CloudFrontDistributionDomainName:
-    Description: The domain name of our CloudFront distibution
-    Value: !Sub 
-      - 'https://${Domain}/'
-      - Domain: !GetAtt CloudFrontDistribution.DomainName
-  
-  CloudFrontOriginAccessIdentity:
-    Description: The origin access identity ID for CloudFront
-    Value: !Ref OriginAccessIdentity
-
-  ShellScript:
-    Description: 'Run the following command to set up the Lambda trigger! NOTE: This only works on Linux, Mac, or WSL'
-    Value: !Sub
-      - './scripts/lambda_trigger.sh ${Bucket} ${Lambda} ${Oai}'
-      - Bucket: '{{resolve:ssm:BucketName}}'
-        Lambda: !GetAtt validateImageWithRekognition.Arn
-        Oai: !Ref OriginAccessIdentity
+    Metadata:
+      SamResourceId: deleteQuizResolver
+  graphQLMySQLResolver:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - RDSProxy
+      - ClosedSecurityGroup
+      - MainDBInstance
+      - LambdaServiceRole
+    Metadata:
+      SamResourceId: graphQLMySQLResolver
+    Properties:
+      Code:
+        S3Bucket: aws-sam-cli-managed-default-samclisourcebucket-1ofs2gcz3cgz6
+        S3Key: commit2act/09e37180132583718ec5ed5612ccdd8c
+      Description: >-
+        Called by AppSync to resolve SQL statements in the form of a request
+        mapping
+      FunctionName: graphQL-MySQL-Resolver
+      Handler: index.handler
+      MemorySize: 1000
+      Role: !GetAtt 
+        - graphQLMySQLResolverRole
+        - Arn
+      Runtime: nodejs14.x
+      Timeout: 100
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref ClosedSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+      Environment:
+        Variables:
+          DBNAME: !Ref DBName
+          PASSWORD: !Ref DBPassword
+          USERNAME: !Ref DBUser
+          RDSPROXY_ENDPOINT: !GetAtt 
+            - RDSProxy
+            - Endpoint
+          ADMIN_NAME: !Ref CognitoAdminName
+          ADMIN_EMAIL: !Ref CognitoAdminEmail
+      Tags:
+        - Key: 'lambda:createdBy'
+          Value: SAM
+      Layers:
+        - !Ref graphQLMySQLResolverLayers251bc25b43
+      Architectures:
+        - x86_64
+  graphQLMySQLResolverRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+        - 'arn:aws:iam::aws:policy/SecretsManagerReadWrite'
+        - 'arn:aws:iam::aws:policy/AmazonRDSFullAccess'
+        - 'arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess'
+      Policies:
+        - PolicyName: graphQLMySQLResolverRolePolicy3
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'logs:CreateLogGroup'
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/GraphQL-MySQL-Resolver:*
+              - Effect: Allow
+                Action: 'rds-db:connect'
+                Resource: !GetAtt 
+                  - RDSProxy
+                  - DBProxyArn
+              - Effect: Allow
+                Action:
+                  - 'ec2:CreateNetworkInterface'
+                  - 'ec2:DeleteNetworkInterface'
+                  - 'ec2:DescribeNetworkInterfaces'
+                Resource: '*'
+      Tags:
+        - Key: 'lambda:createdBy'
+          Value: SAM
+  validateImageWithRekognition:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - CloudFrontDistribution
+      - RDSProxy
+      - ClosedSecurityGroup
+      - MainDBInstance
+    Metadata:
+      SamResourceId: validateImageWithRekognition
+    Properties:
+      Code:
+        S3Bucket: aws-sam-cli-managed-default-samclisourcebucket-1ofs2gcz3cgz6
+        S3Key: commit2act/cc3a99ed9d582b3e8fb02f3e268d8451
+      Description: Validates images uploaded through the submitted action pipeline
+      FunctionName: validateImageWithRekognition
+      Handler: lambda_function.lambda_handler
+      MemorySize: 128
+      Role: !GetAtt 
+        - validateImageWithRekognitionRole
+        - Arn
+      Runtime: python3.8
+      Timeout: 100
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref ClosedSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+      Environment:
+        Variables:
+          AMPLIFY_BUCKET: '{{resolve:ssm:BucketName:1:1677894839400}}'
+          CLOUDFRONT_URL: !GetAtt 
+            - CloudFrontDistribution
+            - DomainName
+          DBNAME: !Ref DBName
+          ENDPOINT: !GetAtt 
+            - RDSProxy
+            - Endpoint
+          PASSWORD: !Ref DBPassword
+          USERNAME: !Ref DBUser
+      Tags:
+        - Key: 'lambda:createdBy'
+          Value: SAM
+      Architectures:
+        - x86_64
+  validateImageWithRekognitionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+      Policies:
+        - PolicyName: validateImageWithRekognitionRolePolicy0
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'logs:CreateLogGroup'
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource:
+                  - !Sub >-
+                    arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/validateImageWithRekognition:*
+              - Effect: Allow
+                Action:
+                  - 'rekognition:DetectLabels'
+                  - 'rekognition:DetectFaces'
+                  - 'rekognition:DetectModerationLabels'
+                  - 'rekognition:CompareFaces'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'rekognition:CreateCollection'
+                  - 'rekognition:IndexFaces'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 's3:PutObject'
+                  - 's3:GetObject'
+                  - 's3:DeleteObject'
+                Resource: 'arn:aws:s3:::*'
+              - Effect: Allow
+                Action:
+                  - 'ssm:GetParameter'
+                  - 'ssm:GetParameters'
+                Resource:
+                  - !Sub >-
+                    arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/MINIMUM_REKOGNITION_CONFIDENCE_THRESHOLD
+              - Effect: Allow
+                Action:
+                  - 'ssm:UpdateInstanceInformation'
+                  - 'ssmmessages:CreateControlChannel'
+                  - 'ssmmessages:CreateDataChannel'
+                  - 'ssmmessages:OpenControlChannel'
+                  - 'ssmmessages:OpenDataChannel'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 's3:GetEncryptionConfiguration'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'kms:Decrypt'
+                Resource: '*'
+      Tags:
+        - Key: 'lambda:createdBy'
+          Value: SAM
+  graphQLMySQLResolverLayers251bc25b43:
+    Type: 'AWS::Lambda::LayerVersion'
+    DeletionPolicy: Retain
+    Properties:
+      Content:
+        S3Bucket: aws-sam-cli-managed-default-samclisourcebucket-1ofs2gcz3cgz6
+        S3Key: commit2act/2f750b242b7de1f8dd417590b30100ac
+      Description: Dependency for Lambda
+      LayerName: graphQLMySQLResolverLayers

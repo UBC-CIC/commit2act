@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import { updateLoginState } from './actions/loginActions';
 import theme from './themes';
 import ScrollToTop from './components/ScrollToTop';
+import { useContentTranslationsContext } from './components/contexts/ContentTranslationsContext';
+import { getAllTranslations } from './services/translations';
 
 const isLocalhost = Boolean(
   window.location.hostname === "localhost" ||
@@ -45,6 +47,7 @@ function App (props) {
   const { loginState, updateLoginState } = props;
 
   const [currentLoginState, updateCurrentLoginState] = useState(loginState);
+  const { setContentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
     setAuthListener();
@@ -65,6 +68,23 @@ function App (props) {
       }
     });
   }
+
+
+  const downloadTranslations = async (langCode) => {
+    switch (langCode) {
+      case 'fr':
+        const translations = await getAllTranslations();
+        setContentTranslations(translations);
+        break;
+      default:
+        break;
+    }
+  }
+
+  useEffect(() => {
+    downloadTranslations('fr');
+  }, [])
+
 
   return (
     <StylesProvider injectFirst>

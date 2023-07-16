@@ -36,6 +36,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { styled } from '@mui/material/styles';
+import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
+import { updateTranslationWithLangCode } from '../../services/translations';
 
 const Input = styled('input')`
   display: none;
@@ -90,6 +92,9 @@ const ActionCard = ({
   const [emptyActionItemError, setEmptyActionItemError] = useState(false);
   const [emptyLabelError, setEmptyLabelError] = useState(false);
 
+  const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
+  const [relevantFrenchAction, setRelevantFrenchAction] = useState(emptyActionItemForm);
+
   //get all action items for the action
   useEffect(() => {
     const getActionItems = async () => {
@@ -109,6 +114,15 @@ const ActionCard = ({
     };
     getActionItems();
   }, [action_id]);
+
+  // load all translations for the action
+  useEffect(() => {
+    const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
+    if (frenchTranslations) {
+      const frenchAction = frenchTranslations.translationJSON?.actions?.find((action) => action.action_id === action_id);
+      setRelevantFrenchAction(frenchAction || emptyActionItemForm);
+    }
+  }, [])
 
   /** functions for rendering the non editable action card */
 
@@ -259,6 +273,17 @@ const ActionCard = ({
     }
   };
 
+  const updateTranslations = (e) => {
+    e.preventDefault();
+    if (e.target.name.includes('french')) {
+      setRelevantFrenchAction(
+        {
+          ...relevantFrenchAction,
+          [e.target.name.replace('_french', '')]: e.target.value
+        })
+    }
+  }
+
   const removeActionItem = (name) => {
     let actionItemsCopy = actionForm.action_items;
     let filteredActionItems = actionItemsCopy.filter(
@@ -352,7 +377,32 @@ const ActionCard = ({
     }
   };
 
+  const updateTranslationsJsonActionsWithinAllTranslations = (translationJSON) => {
+    if (!translationJSON.actions) translationJSON.actions = [];
+
+    let relevantActionIndex = translationJSON.actions?.findIndex((action) => action.action_id === action_id);
+    if (relevantActionIndex > -1) {
+      translationJSON.actions[relevantActionIndex] = { ...relevantFrenchAction };
+    } else {
+      translationJSON.actions.push({
+        action_id: action_id,
+        ...relevantFrenchAction
+      })
+    }
+  }
+
+  const updateFrenchTranslationsJson = async () => {
+    for (const translationObject of contentTranslations) {
+      if (translationObject.langCode === 'fr') {
+        await updateTranslationsJsonActionsWithinAllTranslations(translationObject.translationJSON);
+        await updateTranslationWithLangCode('fr', translationObject.translationJSON)
+      }
+    }
+    setContentTranslations(...contentTranslations)
+  }
+
   const updateSelectedAction = async () => {
+    updateFrenchTranslationsJson();
     try {
       checkRequiredActionFields();
       //update icon image in s3 if user uploaded a new image
@@ -788,21 +838,40 @@ const ActionCard = ({
         )}
         {
           editAction ? (
-            <TextField
-              required
-              value={actionForm.action_name}
-              InputLabelProps={{ shrink: true }}
-              label="Action Name"
-              name="action_name"
-              onChange={updateForm}
-              sx={{
-                textAlign: { xs: 'center', sm: 'left' },
-                fontSize: '28px',
-                fontWeight: '300',
-                marginLeft: '1em',
-                marginRight: '1em',
-              }}
-            />
+            <>
+              <TextField
+                required
+                value={actionForm.action_name}
+                InputLabelProps={{ shrink: true }}
+                label="Action Name"
+                name="action_name"
+                onChange={updateForm}
+                sx={{
+                  textAlign: { xs: 'center', sm: 'left' },
+                  fontSize: '28px',
+                  fontWeight: '300',
+                  marginLeft: '1em',
+                  marginRight: '1em',
+                }}
+              />
+
+              <TextField
+                value={relevantFrenchAction?.action_name || ''}
+                InputLabelProps={{ shrink: true }}
+                label="Action Name (French)"
+                name="action_name_french"
+                onChange={updateTranslations}
+                sx={{
+                  textAlign: { xs: 'center', sm: 'left' },
+                  fontSize: '28px',
+                  fontWeight: '300',
+                  marginTop: '1em',
+                  marginLeft: '1em',
+                  marginRight: '1em',
+                }}
+              />
+
+            </>
 
           ) : (
             <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
