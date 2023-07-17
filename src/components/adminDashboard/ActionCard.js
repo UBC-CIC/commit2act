@@ -20,6 +20,7 @@ import {
   TextField,
   FormGroup,
   Skeleton,
+  Tab,
 } from '@mui/material';
 import { Storage, API } from 'aws-amplify';
 import { getActionItemsForAction } from '../../graphql/queries';
@@ -38,6 +39,9 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { styled } from '@mui/material/styles';
 import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 import { updateTranslationWithLangCode } from '../../services/translations';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
 const Input = styled('input')`
   display: none;
@@ -79,6 +83,12 @@ const ActionCard = ({
     item_description: '',
     co2_saved_per_unit: '',
   };
+
+  const tabs = [
+    'English',
+    'French',
+  ];
+
   const [actionForm, setActionForm] = useState(initialActionForm);
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
@@ -95,6 +105,8 @@ const ActionCard = ({
   const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
   const [relevantFrenchAction, setRelevantFrenchAction] = useState(emptyActionItemForm);
 
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+
   //get all action items for the action
   useEffect(() => {
     const getActionItems = async () => {
@@ -103,26 +115,45 @@ const ActionCard = ({
         variables: { action_id: action_id },
       });
 
-      const modifiedActionItems = res.data.getActionItemsForAction.map((actionItem, index) => {
+      const actionItemsWithIndex = res.data.getActionItemsForAction.map((actionItem, index) => {
         return actionItem = { ...actionItem, index: index };
       });
 
       setActionForm((prev) => ({
         ...prev,
-        action_items: modifiedActionItems,
+        action_items: actionItemsWithIndex,
       }));
+
+      // load all translations for the action
+      const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
+      if (frenchTranslations) {
+        let frenchAction = frenchTranslations.translationJSON?.actions?.find((action) => action.action_id === action_id);
+        if (frenchAction) {
+          if (frenchAction.action_items) {
+            // if frenchAction already has action_items
+            setRelevantFrenchAction(frenchAction);
+          } else if (actionItemsWithIndex.length > 0) {
+            // if frenchAction does not have action_items but actionItemsWithIndex has action_items
+            frenchAction.action_items = actionItemsWithIndex.map((actionItem) => {
+              return { ...emptyActionItemForm, index: actionItem.index }
+            })
+            setRelevantFrenchAction(frenchAction);
+          } else {
+            // if frenchAction does not have action_items and actionItemsWithIndex does not have action_items
+            frenchAction.action_items = [];
+            setRelevantFrenchAction(frenchAction);
+          }
+        } else {
+          let emptyActionInit = initialActionForm;
+          emptyActionInit.action_items = actionItemsWithIndex.map((actionItem) => {
+            return { ...emptyActionItemForm, index: actionItem.index }
+          })
+          setRelevantFrenchAction(emptyActionInit);
+        }
+      }
     };
     getActionItems();
   }, [action_id]);
-
-  // load all translations for the action
-  useEffect(() => {
-    const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
-    if (frenchTranslations) {
-      const frenchAction = frenchTranslations.translationJSON?.actions?.find((action) => action.action_id === action_id);
-      setRelevantFrenchAction(frenchAction || emptyActionItemForm);
-    }
-  }, [])
 
   /** functions for rendering the non editable action card */
 
@@ -251,6 +282,31 @@ const ActionCard = ({
     });
   }
 
+  const updateActionItemTranslationWithNewValue = (event, relevantTranslationObject) => {
+    let updatedActionItemIndex = event.target.attributes.index.value;
+    return relevantTranslationObject.action_items?.map((item) => {
+      if (item.index === parseInt(updatedActionItemIndex)) {
+        if (event.target.name.includes('item_name')) {
+          return {
+            ...item,
+            item_name: event.target.value,
+          };
+        } else if (event.target.name.includes('item_description')) {
+          return {
+            ...item,
+            item_description: event.target.value,
+          };
+        } else if (event.target.name.includes('item_co2')) {
+          return {
+            ...item,
+            co2_saved_per_unit: event.target.value,
+          };
+        }
+      }
+      return item;
+    });
+  }
+
   /** functions for rendering the editable action card */
   const updateForm = (e) => {
     e.preventDefault();
@@ -276,11 +332,18 @@ const ActionCard = ({
   const updateTranslations = (e) => {
     e.preventDefault();
     if (e.target.name.includes('french')) {
-      setRelevantFrenchAction(
-        {
-          ...relevantFrenchAction,
-          [e.target.name.replace('_french', '')]: e.target.value
-        })
+      if (e.target.name.includes('edit')) {
+        let updatedActionItems = updateActionItemTranslationWithNewValue(e, relevantFrenchAction)
+        setRelevantFrenchAction((prev) => ({
+          ...prev, action_items: updatedActionItems
+        }))
+      } else {
+        setRelevantFrenchAction(
+          {
+            ...relevantFrenchAction,
+            [e.target.name.replace('_french', '')]: e.target.value
+          })
+      }
     }
   }
 
@@ -490,6 +553,10 @@ const ActionCard = ({
     getActions();
   };
 
+  const handleTabChange = (e, newValue) => {
+    setSelectedTab(newValue);
+  };
+
   const renderEditActionContent = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2em' }}>
@@ -594,46 +661,102 @@ const ActionCard = ({
                   </IconButton>
                 </AccordionSummary>
                 <AccordionDetails sx={{ p: 0 }}>
-                  <List dense>
-                    <ListItem>
-                      <TextField
-                        required
-                        value={item.item_name}
-                        label="Name"
-                        name='item_name_edit'
-                        property=''
-                        inputProps={{ 'index': item.index }}
-                        onChange={updateForm}
-                        sx={{ width: '100%' }}
-                      />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <TextField
-                        required
-                        value={item.item_description}
-                        label="Description"
-                        name='item_description_edit'
-                        property=''
-                        inputProps={{ 'index': item.index }}
-                        onChange={updateForm}
-                        sx={{ width: '100%' }}
-                      />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <TextField
-                        required
-                        value={item.co2_saved_per_unit}
-                        label="CO2 Saved Per Unit"
-                        name='item_co2_edit'
-                        property=''
-                        inputProps={{ 'index': item.index }}
-                        onChange={updateForm}
-                        sx={{ width: '100%' }}
-                      />
-                    </ListItem>
-                  </List>
+                  <TabContext value={selectedTab}>
+                    <TabList
+                      onChange={handleTabChange}
+                      aria-label="update action tab"
+                      variant="scrollable"
+                      scrollButtons
+                      allowScrollButtonsMobile
+                    >
+                      <Tab label={tabs[0]} value={tabs[0]} />
+                      <Tab label={tabs[1]} value={tabs[1]} />
+                    </TabList>
+                    <TabPanel value={tabs[0]}>
+                      <List dense>
+                        <ListItem>
+                          <TextField
+                            required
+                            value={item.item_name}
+                            label="Name"
+                            name='item_name_edit'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateForm}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={item.item_description}
+                            label="Description"
+                            name='item_description_edit'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateForm}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={item.co2_saved_per_unit}
+                            label="CO2 Saved Per Unit"
+                            name='item_co2_edit'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateForm}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                      </List>
+                    </TabPanel>
+                    <TabPanel value={tabs[1]}>
+                      <List dense>
+                        <ListItem>
+                          <TextField
+                            required
+                            value={relevantFrenchAction.action_items ? relevantFrenchAction.action_items[item.index]?.item_name : ''}
+                            label="Name"
+                            name='item_name_edit_french'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateTranslations}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={relevantFrenchAction.action_items ? relevantFrenchAction.action_items[item.index]?.item_description : ''}
+                            label="Description"
+                            name='item_description_edit_french'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateTranslations}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={relevantFrenchAction.action_items ? relevantFrenchAction.action_items[item.index]?.co2_saved_per_unit : ''}
+                            label="CO2 Saved Per Unit"
+                            name='item_co2_edit_french'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateTranslations}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                      </List>
+                    </TabPanel>
+                  </TabContext>
                 </AccordionDetails>
               </Accordion>
             ))}

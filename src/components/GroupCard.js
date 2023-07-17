@@ -252,8 +252,9 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               }}
             >
               {donutChartsData &&
-                donutChartsData.map((data) => (
+                donutChartsData.map((data, index) => (
                   <UserContributionDonutChart
+                    key={index}
                     data={data}
                     displayTitles={false}
                   />
