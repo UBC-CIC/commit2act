@@ -7,6 +7,8 @@ import { getAllActions } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import ActionCard from './ActionCard';
+import { useLanguageContext } from "../contexts/LanguageContext";
+import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -33,6 +35,10 @@ const ManageActions = () => {
   const [selectedAction, setSelectedAction] = useState();
   const [openActionDialog, setOpenActionDialog] = useState(false);
   const [editAction, setEditAction] = useState(false);
+  const [actionsInFrench, setActionsInFrench] = useState([]);
+
+  const { language } = useLanguageContext();
+  const { contentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
     setOpenActionDialog(true);
@@ -46,13 +52,43 @@ const ManageActions = () => {
 
   useEffect(() => {
     getActions();
-  }, []);
+  }, [language]);
 
   const getActions = async () => {
     const res = await API.graphql({ query: getAllActions });
     const actions = res.data.getAllActions;
-    setActionOptions(actions);
+    switch (language) {
+      case 'en':
+        setActionOptions(actions);
+        break;
+      case 'fr':
+        translateActionsToFrench(actions);
+        break;
+      default:
+        break;
+    }
   };
+  // TODO: need to translate actionitems to french
+  const translateActionsToFrench = (actions) => {
+    const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
+
+    if (!frenchTranslations) {
+      console.error('No french translations found');
+      setActionOptions(actions);
+      return;
+    }
+
+    let updatedActions = actions.map((action) => {
+      let frenchAction = frenchTranslations.translationJSON?.actions?.find((frenchActionObj) => frenchActionObj.action_id === action.action_id);
+
+      if (!frenchAction) {
+        return { ...action };
+      }
+
+      return { ...action, ...frenchAction };
+    });
+    setActionOptions(updatedActions);
+  }
 
   return (
     <Grid
