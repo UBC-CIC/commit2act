@@ -35,7 +35,6 @@ const ManageActions = () => {
   const [selectedAction, setSelectedAction] = useState();
   const [openActionDialog, setOpenActionDialog] = useState(false);
   const [editAction, setEditAction] = useState(false);
-  const [actionsInFrench, setActionsInFrench] = useState([]);
 
   const { language } = useLanguageContext();
   const { contentTranslations } = useContentTranslationsContext();

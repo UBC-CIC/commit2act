@@ -39,6 +39,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { styled } from '@mui/material/styles';
 import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 import { updateTranslationWithLangCode } from '../../services/translations';
+import { useLanguageContext } from "../contexts/LanguageContext";
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -105,6 +106,7 @@ const ActionCard = ({
 
   const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
   const [relevantFrenchAction, setRelevantFrenchAction] = useState(initialActionForm);
+  const { language } = useLanguageContext();
 
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
@@ -167,6 +169,85 @@ const ActionCard = ({
 
   };
 
+  const renderTranslatedActionItems = () => {
+    return (
+      <>
+        {action.action_items &&
+          action.action_items.map((item) => (
+            <Accordion key={item.item_name}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="action-item-content"
+              >
+                <Typography variant="subtitle2">{item.item_name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 0 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Name" secondary={item.item_name} />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="Description"
+                      secondary={item.item_description}
+                    />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="CO2 Saved Per Unit"
+                      secondary={item.co2_saved_per_unit}
+                    />
+                  </ListItem>
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+      </>
+    )
+  }
+
+  const renderActionItemsFromDB = () => {
+    return (
+      <>
+        {actionForm.action_items.length === 0 && <Skeleton variant="text" />}
+        {actionForm.action_items &&
+          actionForm.action_items.map((item) => (
+            <Accordion key={item.item_name}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="action-item-content"
+              >
+                <Typography variant="subtitle2">{item.item_name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 0 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Name" secondary={item.item_name} />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="Description"
+                      secondary={item.item_description}
+                    />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="CO2 Saved Per Unit"
+                      secondary={item.co2_saved_per_unit}
+                    />
+                  </ListItem>
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+      </>
+    )
+  }
+
   /** functions for rendering the non editable action card */
 
   const renderActionContent = () => {
@@ -192,39 +273,7 @@ const ActionCard = ({
           <Typography variant="h3" sx={{ mb: '1em' }}>
             Action Items
           </Typography>
-          {actionForm.action_items.length === 0 && <Skeleton variant="text" />}
-          {actionForm.action_items &&
-            actionForm.action_items.map((item) => (
-              <Accordion key={item.item_name}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="action-item-content"
-                >
-                  <Typography variant="subtitle2">{item.item_name}</Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ p: 0 }}>
-                  <List dense>
-                    <ListItem>
-                      <ListItemText primary="Name" secondary={item.item_name} />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="Description"
-                        secondary={item.item_description}
-                      />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="CO2 Saved Per Unit"
-                        secondary={item.co2_saved_per_unit}
-                      />
-                    </ListItem>
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            ))}
+          {language != 'en' && action.action_items.lenght != 0 ? renderTranslatedActionItems() : renderActionItemsFromDB()}
         </Box>
         <Box>
           <Typography variant="h3">Fallback Text</Typography>
