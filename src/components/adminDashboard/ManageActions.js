@@ -67,7 +67,6 @@ const ManageActions = () => {
         break;
     }
   };
-  // TODO: need to translate actionitems to french
   const translateActionsToFrench = (actions) => {
     const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
 

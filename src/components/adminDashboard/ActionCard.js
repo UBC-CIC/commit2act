@@ -273,7 +273,7 @@ const ActionCard = ({
           <Typography variant="h3" sx={{ mb: '1em' }}>
             Action Items
           </Typography>
-          {language != 'en' && action.action_items.lenght != 0 ? renderTranslatedActionItems() : renderActionItemsFromDB()}
+          {language != 'en' && action.action_items.length != 0 ? renderTranslatedActionItems() : renderActionItemsFromDB()}
         </Box>
         <Box>
           <Typography variant="h3">Fallback Text</Typography>
