@@ -273,7 +273,7 @@ const ActionCard = ({
           <Typography variant="h3" sx={{ mb: '1em' }}>
             Action Items
           </Typography>
-          {language != 'en' && action.action_items.length != 0 ? renderTranslatedActionItems() : renderActionItemsFromDB()}
+          {language !== 'en' && action.action_items.length !== 0 ? renderTranslatedActionItems() : renderActionItemsFromDB()}
         </Box>
         <Box>
           <Typography variant="h3">Fallback Text</Typography>
@@ -390,7 +390,7 @@ const ActionCard = ({
     }
   };
 
-  const updateTranslations = (e) => {
+  const updateFrenchTranslations = (e) => {
     e.preventDefault();
     if (e.target.name.includes('french')) {
       if (e.target.name.includes('edit')) {
@@ -852,7 +852,7 @@ const ActionCard = ({
                             name='item_name_edit_french'
                             property=''
                             inputProps={{ 'index': item.index }}
-                            onChange={updateTranslations}
+                            onChange={updateFrenchTranslations}
                             sx={{ width: '100%' }}
                           />
                         </ListItem>
@@ -865,7 +865,7 @@ const ActionCard = ({
                             name='item_description_edit_french'
                             property=''
                             inputProps={{ 'index': item.index }}
-                            onChange={updateTranslations}
+                            onChange={updateFrenchTranslations}
                             sx={{ width: '100%' }}
                           />
                         </ListItem>
@@ -878,7 +878,7 @@ const ActionCard = ({
                             name='item_co2_edit_french'
                             property=''
                             inputProps={{ 'index': item.index }}
-                            onChange={updateTranslations}
+                            onChange={updateFrenchTranslations}
                             sx={{ width: '100%' }}
                           />
                         </ListItem>
@@ -977,7 +977,7 @@ const ActionCard = ({
             }}
             InputLabelProps={{ shrink: true }}
             sx={{ width: '100%', mt: '1em' }}
-            onChange={updateTranslations}
+            onChange={updateFrenchTranslations}
           />
         </Box>
         <Box>
@@ -1064,7 +1064,7 @@ const ActionCard = ({
                 value={relevantFrenchAction?.curr_label || ''}
                 InputLabelProps={{ shrink: true }}
                 sx={{ width: { xs: '100%', md: '90%' } }}
-                onChange={updateTranslations}
+                onChange={updateFrenchTranslations}
               />
             </Box>
             <Button
@@ -1163,7 +1163,7 @@ const ActionCard = ({
                 InputLabelProps={{ shrink: true }}
                 label="Action Name (French)"
                 name="action_name_french"
-                onChange={updateTranslations}
+                onChange={updateFrenchTranslations}
                 sx={{
                   textAlign: { xs: 'center', sm: 'left' },
                   fontSize: '28px',
