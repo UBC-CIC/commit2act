@@ -13,5 +13,5 @@ export const getAllTranslations = async () => {
 
 
 export const updateTranslationWithLangCode = async (langCode, translationObject) => {
-    const upload = await Storage.put(`translations/${langCode}.json`, JSON.stringify(translationObject));
+    await Storage.put(`translations/${langCode}.json`, JSON.stringify(translationObject));
 }

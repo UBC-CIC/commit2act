@@ -70,6 +70,7 @@ const ActionCard = ({
   } = action;
 
   const initialActionForm = {
+    action_id: action_id,
     action_name: action_name,
     fallback_quiz_media: fallback_quiz_media,
     curr_label: '',
@@ -103,7 +104,7 @@ const ActionCard = ({
   const [emptyLabelError, setEmptyLabelError] = useState(false);
 
   const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
-  const [relevantFrenchAction, setRelevantFrenchAction] = useState(emptyActionItemForm);
+  const [relevantFrenchAction, setRelevantFrenchAction] = useState(initialActionForm);
 
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
@@ -124,36 +125,47 @@ const ActionCard = ({
         action_items: actionItemsWithIndex,
       }));
 
-      // load all translations for the action
-      const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
-      if (frenchTranslations) {
-        let frenchAction = frenchTranslations.translationJSON?.actions?.find((action) => action.action_id === action_id);
-        if (frenchAction) {
-          if (frenchAction.action_items) {
-            // if frenchAction already has action_items
-            setRelevantFrenchAction(frenchAction);
-          } else if (actionItemsWithIndex.length > 0) {
-            // if frenchAction does not have action_items but actionItemsWithIndex has action_items
-            frenchAction.action_items = actionItemsWithIndex.map((actionItem) => {
-              return { ...emptyActionItemForm, index: actionItem.index }
-            })
-            setRelevantFrenchAction(frenchAction);
-          } else {
-            // if frenchAction does not have action_items and actionItemsWithIndex does not have action_items
-            frenchAction.action_items = [];
-            setRelevantFrenchAction(frenchAction);
-          }
-        } else {
-          let emptyActionInit = initialActionForm;
-          emptyActionInit.action_items = actionItemsWithIndex.map((actionItem) => {
-            return { ...emptyActionItemForm, index: actionItem.index }
-          })
-          setRelevantFrenchAction(emptyActionInit);
-        }
-      }
+      await loadFrenchTranslations(actionItemsWithIndex);
     };
     getActionItems();
   }, [action_id]);
+
+
+  const loadFrenchTranslations = async (actionItemsWithIndex) => {
+    // load all translations for the action
+    const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
+    if (!frenchTranslations) {
+      throw new Error('French translations not found');
+    }
+
+    let frenchAction = frenchTranslations.translationJSON?.actions?.find((action) => action.action_id === action_id);
+    if (frenchAction) {
+      if (frenchAction.action_items.length > 0) {
+        // if frenchAction already has action_items
+        setRelevantFrenchAction(frenchAction);
+      } else if (frenchAction.action_items.length === 0 && actionItemsWithIndex.length > 0) {
+        // if frenchAction does not have action_items but actionItemsWithIndex has action_items
+        frenchAction.action_items = actionItemsWithIndex.map((actionItem) => {
+          return { ...emptyActionItemForm, index: actionItem.index, co2_saved_per_unit: actionItem.co2_saved_per_unit }
+        })
+        setRelevantFrenchAction(frenchAction);
+      } else {
+        // if frenchAction does not have action_items and actionItemsWithIndex does not have action_items
+        frenchAction.action_items = [];
+        setRelevantFrenchAction(frenchAction);
+      }
+    } else {
+      let emptyActionInit = initialActionForm;
+      // we do not want labels and fallback_quiz_media for translations
+      emptyActionInit.labels = [];
+      emptyActionInit.fallback_quiz_media = "";
+      emptyActionInit.action_items = actionItemsWithIndex.map((actionItem) => {
+        return { ...emptyActionItemForm, index: actionItem.index, co2_saved_per_unit: actionItem.co2_saved_per_unit }
+      })
+      setRelevantFrenchAction(emptyActionInit);
+    }
+
+  };
 
   /** functions for rendering the non editable action card */
 
@@ -333,21 +345,31 @@ const ActionCard = ({
     e.preventDefault();
     if (e.target.name.includes('french')) {
       if (e.target.name.includes('edit')) {
-        let updatedActionItems = updateActionItemTranslationWithNewValue(e, relevantFrenchAction)
+        let updatedActionItems = updateActionItemTranslationWithNewValue(e, relevantFrenchAction);
         setRelevantFrenchAction((prev) => ({
           ...prev, action_items: updatedActionItems
-        }))
+        }));
       } else {
-        setRelevantFrenchAction(
-          {
-            ...relevantFrenchAction,
-            [e.target.name.replace('_french', '')]: e.target.value
-          })
+        setRelevantFrenchAction((prev) => ({
+          ...prev,
+          [e.target.name.replace('_french', '')]: e.target.value
+        }));
       }
     }
   }
 
-  const removeActionItem = (name) => {
+  const removeActionItemFromAllTranslations = (actionItemIndex) => {
+    let relevantFrenchActionItemsCopy = relevantFrenchAction.action_items;
+    let filteredFrenchActionItems = relevantFrenchActionItemsCopy.filter((item) => item.index !== actionItemIndex);
+
+    // add more translations here when required
+
+    setRelevantFrenchAction((prev) => ({
+      ...prev, action_items: filteredFrenchActionItems
+    }));
+  }
+
+  const removeActionItem = (name, index) => {
     let actionItemsCopy = actionForm.action_items;
     let filteredActionItems = actionItemsCopy.filter(
       (item) => item.item_name !== name
@@ -356,6 +378,8 @@ const ActionCard = ({
       ...prev,
       action_items: filteredActionItems,
     }));
+
+    removeActionItemFromAllTranslations(index);
   };
 
   const checkRequiredActionItemFields = () => {
@@ -373,6 +397,12 @@ const ActionCard = ({
     }
   };
 
+  const addEmptyActionItemToAllTranslations = () => {
+    setRelevantFrenchAction((prev) => ({
+      ...prev, action_items: [...prev.action_items, { ...initialActionForm, index: prev.action_items.length }]
+    }));
+  }
+
   const addActionItem = () => {
     try {
       checkRequiredActionItemFields();
@@ -381,8 +411,11 @@ const ActionCard = ({
       );
       //adds the item from the form into actionItems array
       let actionItemsCopy = actionForm.action_items;
-      actionItemsCopy.push(actionItemsForm);
+      actionItemsCopy.push({ ...actionItemsForm, index: actionItemsCopy.length });
+
       setActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
+      //adds emptyActionInit to all translations
+      addEmptyActionItemToAllTranslations();
       //clears the actionItemsForm so user can enter in a new action item
       setActionItemsForm(emptyActionItemForm);
       //reset error states
@@ -408,8 +441,22 @@ const ActionCard = ({
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
   };
 
+  const removeValidationLabelFromTranslation = (label, langCode) => {
+    if (langCode === 'fr') {
+      let labelsCopy = relevantFrenchAction.labels;
+      const index = labelsCopy.indexOf(label);
+      labelsCopy.splice(index, 1);
+      setRelevantFrenchAction((prev) => ({ ...prev, labels: labelsCopy }));
+    }
+  }
+
   const addValidationLabel = () => {
     //create array that contains the current label input from the form along with all previous inputted labels
+    if (actionForm.curr_label === '') {
+      // update translations
+      addValidationLabelsToTranslations();
+      return;
+    }
     let labelsCopy = actionForm.labels;
     labelsCopy.push(actionForm.curr_label);
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
@@ -418,7 +465,29 @@ const ActionCard = ({
     }
     //clear current label
     setActionForm((prev) => ({ ...prev, curr_label: '' }));
+
+    // update translations
+    addValidationLabelsToTranslations();
   };
+
+  const addValidationLabelsToTranslations = () => {
+    const pushToFrenchActionLabels = () => {
+      if (relevantFrenchAction.curr_label === '') {
+        return;
+      }
+      let labelsCopy = relevantFrenchAction.labels;
+
+      if (!labelsCopy) {
+        labelsCopy = [];
+      }
+
+      labelsCopy.push(relevantFrenchAction.curr_label);
+      setRelevantFrenchAction((prev) => ({ ...prev, labels: labelsCopy }));
+      setRelevantFrenchAction((prev) => ({ ...prev, curr_label: '' }));
+    };
+
+    pushToFrenchActionLabels();
+  }
 
   const handleIconUpload = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -459,9 +528,19 @@ const ActionCard = ({
       if (translationObject.langCode === 'fr') {
         await updateTranslationsJsonActionsWithinAllTranslations(translationObject.translationJSON);
         await updateTranslationWithLangCode('fr', translationObject.translationJSON)
+        setContentTranslations((prev) => {
+          return prev.map((translation) => {
+            if (translation.langCode === 'fr') {
+              return {
+                ...translation,
+                translationJSON: translationObject.translationJSON,
+              };
+            }
+            return translation;
+          });
+        });
       }
     }
-    setContentTranslations(...contentTranslations)
   }
 
   const updateSelectedAction = async () => {
@@ -656,7 +735,7 @@ const ActionCard = ({
                   }}
                 >
                   <Typography variant="subtitle2">{item.item_name}</Typography>
-                  <IconButton onClick={() => removeActionItem(item.item_name)}>
+                  <IconButton onClick={() => removeActionItem(item.item_name, item.index)}>
                     <DeleteOutlineOutlinedIcon />
                   </IconButton>
                 </AccordionSummary>
@@ -672,7 +751,7 @@ const ActionCard = ({
                       <Tab label={tabs[0]} value={tabs[0]} />
                       <Tab label={tabs[1]} value={tabs[1]} />
                     </TabList>
-                    <TabPanel value={tabs[0]}>
+                    <TabPanel value={tabs[0]} aria-label='english translation tab'>
                       <List dense>
                         <ListItem>
                           <TextField
@@ -714,7 +793,7 @@ const ActionCard = ({
                         </ListItem>
                       </List>
                     </TabPanel>
-                    <TabPanel value={tabs[1]}>
+                    <TabPanel value={tabs[1]} aria-label='french translation tab'>
                       <List dense>
                         <ListItem>
                           <TextField
@@ -828,6 +907,7 @@ const ActionCard = ({
           <TextField
             required
             name="fallback_quiz_media"
+            label="Fallback Text"
             value={actionForm.fallback_quiz_media}
             multiline
             InputProps={{
@@ -836,6 +916,19 @@ const ActionCard = ({
             InputLabelProps={{ shrink: true }}
             sx={{ width: '100%', mt: '1em' }}
             onChange={updateForm}
+          />
+          <TextField
+            required
+            name="fallback_quiz_media_french"
+            label="Fallback Text (French)"
+            value={relevantFrenchAction?.fallback_quiz_media || ''}
+            multiline
+            InputProps={{
+              style: { fontSize: 15, fontWeight: 100, color: 'black' },
+            }}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: '100%', mt: '1em' }}
+            onChange={updateTranslations}
           />
         </Box>
         <Box>
@@ -857,7 +950,7 @@ const ActionCard = ({
               sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                my: '1.5em',
+                my: '0.5em',
                 gap: '0.5em',
               }}
             >
@@ -871,22 +964,60 @@ const ActionCard = ({
               ))}
             </Box>
           )}
+          <Typography
+            variant="subtitle1"
+            component="span"
+          >
+            French Labels
+          </Typography>
+          {relevantFrenchAction.labels?.length > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                mt: '0.5em',
+                gap: '0.5em',
+                mb: '1.5em'
+              }}
+            >
+              {relevantFrenchAction.labels?.map((label) => (
+                <Chip
+                  key={label + '_french'}
+                  label={label}
+                  variant="outlined"
+                  onDelete={() => removeValidationLabelFromTranslation(label, 'fr')}
+                />
+              ))}
+            </Box>
+          )}
           <FormGroup
             sx={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               mt: '3em',
+              alignItems: 'center'
             }}
           >
-            <TextField
-              required
-              label="Label"
-              name="curr_label"
-              value={actionForm.curr_label}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: { xs: '100%', md: '80%' } }}
-              onChange={updateForm}
-            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: '1', gap: '10px' }}>
+              <TextField
+                required
+                label="Label"
+                name="curr_label"
+                value={actionForm.curr_label}
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: { xs: '100%', md: '90%' } }}
+                onChange={updateForm}
+              />
+              <TextField
+                required
+                label="Label (french)"
+                name="curr_label_french"
+                value={relevantFrenchAction?.curr_label || ''}
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: { xs: '100%', md: '90%' } }}
+                onChange={updateTranslations}
+              />
+            </Box>
             <Button
               variant="outlined"
               sx={{
