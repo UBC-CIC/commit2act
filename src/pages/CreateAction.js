@@ -20,6 +20,7 @@ import {
   AccordionDetails,
   Divider,
   Paper,
+  Tab,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Storage, API } from 'aws-amplify';
@@ -31,6 +32,12 @@ import {
 import { getAllActions } from '../graphql/queries';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useContentTranslationsContext } from '../components/contexts/ContentTranslationsContext';
+
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { updateTranslationWithLangCode } from '../services/translations';
 
 const Input = styled('input')`
   display: none;
@@ -56,8 +63,8 @@ const CreateAction = () => {
     co2_saved_per_unit: '',
   };
   const [allActionNames, setAllActionNames] = useState();
-  const [actionForm, setActionForm] = useState(emptyActionForm);
-  const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
+  const [actionForm, setActionForm] = useState(JSON.parse(JSON.stringify(emptyActionForm)));
+  const [actionItemsForm, setActionItemsForm] = useState(JSON.parse(JSON.stringify(emptyActionItemForm)));
   const [actionIconFile, setActionIconFile] = useState();
   const [actionIconPreviewLink, setActionIconPreviewLink] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +77,18 @@ const CreateAction = () => {
   const [emptyActionItemError, setEmptyActionItemError] = useState(false);
   const [emptyLabelError, setEmptyLabelError] = useState(false);
 
+  //translation states
+  const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
+  const [frenchActionForm, setFrenchActionForm] = useState(JSON.parse(JSON.stringify(emptyActionForm)));
+  const [frenchActionItemsForm, setFrenchActionItemsForm] = useState(JSON.parse(JSON.stringify(emptyActionItemForm)));
+
+  const tabs = [
+    'English',
+    'French',
+  ];
+
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+
   //gets list of all action names to make sure submitted group isn't a duplicate
   useEffect(() => {
     const getActionNames = async () => {
@@ -80,6 +99,10 @@ const CreateAction = () => {
     };
     getActionNames();
   }, []);
+
+  const handleTabChange = (e, newValue) => {
+    setSelectedTab(newValue);
+  };
 
   const updateForm = (e) => {
     if (e.target.name in actionItemsForm) {
@@ -95,6 +118,20 @@ const CreateAction = () => {
     }
   };
 
+  const updateFrenchTranslations = (e) => {
+    if (e.target.name.replace('_french', '') in frenchActionItemsForm) {
+      setFrenchActionItemsForm((prev) => ({
+        ...prev,
+        [e.target.name.replace('_french', '')]: e.target.value,
+      }));
+    } else {
+      setFrenchActionForm((prev) => ({
+        ...prev,
+        [e.target.name.replace('_french', '')]: e.target.value
+      }));
+    }
+  }
+
   //handle icon upload
   const handleIconUpload = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -107,9 +144,17 @@ const CreateAction = () => {
     setActionIconPreviewLink(previewLink);
   };
 
+  const removeFrenchActionItem = (index) => {
+    let frenchActionItemsCopy = frenchActionForm.action_items;
+    frenchActionItemsCopy.splice(index, 1);
+    setFrenchActionForm((prev) => ({ ...prev, action_items: frenchActionItemsCopy }));
+  }
+
   /** functions for adding and removing action items */
   const removeActionItem = (name) => {
     let actionItemsCopy = actionForm.action_items;
+    let deleteActionItemIndex = actionItemsCopy.findIndex(item => item.item_name === name)
+
     let filteredActionItems = actionItemsCopy.filter(
       (item) => item.item_name !== name
     );
@@ -117,6 +162,8 @@ const CreateAction = () => {
       ...prev,
       action_items: filteredActionItems,
     }));
+
+    removeFrenchActionItem(deleteActionItemIndex);
   };
 
   const checkRequiredActionItemFields = () => {
@@ -134,6 +181,14 @@ const CreateAction = () => {
     }
   };
 
+  const addFrenchActionItems = () => {
+    let frenchActionItemsCopy = frenchActionForm.action_items;
+    frenchActionItemsCopy.push(frenchActionItemsForm);
+    setFrenchActionForm((prev) => ({ ...prev, action_items: frenchActionItemsCopy }));
+    //clears the actionItemsForm so user can enter in a new action item
+    setFrenchActionItemsForm(emptyActionItemForm);
+  }
+
   const addActionItem = () => {
     try {
       checkRequiredActionItemFields();
@@ -147,6 +202,7 @@ const CreateAction = () => {
       if (actionItemsCopy.length > 0) {
         setEmptyActionItemError(false);
       }
+      addFrenchActionItems();
       setEmptyItemFieldError(false);
       setCO2Error(false);
     } catch (e) {
@@ -168,6 +224,23 @@ const CreateAction = () => {
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
   };
 
+  const removeFrenchValidationLabel = (label) => {
+    let labelsCopy = frenchActionForm.labels;
+    const index = labelsCopy.indexOf(label);
+    labelsCopy.splice(index, 1);
+    setFrenchActionForm((prev) => ({ ...prev, labels: labelsCopy }));
+  };
+
+  const addFrenchValidationLabel = () => {
+    //create array that contains the current label input from the form along with all previous inputted labels
+    let labelsCopy = frenchActionForm.labels;
+    labelsCopy.push(frenchActionForm.curr_label);
+    setFrenchActionForm((prev) => ({ ...prev, labels: labelsCopy, curr_label: '' }));
+    if (labelsCopy.length > 0) {
+      setEmptyLabelError(false);
+    }
+  }
+
   const addValidationLabel = () => {
     //create array that contains the current label input from the form along with all previous inputted labels
     let labelsCopy = actionForm.labels;
@@ -178,6 +251,10 @@ const CreateAction = () => {
     }
     //clear current label
     setActionForm((prev) => ({ ...prev, curr_label: '' }));
+
+    if (frenchActionForm.curr_label) {
+      addFrenchValidationLabel();
+    }
   };
 
   // /** functions adding the action itself */
@@ -195,6 +272,32 @@ const CreateAction = () => {
       throw new Error('Missing action items');
     }
   };
+
+
+  const updateTranslationsInS3 = async (frenchActionFormToSubmit) => {
+    const updateFrenchTranslationsJson = async (translationObject) => {
+      translationObject.translationJSON?.actions?.push(frenchActionFormToSubmit);
+      await updateTranslationWithLangCode('fr', translationObject.translationJSON);
+
+      setContentTranslations((prev) => {
+        return prev.map((translation) => {
+          if (translation.langCode === 'fr') {
+            return {
+              ...translation,
+              translationJSON: translationObject.translationJSON,
+            };
+          }
+          return translation;
+        });
+      });
+    }
+
+    for (const translationObject of contentTranslations) {
+      if (translationObject.langCode === 'fr') {
+        await updateFrenchTranslationsJson(translationObject);
+      }
+    }
+  }
 
   const submitAction = async () => {
     try {
@@ -242,8 +345,13 @@ const CreateAction = () => {
           },
         }),
       ]);
+      // add translations here
+      let frenchActionFormToSubmit = JSON.parse(JSON.stringify({ ...frenchActionForm, action_id: actionId }));
+      await updateTranslationsInS3(frenchActionFormToSubmit);
+
       //clear form and related states
-      setActionForm(emptyActionForm);
+      setActionForm(JSON.parse(JSON.stringify(emptyActionForm)));
+      setFrenchActionForm(JSON.parse(JSON.stringify(emptyActionForm)));
       setActionIconPreviewLink();
       setActionNameTakenError(false);
       setEmptyActionFieldError(false);
@@ -252,7 +360,12 @@ const CreateAction = () => {
       //render success message
       setSubmitActionSuccess(true);
     } catch (e) {
+      setIsLoading(false);
       const errorMsg = e.message;
+      if (!errorMsg) {
+        console.error(e);
+        setEmptyActionFieldError(true);
+      }
       if (errorMsg.includes('Action name taken')) {
         setActionNameTakenError(true);
       } else if (errorMsg.includes('Empty field')) {
@@ -273,7 +386,7 @@ const CreateAction = () => {
   const renderAddedActionItems = () => {
     return (
       actionForm.action_items &&
-      actionForm.action_items.map((item) => (
+      actionForm.action_items.map((item, index) => (
         <Accordion key={item.item_name}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -292,25 +405,60 @@ const CreateAction = () => {
             </IconButton>
           </AccordionSummary>
           <AccordionDetails sx={{ p: 0 }}>
-            <List dense>
-              <ListItem>
-                <ListItemText primary="Name" secondary={item.item_name} />
-              </ListItem>
-              <Divider flexItem />
-              <ListItem>
-                <ListItemText
-                  primary="Description"
-                  secondary={item.item_description}
-                />
-              </ListItem>
-              <Divider flexItem />
-              <ListItem>
-                <ListItemText
-                  primary="CO2 Saved Per Unit"
-                  secondary={item.co2_saved_per_unit}
-                />
-              </ListItem>
-            </List>
+            <TabContext value={selectedTab}>
+              <TabList
+                onChange={handleTabChange}
+                aria-label="update action tab"
+                variant="scrollable"
+                scrollButtons
+                allowScrollButtonsMobile
+              >
+                <Tab label={tabs[0]} value={tabs[0]} />
+                <Tab label={tabs[1]} value={tabs[1]} />
+              </TabList>
+              <TabPanel value={tabs[0]} aria-label='english translation tab'>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Name" secondary={item.item_name} />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="Description"
+                      secondary={item.item_description}
+                    />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="CO2 Saved Per Unit"
+                      secondary={item.co2_saved_per_unit}
+                    />
+                  </ListItem>
+                </List>
+              </TabPanel>
+              <TabPanel value={tabs[1]} aria-label='french translation tab'>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Name" secondary={frenchActionForm.action_items.length > 0 ? frenchActionForm.action_items[index].item_name || item.item_name : item.item_name} />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="Description"
+                      secondary={frenchActionForm?.action_items?.length > 0 ? frenchActionForm.action_items[index]?.item_description || item.item_description : item.item_description}
+                    />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="CO2 Saved Per Unit"
+                      secondary={frenchActionForm?.action_items?.length > 0 ? frenchActionForm.action_items[index]?.co2_saved_per_unit || item.co2_saved_per_unit : item.co2_saved_per_unit}
+                    />
+                  </ListItem>
+                </List>
+              </TabPanel>
+            </TabContext>
           </AccordionDetails>
         </Accordion>
       ))
@@ -324,6 +472,18 @@ const CreateAction = () => {
         variant="outlined"
         key={index}
         onDelete={() => removeValidationLabel(label)}
+        sx={{ mr: '0.5em' }}
+      />
+    ));
+  };
+
+  const renderAddedFrenchLabels = () => {
+    return frenchActionForm.labels.map((label, index) => (
+      <Chip
+        label={label}
+        variant="outlined"
+        key={index}
+        onDelete={() => removeFrenchValidationLabel(label)}
         sx={{ mr: '0.5em' }}
       />
     ));
@@ -374,6 +534,17 @@ const CreateAction = () => {
                 }
                 onChange={updateForm}
                 sx={{ width: '100%' }}
+              />
+              <TextField
+                value={frenchActionForm?.action_name || ''}
+                InputLabelProps={{ shrink: true }}
+                label="Action Name (French)"
+                name="action_name_french"
+                onChange={updateFrenchTranslations}
+                sx={{
+                  marginTop: '1em',
+                  width: '100%',
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -442,36 +613,77 @@ const CreateAction = () => {
               gap: '1.5em',
               flexDirection: { xs: 'column', md: 'row' },
               mt: actionForm.action_items.length > 0 && '1.5em',
+              alignItems: 'center'
             }}
           >
-            <TextField
-              required
-              label="Item Name"
-              name="item_name"
-              InputLabelProps={{ shrink: true }}
-              value={actionItemsForm.item_name}
-              onChange={updateForm}
-            />
-            <TextField
-              required
-              label="Item Description"
-              name="item_description"
-              InputLabelProps={{ shrink: true }}
-              value={actionItemsForm.item_description}
-              onChange={updateForm}
-            />
-            <TextField
-              required
-              label="CO2 Per Unit Saved"
-              name="co2_saved_per_unit"
-              inputProps={{ inputMode: 'numeric' }}
-              InputLabelProps={{ shrink: true }}
-              value={actionItemsForm.co2_saved_per_unit}
-              error={cO2Error}
-              helperText={cO2Error && 'Input must be a number greater than 0'}
-              sx={{ xs: { mt: '1.5em' } }}
-              onChange={updateForm}
-            />
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5em'
+              }}>
+              <Box
+                data-fields="action-items-en"
+              >
+                <TextField
+                  required
+                  label="Item Name"
+                  name="item_name"
+                  InputLabelProps={{ shrink: true }}
+                  value={actionItemsForm.item_name}
+                  onChange={updateForm}
+                />
+                <TextField
+                  required
+                  label="Item Description"
+                  name="item_description"
+                  InputLabelProps={{ shrink: true }}
+                  value={actionItemsForm.item_description}
+                  onChange={updateForm}
+                />
+                <TextField
+                  required
+                  label="CO2 Per Unit Saved"
+                  name="co2_saved_per_unit"
+                  inputProps={{ inputMode: 'numeric' }}
+                  InputLabelProps={{ shrink: true }}
+                  value={actionItemsForm.co2_saved_per_unit}
+                  error={cO2Error}
+                  helperText={cO2Error && 'Input must be a number greater than 0'}
+                  sx={{ xs: { mt: '1.5em' } }}
+                  onChange={updateForm}
+                />
+              </Box>
+              <Box
+                data-fields="action-items-fr"
+              >
+                <TextField
+                  label="Item Name (French)"
+                  name="item_name_french"
+                  InputLabelProps={{ shrink: true }}
+                  value={frenchActionItemsForm.item_name}
+                  onChange={updateFrenchTranslations}
+                />
+                <TextField
+                  label="Item Description (French)"
+                  name="item_description_french"
+                  InputLabelProps={{ shrink: true }}
+                  value={frenchActionItemsForm.item_description}
+                  onChange={updateFrenchTranslations}
+                />
+
+                <TextField
+                  label="CO2 Per Unit Saved (French)"
+                  name="co2_saved_per_unit_french"
+                  inputProps={{ inputMode: 'numeric' }}
+                  InputLabelProps={{ shrink: true }}
+                  disabled={true}
+                  value={actionItemsForm.co2_saved_per_unit}
+                  error={cO2Error}
+                  sx={{ xs: { mt: '1.5em' } }}
+                />
+              </Box>
+            </Box>
             <Button
               variant="outlined"
               onClick={addActionItem}
@@ -487,6 +699,14 @@ const CreateAction = () => {
             InputLabelProps={{ shrink: true }}
             value={actionForm.fallback_quiz_media}
             onChange={updateForm}
+          />
+          <TextField
+            label="Text (French)"
+            name="fallback_quiz_media_french"
+            InputLabelProps={{ shrink: true }}
+            value={frenchActionForm.fallback_quiz_media}
+            onChange={updateFrenchTranslations}
+            sx={{ marginTop: '0.5em' }}
           />
           <SectionTitle variant="h3">Image Validation Labels</SectionTitle>
           <Typography
@@ -505,28 +725,65 @@ const CreateAction = () => {
               sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                mb: '1.5em',
+                mb: frenchActionForm.labels.length !== 0 ? '0.25em' : '1.5em',
                 width: { xs: '30%', sm: '80%' },
               }}
             >
               {renderAddedLabels()}
             </Box>
           )}
+          {frenchActionForm.labels.length !== 0 && (
+            <>
+              <Typography
+                variant="subtitle1"
+                component="span"
+                sx={{
+                  mb: '0.25em',
+                }}
+              >
+                Labels (French)
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  mb: '1.5em',
+                  width: { xs: '30%', sm: '80%' },
+                }}
+              >
+                {renderAddedFrenchLabels()}
+              </Box>
+            </>
+          )}
           <FormGroup
             sx={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              alignItems: 'center'
             }}
           >
-            <TextField
-              required
-              label="Label"
-              name="curr_label"
-              value={actionForm.curr_label}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: { xs: '100%', md: '80%' } }}
-              onChange={updateForm}
-            />
+            <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'} gap={4} marginRight={'0.5em'} flexGrow={1} maxWidth={'75%'}>
+              <TextField
+                required
+                label="Label"
+                name="curr_label"
+                value={actionForm.curr_label}
+                InputLabelProps={{ shrink: true }}
+                sx={{ flexGrow: 1 }}
+                onChange={updateForm}
+              />
+
+              <TextField
+                required
+                label="Label French"
+                name="curr_label_french"
+                value={frenchActionForm.curr_label}
+                InputLabelProps={{ shrink: true }}
+                sx={{ flexGrow: 1 }}
+                onChange={updateFrenchTranslations}
+              />
+
+            </Box>
             <Button
               variant="outlined"
               sx={{

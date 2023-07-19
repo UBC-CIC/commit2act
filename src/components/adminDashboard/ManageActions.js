@@ -35,7 +35,6 @@ const ManageActions = () => {
   const [selectedAction, setSelectedAction] = useState();
   const [openActionDialog, setOpenActionDialog] = useState(false);
   const [editAction, setEditAction] = useState(false);
-  const [actionsInFrench, setActionsInFrench] = useState([]);
 
   const { language } = useLanguageContext();
   const { contentTranslations } = useContentTranslationsContext();
@@ -68,7 +67,6 @@ const ManageActions = () => {
         break;
     }
   };
-  // TODO: need to translate actionitems to french
   const translateActionsToFrench = (actions) => {
     const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
 
