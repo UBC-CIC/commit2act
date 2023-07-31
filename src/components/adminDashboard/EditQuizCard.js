@@ -75,10 +75,6 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
 
   }, [quiz]);
 
-  // useEffect(() => {
-  //   console.log('quiz french form: ', frenchQuizForm);
-  // }, [frenchQuizForm])
-
   const updateForm = (e) => {
     setQuizForm((prev) => ({
       ...prev,
@@ -158,8 +154,6 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
       }
       return obj;
     });
-
-    console.log('french updated answers: ', frenchUpdatedAnswers);
 
     setQuizForm((prev) => ({ ...prev, quiz_answers: updatedAnswers }));
     setFrenchQuizForm((prev) => ({ ...prev, quiz_answers: frenchUpdatedAnswers }));
