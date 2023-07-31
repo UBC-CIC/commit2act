@@ -12,6 +12,35 @@ const QuizCard = ({ quiz, getQuizzes }) => {
     setEditQuiz(false);
   }, [getQuizzes]);
 
+  const renderFrenchAnswers = () => {
+    if (quiz.answers_french?.length < 1) return;
+    return (
+      <>
+        <Typography variant='subtitle1'>Possible Answers (French)</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            my: '0.5em',
+            gap: '0.5em',
+          }}
+        >
+          {
+            quiz.answers_french
+              .split('\n')
+              .map((answer) =>
+                quiz.correct_answers_french.split('\n').includes(answer) ? (
+                  <Chip key={answer} icon={<CheckIcon />} label={answer} />
+                ) : (
+                  <Chip key={answer} label={answer} variant="outlined" />
+                )
+              )
+          }
+        </Box>
+      </>
+    )
+  };
+
   const renderView = () => {
     if (editQuiz) {
       return <EditQuizCard quiz={quiz} getQuizzes={getQuizzes} />;
@@ -28,10 +57,28 @@ const QuizCard = ({ quiz, getQuizzes }) => {
           <Box>
             <Typography variant="h3">Fact Text</Typography>
             <Typography sx={{ mt: '1em' }}>{fact_text}</Typography>
+            {
+              quiz.fact_text_french &&
+              (
+                <>
+                  <Typography variant='subtitle1'>Fact Text (French)</Typography>
+                  <Typography sx={{ mt: '1em' }} variant='subtitle2'>{quiz.fact_text_french || ''}</Typography>
+                </>
+              )
+            }
           </Box>
           <Box>
             <Typography variant="h3">Question Text</Typography>
             <Typography sx={{ mt: '1em' }}>{question_text}</Typography>
+            {
+              quiz.question_text_french &&
+              (
+                <>
+                  <Typography variant='subtitle1'>Question Text (French)</Typography>
+                  <Typography sx={{ mt: '1em' }} variant='subtitle2'>{quiz.question_text_french || ''}</Typography>
+                </>
+              )
+            }
           </Box>
           <Box>
             <Typography variant="h3">Possible Answers</Typography>
@@ -53,6 +100,7 @@ const QuizCard = ({ quiz, getQuizzes }) => {
                   )
                 )}
             </Box>
+            {renderFrenchAnswers()}
           </Box>
         </Box>
       );
