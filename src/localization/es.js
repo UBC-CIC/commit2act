@@ -267,6 +267,8 @@ const translations = {
   totalActionsSubmitted: 'ES totalActionsSubmitted',
   actionsFirstAnswerCorrect: 'ES actionsFirstAnswerCorrect',
   actionsFirstAnswerIncorrect: 'ES actionsFirstAnswerIncorrect',
+  actionsSubmittedWithImage: 'ES actionsSubmittedWithImage',
+  actionsSubmittedWithoutImage: 'ES actionsSubmittedWithoutImage',
   numberActionsSubmittedWithImage: 'ES numberActionsSubmittedWithImage',
   numberActionsSubmittedWithoutImage: 'ES numberActionsSubmittedWithoutImage',
   date: 'ES Date',
@@ -280,6 +282,7 @@ const translations = {
   ninetyDays: 'FR ninetyDays',
   oneYear: 'ES oneYear',
   co2SavedDuring: 'ES co2SavedDuring',
+  totalGramsSavedCO2PerDayAllActions: 'ES totalGramsSavedCO2PerDayAllActions',
 };
 
 export default translations;

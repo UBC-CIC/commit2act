@@ -271,7 +271,7 @@ const translations = {
   actionsSubmittedWithoutImage: 'FR actionsSubmittedWithoutImage',
   numberActionsSubmittedWithImage: 'FR numberActionsSubmittedWithImage',
   numberActionsSubmittedWithoutImage: 'FR numberActionsSubmittedWithoutImage',
-  date: 'Date FR',
+  date: 'FR Date',
   gramsCO2Saved: 'FR gramsCO2Saved',
   applyFilter: 'FR applyFilter',
   createAction: 'FR createAction',
@@ -282,6 +282,7 @@ const translations = {
   ninetyDays: 'FR ninetyDays',
   oneYear: 'FR oneYear',
   co2SavedDuring: 'FR co2SavedDuring',
+  totalGramsSavedCO2PerDayAllActions: 'FR totalGramsSavedCO2PerDayAllActions',
 };
 
 export default translations;

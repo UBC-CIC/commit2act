@@ -146,7 +146,7 @@ const LineChart = ({ allSubmittedActions }) => {
             labels: Object.keys(lineChartData),
             datasets: [
               {
-                label: 'Total Grams of CO2 Saved Per Day For All Actions',
+                label: translation.totalGramsSavedCO2PerDayAllActions,
                 data: Object.values(lineChartData),
                 backgroundColor: ['#929cda'],
                 barPercentage: 1,
@@ -161,7 +161,7 @@ const LineChart = ({ allSubmittedActions }) => {
               x: {
                 title: {
                   display: true,
-                  text: 'Date',
+                  text: translation.date,
                   padding: {
                     top: 20,
                   },

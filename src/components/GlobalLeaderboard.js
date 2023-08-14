@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Link,
@@ -27,7 +27,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-
+import { useLanguageContext } from "../components/contexts/LanguageContext";
 
 import useTranslation from ".//customHooks/translations";
 
@@ -50,16 +50,16 @@ const StyledTableBody = styled(TableBody)`
 const GlobalLeaderboard = () => {
   const navigate = useNavigate();
   const translation = useTranslation();
-  const tabs = [
+  const tabs = useMemo(() => [
     translation.globalGroups,
     translation.globalUsers,
-  ];
-  const filters = [
+  ], [translation.globalGroups, translation.globalUsers]);
+  const filters = useMemo(() => [
     { name: translation.totalCO2Saved, property: 'total_co2' },
     { name: translation.weeklyCO2Saved, property: 'weekly_co2' },
     { name: translation.totalPoints, property: 'total_points' },
     { name: translation.weeklyPoints, property: 'weekly_points' },
-  ];
+  ], [translation.totalCO2Saved, translation.totalPoints, translation.weeklyCO2Saved, translation.weeklyPoints]);
   const [groups, setGroups] = useState();
   const [users, setUsers] = useState();
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
@@ -70,6 +70,7 @@ const GlobalLeaderboard = () => {
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { language } = useLanguageContext();
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
@@ -95,7 +96,9 @@ const GlobalLeaderboard = () => {
     };
 
     getTableData();
-  }, []);
+    setSelectedTab(tabs[0]);
+    setSelectedFilter(filters[0]);
+  }, [tabs, filters, language]);
 
   //filters groups when group state is initially set, filters groups and group members every time a new filter is selected
   useEffect(() => {

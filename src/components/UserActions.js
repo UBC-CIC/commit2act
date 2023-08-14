@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SubmittedActionCard from '../components/SubmittedActionCard';
 import {
   Box,
@@ -16,6 +16,7 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import useTranslation from './customHooks/translations';
+import { useLanguageContext } from "./contexts/LanguageContext";
 
 const UserActions = ({ databaseUser, setUser, userType }) => {
   const [showMore, setShowMore] = useState({
@@ -27,20 +28,23 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
   const translation = useTranslation();
-  const tabs = [
+  const tabs = useMemo(() => [
     translation.validated,
     translation.awaitingValidation,
     translation.notPassValidation,
-  ];
+  ], [translation.awaitingValidation, translation.notPassValidation, translation.validated]);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
+  const { language } = useLanguageContext();
 
   useEffect(() => {
     if (databaseUser) {
       getUserActions(databaseUser.user_id);
     }
-  }, [databaseUser]);
+
+    setSelectedTab(tabs[0]);
+  }, [databaseUser, tabs, language]);
 
   const getCurrentDatabaseUser = async (id) => {
     const userRes = await API.graphql({
