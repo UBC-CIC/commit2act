@@ -58,7 +58,10 @@ const StyledTableBody = styled(TableBody)`
 const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const navigate = useNavigate();
   const translation = useTranslation();
-  const tabs = ['Global Groups', 'Group Members'];
+  const tabs = [
+    translation.globalGroups,
+    translation.groupMembers,
+  ];
   const filters = [
     { name: translation.totalCO2Saved, property: 'total_co2' },
     { name: translation.weeklyCO2Saved, property: 'weekly_co2' },

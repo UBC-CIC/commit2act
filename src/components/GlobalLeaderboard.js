@@ -50,7 +50,10 @@ const StyledTableBody = styled(TableBody)`
 const GlobalLeaderboard = () => {
   const navigate = useNavigate();
   const translation = useTranslation();
-  const tabs = ['Global Groups', 'Global Users'];
+  const tabs = [
+    translation.globalGroups,
+    translation.globalUsers,
+  ];
   const filters = [
     { name: translation.totalCO2Saved, property: 'total_co2' },
     { name: translation.weeklyCO2Saved, property: 'weekly_co2' },

@@ -11,15 +11,18 @@ import MyGroupsPanel from '../components/validateActions/MyGroupsPanel';
 import useTranslation from '../components/customHooks/translations';
 
 const ValidateActions = ({ user, userType }) => {
-  const tabs = ['My Groups', 'Users Without Groups', 'All Unvalidated Actions'];
+  const translation = useTranslation();
+  const tabs = [
+    translation.myGroups,
+    translation.validateActionsUsersWithoutGroupsTab,
+    translation.validateActionsAllUnvalidatedActionsTab,
+  ];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
   };
-
-  const translation = useTranslation();
 
   return (
     <>

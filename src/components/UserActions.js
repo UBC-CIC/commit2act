@@ -27,7 +27,11 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
   const translation = useTranslation();
-  const tabs = [translation.validated, translation.awaitingValidation, translation.notPassValidation];
+  const tabs = [
+    translation.validated,
+    translation.awaitingValidation,
+    translation.notPassValidation,
+  ];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));

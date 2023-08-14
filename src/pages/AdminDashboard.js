@@ -12,10 +12,10 @@ import useTranslation from "../components/customHooks/translations";
 const AdminDashboard = () => {
   const translation = useTranslation();
   const tabs = [
-    'Dashboard',
-    'Create Action',
-    'Manage Actions',
-    'Manage Quiz Questions',
+    translation.dashboard,
+    translation.createAction,
+    translation.manageActions,
+    translation.manageQuizQuestions,
   ];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
