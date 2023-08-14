@@ -64,17 +64,17 @@ const EditAccountInfo = ({
   const translation = useTranslation();
   const [userInfoForm, setUserInfoForm] = useState(initialUserForm);
   const [passwordRequirements, setPasswordRequirements] = useState({
-    uppercase: { error: false, description: translation.oneUppercase },
-    lowercase: { error: false, description: translation.oneLowercase },
-    digit: { error: false, description: translation.oneDigit },
-    special: { error: false, description: translation.oneSpecialCharacter },
+    uppercase: { error: false, description: 'oneUppercase' },
+    lowercase: { error: false, description: 'oneLowercase' },
+    digit: { error: false, description: 'oneDigit' },
+    special: { error: false, description: 'oneSpecialCharacter' },
     minLength: {
       error: false,
-      description: translation.more8Characters,
+      description: 'more8Characters',
     },
     maxLength: {
       error: false,
-      description: translation.less16Characters,
+      description: 'less16Characters',
     },
   });
   const [infoUpdateSuccess, setInfoUpdateSuccess] = useState(false);
