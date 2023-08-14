@@ -18,7 +18,12 @@ import useTranslation from '../customHooks/translations';
 const LineChart = ({ allSubmittedActions }) => {
   const [lineChartData, setLineChartData] = useState();
   const translation = useTranslation();
-  const filters = ['7 Days', '30 Days', '90 Days', '1 Year'];
+  const filters = [
+    translation.sevenDays,
+    translation.thirtyDays,
+    translation.ninetyDays,
+    translation.oneYear,
+  ];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
@@ -107,7 +112,7 @@ const LineChart = ({ allSubmittedActions }) => {
         }}
       >
         <Typography variant="subtitle2">
-          CO2 Saved during the past {selectedFilter}
+          {translation.formatString(translation.co2SavedDuring, selectedFilter)}
         </Typography>
         <Box
           sx={{

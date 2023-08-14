@@ -18,7 +18,11 @@ import useTranslation from '../customHooks/translations';
 const BarChart = ({ allSubmittedActions }) => {
   const [barChartData, setBarChartData] = useState();
   const translation = useTranslation();
-  const filters = ['7 Days', '30 Days', 'Year'];
+  const filters = [
+    translation.sevenDays,
+    translation.thirtyDays,
+    translation.oneYear,
+  ];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
@@ -104,7 +108,7 @@ const BarChart = ({ allSubmittedActions }) => {
         }}
       >
         <Typography variant="subtitle2">
-          Actions submitted during the past {selectedFilter}
+          {translation.formatString(translation.actionsSubmittedFilter, selectedFilter)}
         </Typography>
         <Box
           sx={{

@@ -260,8 +260,7 @@ const translations = {
   totalUsers: 'Total Users',
   totalGroups: 'Total Groups',
   actionsSubmitted: 'Actions Submitted',
-  // actionsSubmitted7Days: 'Actions submitted during the past 7 Days',
-  actionsSubmittedFilter: 'Actions submitted during the past %s',
+  actionsSubmittedFilter: 'Actions submitted during the past {0}',
   allTimeStats: 'All Time Stats',
   totalActionsSubmitted: 'Total Number of Actions Submitted',
   actionsFirstAnswerCorrect: 'Actions With First Quiz Answer Correct',
@@ -276,6 +275,11 @@ const translations = {
   createAction: 'Create Action',
   manageActions: 'Manage Actions',
   manageQuizQuestions: 'Manage Quiz Questions',
+  sevenDays: '7 Days',
+  thirtyDays: '30 Days',
+  ninetyDays: '90 Days',
+  oneYear: 'Year',
+  co2SavedDuring: 'CO2 Saved during the past {0}',
 };
 
 export default translations;
