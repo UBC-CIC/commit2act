@@ -13,9 +13,11 @@ import { Bar } from 'react-chartjs-2';
 import { format, eachDayOfInterval, sub } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import useTranslation from '../customHooks/translations';
 
 const LineChart = ({ allSubmittedActions }) => {
   const [lineChartData, setLineChartData] = useState();
+  const translation = useTranslation();
   const filters = ['7 Days', '30 Days', '90 Days', '1 Year'];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
@@ -114,7 +116,7 @@ const LineChart = ({ allSubmittedActions }) => {
             alignItems: 'center',
           }}
         >
-          <Tooltip title="Apply Filter">
+          <Tooltip title={translation.applyFilter}>
             <IconButton onClick={handleClick}>
               <FilterListIcon />
             </IconButton>
@@ -172,7 +174,7 @@ const LineChart = ({ allSubmittedActions }) => {
                 beginAtZero: true,
                 title: {
                   display: true,
-                  text: 'Grams CO2 Saved',
+                  text: translation.gramsCO2Saved,
                   padding: {
                     bottom: 20,
                   },

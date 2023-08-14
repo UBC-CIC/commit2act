@@ -259,6 +259,23 @@ const translations = {
   accept: 'Aceptar',
   reject: 'Rechazar',
   actions: 'Acciones',
+  totalUsers: 'ES totalUsers',
+  totalGroups: 'ES totalGroups',
+  actionsSubmitted: 'ES actionsSubmitted',
+  // actionsSubmitted7Days: 'ES actionsSubmitted7Days',
+  actionsSubmittedFilter: 'ES Actions submitted during the past %s',
+  allTimeStats: 'ES allTimeStats',
+  totalActionsSubmitted: 'ES totalActionsSubmitted',
+  actionsFirstAnswerCorrect: 'ES actionsFirstAnswerCorrect',
+  actionsFirstAnswerIncorrect: 'ES actionsFirstAnswerIncorrect',
+  numberActionsSubmittedWithImage: 'ES numberActionsSubmittedWithImage',
+  numberActionsSubmittedWithoutImage: 'ES numberActionsSubmittedWithoutImage',
+  date: 'ES Date',
+  gramsCO2Saved: 'ES gramsCO2Saved',
+  applyFilter: 'ES applyFilter',
+  createAction: 'ES createAction',
+  manageActions: 'ES manageActions',
+  manageQuizQuestions: 'ES manageQuizQuestions',
 };
 
 export default translations;

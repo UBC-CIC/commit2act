@@ -7,8 +7,10 @@ import CreateAction from './CreateAction';
 import ManageActions from '../components/adminDashboard/ManageActions';
 import ManageQuizzes from '../components/adminDashboard/ManageQuizzes';
 import Dashboard from '../components/adminDashboard/Dashboard';
+import useTranslation from "../components/customHooks/translations";
 
 const AdminDashboard = () => {
+  const translation = useTranslation();
   const tabs = [
     'Dashboard',
     'Create Action',

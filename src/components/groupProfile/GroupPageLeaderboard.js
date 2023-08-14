@@ -523,7 +523,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
               <Typography variant="subtitle2" component="div">
                 {selectedFilter.name}
               </Typography>
-              <Tooltip title="Apply Filter">
+              <Tooltip title={translation.applyFilter}>
                 <IconButton onClick={handleClick}>
                   <FilterListIcon />
                 </IconButton>

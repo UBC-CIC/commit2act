@@ -15,6 +15,7 @@ import {
 } from '../graphql/queries';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import useTranslation from './customHooks/translations';
 
 const UserActions = ({ databaseUser, setUser, userType }) => {
   const [showMore, setShowMore] = useState({
@@ -25,7 +26,8 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
-  const tabs = ['Validated', 'Awaiting Validation', 'Did Not Pass Validation'];
+  const translation = useTranslation();
+  const tabs = [translation.validated, translation.awaitingValidation, translation.notPassValidation];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
@@ -126,7 +128,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
       return (
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="subtitle2">
-            There are no validated actions to show
+            {translation.noValidatedActions}
           </Typography>
         </Box>
       );
@@ -165,7 +167,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
                   }))
                 }
               >
-                View {showMore.unvalidated ? 'Less' : 'More'}
+                {translation.view} {showMore.unvalidated ? translation.less : translation.more}
               </Button>
             )}
           </Stack>
@@ -175,7 +177,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
       return (
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="subtitle2">
-            There are no unvalidated actions to show
+            {translation.noUnvalidatedActions}
           </Typography>
         </Box>
       );
@@ -214,7 +216,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
                   }))
                 }
               >
-                View {showMore.failed ? 'Less' : 'More'}
+                {translation.view} {showMore.failed ? translation.less : translation.more}
               </Button>
             )}
           </Stack>
@@ -224,7 +226,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
       return (
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="subtitle2">
-            There are no failed actions to show
+            {translation.noFailedActions}
           </Typography>
         </Box>
       );
@@ -259,15 +261,15 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
                   <Tab label={tabs[2]} value={tabs[2]} />
                 </TabList>
               </Box>
-              <TabPanel 
+              <TabPanel
                 value={tabs[0]}
                 sx={{
                   height:{xs: '500px', md: 'auto'},
                 }}
-              > 
+              >
                 {renderValidatedActionCards()}
               </TabPanel>
-              <TabPanel 
+              <TabPanel
                 value={tabs[1]}
                 sx={{
                   height:{xs: '500px', md: 'auto'},
@@ -275,7 +277,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
               >
                 {renderUnvalidatedActionCards()}
               </TabPanel>
-              <TabPanel 
+              <TabPanel
                 value={tabs[2]}
                 sx={{
                   height:{xs: '500px', md: 'auto'},
