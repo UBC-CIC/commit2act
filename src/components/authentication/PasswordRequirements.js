@@ -4,6 +4,8 @@ import { green, red } from '@mui/material/colors';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { CheckCircle, Cancel } from '@mui/icons-material';
 
+import useTranslation from '../customHooks/translations';
+
 const PasswordRequirements = ({ requirements }) => {
   const useStyles = makeStyles()((theme) => {
     return{
@@ -19,6 +21,7 @@ const PasswordRequirements = ({ requirements }) => {
     }
   });
 
+  const translation = useTranslation();
   const { classes } = useStyles();
 
   return (
@@ -35,7 +38,7 @@ const PasswordRequirements = ({ requirements }) => {
             </ListItemIcon>
             <ListItemText
               className={classes.fontSize}
-              primary={req[1].description}
+              primary={translation[req[1].description]}
             />
           </ListItem>
         );

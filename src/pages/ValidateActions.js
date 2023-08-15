@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Typography, Tab } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -7,19 +7,28 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import UsersWithoutGroupPanel from '../components/validateActions/UsersWithoutGroupPanel';
 import AllUnvalidatedActionsPanel from '../components/validateActions/AllUnvalidatedActionsPanel';
 import MyGroupsPanel from '../components/validateActions/MyGroupsPanel';
+import { useLanguageContext } from "../components/contexts/LanguageContext";
 
 import useTranslation from '../components/customHooks/translations';
 
 const ValidateActions = ({ user, userType }) => {
-  const tabs = ['My Groups', 'Users Without Groups', 'All Unvalidated Actions'];
+  const translation = useTranslation();
+  const tabs = useMemo(() => [
+    translation.myGroups,
+    translation.validateActionsUsersWithoutGroupsTab,
+    translation.validateActionsAllUnvalidatedActionsTab,
+  ], [translation.myGroups, translation.validateActionsAllUnvalidatedActionsTab, translation.validateActionsUsersWithoutGroupsTab]);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const { language } = useLanguageContext();
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
   };
 
-  const translation = useTranslation();
+  useEffect(() => {
+    setSelectedTab(tabs[0]);
+  }, [tabs, language]);
 
   return (
     <>
@@ -31,7 +40,7 @@ const ValidateActions = ({ user, userType }) => {
       {/* render tab view if user is an Admin, render single page search bar view if user is not */}
       {userType &&
         (userType === 'Admin' ? (
-          <TabContext value={selectedTab}>
+          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
             <Box
               sx={{
                 mt: '4em',
