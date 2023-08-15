@@ -30,7 +30,7 @@ const AdminDashboard = () => {
   }, [tabs, language]);
 
   return (
-    <TabContext value={selectedTab}>
+    <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
       <Box
         sx={{
           mt: { xs: 0, lg: '-64px' },

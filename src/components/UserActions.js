@@ -249,7 +249,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
     <>
         <>
           <Box sx={{ textAlign: { xs: 'center'} }}>
-            <TabContext value={selectedTab}>
+            <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
               <Box
                 sx={{
                   borderBottom: 1,

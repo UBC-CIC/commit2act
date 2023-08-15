@@ -354,7 +354,7 @@ const GlobalLeaderboard = () => {
               </Menu>
             </Box>
           </Box>
-          <TabContext value={selectedTab}>
+          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
             <Box
               sx={{
                 borderTop: 1,

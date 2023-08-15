@@ -40,7 +40,7 @@ const ValidateActions = ({ user, userType }) => {
       {/* render tab view if user is an Admin, render single page search bar view if user is not */}
       {userType &&
         (userType === 'Admin' ? (
-          <TabContext value={selectedTab}>
+          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
             <Box
               sx={{
                 mt: '4em',
