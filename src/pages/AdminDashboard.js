@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Typography, Tab } from '@mui/material';
 import TabPanel from '@mui/lab/TabPanel';
 import TabContext from '@mui/lab/TabContext';
@@ -7,22 +7,30 @@ import CreateAction from './CreateAction';
 import ManageActions from '../components/adminDashboard/ManageActions';
 import ManageQuizzes from '../components/adminDashboard/ManageQuizzes';
 import Dashboard from '../components/adminDashboard/Dashboard';
+import useTranslation from "../components/customHooks/translations";
+import { useLanguageContext } from "../components/contexts/LanguageContext";
 
 const AdminDashboard = () => {
-  const tabs = [
-    'Dashboard',
-    'Create Action',
-    'Manage Actions',
-    'Manage Quiz Questions',
-  ];
+  const translation = useTranslation();
+  const tabs = useMemo(() => [
+    translation.dashboard,
+    translation.createAction,
+    translation.manageActions,
+    translation.manageQuizQuestions,
+  ], [translation.createAction, translation.dashboard, translation.manageActions, translation.manageQuizQuestions]);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const { language } = useLanguageContext();
 
   const handleTabChange = (e, newValue) => {
     setSelectedTab(newValue);
   };
 
+  useEffect(() => {
+    setSelectedTab(tabs[0]);
+  }, [tabs, language]);
+
   return (
-    <TabContext value={selectedTab}>
+    <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
       <Box
         sx={{
           mt: { xs: 0, lg: '-64px' },

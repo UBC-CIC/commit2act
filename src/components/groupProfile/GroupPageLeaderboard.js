@@ -58,7 +58,10 @@ const StyledTableBody = styled(TableBody)`
 const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const navigate = useNavigate();
   const translation = useTranslation();
-  const tabs = ['Global Groups', 'Group Members'];
+  const tabs = [
+    translation.globalGroups,
+    translation.groupMembers,
+  ];
   const filters = [
     { name: translation.totalCO2Saved, property: 'total_co2' },
     { name: translation.weeklyCO2Saved, property: 'weekly_co2' },
@@ -523,7 +526,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
               <Typography variant="subtitle2" component="div">
                 {selectedFilter.name}
               </Typography>
-              <Tooltip title="Apply Filter">
+              <Tooltip title={translation.applyFilter}>
                 <IconButton onClick={handleClick}>
                   <FilterListIcon />
                 </IconButton>
@@ -545,7 +548,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
               </Menu>
             </Box>
           </Box>
-          <TabContext value={selectedTab}>
+          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
             <Box
               sx={{
                 borderTop: 1,

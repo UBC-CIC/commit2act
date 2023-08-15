@@ -13,10 +13,17 @@ import { Bar } from 'react-chartjs-2';
 import { format, eachDayOfInterval, sub } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import useTranslation from '../customHooks/translations';
 
 const LineChart = ({ allSubmittedActions }) => {
   const [lineChartData, setLineChartData] = useState();
-  const filters = ['7 Days', '30 Days', '90 Days', '1 Year'];
+  const translation = useTranslation();
+  const filters = [
+    translation.sevenDays,
+    translation.thirtyDays,
+    translation.ninetyDays,
+    translation.oneYear,
+  ];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
@@ -105,7 +112,7 @@ const LineChart = ({ allSubmittedActions }) => {
         }}
       >
         <Typography variant="subtitle2">
-          CO2 Saved during the past {selectedFilter}
+          {translation.formatString(translation.co2SavedDuring, selectedFilter)}
         </Typography>
         <Box
           sx={{
@@ -114,7 +121,7 @@ const LineChart = ({ allSubmittedActions }) => {
             alignItems: 'center',
           }}
         >
-          <Tooltip title="Apply Filter">
+          <Tooltip title={translation.applyFilter}>
             <IconButton onClick={handleClick}>
               <FilterListIcon />
             </IconButton>
@@ -139,7 +146,7 @@ const LineChart = ({ allSubmittedActions }) => {
             labels: Object.keys(lineChartData),
             datasets: [
               {
-                label: 'Total Grams of CO2 Saved Per Day For All Actions',
+                label: translation.totalGramsSavedCO2PerDayAllActions,
                 data: Object.values(lineChartData),
                 backgroundColor: ['#929cda'],
                 barPercentage: 1,
@@ -154,7 +161,7 @@ const LineChart = ({ allSubmittedActions }) => {
               x: {
                 title: {
                   display: true,
-                  text: 'Date',
+                  text: translation.date,
                   padding: {
                     top: 20,
                   },
@@ -172,7 +179,7 @@ const LineChart = ({ allSubmittedActions }) => {
                 beginAtZero: true,
                 title: {
                   display: true,
-                  text: 'Grams CO2 Saved',
+                  text: translation.gramsCO2Saved,
                   padding: {
                     bottom: 20,
                   },

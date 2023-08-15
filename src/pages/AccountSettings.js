@@ -25,7 +25,11 @@ const AccountSettings = ({user, setUser, userType }) => {
   const [validatedActions, setValidatedActions] = useState();
   const [unvalidatedActions, setUnvalidatedActions] = useState();
   const [failedActions, setFailedActions] = useState();
-  const tabs = [translation.validated, translation.awaitingValidation, translation.notPassValidation];
+  const tabs = [
+    translation.validated,
+    translation.awaitingValidation,
+    translation.notPassValidation,
+  ];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [editUser, setEditUser] = useState(false);
 

@@ -15,6 +15,7 @@ import GlobalLeaderboard from '../GlobalLeaderboard';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import LineChart from './LineChart';
+import useTranslation from '../customHooks/translations';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -31,6 +32,7 @@ const Dashboard = () => {
   const [allSubmittedActions, setAllSubmittedActions] = useState();
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
+  const translation = useTranslation();
 
   const getStats = async () => {
     const [totalUserRes, totalGroupRes, submittedActionRes] = await Promise.all(
@@ -95,7 +97,7 @@ const Dashboard = () => {
     >
       <Grid item xs={12}>
         <Typography variant="h2" component="h1">
-          Admin Dashboard
+          {translation.adminDashboard}
         </Typography>
       </Grid>
       <Grid
@@ -110,7 +112,7 @@ const Dashboard = () => {
         <Grid item xs={12} md={3}>
           {allUsers && (
             <StyledPaper sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h7"> Total Users</Typography>
+              <Typography variant="h7"> {translation.totalUsers}</Typography>
               <Typography
                 variant="h2"
                 sx={{
@@ -131,7 +133,7 @@ const Dashboard = () => {
             <StyledPaper
               sx={{ display: 'flex', flexDirection: 'column', mt: '1em' }}
             >
-              <Typography variant="h7"> Total Groups</Typography>
+              <Typography variant="h7"> {translation.totalGroups}</Typography>
               <Typography
                 variant="h2"
                 sx={{
@@ -191,7 +193,7 @@ const Dashboard = () => {
       </Grid>
       <Grid item xs={12} sx={{ width: { xs: '70%', md: '100%' } }}>
         <Typography variant="h2" sx={{ my: { sm: '2em' }, mb: { xs: '2em' } }}>
-          All Time Stats
+          {translation.allTimeStats}
         </Typography>
         <Box
           sx={{
@@ -213,7 +215,7 @@ const Dashboard = () => {
             >
               <Typography variant="h7">
                 {' '}
-                Total Number of Actions Submitted
+                {translation.totalActionsSubmitted}
               </Typography>
               <Typography variant="h2">{allSubmittedActions.length}</Typography>
             </StyledPaper>
@@ -223,8 +225,8 @@ const Dashboard = () => {
             <Doughnut
               data={{
                 labels: [
-                  'Actions Submitted With Image',
-                  'Actions Submitted Without Image',
+                  translation.actionsSubmittedWithImage,
+                  translation.actionsSubmittedWithoutImage,
                 ],
                 datasets: [
                   {
@@ -250,8 +252,8 @@ const Dashboard = () => {
             <Doughnut
               data={{
                 labels: [
-                  'Actions With First Quiz Answer Correct',
-                  'Actions With First Quiz Answer Incorrect',
+                  translation.actionsFirstAnswerCorrect,
+                  translation.actionsFirstAnswerIncorrect,
                 ],
                 datasets: [
                   {

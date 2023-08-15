@@ -51,11 +51,11 @@ const GroupProfile = ({ user }) => {
   const translation = useTranslation();
   const { groupName } = useParams();
   const tabs = [
-    'Group Info',
-    'Member Actions',
-    'Group Members',
-    'Add Members',
-    'Edit Group Info',
+    translation.groupInfo,
+    translation.memberActions,
+    translation.groupMembers,
+    translation.addMembers,
+    translation.editGroupInfo,
   ];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [groupInfo, setGroupInfo] = useState();

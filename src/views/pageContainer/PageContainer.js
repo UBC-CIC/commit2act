@@ -186,7 +186,7 @@ function PageContainer (props) {
 
   const handleChangePage = (event, newPage) => {
     handleSideMenu();
-  }; 
+  };
   //   {
   //     /* Example side menu is provided below */
   //   }
@@ -352,8 +352,8 @@ function PageContainer (props) {
     <Grid container direction="column">
       {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true} 
-      sx={{ position: 'sticky' }} 
+      <Navbar showSideMenuButton={true}
+      sx={{ position: 'sticky' }}
       />
       {/* App content example below with sidebar */}
       <Grid item xs={12} className="App-header">
