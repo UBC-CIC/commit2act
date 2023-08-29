@@ -199,10 +199,10 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
     const isAnswerCorrectValues = quiz_answers.map(
       (answerObj) => answerObj.is_correct_answer
     );
-    const hasAllAnswerTranslations = frenchQuizForm.quiz_answers?.length === quiz_answers.length;
     //check to see if any of the answers are duplicates
     const answerValues = quiz_answers.map((answerObj) => answerObj.answer);
     const hasDuplicates = answerValues.length !== new Set(answerValues).size;
+    const hasAllAnswerTranslations = frenchQuizForm.quiz_answers?.length === quiz_answers.length;
     if (fact_text === '' || question_text === '') {
       throw new Error('Empty field');
     } else if (quiz_answers.length === 0) {
