@@ -29,10 +29,10 @@ input ActionItemInputId {
 }
 
 type ActionQuiz {
-  quiz_id: Int!
-  fact_text: String!
-  question_text: String!
-  action_id: Int!
+  quiz_id: Int
+  fact_text: String
+  question_text: String
+  action_id: Int
 }
 
 type ActionQuizAnswer {
@@ -47,10 +47,10 @@ input ActionQuizAnswerNoId {
 }
 
 type ActionQuizWithAnswers {
-  quiz_id: Int!
-  fact_text: String!
-  question_text: String!
-  action_id: Int!
+  quiz_id: Int
+  fact_text: String
+  question_text: String
+  action_id: Int
   answers: String
   correct_answers: String
 }
