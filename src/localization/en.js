@@ -247,6 +247,8 @@ const translations = {
   groupNameSearchEmptySearch: 'Your search for "{0}" did not match any of your groups',
   groupNameSearchNoGroups: 'You currently do not own any groups',
   filteringBy: 'Filtering By:',
+  currentFilter: 'Current filter',
+  changeFilter: 'Change filter',
   groupNameSearchAllFilter: 'All My Groups',
   validateActionsNoActions: 'There are no actions in need of validation',
   actionNameSearchAllFilter: 'All Action Types',
