@@ -44,6 +44,9 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
       console.log(e);
     });
     if (typeof res !== 'undefined') {
+      // remove quizzes that have null id
+      res.data.getAllQuizzesForAction = res.data.getAllQuizzesForAction.filter(quiz => quiz.quiz_id !== null);
+
       const frenchQuizzes = await getFrenchQuizzes();
       if (frenchQuizzes) {
         res.data.getAllQuizzesForAction.forEach(quiz => {
