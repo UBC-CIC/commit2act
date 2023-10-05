@@ -54,16 +54,19 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
       curr_answer: '',
     });
 
-    const frenchAnswerArray = answers_french?.split('\n') || [];
-    const frenchCorrectAnswerArray = correct_answers_french?.split('\n') || [];
+
+    const frenchAnswerArray = answers_french ? answers_french?.split('\n') : [];
+    const frenchCorrectAnswerArray = correct_answers_french ? correct_answers_french?.split('\n') : [];
 
     let frenchAnswerObjArray = [];
-    frenchAnswerArray.map((answer) => {
-      frenchAnswerObjArray.push({
-        answer: answer,
-        is_correct_answer: frenchCorrectAnswerArray.includes(answer),
-      })
-    });
+    if (frenchAnswerArray.length) {
+      frenchAnswerArray.map((answer) => {
+        frenchAnswerObjArray.push({
+          answer: answer,
+          is_correct_answer: frenchCorrectAnswerArray.includes(answer),
+        })
+      });
+    }
 
     setFrenchQuizForm({
       quiz_id: quiz.quiz_id,
