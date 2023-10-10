@@ -20,6 +20,7 @@ import {
   TextField,
   FormGroup,
   Skeleton,
+  Tab,
 } from '@mui/material';
 import { Storage, API } from 'aws-amplify';
 import { getActionItemsForAction } from '../../graphql/queries';
@@ -36,6 +37,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { styled } from '@mui/material/styles';
+import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
+import { updateTranslationWithLangCode } from '../../services/translations';
+import { useLanguageContext } from "../contexts/LanguageContext";
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
 const Input = styled('input')`
   display: none;
@@ -64,6 +71,7 @@ const ActionCard = ({
   } = action;
 
   const initialActionForm = {
+    action_id: action_id,
     action_name: action_name,
     fallback_quiz_media: fallback_quiz_media,
     curr_label: '',
@@ -77,6 +85,12 @@ const ActionCard = ({
     item_description: '',
     co2_saved_per_unit: '',
   };
+
+  const tabs = [
+    'English',
+    'French',
+  ];
+
   const [actionForm, setActionForm] = useState(initialActionForm);
   const [actionItemsForm, setActionItemsForm] = useState(emptyActionItemForm);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
@@ -90,6 +104,12 @@ const ActionCard = ({
   const [emptyActionItemError, setEmptyActionItemError] = useState(false);
   const [emptyLabelError, setEmptyLabelError] = useState(false);
 
+  const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
+  const [relevantFrenchAction, setRelevantFrenchAction] = useState(initialActionForm);
+  const { language } = useLanguageContext();
+
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+
   //get all action items for the action
   useEffect(() => {
     const getActionItems = async () => {
@@ -97,13 +117,136 @@ const ActionCard = ({
         query: getActionItemsForAction,
         variables: { action_id: action_id },
       });
+
+      const actionItemsWithIndex = res.data.getActionItemsForAction.map((actionItem, index) => {
+        return actionItem = { ...actionItem, index: index };
+      });
+
       setActionForm((prev) => ({
         ...prev,
-        action_items: res.data.getActionItemsForAction,
+        action_items: actionItemsWithIndex,
       }));
+
+      await loadFrenchTranslations(actionItemsWithIndex);
     };
     getActionItems();
   }, [action_id]);
+
+
+  const loadFrenchTranslations = async (actionItemsWithIndex) => {
+    // load all translations for the action
+    const frenchTranslations = contentTranslations.find((translation) => translation.langCode === 'fr');
+    if (!frenchTranslations) {
+      throw new Error('French translations not found');
+    }
+
+    let frenchAction = frenchTranslations.translationJSON?.actions?.find((action) => action.action_id === action_id);
+    if (frenchAction) {
+      if (frenchAction.action_items.length > 0) {
+        // if frenchAction already has action_items
+        setRelevantFrenchAction(frenchAction);
+      } else if (frenchAction.action_items.length === 0 && actionItemsWithIndex.length > 0) {
+        // if frenchAction does not have action_items but actionItemsWithIndex has action_items
+        frenchAction.action_items = actionItemsWithIndex.map((actionItem) => {
+          return { ...emptyActionItemForm, index: actionItem.index, co2_saved_per_unit: actionItem.co2_saved_per_unit }
+        })
+        setRelevantFrenchAction(frenchAction);
+      } else {
+        // if frenchAction does not have action_items and actionItemsWithIndex does not have action_items
+        frenchAction.action_items = [];
+        setRelevantFrenchAction(frenchAction);
+      }
+    } else {
+      let emptyActionInit = initialActionForm;
+      // we do not want labels and fallback_quiz_media for translations
+      emptyActionInit.labels = [];
+      emptyActionInit.fallback_quiz_media = "";
+      emptyActionInit.action_items = actionItemsWithIndex.map((actionItem) => {
+        return { ...emptyActionItemForm, index: actionItem.index, co2_saved_per_unit: actionItem.co2_saved_per_unit }
+      })
+      setRelevantFrenchAction(emptyActionInit);
+    }
+
+  };
+
+  const renderTranslatedActionItems = () => {
+    return (
+      <>
+        {action.action_items &&
+          action.action_items.map((item) => (
+            <Accordion key={item.item_name}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="action-item-content"
+              >
+                <Typography variant="subtitle2">{item.item_name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 0 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Name" secondary={item.item_name} />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="Description"
+                      secondary={item.item_description}
+                    />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="CO2 Saved Per Unit"
+                      secondary={item.co2_saved_per_unit}
+                    />
+                  </ListItem>
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+      </>
+    )
+  }
+
+  const renderActionItemsFromDB = () => {
+    return (
+      <>
+        {actionForm.action_items.length === 0 && <Skeleton variant="text" />}
+        {actionForm.action_items &&
+          actionForm.action_items.map((item) => (
+            <Accordion key={item.item_name}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="action-item-content"
+              >
+                <Typography variant="subtitle2">{item.item_name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 0 }}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Name" secondary={item.item_name} />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="Description"
+                      secondary={item.item_description}
+                    />
+                  </ListItem>
+                  <Divider flexItem />
+                  <ListItem>
+                    <ListItemText
+                      primary="CO2 Saved Per Unit"
+                      secondary={item.co2_saved_per_unit}
+                    />
+                  </ListItem>
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+      </>
+    )
+  }
 
   /** functions for rendering the non editable action card */
 
@@ -130,39 +273,7 @@ const ActionCard = ({
           <Typography variant="h3" sx={{ mb: '1em' }}>
             Action Items
           </Typography>
-          {actionForm.action_items.length === 0 && <Skeleton variant="text" />}
-          {actionForm.action_items &&
-            actionForm.action_items.map((item) => (
-              <Accordion key={item.item_name}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="action-item-content"
-                >
-                  <Typography variant="subtitle2">{item.item_name}</Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ p: 0 }}>
-                  <List dense>
-                    <ListItem>
-                      <ListItemText primary="Name" secondary={item.item_name} />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="Description"
-                        secondary={item.item_description}
-                      />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="CO2 Saved Per Unit"
-                        secondary={item.co2_saved_per_unit}
-                      />
-                    </ListItem>
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            ))}
+          {language !== 'en' && action.action_items.length !== 0 ? renderTranslatedActionItems() : renderActionItemsFromDB()}
         </Box>
         <Box>
           <Typography variant="h3">Fallback Text</Typography>
@@ -206,13 +317,70 @@ const ActionCard = ({
     );
   };
 
-  /** functions for rendering the editable action card */
+  const updateActionItemWithNewValue = (event) => {
+    let updatedActionItemIndex = event.target.attributes.index.value;
 
+    return actionForm.action_items.map((item) => {
+      if (item.index === parseInt(updatedActionItemIndex)) {
+        if (event.target.name.includes('item_name')) {
+          return {
+            ...item,
+            item_name: event.target.value,
+          };
+        } else if (event.target.name.includes('item_description')) {
+          return {
+            ...item,
+            item_description: event.target.value,
+          };
+        } else if (event.target.name.includes('item_co2')) {
+          return {
+            ...item,
+            co2_saved_per_unit: event.target.value,
+          };
+        }
+      }
+      return item;
+    });
+  }
+
+  const updateActionItemTranslationWithNewValue = (event, relevantTranslationObject) => {
+    let updatedActionItemIndex = event.target.attributes.index.value;
+    return relevantTranslationObject.action_items?.map((item) => {
+      if (item.index === parseInt(updatedActionItemIndex)) {
+        if (event.target.name.includes('item_name')) {
+          return {
+            ...item,
+            item_name: event.target.value,
+          };
+        } else if (event.target.name.includes('item_description')) {
+          return {
+            ...item,
+            item_description: event.target.value,
+          };
+        } else if (event.target.name.includes('item_co2')) {
+          return {
+            ...item,
+            co2_saved_per_unit: event.target.value,
+          };
+        }
+      }
+      return item;
+    });
+  }
+
+  /** functions for rendering the editable action card */
   const updateForm = (e) => {
+    e.preventDefault();
     if (e.target.name in actionItemsForm) {
       setActionItemsForm((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
+      }));
+    } else if (e.target.name.includes('edit')) {
+      let updatedActionItems = updateActionItemWithNewValue(e)
+      setActionForm((prev) => ({
+        ...prev,
+        action_items: updatedActionItems,
       }));
     } else {
       setActionForm((prev) => ({
@@ -222,7 +390,35 @@ const ActionCard = ({
     }
   };
 
-  const removeActionItem = (name) => {
+  const updateFrenchTranslations = (e) => {
+    e.preventDefault();
+    if (e.target.name.includes('french')) {
+      if (e.target.name.includes('edit')) {
+        let updatedActionItems = updateActionItemTranslationWithNewValue(e, relevantFrenchAction);
+        setRelevantFrenchAction((prev) => ({
+          ...prev, action_items: updatedActionItems
+        }));
+      } else {
+        setRelevantFrenchAction((prev) => ({
+          ...prev,
+          [e.target.name.replace('_french', '')]: e.target.value
+        }));
+      }
+    }
+  }
+
+  const removeActionItemFromAllTranslations = (actionItemIndex) => {
+    let relevantFrenchActionItemsCopy = relevantFrenchAction.action_items;
+    let filteredFrenchActionItems = relevantFrenchActionItemsCopy.filter((item) => item.index !== actionItemIndex);
+
+    // add more translations here when required
+
+    setRelevantFrenchAction((prev) => ({
+      ...prev, action_items: filteredFrenchActionItems
+    }));
+  }
+
+  const removeActionItem = (name, index) => {
     let actionItemsCopy = actionForm.action_items;
     let filteredActionItems = actionItemsCopy.filter(
       (item) => item.item_name !== name
@@ -231,6 +427,8 @@ const ActionCard = ({
       ...prev,
       action_items: filteredActionItems,
     }));
+
+    removeActionItemFromAllTranslations(index);
   };
 
   const checkRequiredActionItemFields = () => {
@@ -248,6 +446,12 @@ const ActionCard = ({
     }
   };
 
+  const addEmptyActionItemToAllTranslations = () => {
+    setRelevantFrenchAction((prev) => ({
+      ...prev, action_items: [...prev.action_items, { ...initialActionForm, index: prev.action_items.length }]
+    }));
+  }
+
   const addActionItem = () => {
     try {
       checkRequiredActionItemFields();
@@ -256,8 +460,11 @@ const ActionCard = ({
       );
       //adds the item from the form into actionItems array
       let actionItemsCopy = actionForm.action_items;
-      actionItemsCopy.push(actionItemsForm);
+      actionItemsCopy.push({ ...actionItemsForm, index: actionItemsCopy.length });
+
       setActionForm((prev) => ({ ...prev, action_items: actionItemsCopy }));
+      //adds emptyActionInit to all translations
+      addEmptyActionItemToAllTranslations();
       //clears the actionItemsForm so user can enter in a new action item
       setActionItemsForm(emptyActionItemForm);
       //reset error states
@@ -283,8 +490,22 @@ const ActionCard = ({
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
   };
 
+  const removeValidationLabelFromTranslation = (label, langCode) => {
+    if (langCode === 'fr') {
+      let labelsCopy = relevantFrenchAction.labels;
+      const index = labelsCopy.indexOf(label);
+      labelsCopy.splice(index, 1);
+      setRelevantFrenchAction((prev) => ({ ...prev, labels: labelsCopy }));
+    }
+  }
+
   const addValidationLabel = () => {
     //create array that contains the current label input from the form along with all previous inputted labels
+    if (actionForm.curr_label === '') {
+      // update translations
+      addValidationLabelsToTranslations();
+      return;
+    }
     let labelsCopy = actionForm.labels;
     labelsCopy.push(actionForm.curr_label);
     setActionForm((prev) => ({ ...prev, labels: labelsCopy }));
@@ -293,7 +514,29 @@ const ActionCard = ({
     }
     //clear current label
     setActionForm((prev) => ({ ...prev, curr_label: '' }));
+
+    // update translations
+    addValidationLabelsToTranslations();
   };
+
+  const addValidationLabelsToTranslations = () => {
+    const pushToFrenchActionLabels = () => {
+      if (relevantFrenchAction.curr_label === '') {
+        return;
+      }
+      let labelsCopy = relevantFrenchAction.labels;
+
+      if (!labelsCopy) {
+        labelsCopy = [];
+      }
+
+      labelsCopy.push(relevantFrenchAction.curr_label);
+      setRelevantFrenchAction((prev) => ({ ...prev, labels: labelsCopy }));
+      setRelevantFrenchAction((prev) => ({ ...prev, curr_label: '' }));
+    };
+
+    pushToFrenchActionLabels();
+  }
 
   const handleIconUpload = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -315,7 +558,42 @@ const ActionCard = ({
     }
   };
 
+  const updateTranslationsJsonActionsWithinAllTranslations = (translationJSON) => {
+    if (!translationJSON.actions) translationJSON.actions = [];
+
+    let relevantActionIndex = translationJSON.actions?.findIndex((action) => action.action_id === action_id);
+    if (relevantActionIndex > -1) {
+      translationJSON.actions[relevantActionIndex] = { ...relevantFrenchAction };
+    } else {
+      translationJSON.actions.push({
+        action_id: action_id,
+        ...relevantFrenchAction
+      })
+    }
+  }
+
+  const updateFrenchTranslationsJson = async () => {
+    for (const translationObject of contentTranslations) {
+      if (translationObject.langCode === 'fr') {
+        await updateTranslationsJsonActionsWithinAllTranslations(translationObject.translationJSON);
+        await updateTranslationWithLangCode('fr', translationObject.translationJSON)
+        setContentTranslations((prev) => {
+          return prev.map((translation) => {
+            if (translation.langCode === 'fr') {
+              return {
+                ...translation,
+                translationJSON: translationObject.translationJSON,
+              };
+            }
+            return translation;
+          });
+        });
+      }
+    }
+  }
+
   const updateSelectedAction = async () => {
+    updateFrenchTranslationsJson();
     try {
       checkRequiredActionFields();
       //update icon image in s3 if user uploaded a new image
@@ -333,11 +611,18 @@ const ActionCard = ({
         }
       }
 
+      // remove index from action_items
+      let actionItemsWithoutIndex = actionForm.action_items;
+      actionItemsWithoutIndex.forEach((item) => {
+        delete item.index;
+      });
+
       await Promise.all([
         API.graphql({
           query: updateAction,
           variables: {
             action_id: action_id,
+            action_name: actionForm.action_name,
             fallback_quiz_media: actionForm.fallback_quiz_media,
             action_icon: actionIconFile ? iconLink : action_icon,
           },
@@ -346,7 +631,7 @@ const ActionCard = ({
           query: remakeActionItems,
           variables: {
             action_id: action_id,
-            action_items: actionForm.action_items,
+            action_items: actionItemsWithoutIndex,
           },
         }),
         API.graphql({
@@ -394,6 +679,10 @@ const ActionCard = ({
     });
     handleClose();
     getActions();
+  };
+
+  const handleTabChange = (e, newValue) => {
+    setSelectedTab(newValue);
   };
 
   const renderEditActionContent = () => {
@@ -482,7 +771,7 @@ const ActionCard = ({
           </Typography>
           {actionForm.action_items &&
             actionForm.action_items.map((item) => (
-              <Accordion key={item.item_name}>
+              <Accordion key={item.index}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="action-item-content"
@@ -495,30 +784,107 @@ const ActionCard = ({
                   }}
                 >
                   <Typography variant="subtitle2">{item.item_name}</Typography>
-                  <IconButton onClick={() => removeActionItem(item.item_name)}>
+                  <IconButton onClick={() => removeActionItem(item.item_name, item.index)}>
                     <DeleteOutlineOutlinedIcon />
                   </IconButton>
                 </AccordionSummary>
                 <AccordionDetails sx={{ p: 0 }}>
-                  <List dense>
-                    <ListItem>
-                      <ListItemText primary="Name" secondary={item.item_name} />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="Description"
-                        secondary={item.item_description}
-                      />
-                    </ListItem>
-                    <Divider flexItem />
-                    <ListItem>
-                      <ListItemText
-                        primary="CO2 Saved Per Unit"
-                        secondary={item.co2_saved_per_unit}
-                      />
-                    </ListItem>
-                  </List>
+                  <TabContext value={selectedTab}>
+                    <TabList
+                      onChange={handleTabChange}
+                      aria-label="update action tab"
+                      variant="scrollable"
+                      scrollButtons
+                      allowScrollButtonsMobile
+                    >
+                      <Tab label={tabs[0]} value={tabs[0]} />
+                      <Tab label={tabs[1]} value={tabs[1]} />
+                    </TabList>
+                    <TabPanel value={tabs[0]} aria-label='english translation tab'>
+                      <List dense>
+                        <ListItem>
+                          <TextField
+                            required
+                            value={item.item_name}
+                            label="Name"
+                            name='item_name_edit'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateForm}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={item.item_description}
+                            label="Description"
+                            name='item_description_edit'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateForm}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={item.co2_saved_per_unit}
+                            label="CO2 Saved Per Unit"
+                            name='item_co2_edit'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateForm}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                      </List>
+                    </TabPanel>
+                    <TabPanel value={tabs[1]} aria-label='french translation tab'>
+                      <List dense>
+                        <ListItem>
+                          <TextField
+                            required
+                            value={relevantFrenchAction.action_items ? relevantFrenchAction.action_items[item.index]?.item_name : ''}
+                            label="Name"
+                            name='item_name_edit_french'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateFrenchTranslations}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={relevantFrenchAction.action_items ? relevantFrenchAction.action_items[item.index]?.item_description : ''}
+                            label="Description"
+                            name='item_description_edit_french'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateFrenchTranslations}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                        <Divider flexItem sx={{ marginY: '5px' }} />
+                        <ListItem>
+                          <TextField
+                            required
+                            value={relevantFrenchAction.action_items ? relevantFrenchAction.action_items[item.index]?.co2_saved_per_unit : ''}
+                            label="CO2 Saved Per Unit"
+                            name='item_co2_edit_french'
+                            property=''
+                            inputProps={{ 'index': item.index }}
+                            onChange={updateFrenchTranslations}
+                            sx={{ width: '100%' }}
+                          />
+                        </ListItem>
+                      </List>
+                    </TabPanel>
+                  </TabContext>
                 </AccordionDetails>
               </Accordion>
             ))}
@@ -590,6 +956,7 @@ const ActionCard = ({
           <TextField
             required
             name="fallback_quiz_media"
+            label="Fallback Text"
             value={actionForm.fallback_quiz_media}
             multiline
             InputProps={{
@@ -598,6 +965,19 @@ const ActionCard = ({
             InputLabelProps={{ shrink: true }}
             sx={{ width: '100%', mt: '1em' }}
             onChange={updateForm}
+          />
+          <TextField
+            required
+            name="fallback_quiz_media_french"
+            label="Fallback Text (French)"
+            value={relevantFrenchAction?.fallback_quiz_media || ''}
+            multiline
+            InputProps={{
+              style: { fontSize: 15, fontWeight: 100, color: 'black' },
+            }}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: '100%', mt: '1em' }}
+            onChange={updateFrenchTranslations}
           />
         </Box>
         <Box>
@@ -619,7 +999,7 @@ const ActionCard = ({
               sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                my: '1.5em',
+                my: '0.5em',
                 gap: '0.5em',
               }}
             >
@@ -633,22 +1013,60 @@ const ActionCard = ({
               ))}
             </Box>
           )}
+          <Typography
+            variant="subtitle1"
+            component="span"
+          >
+            French Labels
+          </Typography>
+          {relevantFrenchAction.labels?.length > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                mt: '0.5em',
+                gap: '0.5em',
+                mb: '1.5em'
+              }}
+            >
+              {relevantFrenchAction.labels?.map((label) => (
+                <Chip
+                  key={label + '_french'}
+                  label={label}
+                  variant="outlined"
+                  onDelete={() => removeValidationLabelFromTranslation(label, 'fr')}
+                />
+              ))}
+            </Box>
+          )}
           <FormGroup
             sx={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               mt: '3em',
+              alignItems: 'center'
             }}
           >
-            <TextField
-              required
-              label="Label"
-              name="curr_label"
-              value={actionForm.curr_label}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: { xs: '100%', md: '80%' } }}
-              onChange={updateForm}
-            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: '1', gap: '10px' }}>
+              <TextField
+                required
+                label="Label"
+                name="curr_label"
+                value={actionForm.curr_label}
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: { xs: '100%', md: '90%' } }}
+                onChange={updateForm}
+              />
+              <TextField
+                required
+                label="Label (french)"
+                name="curr_label_french"
+                value={relevantFrenchAction?.curr_label || ''}
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: { xs: '100%', md: '90%' } }}
+                onChange={updateFrenchTranslations}
+              />
+            </Box>
             <Button
               variant="outlined"
               sx={{
@@ -721,9 +1139,49 @@ const ActionCard = ({
             <CloseIcon />
           </IconButton>
         )}
-        <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-          {action_name}
-        </StyledDialogTitle>
+        {
+          editAction ? (
+            <>
+              <TextField
+                required
+                value={actionForm.action_name}
+                InputLabelProps={{ shrink: true }}
+                label="Action Name"
+                name="action_name"
+                onChange={updateForm}
+                sx={{
+                  textAlign: { xs: 'center', sm: 'left' },
+                  fontSize: '28px',
+                  fontWeight: '300',
+                  marginLeft: '1em',
+                  marginRight: '1em',
+                }}
+              />
+
+              <TextField
+                value={relevantFrenchAction?.action_name || ''}
+                InputLabelProps={{ shrink: true }}
+                label="Action Name (French)"
+                name="action_name_french"
+                onChange={updateFrenchTranslations}
+                sx={{
+                  textAlign: { xs: 'center', sm: 'left' },
+                  fontSize: '28px',
+                  fontWeight: '300',
+                  marginTop: '1em',
+                  marginLeft: '1em',
+                  marginRight: '1em',
+                }}
+              />
+
+            </>
+
+          ) : (
+            <StyledDialogTitle sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+              {action_name}
+            </StyledDialogTitle>
+          )
+        }
         <DialogContent sx={{ mt: '1em', p: '3em' }}>
           {editAction ? renderEditActionContent() : renderActionContent()}
         </DialogContent>

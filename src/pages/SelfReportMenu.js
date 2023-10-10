@@ -183,7 +183,7 @@ const SelfReportMenu = ({ user }) => {
         sx={{
           backgroundColor: '#303839',
           width: { xs: '100%', md: '85%' },
-          padding: {xs: '1em', md: '2em 2em 5em'},
+          padding: { xs: '1em', md: '2em 2em 5em' },
           borderRadius: '7px',
         }}
       >
@@ -217,48 +217,52 @@ const SelfReportMenu = ({ user }) => {
         </Typography>
         {renderFormStep()}
         <Box
-            component="div"
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              m: '0 0 1.25em',
-              flexDirection: { xs: 'row' },
-              gap: {xs: '10px', md: '10px'}
-            }}
+          component="div"
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            m: '0 0 1.25em',
+            flexDirection: { xs: 'row' },
+            gap: { xs: '10px', md: '10px' }
+          }}
+        >
+          {![0, 3, 5, 6].includes(activeStep) && (
+            <Button
+              onClick={() => {
+                setActiveStep(activeStep - 1);
+              }}
+              variant="contained"
+              sx={{
+                padding: '1em 1em 1em',
+                fontSize: '1.2rem',
+                marginTop: '1em',
+                minWidth: '50%',
+              }}
             >
-            {![0, 3, 5, 6].includes(activeStep) && (
-              <Button
-                onClick={() => {
-                  setActiveStep(activeStep - 1);
-                }}
-                variant="contained"
-                sx={{
-                  padding: '1em 1em 1em',
-                  fontSize: '1.2rem',
-                  marginTop: '1em',
-                  minWidth: '50%',
-                }}
-              >
-                Previous
-              </Button>
-            )}
-            {![0, 3, 5, 6].includes(activeStep) && (
-              <Button
-                onClick={() => {
+              {translation.previous}
+            </Button>
+          )}
+          {![0, 3, 5, 6].includes(activeStep) && (
+            <Button
+              onClick={() => {
+                if (activeStep === 4 && skipBonusQuestion) {
+                  setActiveStep(activeStep + 2);
+                } else {
                   setActiveStep(activeStep + 1);
-                }}
-                variant="contained"
-                sx={{
-                  padding: '1em 1em 1em',
-                  fontSize: '1.2rem',
-                  marginTop: '1em',
-                  minWidth: '50%',
-                }}
-              >
-                {translation.next}
-              </Button>
-            )}
+                }
+              }}
+              variant="contained"
+              sx={{
+                padding: '1em 1em 1em',
+                fontSize: '1.2rem',
+                marginTop: '1em',
+                minWidth: '50%',
+              }}
+            >
+              {translation.next}
+            </Button>
+          )}
         </Box>
       </Grid>
     </Grid>

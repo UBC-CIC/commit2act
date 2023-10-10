@@ -11,6 +11,7 @@ import { Amplify } from 'aws-amplify';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reducers from './reducers';
 import LanguageContextProvider from "./components/contexts/LanguageContext";
+import ContentTranslationsContextProvider from './components/contexts/ContentTranslationsContext';
 
 // Amplify.configure(awsExports);
 
@@ -19,7 +20,9 @@ const store = createStore(reducers, applyMiddleware(thunk));
 ReactDOM.render(
   <Provider store={store}>
     <LanguageContextProvider>
-      <App />
+      <ContentTranslationsContextProvider>
+        <App />
+      </ContentTranslationsContextProvider>
     </LanguageContextProvider>
   </Provider>,
   document.getElementById('root')

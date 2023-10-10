@@ -15,22 +15,22 @@ const ActionFact = ({
   setSkipBonusQuestion,
 }) => {
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
-  
+
   // Modal.setAppElement('#yourAppElement');
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
-  function openModal() {
+  function openModal () {
     setIsOpen(true);
   }
 
-  function afterOpenModal() {
+  function afterOpenModal () {
     // references are now sync'd and can be accessed.
     subtitle.style.color = '#f00';
   }
 
-  function closeModal() {
+  function closeModal () {
     setIsOpen(false);
   }
   const translation = useTranslation();
@@ -46,7 +46,7 @@ const ActionFact = ({
       });
       //select random fact from quiz pool that has not been answered by the user yet
       const possibleQuizzes = quizPoolForUserRes.data.getQuizPoolForUser;
-      if (possibleQuizzes.length !== 0) {
+      if (possibleQuizzes && possibleQuizzes?.length !== 0) {
         setQuiz(
           possibleQuizzes[Math.floor(Math.random() * possibleQuizzes.length)]
         );
@@ -62,10 +62,10 @@ const ActionFact = ({
   //if there are no possible quizzes, display fallback text. If there is no fallback text, display default message
   const renderFact = () => {
     if (quiz) {
-      return <Typography variant="p" sx={{color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5'}}>{quiz.fact_text}</Typography>;
+      return <Typography variant="p" sx={{ color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5' }}>{quiz.fact_text}</Typography>;
     } else if (noPossibleQuizzes) {
       return selectedAction.fallback_quiz_media ? (
-        <Typography variant="p" sx={{color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5'}}>
+        <Typography variant="p" sx={{ color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5' }}>
           {selectedAction.fallback_quiz_media}
         </Typography>
       ) : (
@@ -102,7 +102,7 @@ const ActionFact = ({
           fontSize: '1.8em',
         }}
       >
-        <button onClick={openModal}>Open Modal</button>
+        {/* <button onClick={openModal}>Open Modal</button> */}
         {renderFact()}
       </Box>
       <Modal

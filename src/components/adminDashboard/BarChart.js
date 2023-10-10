@@ -13,10 +13,16 @@ import { format, eachDayOfInterval, sub } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import 'chartjs-adapter-date-fns';
+import useTranslation from '../customHooks/translations';
 
 const BarChart = ({ allSubmittedActions }) => {
   const [barChartData, setBarChartData] = useState();
-  const filters = ['7 Days', '30 Days', 'Year'];
+  const translation = useTranslation();
+  const filters = [
+    translation.sevenDays,
+    translation.thirtyDays,
+    translation.oneYear,
+  ];
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
@@ -102,7 +108,7 @@ const BarChart = ({ allSubmittedActions }) => {
         }}
       >
         <Typography variant="subtitle2">
-          Actions submitted during the past {selectedFilter}
+          {translation.formatString(translation.actionsSubmittedFilter, selectedFilter)}
         </Typography>
         <Box
           sx={{
@@ -111,7 +117,7 @@ const BarChart = ({ allSubmittedActions }) => {
             alignItems: 'center',
           }}
         >
-          <Tooltip title="Apply Filter">
+          <Tooltip title={translation.applyFilter}>
             <IconButton onClick={handleClick}>
               <FilterListIcon />
             </IconButton>
@@ -136,14 +142,14 @@ const BarChart = ({ allSubmittedActions }) => {
             labels: Object.keys(barChartData),
             datasets: [
               {
-                label: 'Number of Actions Submitted With Image',
+                label: translation.numberActionsSubmittedWithImage,
                 data: Object.values(barChartData).map(
                   (data) => data.actionsWithImage
                 ),
                 backgroundColor: ['#9cda92'],
               },
               {
-                label: 'Number of Actions Submitted Without Image',
+                label: translation.numberActionsSubmittedWithoutImage,
                 data: Object.values(barChartData).map(
                   (data) => data.actionsWithoutImage
                 ),
@@ -157,7 +163,7 @@ const BarChart = ({ allSubmittedActions }) => {
                 stacked: true,
                 title: {
                   display: true,
-                  text: 'Date',
+                  text: translation.date,
                   padding: {
                     top: 20,
                   },
@@ -175,7 +181,7 @@ const BarChart = ({ allSubmittedActions }) => {
                 stacked: true,
                 title: {
                   display: true,
-                  text: 'Actions Submitted',
+                  text: translation.actionsSubmitted,
                   padding: {
                     bottom: 20,
                   },

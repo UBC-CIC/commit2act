@@ -93,7 +93,7 @@ const FindGroup = ({ user }) => {
           id="outlined-basic"
           variant="outlined"
           fullWidth
-          label="Search"
+          label={translation.search}
           value={input}
           sx={{ my: '2em' }}
           onChange={(e) => setInput(e.target.value)}

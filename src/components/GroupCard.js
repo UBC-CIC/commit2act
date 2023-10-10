@@ -117,7 +117,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
   const joinGroupLink =
     group &&
     '/group-profile/'.concat(
-      group_name.replaceAll(' ', '%20'),
+      encodeURIComponent(group_name),
       '/add/',
       '-',
       group_id ** 2
@@ -130,7 +130,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
         <ListItem>
           <ListItemText primary={stat.title} />
           <span>
-            <Typography variant="body1" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{stat.value} g</Typography>
+            <Typography variant="body1" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{stat.value} g</Typography>
           </span>
         </ListItem>
       </React.Fragment>
@@ -146,7 +146,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
           <ListItem>
             <ListItemText primary={stat.title} />
             <span>
-              <Typography variant="body1" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{stat.value}%</Typography>
+              <Typography variant="body1" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{stat.value}%</Typography>
             </span>
           </ListItem>
         </React.Fragment>
@@ -197,13 +197,13 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
           },
         }}
       >
-        <Typography variant="body1">{translation.totalCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(total_co2)} g{' '}</Box></Typography>
+        <Typography variant="body1">{translation.totalCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(total_co2)} g{' '}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">{translation.weeklyCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(weekly_co2)} g{' '}</Box></Typography>
+        <Typography variant="body1">{translation.weeklyCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(weekly_co2)} g{' '}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">{translation.totalPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_points}</Box></Typography>
+        <Typography variant="body1">{translation.totalPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{total_points}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">{translation.weeklyPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_points}</Box></Typography>
+        <Typography variant="body1">{translation.weeklyPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{weekly_points}</Box></Typography>
       </Box>
     ) : (
       <>
@@ -220,19 +220,19 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               }}
             >
               <Typography variant="body1">
-				{translation.totalCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(total_co2)} g</Box>
-			  </Typography>
-              <Divider orientation="vertical" flexItem />
-              <Typography variant="body1">
-			    {translation.weeklyCO2Colon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{Math.ceil(weekly_co2)} g</Box>
+                {translation.totalCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(total_co2)} g</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-			    {translation.totalPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{total_points}</Box>
+                {translation.weeklyCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(weekly_co2)} g</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-			    {translation.weeklyPointsColon} <Box component="span" sx={{color: theme.palette.tertiary.main, fontWeight: '600'}}>{weekly_points}</Box>
+                {translation.totalPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{total_points}</Box>
+              </Typography>
+              <Divider orientation="vertical" flexItem />
+              <Typography variant="body1">
+                {translation.weeklyPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{weekly_points}</Box>
               </Typography>
             </Box>
           </AccordionSummary>
@@ -252,8 +252,9 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               }}
             >
               {donutChartsData &&
-                donutChartsData.map((data) => (
+                donutChartsData.map((data, index) => (
                   <UserContributionDonutChart
+                    key={index}
                     data={data}
                     displayTitles={false}
                   />
@@ -327,7 +328,7 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               )}
               <Typography
                 onClick={() => {
-                  navigate(`/group-profile/${group_name}`);
+                  navigate(`/group-profile/${encodeURIComponent(group_name)}`);
                 }}
                 sx={{
                   ':hover': { opacity: '0.6', cursor: 'pointer' },
@@ -361,12 +362,12 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               </Typography>
               {group_description.length > descriptionLength ? (
                 <Button
-                sx={{ p: 0, mt: { xs: '1em', sm: '1.5em' }, fontSize: 13 }}
-                onClick={() => setReadMore(!readMore)}
+                  sx={{ p: 0, mt: { xs: '1em', sm: '1.5em' }, fontSize: 13 }}
+                  onClick={() => setReadMore(!readMore)}
                 >
-                {translation.read} {readMore ? translation.less : translation.more}
+                  {translation.read} {readMore ? translation.less : translation.more}
                 </Button>
-               ) : null }
+              ) : null}
             </Box>
           )}
         </CardContent>

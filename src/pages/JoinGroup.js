@@ -101,7 +101,7 @@ const JoinGroup = ({ user }) => {
 
   //redirect user to group profile page
   const redirectProfile = () => {
-    navigate(`/group-profile/${groupName}`);
+    navigate(`/group-profile/${encodeURI(groupName)}`);
   };
 
   //if group is private, checks that user inputted password matches group private_password field
@@ -153,7 +153,7 @@ const JoinGroup = ({ user }) => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={redirectHome}>{translation.cancel}</Button>
+            <Button onClick={redirectProfile}>{translation.cancel}</Button>
           </DialogActions>
         </StyledDialog>
       )}

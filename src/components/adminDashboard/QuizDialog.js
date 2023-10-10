@@ -17,6 +17,7 @@ import NewQuizForm from './NewQuizForm';
 import QuizCard from './QuizCard';
 import { API } from 'aws-amplify';
 import { getAllQuizzesForAction } from '../../graphql/queries';
+import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 
 const StyledDialogTitle = styled(DialogTitle)`
   font-size: 28px;
@@ -32,17 +33,57 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
   const [selectedOption, setSelectedOption] = useState();
   const [allQuizzes, setAllQuizzes] = useState();
 
+  // translations
+  const { contentTranslations, setContentTranslations } = useContentTranslationsContext();
+
   const getQuizzes = async () => {
     const res = await API.graphql({
       query: getAllQuizzesForAction,
       variables: { action_id: action.action_id },
     }).catch(e => {
-		console.log(e);
-	});
-	if (typeof res !== 'undefined') {
-		setAllQuizzes(res.data.getAllQuizzesForAction);
-	}
+      console.log(e);
+    });
+    if (typeof res !== 'undefined') {
+      // remove quizzes that have null id
+      res.data.getAllQuizzesForAction = res.data.getAllQuizzesForAction.filter(quiz => quiz.quiz_id !== null);
+
+      const frenchQuizzes = await getFrenchQuizzes();
+      if (frenchQuizzes) {
+        res.data.getAllQuizzesForAction.forEach(quiz => {
+          const frenchQuiz = frenchQuizzes.quizzes?.find(frenchQuiz => frenchQuiz.quiz_id === quiz.quiz_id);
+          if (frenchQuiz) {
+            const correct_french_answer = frenchQuiz.quiz_answers.find(answer => answer.is_correct_answer)?.answer;
+            quiz.question_text_french = frenchQuiz.question_text;
+            quiz.fact_text_french = frenchQuiz.fact_text;
+            quiz.correct_answers_french = correct_french_answer;
+            if (frenchQuiz.quiz_answers.length > 0) {
+              quiz.answers_french = frenchQuiz.quiz_answers.map(answer => answer.answer).join('\n');
+            } else {
+              quiz.answers_french = "";
+            }
+          } else {
+            quiz.question_text_french = '';
+            quiz.fact_text_french = '';
+            quiz.correct_answers_french = "";
+            quiz.answers_french = "";
+          }
+        });
+      } else {
+        res.data.getAllQuizzesForAction.forEach(quiz => {
+          quiz.question_text_french = '';
+          quiz.fact_text_french = '';
+          quiz.correct_answers_french = "";
+          quiz.answers_french = "";
+        });
+      }
+      setAllQuizzes(res.data.getAllQuizzesForAction);
+    }
   };
+
+  const getFrenchQuizzes = async () => {
+    const frenchTranslation = contentTranslations.find(translation => translation.langCode === 'fr');
+    return frenchTranslation.translationJSON?.actions?.find(frenchAction => frenchAction.action_id === action.action_id);
+  }
 
   useEffect(() => {
     getQuizzes();
@@ -80,29 +121,29 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
   };
 
   const renderQuizCards = () => {
-	if (typeof allQuizzes !== 'undefined') {
-		return allQuizzes.length > 0 ? (
-		<Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-			{allQuizzes.map((quiz, index) => (
-			<QuizCard key={index} quiz={quiz} getQuizzes={getQuizzes} />
-			))}
-		</Box>
-		) : (
-		<Box sx={{ textAlign: 'center' }}>
-			<Typography variant="subtitle1">
-			There are currently no quizzes to display.
-			</Typography>
-		</Box>
-		);
-	} else {
-		return (
-			<Box sx={{ textAlign: 'center' }}>
-				<Typography variant="subtitle1">
-				There are currently no quizzes to display.
-				</Typography>
-			</Box>
-		);
-	}
+    if (typeof allQuizzes !== 'undefined') {
+      return allQuizzes.length > 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+          {allQuizzes.map((quiz, index) => (
+            <QuizCard key={index} quiz={quiz} getQuizzes={getQuizzes} />
+          ))}
+        </Box>
+      ) : (
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="subtitle1">
+            There are currently no quizzes to display.
+          </Typography>
+        </Box>
+      );
+    } else {
+      return (
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="subtitle1">
+            There are currently no quizzes to display.
+          </Typography>
+        </Box>
+      );
+    }
   };
 
   return (

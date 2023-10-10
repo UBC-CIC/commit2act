@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Link,
@@ -27,7 +27,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-
+import { useLanguageContext } from "../components/contexts/LanguageContext";
 
 import useTranslation from ".//customHooks/translations";
 
@@ -50,13 +50,16 @@ const StyledTableBody = styled(TableBody)`
 const GlobalLeaderboard = () => {
   const navigate = useNavigate();
   const translation = useTranslation();
-  const tabs = ['Global Groups', 'Global Users'];
-  const filters = [
+  const tabs = useMemo(() => [
+    translation.globalGroups,
+    translation.globalUsers,
+  ], [translation.globalGroups, translation.globalUsers]);
+  const filters = useMemo(() => [
     { name: translation.totalCO2Saved, property: 'total_co2' },
     { name: translation.weeklyCO2Saved, property: 'weekly_co2' },
     { name: translation.totalPoints, property: 'total_points' },
     { name: translation.weeklyPoints, property: 'weekly_points' },
-  ];
+  ], [translation.totalCO2Saved, translation.totalPoints, translation.weeklyCO2Saved, translation.weeklyPoints]);
   const [groups, setGroups] = useState();
   const [users, setUsers] = useState();
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
@@ -67,6 +70,7 @@ const GlobalLeaderboard = () => {
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { language } = useLanguageContext();
 
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
@@ -76,10 +80,10 @@ const GlobalLeaderboard = () => {
     page <= 0
       ? 0
       : selectedTab === tabs[0]
-      ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
-      : selectedTab === tabs[1]
-      ? Math.max(0, (1 + page) * rowsPerPage - users.length)
-      : 0;
+        ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
+        : selectedTab === tabs[1]
+          ? Math.max(0, (1 + page) * rowsPerPage - users.length)
+          : 0;
 
   useEffect(() => {
     const getTableData = async () => {
@@ -92,7 +96,9 @@ const GlobalLeaderboard = () => {
     };
 
     getTableData();
-  }, []);
+    setSelectedTab(tabs[0]);
+    setSelectedFilter(filters[0]);
+  }, [tabs, filters, language]);
 
   //filters groups when group state is initially set, filters groups and group members every time a new filter is selected
   useEffect(() => {
@@ -160,10 +166,10 @@ const GlobalLeaderboard = () => {
         <TableContainer component={Paper} sx={{ mt: '1em', backgroundColor: '#131516' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
-              {translation.formatString(translation.leaderboardDisplaying, {tab: selectedTab})}{selectedFilter.name}
+              {translation.formatString(translation.leaderboardDisplaying, { tab: selectedTab })}{selectedFilter.name}
             </caption>
             <TableHead sx={{ mt: '1em', backgroundColor: '#131516' }}>
-              <TableRow sx={{ position: 'relative', zIndex: '1'}}>
+              <TableRow sx={{ position: 'relative', zIndex: '1' }}>
                 <TableCell>{translation.rank}</TableCell>
                 <TableCell align="left">{translation.name}</TableCell>
                 <TableCell align="right">{translation.totalCO2}</TableCell>
@@ -178,9 +184,9 @@ const GlobalLeaderboard = () => {
                 filteredGroups &&
                 (rowsPerPage > 0
                   ? filteredGroups.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : filteredGroups
                 ).map((group, index) => (
                   <TableRow
@@ -198,18 +204,18 @@ const GlobalLeaderboard = () => {
                       {page > 0 ? rowsPerPage * page + index + 1 : index + 1}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                    <Link
+                      <Link
                         onClick={() => {
                           navigate(`/group-profile/${group.group_name}`);
                         }}
                         sx={{
-                            color: '#fff',
-                            fontSize: '1.1em',
-                            textDecorationColor: '#33AF99',
+                          color: '#fff',
+                          fontSize: '1.1em',
+                          textDecorationColor: '#33AF99',
                           ':hover': { opacity: '0.6', cursor: 'pointer' },
                         }}
                       >
-                      {group.group_name}
+                        {group.group_name}
                       </Link>
                     </TableCell>
                     <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
@@ -224,9 +230,9 @@ const GlobalLeaderboard = () => {
                 filteredUsers &&
                 (rowsPerPage > 0
                   ? filteredUsers.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : filteredUsers
                 ).map((user, index) => (
                   <TableRow
@@ -269,12 +275,12 @@ const GlobalLeaderboard = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
-			labelRowsPerPage={translation.labelRowsPerPage}
-			labelDisplayedRows={
-			  ({ from, to, count }) => {
-				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
-			  }
-			}
+            labelRowsPerPage={translation.labelRowsPerPage}
+            labelDisplayedRows={
+              ({ from, to, count }) => {
+                return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+              }
+            }
           />
         )}
         {selectedTab === tabs[1] && users && (
@@ -288,12 +294,12 @@ const GlobalLeaderboard = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
             showFirstButton
             showLastButton
-			labelRowsPerPage={translation.labelRowsPerPage}
-			labelDisplayedRows={
-			  ({ from, to, count }) => {
-				return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
-			  }
-			}
+            labelRowsPerPage={translation.labelRowsPerPage}
+            labelDisplayedRows={
+              ({ from, to, count }) => {
+                return '' + from + ' - ' + to + ' ' + translation.of + ' ' + count
+              }
+            }
           />
         )}
       </>
@@ -348,7 +354,7 @@ const GlobalLeaderboard = () => {
               </Menu>
             </Box>
           </Box>
-          <TabContext value={selectedTab}>
+          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
             <Box
               sx={{
                 borderTop: 1,
@@ -363,7 +369,7 @@ const GlobalLeaderboard = () => {
                 onChange={handleTabChange}
                 aria-label="Leaderboard tabs"
                 sx={{
-                  width: {xs: '100%', md: 'auto'},
+                  width: { xs: '100%', md: 'auto' },
                   margin: { xs: '0 auto' },
                   borderTop: { xs: 1, sm: 1 },
                   borderRight: { xs: 0, sm: 1 },
@@ -373,8 +379,8 @@ const GlobalLeaderboard = () => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label={translation.globalGroups} value={tabs[0]} id={tabs[0]}/>
-                <Tab label={translation.globalUsers} value={tabs[1]} id={tabs[1]}/>
+                <Tab label={translation.globalGroups} value={tabs[0]} id={tabs[0]} />
+                <Tab label={translation.globalUsers} value={tabs[1]} id={tabs[1]} />
               </TabList>
               <TabPanel
                 value={tabs[0]}
