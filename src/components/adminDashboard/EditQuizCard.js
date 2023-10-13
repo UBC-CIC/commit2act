@@ -47,7 +47,9 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
         is_correct_answer: correctAnswerArray.includes(answer),
       })
     );
+
     setQuizForm({
+      quiz_id: quiz.quiz_id,
       fact_text: fact_text,
       question_text: question_text,
       quiz_answers: answerObjArray,
@@ -242,10 +244,11 @@ const EditQuizCard = ({ quiz, getQuizzes }) => {
         relevantAction.quizzes = [];
       } else {
         // remove existing quiz with same id
-        relevantAction.quizzes = relevantAction.quizzes.filter(quiz => quiz.quiz_id === !quizForm.quiz_id);
+        relevantAction.quizzes = relevantAction.quizzes.filter(quiz => {
+          return quiz.quiz_id !== quizForm.quiz_id
+        });
       }
       relevantAction.quizzes.push(frenchQuizForm);
-
       await updateTranslationWithLangCode('fr', translationObject.translationJSON);
 
       setContentTranslations((prev) => {
