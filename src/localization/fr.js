@@ -258,6 +258,7 @@ const translations = {
   submittedInC: 'Soumis dans :',
   accept: 'Accepter',
   reject: 'Rejeter',
+  clearSearch: '',
   actions: 'Actions',
   totalUsers: 'Utilisateurs Totaux',
   totalGroups: 'Groupes Totaux',

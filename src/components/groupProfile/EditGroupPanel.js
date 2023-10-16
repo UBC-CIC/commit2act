@@ -180,7 +180,7 @@ const EditGroupPanel = ({ groupInfo, getUpdatedGroup }) => {
   const renderEditGroupForm = () => {
     return (
       <>
-        <Typography variant="h2">{translation.editGroupInfo}</Typography>
+        <Typography variant="h3">{translation.editGroupInfo}</Typography>
         <Box
           sx={{
             p: '1em',

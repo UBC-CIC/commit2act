@@ -101,7 +101,7 @@ const FindGroup = ({ user }) => {
           InputProps={{
             startAdornment: <Search sx={{ mr: '1em' }} />,
             endAdornment: input && (
-              <IconButton onClick={(e) => setInput('')}>
+              <IconButton aria-label={translation.clearSearch} onClick={(e) => setInput('')}>
                 <Clear />
               </IconButton>
             ),
