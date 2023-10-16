@@ -26,14 +26,15 @@ const QuizCard = ({ quiz, getQuizzes }) => {
           }}
         >
           {
-            quiz.answers_french
+            !!quiz.answers_french ?? quiz.answers_french
               .split('\n')
-              .map((answer) =>
-                quiz.correct_answers_french.split('\n').includes(answer) ? (
+              .map((answer) => {
+                quiz?.correct_answers_french?.split('\n').includes(answer) ? (
                   <Chip key={answer} icon={<CheckIcon />} label={answer} />
                 ) : (
                   <Chip key={answer} label={answer} variant="outlined" />
                 )
+              }
               )
           }
         </Box>
@@ -90,15 +91,17 @@ const QuizCard = ({ quiz, getQuizzes }) => {
                 gap: '0.5em',
               }}
             >
-              {answers
-                .split('\n')
-                .map((answer) =>
-                  correct_answers.split('\n').includes(answer) ? (
-                    <Chip key={answer} icon={<CheckIcon />} label={answer} />
-                  ) : (
-                    <Chip key={answer} label={answer} variant="outlined" />
+              {
+                !!answers ?? answers
+                  .split('\n')
+                  .map((answer) =>
+                    correct_answers?.split('\n').includes(answer) ? (
+                      <Chip key={answer} icon={<CheckIcon />} label={answer} />
+                    ) : (
+                      <Chip key={answer} label={answer} variant="outlined" />
+                    )
                   )
-                )}
+              }
             </Box>
             {renderFrenchAnswers()}
           </Box>

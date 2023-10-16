@@ -43,67 +43,59 @@ const GroupMemberPanel = ({
           }}
         >
           {groupMembers.map((member, index) => (
-            <Grid
-              container
-              item
-              xs={6}
-              sm={4}
-              md={2}
-              sx={{ justifyContent: 'center' }}
-              key={index}
-            >
-              <Tooltip title={member.name}>
-                <IconButton
-                  aria-label="user avatar"
-                  disableRipple={true}
-                  onClick={() => handleOpen(member)}
-                  sx={{ mb: { xs: '0.25em' } }}
+            <Tooltip title={member.name}>
+              <IconButton
+                aria-label="user avatar"
+                disableRipple={true}
+                onClick={() => handleOpen(member)}
+                sx={{ display: 'block', mb: { xs: '0.25em' } }}
+              >
+                <Badge
+                  overlap="rectangular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  badgeContent={
+                    <StarIcon
+                      sx={{ color: '#d4b24c' }}
+                      stroke="white"
+                      strokeWidth={1}
+                    />
+                  }
+                  invisible={member.user_role === 'member'}
                 >
-                  <Badge
-                    overlap="rectangular"
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    badgeContent={
-                      <StarIcon
-                        sx={{ color: '#d4b24c' }}
-                        stroke="white"
-                        strokeWidth={1}
-                      />
-                    }
-                    invisible={member.user_role === 'member'}
-                  >
-                    <Avatar
-                      variant="rounded"
-                      aria-hidden="true"
-                      sx={{
-                        background: '#5bc1ab',
-                        // padding: '20px',
-                        borderRadius: '99em',
-                        boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
-                        border: '1px solid #000000',
-                        width: {
-                          xs: 120,
-                        },
-                        height: {
-                          xs: 120,
-                        },
-                        ':hover': { cursor: 'pointer' },
-                      }}
-                      src={member.avatar ? member.avatar : null}
-                    >
-                      {member.name.charAt(0)}
-                    </Avatar>
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-              <Box component="span" sx={{
-                      color: '#000',
-                      fontSize: '0.75rem',
-                      padding: '1em',
+                  <Avatar
+                    variant="rounded"
+                    aria-hidden="true"
+                    sx={{
+                      background: '#5bc1ab',
+                      // padding: '20px',
+                      borderRadius: '99em',
+                      boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
+                      border: '1px solid #000000',
+                      width: {
+                        xs: 120,
+                      },
+                      height: {
+                        xs: 120,
+                      },
+                      ':hover': { cursor: 'pointer' },
                     }}
-                      >
-                      {member.name}
-                    </Box>
-            </Grid>
+                    src={member.avatar ? member.avatar : null}
+                  >
+                    {member.name.charAt(0)}
+                  </Avatar>
+                </Badge>
+                <Box component="div" sx={{
+                  color: '#000',
+                  fontSize: '0.75rem',
+                  maxWidth: '80%',
+                  paddingTop: '10px',
+                  margin: '0 auto'
+                }}
+                  >
+                  {member.name}
+                </Box>
+              </IconButton>
+            </Tooltip>
           ))}
           {openDialog && (
             <GroupMemberPanelDialog

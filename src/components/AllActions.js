@@ -83,11 +83,16 @@ const AllActions = ({ setSelectedAction }) => {
         {actionOptions &&
           actionOptions.map((action, index) => (
             <StyledImageListItem
+              component="button"
               key={index}
               sx={{
                 width: '100%',
                 height: '100px',
                 cursor: 'pointer',
+                background: 'none',
+                padding: '0',
+                boxShadow: '0',
+                border: '0',
                 '&:hover': {
                   opacity: '0.7',
                 },
@@ -112,6 +117,7 @@ const AllActions = ({ setSelectedAction }) => {
                 ></Box>
               )}
               <StyledImageListItemBar
+                sx={{width: '100%'}}
                 title={action.action_name}
                 position="below"
               />

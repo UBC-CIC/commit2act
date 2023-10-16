@@ -329,10 +329,10 @@ const GlobalLeaderboard = () => {
                 alignItems: 'center',
               }}
             >
-              <Typography variant="subtitle2" component="div">
+              <Typography variant="subtitle2" component="div" aria-description={translation.currentFilter + ' : ' + selectedFilter.name}>
                 {selectedFilter.name}
               </Typography>
-              <Tooltip title={translation.applyFilter}>
+              <Tooltip title={translation.changeFilter}>
                 <IconButton onClick={handleClick}>
                   <FilterListIcon />
                 </IconButton>

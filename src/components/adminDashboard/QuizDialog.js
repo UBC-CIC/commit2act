@@ -44,6 +44,9 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
       console.log(e);
     });
     if (typeof res !== 'undefined') {
+      // remove quizzes that have null id
+      res.data.getAllQuizzesForAction = res.data.getAllQuizzesForAction.filter(quiz => quiz.quiz_id !== null);
+
       const frenchQuizzes = await getFrenchQuizzes();
       if (frenchQuizzes) {
         res.data.getAllQuizzesForAction.forEach(quiz => {
@@ -56,21 +59,21 @@ const QuizDialog = ({ action, open, handleClose, getActions }) => {
             if (frenchQuiz.quiz_answers.length > 0) {
               quiz.answers_french = frenchQuiz.quiz_answers.map(answer => answer.answer).join('\n');
             } else {
-              quiz.answers_french = [];
+              quiz.answers_french = "";
             }
           } else {
             quiz.question_text_french = '';
             quiz.fact_text_french = '';
-            quiz.correct_answers_french = [];
-            quiz.answers_french = [];
+            quiz.correct_answers_french = "";
+            quiz.answers_french = "";
           }
         });
       } else {
         res.data.getAllQuizzesForAction.forEach(quiz => {
           quiz.question_text_french = '';
           quiz.fact_text_french = '';
-          quiz.correct_answers_french = [];
-          quiz.answers_french = [];
+          quiz.correct_answers_french = "";
+          quiz.answers_french = "";
         });
       }
       setAllQuizzes(res.data.getAllQuizzesForAction);

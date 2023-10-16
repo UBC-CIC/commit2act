@@ -46,7 +46,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
           sm={7}
           sx={{ wordWrap: 'break-word', whiteSpace: 'pre-line' }}
         >
-          <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
+          <Typography component="div" variant="h3" sx={{ mb: '1em' }}>
             {translation.about}
           </Typography>
           <Box
@@ -63,7 +63,7 @@ const GroupInfoPanel = ({ groupOwners, groupInfo }) => {
           </Box>
         </Grid>
         <Grid item xs={12} sm={5}>
-          <Typography component="div" variant="h2" sx={{ mb: '1em' }}>
+          <Typography component="div" variant="h3" sx={{ mb: '1em' }}>
             {translation.groupOwners}
           </Typography>
           <Box
