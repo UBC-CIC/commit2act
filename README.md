@@ -12,6 +12,10 @@ TakingITGlobal is a non-governmental organization that focuses on global issues 
 | [Credits](#Credits)                                 | Meet the team behind the solution                       |
 | [License](#License)                                 | License details                                         |
 
+# Getting started
+
+Refer to [this guide](./docs/GettingStarted.md)
+
 # High Level Architecture
 
 The following architecture diagram illustrates the various AWS components utliized to deliver the solution. For an in-depth explanation of the frontend and backend stacks, refer to the [Architecture Deep Dive](docs/ArchitectureDeepDive.md).
