@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { API } from 'aws-amplify';
+import { getAllUngraveyardedActions } from '../graphql/queries';
 import {
   TextField,
   Box,
@@ -36,7 +38,6 @@ const SelfReportMenu = ({ user }) => {
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
-
   const translation = useTranslation();
 
   const steps = [
@@ -49,6 +50,20 @@ const SelfReportMenu = ({ user }) => {
     translation.logActionStep7,
   ];
 
+  const [actionOptions, setActionOptions] = useState([]);
+  useEffect(() => {
+    (async function () {
+      try {
+        const res = await API.graphql({ query: getAllUngraveyardedActions });
+        const actions = res.data.getAllUngraveyardedActions;
+        setActionOptions(actions);
+        console.log(actions);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [setActionOptions]);
+
   //resets the form everytime a new action is selected
   useEffect(() => {
     if (selectedAction) {
@@ -58,11 +73,21 @@ const SelfReportMenu = ({ user }) => {
     }
   }, [selectedAction]);
 
+  useEffect(() => {
+    console.log(actionItemValues);
+  }, [actionItemValues]);
+
+  // push path fixes
   const nav = useNavigate();
   useEffect(() => {
-    if (activeStep === 0) {
+    // parse url
+    const q = window.location.pathname.split('/');
+    const action = q[q.length - 1];
+    if (action === 'log-action') {
       nav('/log-action');
+      setActiveStep(() => 0);
       setTotalCO2Saved(0);
+      return;
     }
   }, [activeStep]); // eslint-disable-line
 
@@ -74,7 +99,10 @@ const SelfReportMenu = ({ user }) => {
     return (
       <>
         {activeStep === 0 && (
-          <AllActions setSelectedAction={setSelectedAction} />
+          <AllActions
+            setSelectedAction={setSelectedAction}
+            actionOptions={actionOptions}
+          />
         )}
         {activeStep === 1 && (
           <Grid
