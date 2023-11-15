@@ -19,12 +19,13 @@ import ImageValidationPanel from '../components/logAction/ImageValidationPanel';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
+import { useNavigate } from 'react-router-dom';
 
 import useTranslation from '../components/customHooks/translations';
 
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), 'yyyy-MM-dd')
+    format(new Date(), 'yyyy-MM-dd'),
   );
   const [selectedAction, setSelectedAction] = useState();
   const [activeStep, setActiveStep] = useState(0);
@@ -57,11 +58,13 @@ const SelfReportMenu = ({ user }) => {
     }
   }, [selectedAction]);
 
+  const nav = useNavigate();
   useEffect(() => {
     if (activeStep === 0) {
+      nav('/log-action');
       setTotalCO2Saved(0);
     }
-  }, [activeStep]);
+  }, [activeStep]); // eslint-disable-line
 
   const handleDateChange = (newDate) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
@@ -224,7 +227,7 @@ const SelfReportMenu = ({ user }) => {
             alignItems: 'center',
             m: '0 0 1.25em',
             flexDirection: { xs: 'row' },
-            gap: { xs: '10px', md: '10px' }
+            gap: { xs: '10px', md: '10px' },
           }}
         >
           {![0, 3, 5, 6].includes(activeStep) && (

@@ -12,6 +12,7 @@ import ImageListItem, {
 import { getAllUngraveyardedActions } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -44,11 +45,28 @@ const AllActions = ({ setSelectedAction }) => {
     getActions();
   }, []);
 
+  const nav = useNavigate();
+
   const getActions = async () => {
     const res = await API.graphql({ query: getAllUngraveyardedActions });
     const actions = res.data.getAllUngraveyardedActions;
     setActionOptions(actions);
   };
+
+  /**
+   * @param {number} actionIndex
+   * @returns {ChangeEventHandler<HTMLButtonElement>}
+   */
+  function handleActionSelect(actionIndex) {
+    return () => {
+      const action = actionOptions[actionIndex];
+      setSelectedAction(action);
+      /** @type {string} */
+      const u = action.action_name;
+      const urlParam = u.toLowerCase().trim().replaceAll(' ', '-');
+      nav(`/log-action/${encodeURIComponent(urlParam)}`);
+    };
+  }
 
   return (
     <Grid
@@ -97,7 +115,7 @@ const AllActions = ({ setSelectedAction }) => {
                   opacity: '0.7',
                 },
               }}
-              onClick={() => setSelectedAction(action)}
+              onClick={handleActionSelect(index)}
             >
               {action.action_icon ? (
                 <img
@@ -117,7 +135,7 @@ const AllActions = ({ setSelectedAction }) => {
                 ></Box>
               )}
               <StyledImageListItemBar
-                sx={{width: '100%'}}
+                sx={{ width: '100%' }}
                 title={action.action_name}
                 position="below"
               />

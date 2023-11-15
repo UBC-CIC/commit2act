@@ -10,7 +10,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Box
+  Box,
 } from '@mui/material';
 import {
   Assessment,
@@ -45,7 +45,6 @@ import PrivateRoute from './PrivateRoute';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-
 import useTranslation from '../../components/customHooks/translations';
 const drawerWidth = 312;
 
@@ -65,7 +64,7 @@ const useStyles = makeStyles()((theme) => {
       },
       '& svg': {
         fontSize: 30,
-      }
+      },
     },
     content: {
       flexGrow: 1,
@@ -106,7 +105,7 @@ const useStyles = makeStyles()((theme) => {
       '& img': {
         fontSize: 30,
         color: '#000',
-        filter: 'invert(1)'
+        filter: 'invert(1)',
       },
     },
     skip_button: {
@@ -119,16 +118,15 @@ const useStyles = makeStyles()((theme) => {
       margin: '0.25em',
       transform: 'translateY(-150%)',
       transition: 'transform 0.3s',
-      "&:focus": {
+      '&:focus': {
         transform: 'translateY(0%)',
         zIndex: '2000',
-      }
-    }
+      },
+    },
   };
 });
 
-
-function PageContainer (props) {
+function PageContainer(props) {
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
   const { menuEnabled, updateMenuState } = props;
@@ -146,7 +144,7 @@ function PageContainer (props) {
     const cognitoUserEntry = await Auth.currentAuthenticatedUser();
     //on user's first login, create user entry in database, then update custom firstLogin attribute to false
     const firstLogin = cognitoUserEntry.attributes['custom:firstLogin'];
-    if (firstLogin !== "false") {
+    if (firstLogin !== 'false') {
       await API.graphql({
         query: createUser,
         variables: {
@@ -225,7 +223,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-log.png' />
+              src="./assets/images/icon-log.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.logAction} />
         </ListItem>
@@ -237,15 +236,12 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-home.png' />
+              src="./assets/images/icon-home.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.dashboard} />
         </ListItem>
-        <ListItem
-          button
-          key={'Actions'}
-          onClick={() => navigate('/actions')}
-        >
+        <ListItem button key={'Actions'} onClick={() => navigate('/actions')}>
           <ListItemIcon>
             <Box
               component="img"
@@ -253,7 +249,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-validate.png' />
+              src="./assets/images/icon-validate.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.actions} />
         </ListItem>
@@ -269,7 +266,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-create-group.png' />
+              src="./assets/images/icon-create-group.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.myGroups} />
         </ListItem>
@@ -285,7 +283,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-find.png' />
+              src="./assets/images/icon-find.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.findGroup} />
         </ListItem>
@@ -302,7 +301,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-create-group.png' />
+              src="./assets/images/icon-create-group.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.createGroup} />
         </ListItem>
@@ -319,7 +319,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-validate.png' />
+              src="./assets/images/icon-validate.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.validateActions} />
         </ListItem>
@@ -355,7 +356,8 @@ function PageContainer (props) {
                 width: 28,
               }}
               alt=""
-              src='./assets/images/icon-my-account.png' />
+              src="./assets/images/icon-my-account.png"
+            />
           </ListItemIcon>
           <ListItemText primary={translation.myAccount} />
         </ListItem>
@@ -370,9 +372,7 @@ function PageContainer (props) {
       </a>
       {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true}
-      sx={{ position: 'sticky' }}
-      />
+      <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
       {/* App content example below with sidebar */}
       <Grid item xs={12} className="App-header">
         {/* Side menu component */}
@@ -386,7 +386,7 @@ function PageContainer (props) {
             width: 312,
             color: 'success.main',
           }}
-          className={clsx(classes.drawer,{
+          className={clsx(classes.drawer, {
             [classes.menuClosed]: !menuEnabled,
           })}
         >
@@ -394,16 +394,19 @@ function PageContainer (props) {
           {/* Side menu items added for rendering */}
           {list()}
         </Drawer>
-        <main id="main" className={clsx(classes.content, {
-          [classes.contentShift]: menuEnabled,
-        })}>
+        <main
+          id="main"
+          className={clsx(classes.content, {
+            [classes.contentShift]: menuEnabled,
+          })}
+        >
           {/* Routes are added here if you need multiple page views. otherwise this Switch can be deleted and replaced
                 with your app's contents */}
 
           <Routes>
-             <Route
+            <Route
               exact
-              path={'/log-action'}
+              path={'/log-action/*'}
               element={<SelfReportMenu user={user} />}
             />
             <Route
