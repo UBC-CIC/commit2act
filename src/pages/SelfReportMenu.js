@@ -58,18 +58,20 @@ const SelfReportMenu = ({ user }) => {
   useEffect(() => {
     (async function () {
       try {
-        // fetch all options
+        // fetch all action options
         const res = await API.graphql({ query: getAllUngraveyardedActions });
         const actions = res.data.getAllUngraveyardedActions;
         setActionOptions(() => actions);
 
-        // push path if user enter action in url, ie: /log-action/plant-based-eating
+        // push path if user input action in url, ie: /log-action/plant-based-eating
         const a = window.location.pathname.split('/');
         const action = a[a.length - 1]
           .trim()
           .toLowerCase()
           .replaceAll(' ', '-');
         if (action === 'log-action') return;
+
+        // if the action is invalid, redirect back to /log-action
         const i = validOption(actions, action);
         if (i === -1) {
           nav('/log-action');
@@ -85,10 +87,10 @@ const SelfReportMenu = ({ user }) => {
         setLoading(() => false);
       }
     })();
-  }, [setActionOptions]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // resets the form everytime a new action is selected
-  // handles push path
+  // handles push path if when user manually selects an action
   useEffect(() => {
     if (selectedAction) {
       setActiveStep(1);
@@ -100,7 +102,7 @@ const SelfReportMenu = ({ user }) => {
     } else {
       setActiveStep(0);
     }
-  }, [selectedAction]);
+  }, [selectedAction]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDateChange = (newDate) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
