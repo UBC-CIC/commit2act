@@ -11,6 +11,7 @@ import {
   Step,
   StepLabel,
   MobileStepper,
+  CircularProgress,
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -39,6 +40,7 @@ const SelfReportMenu = ({ user }) => {
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
   const translation = useTranslation();
+  const nav = useNavigate();
 
   const steps = [
     translation.logActionStep1,
@@ -51,45 +53,54 @@ const SelfReportMenu = ({ user }) => {
   ];
 
   const [actionOptions, setActionOptions] = useState([]);
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} */
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async function () {
       try {
+        // fetch all options
         const res = await API.graphql({ query: getAllUngraveyardedActions });
         const actions = res.data.getAllUngraveyardedActions;
-        setActionOptions(actions);
-        console.log(actions);
+        setActionOptions(() => actions);
+
+        // push path if user enter action in url, ie: /log-action/plant-based-eating
+        const a = window.location.pathname.split('/');
+        const action = a[a.length - 1]
+          .trim()
+          .toLowerCase()
+          .replaceAll(' ', '-');
+        if (action === 'log-action') return;
+        const i = validOption(actions, action);
+        if (i === -1) {
+          nav('/log-action');
+          setSelectedAction(undefined);
+        } else {
+          nav(`/log-action/${action}`);
+          setActiveStep(() => 1);
+          setSelectedAction(() => actionOptions[i]);
+        }
       } catch (e) {
         console.error(e);
+      } finally {
+        setLoading(() => false);
       }
     })();
   }, [setActionOptions]);
 
-  //resets the form everytime a new action is selected
+  // resets the form everytime a new action is selected
+  // handles push path
   useEffect(() => {
     if (selectedAction) {
       setActiveStep(1);
+      const p = selectedAction.action_name
+        .trim()
+        .toLowerCase()
+        .replaceAll(' ', '-');
+      nav(`/log-action/${p}`);
     } else {
       setActiveStep(0);
     }
   }, [selectedAction]);
-
-  useEffect(() => {
-    console.log(actionItemValues);
-  }, [actionItemValues]);
-
-  // push path fixes
-  const nav = useNavigate();
-  useEffect(() => {
-    // parse url
-    const q = window.location.pathname.split('/');
-    const action = q[q.length - 1];
-    if (action === 'log-action') {
-      nav('/log-action');
-      setActiveStep(() => 0);
-      setTotalCO2Saved(0);
-      return;
-    }
-  }, [activeStep]); // eslint-disable-line
 
   const handleDateChange = (newDate) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
@@ -98,6 +109,7 @@ const SelfReportMenu = ({ user }) => {
   const renderFormStep = () => {
     return (
       <>
+        {loading ? <CircularProgress /> : <></>}
         {activeStep === 0 && (
           <AllActions
             setSelectedAction={setSelectedAction}
@@ -261,7 +273,12 @@ const SelfReportMenu = ({ user }) => {
           {![0, 3, 5, 6].includes(activeStep) && (
             <Button
               onClick={() => {
-                setActiveStep(activeStep - 1);
+                setActiveStep((s) => {
+                  if (s - 1 === 0) {
+                    nav('/log-action');
+                  }
+                  return s - 1;
+                });
               }}
               variant="contained"
               sx={{
@@ -301,3 +318,21 @@ const SelfReportMenu = ({ user }) => {
 };
 
 export default SelfReportMenu;
+
+/**
+ * @param {any[]} actionOptions
+ * @param {string} action
+ * @returns {number} index - action index
+ */
+function validOption(actionOptions, action) {
+  for (let i = 0; i < actionOptions.length; i++) {
+    const a = actionOptions[i];
+    /** @type {string} */
+    let name = a.action_name;
+    name = name.toLowerCase().trim().replaceAll(' ', '-');
+    if (name === action) {
+      return i;
+    }
+  }
+  return -1;
+}

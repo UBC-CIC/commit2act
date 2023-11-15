@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Box,
   Grid,
@@ -9,8 +9,6 @@ import {
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
-import { getAllUngraveyardedActions } from '../graphql/queries';
-import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,21 +35,9 @@ const StyledImageListItem = styled(ImageListItem)`
   }
 `;
 
-const AllActions = ({ setSelectedAction }) => {
-  const [actionOptions, setActionOptions] = useState();
+const AllActions = ({ setSelectedAction, actionOptions }) => {
   const displayDefaultMsg = actionOptions && actionOptions.length === 0;
-
-  useEffect(() => {
-    getActions();
-  }, []);
-
   const nav = useNavigate();
-
-  const getActions = async () => {
-    const res = await API.graphql({ query: getAllUngraveyardedActions });
-    const actions = res.data.getAllUngraveyardedActions;
-    setActionOptions(actions);
-  };
 
   /**
    * @param {number} actionIndex
