@@ -12,6 +12,8 @@ import ImageListItem, {
 import { getAllUngraveyardedActions } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
+import useTranslation from './customHooks/translations';
+import { useContentTranslationsContext } from './contexts/ContentTranslationsContext';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -40,15 +42,37 @@ const AllActions = ({ setSelectedAction }) => {
   const [actionOptions, setActionOptions] = useState();
   const displayDefaultMsg = actionOptions && actionOptions.length === 0;
 
+  const translation = useTranslation();
+  const { contentTranslations } = useContentTranslationsContext();
+
   useEffect(() => {
-    getActions();
-  }, []);
+    if (contentTranslations.length > 0) {
+      getActions();
+    }
+  }, [contentTranslations]);
 
   const getActions = async () => {
     const res = await API.graphql({ query: getAllUngraveyardedActions });
     const actions = res.data.getAllUngraveyardedActions;
-    setActionOptions(actions);
+    if (translation.getLanguage() != 'en') {
+      const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
+      const updatedActions = disassembleInto(actions, relevantTranslationObject?.translationJSON?.actions || []);
+      setActionOptions(updatedActions);
+    } else {
+      setActionOptions(actions);
+    }
   };
+
+  const disassembleInto = (actions, translatedActions) => {
+    return actions.map((action) => {
+      const translatedAction = translatedActions.find((translatedAction) => translatedAction.action_id === action.action_id);
+      console.log(translatedAction);
+      return {
+        ...action,
+        ...translatedAction
+      }
+    });
+  }
 
   return (
     <Grid
@@ -117,7 +141,7 @@ const AllActions = ({ setSelectedAction }) => {
                 ></Box>
               )}
               <StyledImageListItemBar
-                sx={{width: '100%'}}
+                sx={{ width: '100%' }}
                 title={action.action_name}
                 position="below"
               />
