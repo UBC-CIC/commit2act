@@ -66,7 +66,6 @@ const AllActions = ({ setSelectedAction }) => {
   const disassembleInto = (actions, translatedActions) => {
     return actions.map((action) => {
       const translatedAction = translatedActions.find((translatedAction) => translatedAction.action_id === action.action_id);
-      console.log(translatedAction);
       return {
         ...action,
         ...translatedAction
