@@ -60,7 +60,8 @@ const translations = {
   alertNewActionText: '¡Tienes {0} acciones para validar!',
   startValidating: 'Comenzar a validar',
   alertActionsPendingTitle: '{0} acciones pendientes de validación',
-  alertActionsPendingText: 'El impacto de sus acciones pendientes es {0} de CO2 ahorrado',
+  alertActionsPendingText:
+    'El impacto de sus acciones pendientes es {0} de CO2 ahorrado',
   recentProgress: 'Progreso reciente',
   logANewAction: 'Registrar una nueva acción',
   co2SavedWeek: 'CO2 ahorrado esta semana',
@@ -72,7 +73,8 @@ const translations = {
   globalUsers: 'Usuarios globales',
   totalCO2Saved: 'CO2 total ahorrado',
   weeklyCO2Saved: 'CO2 ahorrado semanalmente',
-  leaderboardDisplaying: 'Tabla de clasificación que muestra {tab} clasificada por ',
+  leaderboardDisplaying:
+    'Tabla de clasificación que muestra {tab} clasificada por ',
   rank: 'Rango',
   totalCO2: 'CO2 Total',
   totalPoints: 'Puntos Totales',
@@ -83,7 +85,8 @@ const translations = {
   weeklyCO2Colon: 'CO2 Semanal:',
   weeklyPointsColon: 'Puntos Semanales:',
   leaderboards: 'Tablas de clasificación',
-  noMyGroups: 'No hay grupos para mostrar. ¡Crea o únete a un grupo para comenzar!',
+  noMyGroups:
+    'No hay grupos para mostrar. ¡Crea o únete a un grupo para comenzar!',
   viewGroupStats: 'Ver estadísticas del grupo',
   myContributions: 'Mis contribuciones',
   myContribution: 'Mi Contribución',
@@ -124,8 +127,10 @@ const translations = {
   successUserNowRemoved: '{0} ha sido eliminado del grupo',
   demotionErrorTitle: 'Error de degradación',
   demotionErrorText: 'Los grupos deben tener al menos 1 propietario del grupo',
-  addMembersDescription: 'Agrega usuarios a este grupo enviándoles el enlace de tu grupo',
-  addMembersDescriptionPassword: 'Agrega usuarios a este grupo enviándoles el enlace y la contraseña de tu grupo',
+  addMembersDescription:
+    'Agrega usuarios a este grupo enviándoles el enlace de tu grupo',
+  addMembersDescriptionPassword:
+    'Agrega usuarios a este grupo enviándoles el enlace y la contraseña de tu grupo',
   groupLinkLabel: 'Tu enlace de grupo es:',
   groupPasswordLabel: 'Tu contraseña de grupo es:',
   linkCopied: '¡Enlace copiado!',
@@ -151,17 +156,23 @@ const translations = {
   deleteGroupPrompt: 'Eliminar {0}',
   deletePrompAlert: 'Esto es irreversible',
   logout: 'Cerrar sesión',
-  leaveGroupLastMemberWarning: 'Este grupo se eliminará ya que no habrá más miembros en el grupo.',
-  promoteOtherUserBeforeLeavingGroup: 'Debes promover a otro usuario a propietario del grupo antes de dejar el grupo.',
+  leaveGroupLastMemberWarning:
+    'Este grupo se eliminará ya que no habrá más miembros en el grupo.',
+  promoteOtherUserBeforeLeavingGroup:
+    'Debes promover a otro usuario a propietario del grupo antes de dejar el grupo.',
   removeGroupOwner: 'Eliminar propietario de grupo',
-  promoteOtherUserBeforeRemovingUser: 'Debes promover a otro usuario a propietario del grupo antes de eliminar a este usuario.',
+  promoteOtherUserBeforeRemovingUser:
+    'Debes promover a otro usuario a propietario del grupo antes de eliminar a este usuario.',
   leftGroup: '¡Has abandonado el grupo!',
   joinGroupAlreadyMember: '¡Ya eres miembro de este grupo!',
   joinGroupTitle: 'Has sido invitado a unirte a {0}',
-  successRedirectProfilePage: '¡Éxito! Redirigiendo a la página de perfil de {0}',
+  successRedirectProfilePage:
+    '¡Éxito! Redirigiendo a la página de perfil de {0}',
   joinGroupConfirm: 'Confirma seleccionando Unirse.',
-  joinGroupSelectCancel: 'Seleccione Cancelar para ser redirigido a la página del grupo.',
-  joinGroupEnterPassword: 'Para unirte a este grupo, ingresa la contraseña del grupo y selecciona Unirse.',
+  joinGroupSelectCancel:
+    'Seleccione Cancelar para ser redirigido a la página del grupo.',
+  joinGroupEnterPassword:
+    'Para unirte a este grupo, ingresa la contraseña del grupo y selecciona Unirse.',
   incorrectPassword: 'Contraseña incorrecta',
   logAction: 'Registrar Acción',
   dashboard: 'Panel',
@@ -174,15 +185,15 @@ const translations = {
   logActionStep1: 'Seleccionar Acción',
   logActionStep2: 'Seleccionar Fechas',
   logActionStep3: 'Datos de la Acción',
-  logActionStep4: 'Elementos de la Acción',
-  logActionStep5: 'Validación',
-  logActionStep6: 'Pregunta Extra',
-  logActionStep7: 'CO2 Ahorrado',
+  logActionStep4: 'Validación',
+  logActionStep5: 'Pregunta Extra',
+  logActionStep6: 'CO2 Ahorrado',
   next: 'Siguiente',
   previous: 'Anterior',
   chooseDate: 'Elegir Fecha',
   mustBeNumber: 'El valor debe ser un número decimal mayor que 0',
-  imageValidationText: 'Por favor sube una imagen relacionada con el elemento de tu acción para su verificación',
+  imageValidationText:
+    'Por favor sube una imagen relacionada con el elemento de tu acción para su verificación',
   imageValidationDimensions: 'Dimensiones mínimas 100x100 px',
   imageValidationError: 'Esto no es un archivo de imagen',
   imageValidationSelected: '¡Imagen Seleccionada!',
@@ -195,6 +206,7 @@ const translations = {
   bonusQuizChoicesLabel: 'Opciones de respuesta',
   bonusQuizSubmit: 'Enviar Quiz',
   bonusQuizSkip: 'Saltar Quiz',
+  bonusQuiz: 'Extra Quiz',
   correct: 'Correcto!',
   incorrect: 'Incorrecto!',
   finish: 'Finalizar',
@@ -202,11 +214,13 @@ const translations = {
   co2SavedScreenState: 'Tu acción está siendo actualmente',
   submitted: 'enviada',
   validated: 'validada',
-  co2SavedScreenSkip: 'Presiona saltar para ver los resultados de validación en otro momento',
+  co2SavedScreenSkip:
+    'Presiona saltar para ver los resultados de validación en otro momento',
   thankYou: '¡Gracias!',
   co2SavedScreenValidated: 'Tu acción ha sido validada',
   co2SavedScreenSaved: 'Has ahorrado {0} g de CO2',
-  co2SavedScreenApproval: 'Tu acción está pendiente de aprobación del administrador',
+  co2SavedScreenApproval:
+    'Tu acción está pendiente de aprobación del administrador',
   co2SavedScreenImpact: 'El impacto de tu acción es {0} g de CO2 ahorrado',
   co2SavedScreenAnother: 'Agregar Otra Acción',
   createGroupTitle: 'Crear nuevo grupo',
@@ -236,18 +250,23 @@ const translations = {
   savePassword: 'Guardar contraseña',
   toggleCurrentPassword: 'alternar visibilidad de la contraseña actual',
   toggleNewPassword: 'alternar visibilidad de la nueva contraseña',
-  toggleConfirmNewPassword: 'alternar visibilidad de la confirmación de la nueva contraseña',
+  toggleConfirmNewPassword:
+    'alternar visibilidad de la confirmación de la nueva contraseña',
   findGroupTitle: 'Buscar grupo',
-  findGroupDescription: 'Ingresa el nombre del grupo para buscar grupos públicos',
-  findGroupErrorSearch: 'Tu búsqueda de "{0}" no coincide con ningún grupo público',
-  findGroupTopGroups: 'Estos son los 5 grupos públicos más populares a los que podrías unirte',
+  findGroupDescription:
+    'Ingresa el nombre del grupo para buscar grupos públicos',
+  findGroupErrorSearch:
+    'Tu búsqueda de "{0}" no coincide con ningún grupo público',
+  findGroupTopGroups:
+    'Estos son los 5 grupos públicos más populares a los que podrías unirte',
   searchResults: 'Resultados de búsqueda',
   validateActionsUsersWithoutGroupsTab: 'Usuarios sin grupo',
   validateActionsAllUnvalidatedActionsTab: 'Todas las acciones sin validar',
   searchByC: 'Buscar por:',
   actionName: 'Nombre de la acción',
   search: 'Buscar',
-  groupNameSearchEmptySearch: 'Tu búsqueda de "{0}" no coincide con ningún grupo que posees',
+  groupNameSearchEmptySearch:
+    'Tu búsqueda de "{0}" no coincide con ningún grupo que posees',
   groupNameSearchNoGroups: 'Actualmente no posees ningún grupo',
   filteringBy: 'Filtrando por:',
   sortingBy: 'Ordenar por',
@@ -255,7 +274,8 @@ const translations = {
   groupNameSearchAllFilter: 'Todos mis grupos',
   validateActionsNoActions: 'No hay acciones que necesiten validación',
   actionNameSearchAllFilter: 'Todos los tipos de acciones',
-  actionNameSearchEmptySearch: 'Tu búsqueda de "{0}" no coincide con ningún nombre de tipo de acción',
+  actionNameSearchEmptySearch:
+    'Tu búsqueda de "{0}" no coincide con ningún nombre de tipo de acción',
   actionNameSearchNoActions: 'Actualmente no hay tipos de acciones',
   submittedInC: 'Enviado en:',
   accept: 'Aceptar',
@@ -267,8 +287,10 @@ const translations = {
   actionsSubmittedFilter: 'Acciones enviadas durante los últimos {0}',
   allTimeStats: 'Estadísticas de Todos los Tiempos',
   totalActionsSubmitted: 'Número Total de Acciones Enviadas',
-  actionsFirstAnswerCorrect: 'Acciones con la Primera Respuesta Correcta en el Quiz',
-  actionsFirstAnswerIncorrect: 'Acciones con la Primera Respuesta Incorrecta en el Quiz',
+  actionsFirstAnswerCorrect:
+    'Acciones con la Primera Respuesta Correcta en el Quiz',
+  actionsFirstAnswerIncorrect:
+    'Acciones con la Primera Respuesta Incorrecta en el Quiz',
   actionsSubmittedWithImage: 'Acciones Enviadas con Imagen',
   actionsSubmittedWithoutImage: 'Acciones Enviadas sin Imagen',
   numberActionsSubmittedWithImage: 'Número de Acciones Enviadas con Imagen',
@@ -285,6 +307,8 @@ const translations = {
   oneYear: 'Año',
   co2SavedDuring: 'CO2 Ahorrado durante los últimos {0}',
   userNoteGroupOwner: ' (el dueño)',
+  totalGramsSavedCO2PerDayAllActions:
+    'Total de Gramos de CO2 Ahorrados por Día Para Todas las Acciones',
 };
 
 export default translations;

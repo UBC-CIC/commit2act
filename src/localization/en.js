@@ -58,7 +58,8 @@ const translations = {
   alertNewActionText: 'You have {0} actions to validate!',
   startValidating: 'Start Validating',
   alertActionsPendingTitle: '{0} Actions Pending Validation',
-  alertActionsPendingText: 'The impact of your pending actions is {0} of CO2 saved',
+  alertActionsPendingText:
+    'The impact of your pending actions is {0} of CO2 saved',
   recentProgress: 'Recent Progress',
   logANewAction: 'Log A New Action',
   co2SavedWeek: 'CO2 Saved This Week',
@@ -122,8 +123,10 @@ const translations = {
   successUserNowRemoved: '{0} has been removed from the group',
   demotionErrorTitle: 'Demotion Error',
   demotionErrorText: 'Groups must have at least 1 group owner',
-  addMembersDescription: 'Add users to this group by sending them your group link',
-  addMembersDescriptionPassword: 'Add users to this group by sending them your group link and password',
+  addMembersDescription:
+    'Add users to this group by sending them your group link',
+  addMembersDescriptionPassword:
+    'Add users to this group by sending them your group link and password',
   groupLinkLabel: 'Your Group Link is:',
   groupPasswordLabel: 'Your Group Password is:',
   linkCopied: 'Link Copied!',
@@ -149,17 +152,21 @@ const translations = {
   deleteGroupPrompt: 'Delete {0}',
   deletePrompAlert: 'This is irreversible',
   logout: 'Logout',
-  leaveGroupLastMemberWarning: 'This group will be deleted since there will be no group members.',
-  promoteOtherUserBeforeLeavingGroup: 'You must promote another user to group owner before leaving the group.',
+  leaveGroupLastMemberWarning:
+    'This group will be deleted since there will be no group members.',
+  promoteOtherUserBeforeLeavingGroup:
+    'You must promote another user to group owner before leaving the group.',
   removeGroupOwner: 'Remove Group Owner',
-  promoteOtherUserBeforeRemovingUser: 'You must promote another user to group owner before removing this user.',
+  promoteOtherUserBeforeRemovingUser:
+    'You must promote another user to group owner before removing this user.',
   leftGroup: 'You have left the the group!',
   joinGroupAlreadyMember: 'You are already a member of this group!',
   joinGroupTitle: 'You have been invited to join {0}',
   successRedirectProfilePage: "Success! Redirecting to {0}'s profile page",
   joinGroupConfirm: 'Please confirm by selecting Join.',
   joinGroupSelectCancel: 'Select Cancel to be redirected to the group page.',
-  joinGroupEnterPassword: 'To join this group, please enter the group password and select Join.',
+  joinGroupEnterPassword:
+    'To join this group, please enter the group password and select Join.',
   incorrectPassword: 'Incorrect Password',
   logAction: 'Log Action',
   dashboard: 'Dashboard',
@@ -172,15 +179,15 @@ const translations = {
   logActionStep1: 'Select Action',
   logActionStep2: 'Select Dates',
   logActionStep3: 'Action Fact',
-  logActionStep4: 'Action Items',
-  logActionStep5: 'Validation',
-  logActionStep6: 'Bonus Question',
-  logActionStep7: 'CO2 Saved',
+  logActionStep4: 'Validation',
+  logActionStep5: 'Bonus Question',
+  logActionStep6: 'CO2 Saved',
   next: 'Next',
   previous: 'Previous',
   chooseDate: 'Choose Date',
   mustBeNumber: 'Input must be a number or decimal greater than 0',
-  imageValidationText: 'Please upload an image related to your action item for verification',
+  imageValidationText:
+    'Please upload an image related to your action item for verification',
   imageValidationDimensions: 'Minimum dimensions 100x100 px',
   imageValidationError: 'This Is Not An Image File',
   imageValidationSelected: 'Image Selected!',
@@ -193,6 +200,7 @@ const translations = {
   bonusQuizChoicesLabel: 'Answer Choices',
   bonusQuizSubmit: 'Submit Quiz',
   bonusQuizSkip: 'Skip Quiz',
+  bonusQuiz: 'Bonus Quiz',
   correct: 'Correct!',
   incorrect: 'Incorrect!',
   finish: 'Finish',
@@ -238,14 +246,16 @@ const translations = {
   findGroupTitle: 'Search For A Group',
   findGroupDescription: 'Enter the group name of any public group',
   findGroupErrorSearch: 'Your search for "{0}" did not match any public groups',
-  findGroupTopGroups: 'Here are the top 5 public groups who you may want to be a part of',
+  findGroupTopGroups:
+    'Here are the top 5 public groups who you may want to be a part of',
   searchResults: 'Search results',
   validateActionsUsersWithoutGroupsTab: 'Users Without Groups',
   validateActionsAllUnvalidatedActionsTab: 'All Unvalidated Actions',
   searchByC: 'Search By:',
   actionName: 'Action Name',
   search: 'Search',
-  groupNameSearchEmptySearch: 'Your search for "{0}" did not match any of your groups',
+  groupNameSearchEmptySearch:
+    'Your search for "{0}" did not match any of your groups',
   groupNameSearchNoGroups: 'You currently do not own any groups',
   filteringBy: 'Filtering By:',
   currentFilter: 'Current filter',
@@ -255,7 +265,8 @@ const translations = {
   groupNameSearchAllFilter: 'All My Groups',
   validateActionsNoActions: 'There are no actions in need of validation',
   actionNameSearchAllFilter: 'All Action Types',
-  actionNameSearchEmptySearch: 'Your search for "{0}" did not match any action type names',
+  actionNameSearchEmptySearch:
+    'Your search for "{0}" did not match any action type names',
   actionNameSearchNoActions: 'There are currently no action types',
   submittedInC: 'Submitted in:',
   accept: 'Accept',
@@ -273,7 +284,8 @@ const translations = {
   actionsSubmittedWithImage: 'Actions Submitted With Image',
   actionsSubmittedWithoutImage: 'Actions Submitted Without Image',
   numberActionsSubmittedWithImage: 'Number of Actions Submitted With Image',
-  numberActionsSubmittedWithoutImage: 'Number of Actions Submitted Without Image',
+  numberActionsSubmittedWithoutImage:
+    'Number of Actions Submitted Without Image',
   date: 'Date',
   gramsCO2Saved: 'Grams CO2 Saved',
   applyFilter: 'Apply Filter',
@@ -286,6 +298,8 @@ const translations = {
   oneYear: 'Year',
   co2SavedDuring: 'CO2 Saved during the past {0}',
   userNoteGroupOwner: ' (Owner)',
+  totalGramsSavedCO2PerDayAllActions:
+    'Total Grams of CO2 Saved Per Day For All Actions',
 };
 
 export default translations;

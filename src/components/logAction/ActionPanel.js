@@ -14,6 +14,7 @@ const ActionPanel = ({
   setTotalCO2Saved,
   activeStep,
   setActiveStep,
+  showActionButtons = true,
 }) => {
   const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
@@ -31,8 +32,15 @@ const ActionPanel = ({
   //gets all action items related to the user selected action
   const getActionItems = async () => {
     if (translation.getLanguage() !== 'en') {
-      const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
-      const relevantAction = relevantTranslationObject?.translationJSON?.actions?.find((action) => action.action_id === selectedAction.action_id);
+      const relevantTranslationObject = contentTranslations.find(
+        (contentTranslation) =>
+          contentTranslation.langCode.toLowerCase() ===
+          translation.getLanguage().toLowerCase()
+      );
+      const relevantAction =
+        relevantTranslationObject?.translationJSON?.actions?.find(
+          (action) => action.action_id === selectedAction.action_id
+        );
       setActionItems(relevantAction?.action_items || []);
       return;
     }
@@ -72,10 +80,10 @@ const ActionPanel = ({
       let updatedItemValues = actionItemValues.map((itemValue) =>
         itemValue.item_name === item.item_name
           ? {
-            ...itemValue,
-            input_value: value,
-            co2: value * item.co2_saved_per_unit,
-          }
+              ...itemValue,
+              input_value: value,
+              co2: value * item.co2_saved_per_unit,
+            }
           : itemValue
       );
       setActionItemValues(updatedItemValues);
@@ -137,50 +145,51 @@ const ActionPanel = ({
           width: '80%',
         }}
       >
-  
         {inputError && (
           <Typography variant="subtitle2">
             {translation.mustBeNumber}
           </Typography>
         )}
         {renderActionForm()}
-        <Box
-          component="div"
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            m: '0 0 1.25em',
-            flexDirection: { xs: 'row' },
-            gap: { xs: '10px', md: '10px' }
-          }}
-        >
-          <Button
-            onClick={() => {
-              setActiveStep(activeStep - 1);
-            }}
-            variant="contained"
+        {showActionButtons ? (
+          <Box
+            component="div"
             sx={{
-              width: '50%',
-              padding: '1em 1em 1em',
-              fontSize: '1.2rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              m: '0 0 1.25em',
+              flexDirection: { xs: 'row' },
+              gap: { xs: '10px', md: '10px' },
             }}
           >
-            {translation.previous}
-          </Button>
-          <Button
-            onClick={calculateCO2}
-            variant="contained"
-            disabled={disableButton}
-            sx={{
-              width: '50%',
-              padding: '1em 1em 1em',
-              fontSize: '1.2rem',
-            }}
-          >
-            {translation.next}
-          </Button>
-        </Box>
+            <Button
+              onClick={() => {
+                setActiveStep(activeStep - 1);
+              }}
+              variant="contained"
+              sx={{
+                width: '50%',
+                padding: '1em 1em 1em',
+                fontSize: '1.2rem',
+              }}
+            >
+              {translation.previous}
+            </Button>
+            <Button
+              onClick={calculateCO2}
+              variant="contained"
+              disabled={disableButton}
+              sx={{
+                width: '50%',
+                padding: '1em 1em 1em',
+                fontSize: '1.2rem',
+              }}
+            >
+              {translation.next}
+            </Button>
+          </Box>
+        ) : null}
       </Box>
     </Grid>
   );
