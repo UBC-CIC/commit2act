@@ -28,7 +28,7 @@ import useTranslation from '../components/customHooks/translations';
 
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), 'yyyy-MM-dd'),
+    format(new Date(), 'yyyy-MM-dd')
   );
   const [selectedAction, setSelectedAction] = useState();
   const [activeStep, setActiveStep] = useState(0);
@@ -79,7 +79,7 @@ const SelfReportMenu = ({ user }) => {
         } else {
           nav(`/log-action/${action}`);
           setActiveStep(() => 1);
-          setSelectedAction(() => actionOptions[i]);
+          setSelectedAction(() => actions[i]);
         }
       } catch (e) {
         console.error(e);
