@@ -648,6 +648,7 @@ function Login(props) {
                   name={'password'}
                   type={'password'}
                   onChange={onChange}
+                  value={formState.password}
                   label={translation.password}
                   className={classes.textFieldStyle}
                 />
@@ -785,6 +786,7 @@ function Login(props) {
                     !!verificationError && translation.enterCorrectResetCode
                   }
                   onChange={onChange}
+                  value={formState.resetCode}
                 />
                 <TextFieldStartAdornment
                   startIcon={<Lock />}
@@ -795,6 +797,7 @@ function Login(props) {
                   helperText={translation.passwordSettings}
                   autoComplete={'new-password'}
                   onChange={onChangePassword}
+                  value={formState.password}
                   className={classes.textFieldStyle}
                 />
                 <Grid
@@ -846,6 +849,7 @@ function Login(props) {
                   type="text"
                   autoComplete={'new-password'}
                   onChange={onChange}
+                  value={formState.name}
                   className={classes.textFieldStyle}
                 />
                 <TextFieldStartAdornment
@@ -871,6 +875,7 @@ function Login(props) {
                     (!!invalidEmailError && translation.validEmail)
                   }
                   onChange={onChange}
+                  value={formState.email}
                 />
                 <TextFieldStartAdornment
                   startIcon={<Lock />}
@@ -881,6 +886,7 @@ function Login(props) {
                   helperText={translation.passwordSettings}
                   autoComplete={'new-password'}
                   onChange={onChangePassword}
+                  value={formState.password}
                   className={classes.textFieldStyle}
                 />
                 <Grid
@@ -905,6 +911,7 @@ function Login(props) {
                   autoComplete={'new-password'}
                   value={confirmPasswordString}
                   className={classes.textFieldStyle}
+                  value={confirmPasswordString}
                   onChange={(e) => {
                     setConfirmPasswordString(e.target.value); // update current input state
                     // check if "password" is the same as "confirm-password"
@@ -949,6 +956,7 @@ function Login(props) {
                     type="text"
                     autoComplete={'new-password'}
                     onChange={onChange}
+                    value={formState.authCode}
                     className={classes.textFieldStyle}
                   />
                 </Grid>
@@ -990,6 +998,7 @@ function Login(props) {
                     error={newPasswordError || emptyInputError}
                     helperText={translation.passwordSettings}
                     onChange={onChangePassword}
+                    value={formState.password}
                     className={classes.textFieldStyle}
                   />
                   <Grid
