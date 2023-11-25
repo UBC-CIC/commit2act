@@ -139,7 +139,7 @@ const useStyles = makeStyles()((theme) => {
   };
 });
 
-function Login (props) {
+function Login(props) {
   const {
     loginState,
     updateLoginState,
@@ -192,7 +192,7 @@ function Login (props) {
   const { classes } = useStyles();
 
   useEffect(() => {
-    async function retrieveUser () {
+    async function retrieveUser() {
       try {
         Auth.currentAuthenticatedUser()
           .then((user) => {
@@ -201,13 +201,13 @@ function Login (props) {
           .catch((err) => {
             updateLoginState('signIn');
           });
-      } catch (e) { }
+      } catch (e) {}
     }
     retrieveUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function clearErrors () {
+  function clearErrors() {
     setAccountCreationEmailExistError(false);
     setAccountCreationPasswordError(false);
     setAccountLoginError(false);
@@ -217,14 +217,14 @@ function Login (props) {
     setInvalidEmailError(false);
   }
 
-  function onChange (e) {
+  function onChange(e) {
     e.persist();
     clearErrors();
 
     updateFormState({ ...formState, [e.target.name]: e.target.value });
   }
 
-  function onChangePassword (e) {
+  function onChangePassword(e) {
     const currPW = e.target.value;
     setPasswordRequirements(() => {
       passwordRequirements.uppercase.error = /[A-Z]/.test(currPW);
@@ -245,7 +245,7 @@ function Login (props) {
       : setPasswordUnmatchError(true);
   }
 
-  async function signUp () {
+  async function signUp() {
     try {
       // check if both passwords match first before signing up
       checkMatchingPasswords();
@@ -294,7 +294,7 @@ function Login (props) {
   }
 
   // confirmSignUp shows after signUp page
-  async function confirmSignUp () {
+  async function confirmSignUp() {
     // Verify Account with confirmation code after sign up page
     try {
       setNewVerification(false);
@@ -316,7 +316,7 @@ function Login (props) {
     }
   }
 
-  async function resendConfirmationCode () {
+  async function resendConfirmationCode() {
     try {
       const { email } = formState;
       setVerificationError(false);
@@ -332,7 +332,7 @@ function Login (props) {
     }
   }
 
-  async function signInGoogle () {
+  async function signInGoogle() {
     try {
       setGLoading(true);
       await Auth.federatedSignIn({ provider: 'Google' });
@@ -343,7 +343,7 @@ function Login (props) {
     }
   }
 
-  async function signInFacebook () {
+  async function signInFacebook() {
     try {
       setFbLoading(true);
       await Auth.federatedSignIn({ provider: 'Facebook' });
@@ -354,7 +354,7 @@ function Login (props) {
     }
   }
 
-  async function signIn () {
+  async function signIn() {
     try {
       setLoading(true);
       const { email, password } = formState;
@@ -386,7 +386,7 @@ function Login (props) {
     }
   }
 
-  async function setNewPassword () {
+  async function setNewPassword() {
     try {
       // check if both passwords match first before setting new password
       checkMatchingPasswords();
@@ -413,7 +413,7 @@ function Login (props) {
     }
   }
 
-  async function forgotPassword () {
+  async function forgotPassword() {
     try {
       const { email } = formState;
       setLoading(true);
@@ -428,7 +428,7 @@ function Login (props) {
   }
 
   // resetPassword after forgotPassword page
-  async function resetPassword () {
+  async function resetPassword() {
     try {
       // check if both passwords match first before resetting password
       checkMatchingPasswords();
@@ -458,7 +458,7 @@ function Login (props) {
     }
   }
 
-  function checkMatchingPasswords () {
+  function checkMatchingPasswords() {
     // check if both passwords match
     if (!confirmPasswordString) {
       // empty field
@@ -468,14 +468,14 @@ function Login (props) {
     }
   }
 
-  function checkEmptyString (str) {
+  function checkEmptyString(str) {
     // check if string is empty after space trimmed
     if (str.replace(/\s+/g, '') === '') {
       throw new Error('empty');
     }
   }
 
-  function resetStates (state) {
+  function resetStates(state) {
     // clear states when hitting the back button
     updateFormState(() => initialFormState);
     clearErrors();
@@ -502,6 +502,16 @@ function Login (props) {
     updateLoginState(state);
   }
 
+  // set email if redirected from landing page
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const email = url.searchParams.get('email');
+    if (!email) {
+      return;
+    }
+    updateFormState((p) => ({ ...p, email }));
+  }, []);
+
   return (
     <>
       {/*  An example image is provided. Please use a royalty-free photo, a photo owned by you, or a photo owned by the CIC */}
@@ -512,21 +522,21 @@ function Login (props) {
           type === 'image'
             ? themeColor === 'standard'
               ? {
-                backgroundColor: '#012144',
-                backgroundImage: 'url(./assets/images/login-background.jpg)',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no',
-                width: '100%',
-                height: '100vh',
-              }
+                  backgroundColor: '#012144',
+                  backgroundImage: 'url(./assets/images/login-background.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundRepeat: 'no',
+                  width: '100%',
+                  height: '100vh',
+                }
               : {
-                backgroundColor: themeColor,
-                backgroundImage: 'url(./assets/images/login-background.jpg)',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no',
-                width: '100%',
-                height: '100vh',
-              }
+                  backgroundColor: themeColor,
+                  backgroundImage: 'url(./assets/images/login-background.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundRepeat: 'no',
+                  width: '100%',
+                  height: '100vh',
+                }
             : themeColor === 'standard'
               ? { backgroundColor: '#012144', width: '100%', height: '100vh' }
               : { backgroundColor: themeColor, width: '100%', height: '100vh' }
@@ -558,14 +568,15 @@ function Login (props) {
           >
             <Grid xs item className={`typewriter ${classes.marginHorizontal}`}>
               <p
-                className={`${classes.textAlignCenter} ${animateTitle
-                  ? darkMode
-                    ? 'line anim-typewriter'
-                    : 'line anim-typewriter-light lightMode'
-                  : darkMode
-                    ? 'line-static'
-                    : 'line-static lightMode-static'
-                  }`}
+                className={`${classes.textAlignCenter} ${
+                  animateTitle
+                    ? darkMode
+                      ? 'line anim-typewriter'
+                      : 'line anim-typewriter-light lightMode'
+                    : darkMode
+                      ? 'line-static'
+                      : 'line-static lightMode-static'
+                }`}
               >
                 {title}
               </p>
@@ -627,6 +638,7 @@ function Login (props) {
                   name={'email'}
                   type={'email'}
                   onChange={onChange}
+                  value={formState.email}
                   label={translation.email}
                   className={classes.textFieldStyle}
                 />
@@ -667,8 +679,7 @@ function Login (props) {
                     loadingState={gLoading}
                   />
                 </Grid>
-                {/* <Grid className={`input-box`} style={{ marginTop: '0px' }}> */}
-                {' '}
+                {/* <Grid className={`input-box`} style={{ marginTop: '0px' }}> */}{' '}
                 {/* sign in button */}
                 {/* <FacebookSubmitButtonWithLoading
                     submitAction={signInFacebook}
