@@ -477,7 +477,7 @@ function Login(props) {
 
   function resetStates(state) {
     // clear states when hitting the back button
-    updateFormState(() => initialFormState);
+    updateFormState((p) => ({ ...initialFormState, email: p.email }));
     clearErrors();
 
     // the following were not removed during onChange() so need to be cleared here
