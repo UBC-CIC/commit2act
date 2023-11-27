@@ -4,10 +4,10 @@ import {
   DialogTitle,
   DialogContent,
   List,
-  ListItem,
   ListItemIcon,
   ListItemText,
   IconButton,
+  ListItemButton,
 } from '@mui/material';
 import {
   AccountCircle,
@@ -137,26 +137,26 @@ const GroupMemberDialog = ({
       (currentUserOwner || userType === 'Admin') && (
         <>
           {selectedMember.user_role === 'member' ? (
-            <ListItem autoFocus button onClick={promoteUser}>
+            <ListItemButton onClick={promoteUser}>
               <ListItemIcon>
                 <PersonAddAlt1 />
               </ListItemIcon>
               <ListItemText>{translation.promoteUserToOwner}</ListItemText>
-            </ListItem>
+            </ListItemButton>
           ) : (
-            <ListItem autoFocus button onClick={demoteOwner}>
+            <ListItemButton onClick={demoteOwner}>
               <ListItemIcon>
                 <PersonRemove />
               </ListItemIcon>
               <ListItemText>{translation.demoteUserToMember}</ListItemText>
-            </ListItem>
+            </ListItemButton>
           )}
-          <ListItem autoFocus button onClick={removeUser}>
+          <ListItemButton onClick={removeUser}>
             <ListItemIcon>
               <GroupRemove />
             </ListItemIcon>
             <ListItemText>{translation.removeUserFromGroup}</ListItemText>
-          </ListItem>
+          </ListItemButton>
         </>
       )
     );
@@ -195,9 +195,8 @@ const GroupMemberDialog = ({
                   selectedMember.user_role.slice(1)}
               </DialogContent>
               <List sx={{ pt: '1em', pb: '2em' }}>
-                <ListItem
+                <ListItemButton
                   autoFocus
-                  button
                   onClick={() =>
                     setDialogDisplay({
                       ...dialogDisplay,
@@ -209,7 +208,7 @@ const GroupMemberDialog = ({
                     <ExitToApp />
                   </ListItemIcon>
                   <ListItemText>{translation.leaveGroup}</ListItemText>
-                </ListItem>
+                </ListItemButton>
               </List>
             </>
           ) : (
@@ -223,9 +222,8 @@ const GroupMemberDialog = ({
                     selectedMember.user_role.slice(1)}
                 </DialogContent>
                 <List sx={{ pt: '1em', pb: '2em' }}>
-                  <ListItem
+                  <ListItemButton
                     autoFocus
-                    button
                     onClick={() =>
                       navigate(`/user-profile/${selectedMember.user_id}`)
                     }
@@ -234,7 +232,7 @@ const GroupMemberDialog = ({
                       <AccountCircle />
                     </ListItemIcon>
                     <ListItemText>{translation.viewUserProfile}</ListItemText>
-                  </ListItem>
+                  </ListItemButton>
                   {renderOwnerAdminView()}
                 </List>
               </>
