@@ -6,6 +6,7 @@ import {
   createSubmittedActionItems,
 } from '../../graphql/mutations';
 import { getSingleSubmittedAction } from '../../graphql/queries';
+import ActionButtons from './ActionButtons';
 
 import useTranslation from '../customHooks/translations';
 
@@ -24,6 +25,7 @@ const CO2SavedScreen = ({
   setSelectedAction,
   selectedImage,
   setSelectedImage,
+  activeStep,
 }) => {
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
@@ -98,77 +100,102 @@ const CO2SavedScreen = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-        minHeight: '20vh',
-        alignItems: 'center',
-      }}
-    >
-      {/* display while image validation and action submission are occuring */}
-      {loading && (
-        <>
-          <Typography variant="h3">
-            {translation.co2SavedScreenState}{' '}
-            {actionSubmitting ? translation.submitted : translation.validated}
-          </Typography>
-          {!actionSubmitting && (
-            <Typography variant="subtitle2">
-              {translation.skip}
+    <>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          minHeight: '20vh',
+          alignItems: 'center',
+        }}
+      >
+        {/* display while image validation and action submission are occuring */}
+        {loading && (
+          <>
+            <Typography variant="h3">
+              {translation.co2SavedScreenState}{' '}
+              {actionSubmitting ? translation.submitted : translation.validated}
             </Typography>
-          )}
-          <CircularProgress sx={{ mt: '1em', color: actionStyle.color }} />
-        </>
-      )}
-      {/* display after image validation and action submission have completed */}
-      {!loading && (
-        <>
-          <Typography variant="h2" sx={{fontWeight: '700', fontSize: '1em'}}>Thank you!</Typography>
-          {validationSuccess ? (
-            <Box>
-              <Typography variant="h3">
-                {translation.co2SavedScreenValidated}
-              </Typography>
-              <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
-			  {translation.formatString(translation.co2SavedScreenSaved, totalCO2Saved)}
-              </Typography>
-            </Box>
-          ) : (
-            <Box>
-              <Typography variant="h3" component="p">
-                {translation.co2SavedScreenApproval}
-              </Typography>
-              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: actionStyle.color }}>
-                {translation.formatString(translation.co2SavedScreenImpact, totalCO2Saved)}
-              </Typography>
-            </Box>
-          )}
-        </>
-      )}
-      {/* display Skip if action has finished submitting but not validating
+            {!actionSubmitting && (
+              <Typography variant="subtitle2">{translation.skip}</Typography>
+            )}
+            <CircularProgress sx={{ mt: '1em' }} />
+          </>
+        )}
+        {/* display after image validation and action submission have completed */}
+        {!loading && (
+          <>
+            <Typography
+              variant="h2"
+              sx={{ fontWeight: '700', fontSize: '1em' }}
+            >
+              Thank you!
+            </Typography>
+            {validationSuccess ? (
+              <Box>
+                <Typography variant="h3">
+                  {translation.co2SavedScreenValidated}
+                </Typography>
+                <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
+                  {translation.formatString(
+                    translation.co2SavedScreenSaved,
+                    totalCO2Saved
+                  )}
+                </Typography>
+              </Box>
+            ) : (
+              <Box>
+                <Typography variant="h3" component="p">
+                  {translation.co2SavedScreenApproval}
+                </Typography>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    mt: '1.5em',
+                    fontSize: '1em',
+                    marginBottom: '1.3em',
+                    color: '#34b198',
+                  }}
+                >
+                  {translation.formatString(
+                    translation.co2SavedScreenImpact,
+                    totalCO2Saved
+                  )}
+                </Typography>
+              </Box>
+            )}
+          </>
+        )}
+        {/* display Skip if action has finished submitting but not validating
       display Add Another Action if action submission and validation are complete*/}
-      {((loading && !actionSubmitting) || !loading) && (
-        <Button
-          onClick={() => {
-            setActiveStep(0);
-            setSelectedAction(null);
-            setActionItemValues([]);
-            setSelectedImage(null);
-          }}
-          sx={{
-            width: '80%',
-            maxWidth: '300px',
-            padding: '1em 1em 1.3em',
-            fontSize: '1.2rem',
-          }}
-          variant="contained"
-        >
-          {!loading ? translation.co2SavedScreenAnother : 'Skip'}
-        </Button>
-      )}
-    </Box>
+        {/* {((loading && !actionSubmitting) || !loading) && (
+          <Button
+            onClick={() => {
+              setActiveStep(0);
+              setSelectedAction(null);
+              setActionItemValues([]);
+              setSelectedImage(null);
+            }}
+            sx={{
+              width: '80%',
+              maxWidth: '300px',
+              padding: '1em 1em 1.3em',
+              fontSize: '1.2rem',
+            }}
+            variant="contained"
+          >
+            {!loading ? translation.co2SavedScreenAnother : 'Skip'}
+          </Button>
+        )} */}
+      </Box>
+      <ActionButtons
+        forwardOnClick={() => setActiveStep(activeStep + 1)}
+        backOnClick={() => setActiveStep(activeStep - 1)}
+        forwardText="Bonus Quiz"
+        backText="Skip"
+      />
+    </>
   );
 };
 

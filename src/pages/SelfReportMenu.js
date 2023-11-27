@@ -18,6 +18,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format, parseISO } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
 import ActionPanel from '../components/logAction/ActionPanel';
+import ActionButtons from '../components/logAction/ActionButtons';
 import ImageValidationPanel from '../components/logAction/ImageValidationPanel';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
@@ -120,6 +121,18 @@ const SelfReportMenu = ({ user }) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
 
+  const calculateCO2 = () => {
+    //get the total CO2 saved by summing the values for the co2 property of all the items in actionItemValues
+    let sumCO2 = actionItemValues.reduce((sum, { co2 }) => sum + co2, 0);
+    setTotalCO2Saved(sumCO2);
+    //remove the co2 object property from every item in actionItemValues
+    //so that actionItemValues will be in proper format to be used in CO2SavedScreen mutation
+    let removedCO2 = actionItemValues.map(({ co2, ...value }) => value);
+    setActionItemValues(removedCO2);
+    //advances log action form to next step
+    setActiveStep(activeStep + 1);
+  };
+
   const renderFormStep = () => {
     return (
       <>
@@ -131,54 +144,61 @@ const SelfReportMenu = ({ user }) => {
           />
         )}
         {activeStep === 1 && (
-          <Grid
-            item
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column',
-              color: actionStyle.color,
-            }}
-          >
-            <Box
+          <>
+            <Grid
+              item
               sx={{
                 display: 'flex',
-                flexDirection: 'column',
                 justifyContent: 'center',
-                gap: '20px',
-                width: '80%',
+                alignItems: 'center',
+                flexDirection: 'column',
+                color: actionStyle.color,
               }}
             >
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label={translation.chooseDate}
-                  value={parseISO(selectedDate)}
-                  onChange={handleDateChange}
-                  renderInput={(selectedDate) => (
-                    <TextField {...selectedDate} />
-                  )}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  gap: '20px',
+                  width: '80%',
+                }}
+              >
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label={translation.chooseDate}
+                    value={parseISO(selectedDate)}
+                    onChange={handleDateChange}
+                    renderInput={(selectedDate) => (
+                      <TextField {...selectedDate} />
+                    )}
+                  />
+                </LocalizationProvider>
+                <ActionPanel
+                  selectedAction={selectedAction}
+                  setTotalCO2Saved={setTotalCO2Saved}
+                  actionItemValues={actionItemValues}
+                  setActionItemValues={setActionItemValues}
+                  activeStep={activeStep}
+                  setActiveStep={setActiveStep}
                 />
-              </LocalizationProvider>
-              <ActionPanel
-                selectedAction={selectedAction}
-                setTotalCO2Saved={setTotalCO2Saved}
-                actionItemValues={actionItemValues}
-                setActionItemValues={setActionItemValues}
-                activeStep={activeStep}
-                setActiveStep={setActiveStep}
-                showActionButtons={false}
-              />
-            </Box>
+              </Box>
 
-            <ImageValidationPanel
-              skipBonusQuestion={skipBonusQuestion}
-              setActiveStep={setActiveStep}
-              activeStep={activeStep}
-              selectedImage={selectedImage}
-              setSelectedImage={setSelectedImage}
+              <ImageValidationPanel
+                skipBonusQuestion={skipBonusQuestion}
+                setActiveStep={setActiveStep}
+                activeStep={activeStep}
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+              />
+            </Grid>
+            <ActionButtons
+              forwardOnClick={calculateCO2}
+              backOnclick={() => setActiveStep(activeStep - 1)}
+              forwardText={translation.next}
+              backText={translation.previous}
             />
-          </Grid>
+          </>
         )}
         {selectedAction && activeStep === 2 && (
           <ActionFact
@@ -188,31 +208,11 @@ const SelfReportMenu = ({ user }) => {
             quiz={quiz}
             setQuiz={setQuiz}
             setSkipBonusQuestion={setSkipBonusQuestion}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
           />
         )}
         {activeStep === 3 && (
-          <ActionPanel
-            selectedAction={selectedAction}
-            actionStyle={actionStyle}
-            setTotalCO2Saved={setTotalCO2Saved}
-            actionItemValues={actionItemValues}
-            setActionItemValues={setActionItemValues}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-            activeStep={activeStep}
-          />
-        )}
-        {activeStep === 4 && (
-          <BonusPointQuiz
-            quiz={quiz}
-            actionStyle={actionStyle}
-            setQuizAnswered={setQuizAnswered}
-            setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-            setActiveStep={setActiveStep}
-            activeStep={activeStep}
-          />
-        )}
-        {activeStep === 5 && (
           <CO2SavedScreen
             actionId={selectedAction.action_id}
             actionStyle={actionStyle}
@@ -229,8 +229,19 @@ const SelfReportMenu = ({ user }) => {
             setSelectedAction={setSelectedAction}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
+            activeStep={activeStep}
           />
         )}
+        {activeStep === 4 && (
+          <BonusPointQuiz
+            quiz={quiz}
+            setQuizAnswered={setQuizAnswered}
+            setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+            setActiveStep={setActiveStep}
+            activeStep={activeStep}
+          />
+        )}
+        {activeStep === 5 && <div>I dare you to match my action by...</div>}
       </>
     );
   };
@@ -316,59 +327,6 @@ const SelfReportMenu = ({ user }) => {
           {steps[activeStep]}
         </Typography>
         {renderFormStep()}
-        <Box
-          component="div"
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            m: '0 0 1.25em',
-            flexDirection: { xs: 'row' },
-            gap: { xs: '10px', md: '10px' },
-          }}
-        >
-          {![0, 3, 5, 6].includes(activeStep) && (
-            <Button
-              onClick={() => {
-                setActiveStep((s) => {
-                  if (s - 1 === 0) {
-                    nav('/log-action');
-                  }
-                  return s - 1;
-                });
-              }}
-              variant="contained"
-              sx={{
-                padding: '1em 1em 1em',
-                fontSize: '1.2rem',
-                marginTop: '1em',
-                minWidth: '50%',
-              }}
-            >
-              {translation.previous}
-            </Button>
-          )}
-          {![0, 3, 5, 6].includes(activeStep) && (
-            <Button
-              onClick={() => {
-                if (activeStep === 4 && skipBonusQuestion) {
-                  setActiveStep(activeStep + 2);
-                } else {
-                  setActiveStep(activeStep + 1);
-                }
-              }}
-              variant="contained"
-              sx={{
-                padding: '1em 1em 1em',
-                fontSize: '1.2rem',
-                marginTop: '1em',
-                minWidth: '50%',
-              }}
-            >
-              {translation.next}
-            </Button>
-          )}
-        </Box>
       </Grid>
     </Grid>
   );
