@@ -42,11 +42,16 @@ const GroupMemberPanel = ({
             flexWrap: 'wrap'
           }}
         >
-          {groupMembers.map((member, index) => (
-            <Tooltip title={member.name}>
+          {groupMembers.map((member) => {
+            const { avatar, user_role, user_id, name } = member;
+            const userIsOwner = user_role === 'owner';
+            return (
+              <Tooltip
+                title={`${name}${userIsOwner ? ' (Owner)' : ''}`}
+                key={user_id}
+              >
               <IconButton
-                aria-label="user avatar"
-                disableRipple={true}
+                  disableRipple
                 onClick={() => handleOpen(member)}
                 sx={{ display: 'block', mb: { xs: '0.25em' } }}
               >
@@ -60,31 +65,32 @@ const GroupMemberPanel = ({
                       strokeWidth={1}
                     />
                   }
-                  invisible={member.user_role === 'member'}
+                    invisible={!userIsOwner}
                 >
                   <Avatar
                     variant="rounded"
                     aria-hidden="true"
                     sx={{
                       background: '#5bc1ab',
-                      // padding: '20px',
                       borderRadius: '99em',
                       boxShadow: '8px 8px 16px rgb(0 0 0 / 43%)',
                       border: '1px solid #000000',
+                        cursor: 'pointer',
                       width: {
                         xs: 120,
                       },
                       height: {
                         xs: 120,
                       },
-                      ':hover': { cursor: 'pointer' },
                     }}
-                    src={member.avatar ? member.avatar : null}
+                      src={avatar ? avatar : null}
+                      alt=""
                   >
-                    {member.name.charAt(0)}
+                      {name.charAt(0)}
                   </Avatar>
                 </Badge>
-                <Box component="div" sx={{
+                  <Box
+                    sx={{
                   color: '#000',
                   fontSize: '0.75rem',
                   maxWidth: '80%',
@@ -92,11 +98,12 @@ const GroupMemberPanel = ({
                   margin: '0 auto'
                 }}
                   >
-                  {member.name}
+                    {name}
                 </Box>
               </IconButton>
             </Tooltip>
-          ))}
+            );
+          })}
           {openDialog && (
             <GroupMemberPanelDialog
               openDialog={openDialog}
