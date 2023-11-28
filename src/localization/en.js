@@ -250,6 +250,8 @@ const translations = {
   filteringBy: 'Filtering By:',
   currentFilter: 'Current filter',
   changeFilter: 'Change filter',
+  sortingBy: 'Sorting by',
+  changeSortingOrder: 'Change Sorting Order',
   groupNameSearchAllFilter: 'All My Groups',
   validateActionsNoActions: 'There are no actions in need of validation',
   actionNameSearchAllFilter: 'All Action Types',
