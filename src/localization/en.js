@@ -300,6 +300,8 @@ const translations = {
   userNoteGroupOwner: ' (Owner)',
   totalGramsSavedCO2PerDayAllActions:
     'Total Grams of CO2 Saved Per Day For All Actions',
+  continue: 'Continue',
+  done: 'Done',
 };
 
 export default translations;

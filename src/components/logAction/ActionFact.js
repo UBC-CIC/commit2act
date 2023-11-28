@@ -6,6 +6,12 @@ import Modal from 'react-modal';
 
 import useTranslation from '../customHooks/translations';
 import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
+import {
+  createSubmittedAction,
+  createSubmittedActionItems,
+} from '../../graphql/mutations';
+import { getSingleSubmittedAction } from '../../graphql/queries';
+
 Modal.setAppElement('#root');
 
 const ActionFact = ({
@@ -17,9 +23,16 @@ const ActionFact = ({
   setSkipBonusQuestion,
   activeStep,
   setActiveStep,
+  actionId,
+  actionDate,
+  totalCO2Saved,
+  actionItemValues,
+  selectedImage,
+  setValidationSuccess,
 }) => {
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
-
+  const [loading, setLoading] = useState(true);
+  const [actionSubmitting, setActionSubmitting] = useState(true);
   // Modal.setAppElement('#yourAppElement');
 
   let subtitle;
@@ -91,6 +104,70 @@ const ActionFact = ({
     };
     getFact();
   }, [selectedAction, setQuiz, setSkipBonusQuestion, user.user_id]);
+
+  useEffect(() => {
+    submitAction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const submitAction = async () => {
+    //creates and submits the action, returns the submitted action id that is stored in database
+
+    const res = await API.graphql({
+      query: createSubmittedAction,
+      variables: {
+        action_id: actionId,
+        date_of_action: actionDate,
+        first_quiz_answer_correct: false,
+        g_co2_saved: totalCO2Saved,
+        is_validated: false,
+        points_earned: Math.ceil(totalCO2Saved),
+        quiz_answered: false,
+        user_id: user.user_id,
+        quiz_id: quiz ? quiz.quiz_id : null,
+      },
+    });
+
+    const submittedActionId = res.data.createSubmittedAction.sa_id;
+    //creates the submitted action items for the action
+    await API.graphql({
+      query: createSubmittedActionItems,
+      variables: {
+        sa_id: submittedActionId,
+        submitted_action_items: actionItemValues,
+      },
+    });
+
+    if (selectedImage) {
+      let imageKey = 'validation/input/'.concat(submittedActionId, '.png');
+      let imageType = selectedImage.type;
+      try {
+        await Storage.put(imageKey, selectedImage, {
+          contentType: imageType,
+        });
+        //update state when action and action items have finished submitting
+        setActionSubmitting(false);
+      } catch (error) {
+        console.log('Error uploading file', error);
+      }
+    }
+    //set timeout of 5s so that image has time to be transferred by lambda and processed by rekognition
+    setTimeout(() => {
+      checkImageValidation(submittedActionId);
+    }, 5000);
+  };
+
+  const checkImageValidation = async (submittedActionId) => {
+    const res = await API.graphql({
+      query: getSingleSubmittedAction,
+      variables: { sa_id: submittedActionId },
+    });
+    const passedValidation = res.data.getSingleSubmittedAction.is_validated;
+    if (passedValidation) {
+      setValidationSuccess(true);
+    }
+    setLoading(false);
+  };
 
   //if there are no possible quizzes, display fallback text. If there is no fallback text, display default message
   const renderFact = () => {
@@ -175,9 +252,7 @@ const ActionFact = ({
         }}
       >
         <Button
-          onClick={() => {
-            setActiveStep(activeStep + 1);
-          }}
+          onClick={() => setActiveStep(activeStep + 1)}
           variant="contained"
           sx={{
             width: '100%',
@@ -186,8 +261,10 @@ const ActionFact = ({
             borderRadius: '35px',
             color: 'white',
           }}
+          disabled={loading}
         >
-          Done
+          {translation.done}{' '}
+          {loading && <CircularProgress sx={{ margin: '0 1em' }} />}
         </Button>
       </Box>
     </Grid>

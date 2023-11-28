@@ -15,7 +15,6 @@ const ActionPanel = ({
   activeStep,
   setActiveStep,
 }) => {
-  const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
   const [inputError, setInputError] = useState(false);
   const [disableButton, setDisableButton] = useState(true);
@@ -38,14 +37,14 @@ const ActionPanel = ({
       );
       const relevantAction =
         relevantTranslationObject?.translationJSON?.actions?.find(
-          (action) => action.action_id === selectedAction.action_id
+          (action) => action.action_id === selectedAction?.action_id
         );
       setActionItems(relevantAction?.action_items || []);
       return;
     }
     const res = await API.graphql({
       query: getActionItemsForAction,
-      variables: { action_id: action_id },
+      variables: { action_id: selectedAction?.action_id },
     });
     const items = res.data.getActionItemsForAction;
     setActionItems(items);

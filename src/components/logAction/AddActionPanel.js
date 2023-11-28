@@ -21,6 +21,7 @@ const AddActionPanel = ({
   skipBonusQuestion,
   selectedImage,
   setSelectedImage,
+  actionStyle,
 }) => {
   const translation = useTranslation();
 
@@ -79,6 +80,7 @@ const AddActionPanel = ({
           activeStep={activeStep}
           selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
+          actionStyle={actionStyle}
         />
       </Grid>
       <ActionButtons

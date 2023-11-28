@@ -15,8 +15,6 @@ import {
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { format, parseISO } from 'date-fns';
-import { Typography, Grid } from '@mui/material';
 import { format } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
@@ -26,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import AddActionPanel from '../components/logAction/AddActionPanel';
 
 import useTranslation from '../components/customHooks/translations';
+import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -52,6 +51,8 @@ const SelfReportMenu = ({ user }) => {
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
+  const [validationSuccess, setValidationSuccess] = useState(false);
+
   const translation = useTranslation();
   const nav = useNavigate();
 
@@ -144,6 +145,7 @@ const SelfReportMenu = ({ user }) => {
             skipBonusQuestion={skipBonusQuestion}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
+            actionStyle={actionStyle}
           />
         )}
         {selectedAction && activeStep === 2 && (
@@ -156,27 +158,21 @@ const SelfReportMenu = ({ user }) => {
             setSkipBonusQuestion={setSkipBonusQuestion}
             activeStep={activeStep}
             setActiveStep={setActiveStep}
+            actionId={selectedAction.action_id}
+            actionDate={selectedDate}
+            totalCO2Saved={totalCO2Saved}
+            actionItemValues={actionItemValues}
+            selectedImage={selectedImage}
+            setValidationSuccess={setValidationSuccess}
           />
         )}
         {activeStep === 3 && (
           <CO2SavedScreen
-            actionId={selectedAction.action_id}
-            actionStyle={actionStyle}
-            actionDate={selectedDate}
             totalCO2Saved={totalCO2Saved}
-            setTotalCO2Saved={setTotalCO2Saved}
-            quiz={quiz}
-            quizAnswered={quizAnswered}
-            firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-            user={user}
-            actionItemValues={actionItemValues}
-            setActionItemValues={setActionItemValues}
             setActiveStep={setActiveStep}
-            setSelectedAction={setSelectedAction}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-            activeStep={activeStep}
             skipBonusQuestion={skipBonusQuestion}
+            validationSuccess={validationSuccess}
+            activeStep={activeStep}
           />
         )}
         {activeStep === 4 && (
@@ -186,9 +182,17 @@ const SelfReportMenu = ({ user }) => {
             setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
             setActiveStep={setActiveStep}
             activeStep={activeStep}
+            actionStyle={actionStyle}
           />
         )}
-        {activeStep === 5 && <div>I dare you to match my action by...</div>}
+
+        {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
+        {activeStep === 5 && (
+          <ShareOnSocialPanel
+            quizAnswer={quizAnswered}
+            firstQuizAnswerCorrect={firstQuizAnswerCorrect}
+          />
+        )}
       </>
     );
   };
