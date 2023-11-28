@@ -57,7 +57,15 @@ const GroupMemberPanel = ({
               <IconButton
                   disableRipple
                 onClick={() => handleOpen(member)}
-                sx={{ display: 'block', mb: { xs: '0.25em' } }}
+                  sx={{
+                    display: 'block',
+                    borderRadius: '1rem',
+                    padding: '0.5rem 0.75rem',
+                    mb: { xs: '0.25em' },
+                    ':hover, :focus': {
+                      backgroundColor: 'rgba(255,255,255,0.75)',
+                    },
+                  }}
               >
                 <Badge
                   overlap="rectangular"
