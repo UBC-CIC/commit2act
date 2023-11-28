@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Grid, Avatar, Tooltip, IconButton, Paper, Badge, Box } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import GroupMemberPanelDialog from './GroupMemberPanelDialog';
+import useTranslation from '../customHooks/translations';
 
 const GroupMemberPanel = ({
   groupMembers,
@@ -11,6 +12,7 @@ const GroupMemberPanel = ({
   currentUserOwner,
   cognitoUser,
 }) => {
+  const translation = useTranslation();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState();
 
@@ -47,7 +49,9 @@ const GroupMemberPanel = ({
             const userIsOwner = user_role === 'owner';
             return (
               <Tooltip
-                title={`${name}${userIsOwner ? ' (Owner)' : ''}`}
+                title={`${name}${
+                  userIsOwner ? translation.userNoteGroupOwner : ''
+                }`}
                 key={user_id}
               >
               <IconButton

@@ -285,7 +285,7 @@ const translations = {
   ninetyDays: '90 Jours',
   oneYear: 'Année',
   co2SavedDuring: 'CO2 Sauvé au cours des {0} derniers',
-  totalGramsSavedCO2PerDayAllActions: 'Grammes CO2 Sauvés au Total Par Jour Pour Toutes les Actions',
+  userNoteGroupOwner: ' (propriétaire)',
 };
 
 export default translations;
