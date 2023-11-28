@@ -29,7 +29,7 @@ const BonusPointQuiz = ({
   setFirstQuizAnswerCorrect,
   activeStep,
 }) => {
-  console.log(quiz);
+  console.log(quiz, 'quiz');
   const { question_text, answers, correct_answers } = quiz;
   const answersArray = answers.split('\n');
   const correctAnswersArray = correct_answers.split('\n');
@@ -75,15 +75,41 @@ const BonusPointQuiz = ({
             </RadioGroup>
           </>
         </FormControl>
-        <ActionButtons
-          forwardOnClick={() => {
-            setIsAnswerSelected(true);
-            setQuizAnswered(true);
-          }}
-          backOnClick={setActiveStep(activeStep + 1)}
-          backText="Skip"
-          forwardText="Submit"
-        />
+        {!userAnswer ? (
+          <ActionButtons
+            forwardOnClick={() => {
+              setIsAnswerSelected(true);
+              setQuizAnswered(true);
+            }}
+            backOnClick={setActiveStep(activeStep + 1)}
+            backText="Skip"
+            forwardText="Submit"
+          />
+        ) : (
+          <Box
+            component="div"
+            sx={{
+              m: '0 0 1.25em',
+              width: { xs: '50%' },
+            }}
+          >
+            <Button
+              onClick={() => {
+                setActiveStep(activeStep + 1);
+              }}
+              variant="contained"
+              sx={{
+                width: '100%',
+                padding: '.5em 1em',
+                fontSize: '1.2rem',
+                borderRadius: '35px',
+                color: 'white',
+              }}
+            >
+              Continue
+            </Button>
+          </Box>
+        )}
         {/* {userAnswer ? (
           <StyledButton
             onClick={() => {
