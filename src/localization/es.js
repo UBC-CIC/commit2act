@@ -250,6 +250,8 @@ const translations = {
   groupNameSearchEmptySearch: 'Tu búsqueda de "{0}" no coincide con ningún grupo que posees',
   groupNameSearchNoGroups: 'Actualmente no posees ningún grupo',
   filteringBy: 'Filtrando por:',
+  sortingBy: 'Ordenar por',
+  changeSortingOrder: 'Cambiar el orden de clasificación',
   groupNameSearchAllFilter: 'Todos mis grupos',
   validateActionsNoActions: 'No hay acciones que necesiten validación',
   actionNameSearchAllFilter: 'Todos los tipos de acciones',

@@ -12,8 +12,6 @@ import {
   Tab,
   Paper,
   Typography,
-  Tooltip,
-  IconButton,
   Menu,
   MenuItem,
 } from '@mui/material';
@@ -22,12 +20,12 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { getAllGroups, getAllUsers } from '../graphql/queries';
 import { API } from 'aws-amplify';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { useLanguageContext } from "../components/contexts/LanguageContext";
+import { SortLeaderboard } from './SortLeaderboard';
+import { useLanguageContext } from '../components/contexts/LanguageContext';
 
 import useTranslation from ".//customHooks/translations";
 
@@ -329,14 +327,10 @@ const GlobalLeaderboard = () => {
                 alignItems: 'center',
               }}
             >
-              <Typography variant="subtitle2" component="div" aria-description={translation.currentFilter + ' : ' + selectedFilter.name}>
-                {selectedFilter.name}
-              </Typography>
-              <Tooltip title={translation.changeFilter}>
-                <IconButton onClick={handleClick}>
-                  <FilterListIcon />
-                </IconButton>
-              </Tooltip>
+              <SortLeaderboard
+                onSelectSort={handleClick}
+                selectedSort={selectedFilter}
+              />
               <Menu
                 id="filter-menu"
                 open={openFilterMenu}
