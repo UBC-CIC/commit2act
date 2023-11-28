@@ -27,7 +27,6 @@ const FindGroup = ({ user }) => {
           variables: { user_id: user.user_id },
         }),
       ]);
-      console.log(allGroupsRes, 'groups');
 
       setGroups(allGroupsRes.data.getAllGroups);
       setUsersGroups(usersGroupsRes.data.getAllGroupsForUser);

@@ -21,9 +21,20 @@ const AddActionPanel = ({
   skipBonusQuestion,
   selectedImage,
   setSelectedImage,
-  calculateCO2,
 }) => {
   const translation = useTranslation();
+
+  const calculateCO2 = () => {
+    //get the total CO2 saved by summing the values for the co2 property of all the items in actionItemValues
+    let sumCO2 = actionItemValues.reduce((sum, { co2 }) => sum + co2, 0);
+    setTotalCO2Saved(sumCO2);
+    //remove the co2 object property from every item in actionItemValues
+    //so that actionItemValues will be in proper format to be used in CO2SavedScreen mutation
+    let removedCO2 = actionItemValues.map(({ co2, ...value }) => value);
+    setActionItemValues(removedCO2);
+    //advances log action form to next step
+    setActiveStep(activeStep + 1);
+  };
 
   return (
     <>
@@ -62,7 +73,6 @@ const AddActionPanel = ({
             setActiveStep={setActiveStep}
           />
         </Box>
-
         <ImageValidationPanel
           skipBonusQuestion={skipBonusQuestion}
           setActiveStep={setActiveStep}

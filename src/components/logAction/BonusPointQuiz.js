@@ -29,10 +29,10 @@ const BonusPointQuiz = ({
   setFirstQuizAnswerCorrect,
   activeStep,
 }) => {
-  console.log(quiz, 'quiz');
-  const { question_text, answers, correct_answers } = quiz;
-  const answersArray = answers.split('\n');
-  const correctAnswersArray = correct_answers.split('\n');
+  const answers = quiz?.answers;
+  const correctAnswers = quiz?.correct_answers;
+  const answersArray = answers ? answers.split('\n') : [];
+  const correctAnswersArray = correctAnswers ? correctAnswers.split('\n') : [];
 
   const [userAnswer, setUserAnswer] = useState();
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
@@ -44,7 +44,7 @@ const BonusPointQuiz = ({
     return (
       <>
         <Typography variant="subtitle2" sx={{ color: actionStyle.color }}>
-          {question_text}
+          {quiz?.question_text}
         </Typography>
         <FormControl>
           <>
@@ -75,67 +75,6 @@ const BonusPointQuiz = ({
             </RadioGroup>
           </>
         </FormControl>
-        {!userAnswer ? (
-          <ActionButtons
-            forwardOnClick={() => {
-              setIsAnswerSelected(true);
-              setQuizAnswered(true);
-            }}
-            backOnClick={setActiveStep(activeStep + 1)}
-            backText="Skip"
-            forwardText="Submit"
-          />
-        ) : (
-          <Box
-            component="div"
-            sx={{
-              m: '0 0 1.25em',
-              width: { xs: '50%' },
-            }}
-          >
-            <Button
-              onClick={() => {
-                setActiveStep(activeStep + 1);
-              }}
-              variant="contained"
-              sx={{
-                width: '100%',
-                padding: '.5em 1em',
-                fontSize: '1.2rem',
-                borderRadius: '35px',
-                color: 'white',
-              }}
-            >
-              Continue
-            </Button>
-          </Box>
-        )}
-        {/* {userAnswer ? (
-          <StyledButton
-            onClick={() => {
-              setIsAnswerSelected(true);
-              setQuizAnswered(true);
-            }}
-            variant="contained"
-          >
-            {translation.bonusQuizSubmit}
-          </StyledButton>
-        ) : (
-          <StyledButton
-            onClick={() => {
-              setActiveStep(activeStep + 1);
-            }}
-            variant="outlined"
-            sx={{
-              width: '80%',
-              maxWidth: '300px',
-              padding: '1em 1em 1.3em',
-              fontSize: '1.2rem',
-            }}
-          >
-            {translation.bonusQuizSkip}
-          </StyledButton>
-        )} */}
       </>
     );
   };
@@ -194,6 +133,41 @@ const BonusPointQuiz = ({
       }}
     >
       {isAnswerSelected ? displayAnswer() : displayQuiz()}
+      {!userAnswer ? (
+        <ActionButtons
+          forwardOnClick={() => {
+            setIsAnswerSelected(true);
+            setQuizAnswered(true);
+          }}
+          backOnClick={() => setActiveStep(activeStep + 1)}
+          backText="Skip"
+          forwardText="Submit"
+        />
+      ) : (
+        <Box
+          component="div"
+          sx={{
+            m: '0 0 1.25em',
+            width: { xs: '50%' },
+          }}
+        >
+          <Button
+            onClick={() => {
+              setActiveStep(activeStep + 1);
+            }}
+            variant="contained"
+            sx={{
+              width: '100%',
+              padding: '.5em 1em',
+              fontSize: '1.2rem',
+              borderRadius: '35px',
+              color: 'white',
+            }}
+          >
+            Continue
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

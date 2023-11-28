@@ -21,11 +21,9 @@ const CO2SavedScreen = ({
   firstQuizAnswerCorrect,
   user,
   actionItemValues,
-  setActionItemValues,
-  setSelectedAction,
   selectedImage,
-  setSelectedImage,
   activeStep,
+  skipBonusQuestion,
 }) => {
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
@@ -189,12 +187,40 @@ const CO2SavedScreen = ({
           </Button>
         )} */}
       </Box>
-      <ActionButtons
-        forwardOnClick={() => setActiveStep(activeStep + 1)}
-        backOnClick={() => setActiveStep(activeStep - 1)}
-        forwardText="Bonus Quiz"
-        backText="Skip"
-      />
+      {skipBonusQuestion ? (
+        <Box
+          component="div"
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            m: 'auto 1.25em',
+          }}
+        >
+          <Button
+            onClick={() => {
+              setActiveStep(activeStep + 2);
+            }}
+            variant="contained"
+            sx={{
+              width: '50%',
+              padding: '.5em 1em',
+              fontSize: '1.2rem',
+              borderRadius: '35px',
+              color: 'white',
+            }}
+          >
+            Continue
+          </Button>
+        </Box>
+      ) : (
+        <ActionButtons
+          forwardOnClick={() => setActiveStep(activeStep + 1)}
+          backOnClick={() => setActiveStep(activeStep + 2)}
+          forwardText="Bonus Quiz"
+          backText="Skip"
+        />
+      )}
     </>
   );
 };

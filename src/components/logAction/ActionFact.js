@@ -78,6 +78,7 @@ const ActionFact = ({
         });
         //select random fact from quiz pool that has not been answered by the user yet
         possibleQuizzes = quizPoolForUserRes.data.getQuizPoolForUser;
+        console.log(quizPoolForUserRes);
       }
       if (possibleQuizzes && possibleQuizzes?.length !== 0) {
         setQuiz(
