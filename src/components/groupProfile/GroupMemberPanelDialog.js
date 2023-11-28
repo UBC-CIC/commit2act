@@ -4,9 +4,6 @@ import {
   DialogTitle,
   DialogContent,
   List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   IconButton,
 } from '@mui/material';
 import {
@@ -27,6 +24,7 @@ import { getAllUsersInGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
 import { useNavigate } from 'react-router-dom';
 import LeaveGroupDialogContent from './LeaveGroupDialogContent';
+import { MemberDialogAction } from './MemberDialogAction';
 
 import useTranslation from '../customHooks/translations';
 
@@ -137,26 +135,23 @@ const GroupMemberDialog = ({
       (currentUserOwner || userType === 'Admin') && (
         <>
           {selectedMember.user_role === 'member' ? (
-            <ListItem autoFocus button onClick={promoteUser}>
-              <ListItemIcon>
-                <PersonAddAlt1 />
-              </ListItemIcon>
-              <ListItemText>{translation.promoteUserToOwner}</ListItemText>
-            </ListItem>
+            <MemberDialogAction
+              onSelectAction={promoteUser}
+              actionLabel={translation.promoteUserToOwner}
+              actionIcon={PersonAddAlt1}
+            />
           ) : (
-            <ListItem autoFocus button onClick={demoteOwner}>
-              <ListItemIcon>
-                <PersonRemove />
-              </ListItemIcon>
-              <ListItemText>{translation.demoteUserToMember}</ListItemText>
-            </ListItem>
+            <MemberDialogAction
+              onSelectAction={demoteOwner}
+              actionLabel={translation.demoteUserToMember}
+              actionIcon={PersonRemove}
+            />
           )}
-          <ListItem autoFocus button onClick={removeUser}>
-            <ListItemIcon>
-              <GroupRemove />
-            </ListItemIcon>
-            <ListItemText>{translation.removeUserFromGroup}</ListItemText>
-          </ListItem>
+          <MemberDialogAction
+            onSelectAction={removeUser}
+            actionLabel={translation.removeUserFromGroup}
+            actionIcon={GroupRemove}
+          />
         </>
       )
     );
@@ -195,21 +190,17 @@ const GroupMemberDialog = ({
                   selectedMember.user_role.slice(1)}
               </DialogContent>
               <List sx={{ pt: '1em', pb: '2em' }}>
-                <ListItem
+                <MemberDialogAction
                   autoFocus
-                  button
-                  onClick={() =>
+                  onSelectAction={() =>
                     setDialogDisplay({
                       ...dialogDisplay,
                       leaveGroupWarning: true,
                     })
                   }
-                >
-                  <ListItemIcon>
-                    <ExitToApp />
-                  </ListItemIcon>
-                  <ListItemText>{translation.leaveGroup}</ListItemText>
-                </ListItem>
+                  actionLabel={translation.leaveGroup}
+                  actionIcon={ExitToApp}
+                />
               </List>
             </>
           ) : (
@@ -223,18 +214,14 @@ const GroupMemberDialog = ({
                     selectedMember.user_role.slice(1)}
                 </DialogContent>
                 <List sx={{ pt: '1em', pb: '2em' }}>
-                  <ListItem
+                  <MemberDialogAction
                     autoFocus
-                    button
-                    onClick={() =>
+                    onSelectAction={() =>
                       navigate(`/user-profile/${selectedMember.user_id}`)
                     }
-                  >
-                    <ListItemIcon>
-                      <AccountCircle />
-                    </ListItemIcon>
-                    <ListItemText>{translation.viewUserProfile}</ListItemText>
-                  </ListItem>
+                    actionLabel={translation.viewUserProfile}
+                    actionIcon={AccountCircle}
+                  />
                   {renderOwnerAdminView()}
                 </List>
               </>
