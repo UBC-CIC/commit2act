@@ -16,14 +16,14 @@ import {
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format, parseISO } from 'date-fns';
+import { Typography, Grid } from '@mui/material';
+import { format } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
-import ActionPanel from '../components/logAction/ActionPanel';
-import ActionButtons from '../components/logAction/ActionButtons';
-import ImageValidationPanel from '../components/logAction/ImageValidationPanel';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
 import { useNavigate } from 'react-router-dom';
+import AddActionPanel from '../components/logAction/AddActionPanel';
 
 import useTranslation from '../components/customHooks/translations';
 
@@ -144,61 +144,20 @@ const SelfReportMenu = ({ user }) => {
           />
         )}
         {activeStep === 1 && (
-          <>
-            <Grid
-              item
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                color: actionStyle.color,
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  gap: '20px',
-                  width: '80%',
-                }}
-              >
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label={translation.chooseDate}
-                    value={parseISO(selectedDate)}
-                    onChange={handleDateChange}
-                    renderInput={(selectedDate) => (
-                      <TextField {...selectedDate} />
-                    )}
-                  />
-                </LocalizationProvider>
-                <ActionPanel
-                  selectedAction={selectedAction}
-                  setTotalCO2Saved={setTotalCO2Saved}
-                  actionItemValues={actionItemValues}
-                  setActionItemValues={setActionItemValues}
-                  activeStep={activeStep}
-                  setActiveStep={setActiveStep}
-                />
-              </Box>
-
-              <ImageValidationPanel
-                skipBonusQuestion={skipBonusQuestion}
-                setActiveStep={setActiveStep}
-                activeStep={activeStep}
-                selectedImage={selectedImage}
-                setSelectedImage={setSelectedImage}
-              />
-            </Grid>
-            <ActionButtons
-              forwardOnClick={calculateCO2}
-              backOnclick={() => setActiveStep(activeStep - 1)}
-              forwardText={translation.next}
-              backText={translation.previous}
-            />
-          </>
+          <AddActionPanel
+            selectedDate={selectedDate}
+            handleDateChange={handleDateChange}
+            selectedAction={selectedAction}
+            setTotalCO2Saved={setTotalCO2Saved}
+            actionItemValues={actionItemValues}
+            setActionItemValues={setActionItemValues}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+            skipBonusQuestion={skipBonusQuestion}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            calculateCO2={calculateCO2}
+          />
         )}
         {selectedAction && activeStep === 2 && (
           <ActionFact
