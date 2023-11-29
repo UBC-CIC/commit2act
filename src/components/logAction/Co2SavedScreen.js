@@ -12,6 +12,7 @@ import useTranslation from '../customHooks/translations';
 const CO2SavedScreen = ({
   actionId,
   actionDate,
+  actionStyle,
   totalCO2Saved,
   setActiveStep,
   quizAnswered,
@@ -118,7 +119,7 @@ const CO2SavedScreen = ({
               {translation.skip}
             </Typography>
           )}
-          <CircularProgress sx={{ mt: '1em' }} />
+          <CircularProgress sx={{ mt: '1em', color: actionStyle.color }} />
         </>
       )}
       {/* display after image validation and action submission have completed */}

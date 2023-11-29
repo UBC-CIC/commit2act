@@ -65,6 +65,7 @@ const StyledButton = styled(Button)`
 
 const ImageValidationPanel = ({
   selectedImage,
+  actionStyle,
   setSelectedImage,
   setActiveStep,
   activeStep,
@@ -141,7 +142,7 @@ const ImageValidationPanel = ({
           borderRadius: '5px',
         }}
       >
-        <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
+        <Typography component="div" variant="subtitle2" sx={{ my: '0.5em', color: actionStyle.color }}>
           {translation.imageValidationText}
         </Typography>
         <Typography sx={{ fontSize: '15px' }}>

@@ -9,6 +9,7 @@ Modal.setAppElement('#root');
 
 const ActionFact = ({
   selectedAction,
+  actionStyle,
   setQuiz,
   quiz,
   user,
@@ -62,10 +63,10 @@ const ActionFact = ({
   //if there are no possible quizzes, display fallback text. If there is no fallback text, display default message
   const renderFact = () => {
     if (quiz) {
-      return <Typography variant="p" sx={{ color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5' }}>{quiz.fact_text}</Typography>;
+      return <Typography variant="p" sx={{ color: actionStyle.color, fontSize: '.5em', lineHeight: '1.5' }}>{quiz.fact_text}</Typography>;
     } else if (noPossibleQuizzes) {
       return selectedAction.fallback_quiz_media ? (
-        <Typography variant="p" sx={{ color: '#BCF10C', fontSize: '.5em', lineHeight: '1.5' }}>
+        <Typography variant="p" sx={{ color: actionStyle.color, fontSize: '.5em', lineHeight: '1.5' }}>
           {selectedAction.fallback_quiz_media}
         </Typography>
       ) : (
