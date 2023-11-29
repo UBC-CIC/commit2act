@@ -680,7 +680,6 @@ function Login(props) {
                     loadingState={gLoading}
                   />
                 </Grid>
-                {/* <Grid className={`input-box`} style={{ marginTop: '0px' }}> */}{' '}
                 {/* sign in button */}
                 {/* <FacebookSubmitButtonWithLoading
                     submitAction={signInFacebook}
