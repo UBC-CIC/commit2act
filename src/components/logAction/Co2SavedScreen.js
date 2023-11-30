@@ -12,6 +12,7 @@ import useTranslation from '../customHooks/translations';
 const CO2SavedScreen = ({
   actionId,
   actionDate,
+  actionStyle,
   totalCO2Saved,
   setActiveStep,
   quizAnswered,
@@ -118,7 +119,7 @@ const CO2SavedScreen = ({
               {translation.skip}
             </Typography>
           )}
-          <CircularProgress sx={{ mt: '1em' }} />
+          <CircularProgress sx={{ mt: '1em', color: actionStyle.color }} />
         </>
       )}
       {/* display after image validation and action submission have completed */}
@@ -139,7 +140,7 @@ const CO2SavedScreen = ({
               <Typography variant="h3" component="p">
                 {translation.co2SavedScreenApproval}
               </Typography>
-              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: '#34b198' }}>
+              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: actionStyle.color }}>
                 {translation.formatString(translation.co2SavedScreenImpact, totalCO2Saved)}
               </Typography>
             </Box>

@@ -8,6 +8,7 @@ import { useContentTranslationsContext } from '../contexts/ContentTranslationsCo
 
 const ActionPanel = ({
   selectedAction,
+  actionStyle,
   actionItemValues,
   setActionItemValues,
   setTotalCO2Saved,
@@ -136,7 +137,7 @@ const ActionPanel = ({
           width: '80%',
         }}
       >
-        <Typography variant="subtitle2" sx={{ marginTop: '-30px', fontSize: '1.2rem' }}>{action_name}</Typography>
+  
         {inputError && (
           <Typography variant="subtitle2">
             {translation.mustBeNumber}

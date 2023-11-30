@@ -266,7 +266,7 @@ const GroupProfile = ({ user }) => {
                     <Typography variant="h4">{translation.co2SavedWeek}</Typography>
                     <Typography variant="h5" className="statValue">
                       <AutoGraphOutlined fontSize="large" />
-                      {groupInfo.weekly_co2}g
+                      {groupInfo.weekly_co2.toFixed(4)}g
                     </Typography>
                   </StyledPaper>
                   <StyledPaper elevation={6} sx={{ background: 'white', flex: '1' }}>

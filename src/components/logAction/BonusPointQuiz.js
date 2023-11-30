@@ -23,6 +23,7 @@ const StyledButton = styled(Button)`
 const BonusPointQuiz = ({
   quiz,
   setActiveStep,
+  actionStyle,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
   activeStep,
@@ -40,15 +41,15 @@ const BonusPointQuiz = ({
   const displayQuiz = () => {
     return (
       <>
-        <Typography variant="subtitle2">{question_text}</Typography>
+        <Typography variant="subtitle2" sx={{color: actionStyle.color}}>{question_text}</Typography>
         <FormControl>
-          <FormLabel id="bonus-quiz-answer-choices">{translation.bonusQuizChoicesLabel}</FormLabel>
+          <FormLabel id="bonus-quiz-answer-choices" >{translation.bonusQuizChoicesLabel}</FormLabel>
           <RadioGroup
             aria-labelledby="bonus-quiz-answer-choices"
             name="quiz-answer-choices-group"
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
-            sx={{ mt: '0.5em', alignSelf: 'center' }}
+            sx={{ mt: '0.5em', alignSelf: 'center', '& .Mui-checked': {color: actionStyle.color} }}
           >
             {answersArray.map((answer, index) => {
               return (
@@ -78,7 +79,6 @@ const BonusPointQuiz = ({
               setActiveStep(activeStep + 1);
             }}
             variant="outlined"
-            color="error"
             sx={{
               width: '80%',
               maxWidth: '300px',
