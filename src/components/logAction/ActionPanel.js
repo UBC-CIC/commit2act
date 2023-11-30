@@ -4,6 +4,7 @@ import { API } from 'aws-amplify';
 import { getActionItemsForAction } from '../../graphql/queries';
 
 import useTranslation from '../customHooks/translations';
+import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 
 const ActionPanel = ({
   selectedAction,
@@ -20,6 +21,7 @@ const ActionPanel = ({
   const [disableButton, setDisableButton] = useState(true);
 
   const translation = useTranslation();
+  const { contentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
     getActionItems();
@@ -28,6 +30,12 @@ const ActionPanel = ({
 
   //gets all action items related to the user selected action
   const getActionItems = async () => {
+    if (translation.getLanguage() !== 'en') {
+      const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
+      const relevantAction = relevantTranslationObject?.translationJSON?.actions?.find((action) => action.action_id === selectedAction.action_id);
+      setActionItems(relevantAction?.action_items || []);
+      return;
+    }
     const res = await API.graphql({
       query: getActionItemsForAction,
       variables: { action_id: action_id },
@@ -64,10 +72,10 @@ const ActionPanel = ({
       let updatedItemValues = actionItemValues.map((itemValue) =>
         itemValue.item_name === item.item_name
           ? {
-              ...itemValue,
-              input_value: value,
-              co2: value * item.co2_saved_per_unit,
-            }
+            ...itemValue,
+            input_value: value,
+            co2: value * item.co2_saved_per_unit,
+          }
           : itemValue
       );
       setActionItemValues(updatedItemValues);
@@ -144,7 +152,7 @@ const ActionPanel = ({
             alignItems: 'center',
             m: '0 0 1.25em',
             flexDirection: { xs: 'row' },
-            gap: {xs: '10px', md: '10px'}
+            gap: { xs: '10px', md: '10px' }
           }}
         >
           <Button

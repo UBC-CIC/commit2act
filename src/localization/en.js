@@ -250,6 +250,8 @@ const translations = {
   filteringBy: 'Filtering By:',
   currentFilter: 'Current filter',
   changeFilter: 'Change filter',
+  sortingBy: 'Sorting by',
+  changeSortingOrder: 'Change Sorting Order',
   groupNameSearchAllFilter: 'All My Groups',
   validateActionsNoActions: 'There are no actions in need of validation',
   actionNameSearchAllFilter: 'All Action Types',
@@ -283,7 +285,7 @@ const translations = {
   ninetyDays: '90 Days',
   oneYear: 'Year',
   co2SavedDuring: 'CO2 Saved during the past {0}',
-  totalGramsSavedCO2PerDayAllActions: 'Total Grams of CO2 Saved Per Day For All Actions',
+  userNoteGroupOwner: ' (Owner)',
 };
 
 export default translations;

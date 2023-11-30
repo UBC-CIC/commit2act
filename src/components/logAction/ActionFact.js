@@ -5,6 +5,7 @@ import { getQuizPoolForUser } from '../../graphql/queries';
 import Modal from 'react-modal';
 
 import useTranslation from '../customHooks/translations';
+import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 Modal.setAppElement('#root');
 
 const ActionFact = ({
@@ -35,18 +36,34 @@ const ActionFact = ({
     setIsOpen(false);
   }
   const translation = useTranslation();
+  const { contentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
     const getFact = async () => {
-      const quizPoolForUserRes = await API.graphql({
-        query: getQuizPoolForUser,
-        variables: {
-          user_id: user.user_id,
-          action_id: selectedAction.action_id,
-        },
-      });
-      //select random fact from quiz pool that has not been answered by the user yet
-      const possibleQuizzes = quizPoolForUserRes.data.getQuizPoolForUser;
+      let possibleQuizzes = [];
+
+      if (translation.getLanguage() != 'en') {
+        const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
+        const relevantAction = relevantTranslationObject?.translationJSON?.actions?.find((action) => action.action_id === selectedAction.action_id);
+
+        // disassemble into answers and correct answers
+        relevantAction?.quizzes?.map((quiz) => {
+          quiz.answers = quiz.quiz_answers.map(quiz_answer => quiz_answer.answer).join("\n") || "";
+          quiz.correct_answers = quiz.quiz_answers.find(quiz_answer => quiz_answer.is_correct_answer === true)?.answer || "";
+        });
+
+        possibleQuizzes = relevantAction?.quizzes || [];
+      } else {
+        const quizPoolForUserRes = await API.graphql({
+          query: getQuizPoolForUser,
+          variables: {
+            user_id: user.user_id,
+            action_id: selectedAction.action_id,
+          },
+        });
+        //select random fact from quiz pool that has not been answered by the user yet
+        possibleQuizzes = quizPoolForUserRes.data.getQuizPoolForUser;
+      }
       if (possibleQuizzes && possibleQuizzes?.length !== 0) {
         setQuiz(
           possibleQuizzes[Math.floor(Math.random() * possibleQuizzes.length)]

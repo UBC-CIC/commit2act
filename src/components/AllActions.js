@@ -10,6 +10,8 @@ import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
 import { styled } from '@mui/material/styles';
+import useTranslation from './customHooks/translations';
+import { useContentTranslationsContext } from './contexts/ContentTranslationsContext';
 import { useNavigate } from 'react-router-dom';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
@@ -52,6 +54,36 @@ const AllActions = ({ setSelectedAction, actionOptions }) => {
       const urlParam = u.toLowerCase().trim().replaceAll(' ', '-');
       nav(`/log-action/${encodeURIComponent(urlParam)}`);
     };
+  }
+  const translation = useTranslation();
+  const { contentTranslations } = useContentTranslationsContext();
+
+  useEffect(() => {
+    if (contentTranslations.length > 0) {
+      getActions();
+    }
+  }, [contentTranslations]);
+
+  const getActions = async () => {
+    const res = await API.graphql({ query: getAllUngraveyardedActions });
+    const actions = res.data.getAllUngraveyardedActions;
+    if (translation.getLanguage() != 'en') {
+      const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
+      const updatedActions = disassembleInto(actions, relevantTranslationObject?.translationJSON?.actions || []);
+      setActionOptions(updatedActions);
+    } else {
+      setActionOptions(actions);
+    }
+  };
+
+  const disassembleInto = (actions, translatedActions) => {
+    return actions.map((action) => {
+      const translatedAction = translatedActions.find((translatedAction) => translatedAction.action_id === action.action_id);
+      return {
+        ...action,
+        ...translatedAction
+      }
+    });
   }
 
   return (

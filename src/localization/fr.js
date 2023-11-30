@@ -227,7 +227,9 @@ const translations = {
   uploadProfilePhoto: 'Télécharger une photo de profil',
   requiredFieldsMessage: 'Veuillez remplir tous les champs obligatoires',
   saveNameEmailPhoto: 'Enregistrer le nom, l’e-mail, la photo',
+  changeFilter: 'Change filter',
   changePassword: 'Changer le mot de passe',
+  currentFilter: 'Current filter',
   currentPassword: 'Mot de passe actuel',
   currentPasswordMessage: 'Le mot de passe actuel est incorrect',
   newPassword: 'Nouveau mot de passe',
@@ -250,6 +252,8 @@ const translations = {
   groupNameSearchEmptySearch: 'Votre recherche pour « {0} » ne correspond à aucun de vos groupes',
   groupNameSearchNoGroups: 'Vous ne possédez actuellement aucun groupe',
   filteringBy: 'Filtrage par :',
+  sortingBy: 'Trier par',
+  changeSortingOrder: "Modifier l'ordre de tri",
   groupNameSearchAllFilter: 'Tous mes groupes',
   validateActionsNoActions: 'Il n’y a aucune action à valider',
   actionNameSearchAllFilter: 'Tous les types d’actions',
@@ -283,7 +287,7 @@ const translations = {
   ninetyDays: '90 Jours',
   oneYear: 'Année',
   co2SavedDuring: 'CO2 Sauvé au cours des {0} derniers',
-  totalGramsSavedCO2PerDayAllActions: 'Grammes CO2 Sauvés au Total Par Jour Pour Toutes les Actions',
+  userNoteGroupOwner: ' (propriétaire)',
 };
 
 export default translations;

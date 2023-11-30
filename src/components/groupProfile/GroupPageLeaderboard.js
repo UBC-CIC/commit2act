@@ -11,8 +11,6 @@ import {
   Tab,
   Paper,
   Typography,
-  Tooltip,
-  IconButton,
   Menu,
   MenuItem,
   Accordion,
@@ -29,11 +27,11 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { getAllGroups, getUserStatsForGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { AutoGraph, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
+import { SortLeaderboard } from '../SortLeaderboard';
 import UserContributionDonutChart from '../UserContributionDonutChart';
 import { useNavigate } from 'react-router-dom';
 
@@ -523,14 +521,10 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                 alignItems: 'center',
               }}
             >
-              <Typography variant="subtitle2" component="div" aria-description={translation.currentFilter + ' : ' + selectedFilter.name}>
-                {selectedFilter.name}
-              </Typography>
-              <Tooltip title={translation.changeFilter}>
-                <IconButton onClick={handleClick}>
-                  <FilterListIcon />
-                </IconButton>
-              </Tooltip>
+              <SortLeaderboard
+                onSelectSort={handleClick}
+                selectedSort={selectedFilter}
+              />
               <Menu
                 id="filter-menu"
                 open={openFilterMenu}

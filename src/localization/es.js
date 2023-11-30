@@ -250,6 +250,8 @@ const translations = {
   groupNameSearchEmptySearch: 'Tu búsqueda de "{0}" no coincide con ningún grupo que posees',
   groupNameSearchNoGroups: 'Actualmente no posees ningún grupo',
   filteringBy: 'Filtrando por:',
+  sortingBy: 'Ordenar por',
+  changeSortingOrder: 'Cambiar el orden de clasificación',
   groupNameSearchAllFilter: 'Todos mis grupos',
   validateActionsNoActions: 'No hay acciones que necesiten validación',
   actionNameSearchAllFilter: 'Todos los tipos de acciones',
@@ -282,7 +284,7 @@ const translations = {
   ninetyDays: '90 Días',
   oneYear: 'Año',
   co2SavedDuring: 'CO2 Ahorrado durante los últimos {0}',
-  totalGramsSavedCO2PerDayAllActions: 'Total de Gramos de CO2 Ahorrados por Día Para Todas las Acciones',
+  userNoteGroupOwner: ' (el dueño)',
 };
 
 export default translations;

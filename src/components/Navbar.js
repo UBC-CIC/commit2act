@@ -115,6 +115,7 @@ function Navbar(props) {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event) => {
+    navigate('/account-settings');
     setAnchorEl(event.currentTarget);
   };
 
