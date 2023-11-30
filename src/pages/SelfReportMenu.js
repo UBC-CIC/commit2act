@@ -236,6 +236,7 @@ const SelfReportMenu = ({ user }) => {
       textAlign="center"
       flexDirection="column"
     >
+      {activeStep > 0 && selectedAction &&
       <Typography
         variant="h1"
         sx={{ 
@@ -243,12 +244,11 @@ const SelfReportMenu = ({ user }) => {
           color: actionStyle.color, 
           mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
       >
-        {activeStep > 0 && selectedAction ?
-          selectedAction.action_name
-          :
-          translation.logActionTitle
-        }
+        
+          {selectedAction.action_name}
+        
       </Typography>
+      }
       {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
         
       <Stepper

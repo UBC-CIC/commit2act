@@ -9,12 +9,11 @@ import {
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
+import { getAllUngraveyardedActions } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import { styled } from '@mui/material/styles';
 import useTranslation from './customHooks/translations';
 import { useContentTranslationsContext } from './contexts/ContentTranslationsContext';
-import { useNavigate } from 'react-router-dom';
-import {getAllUngraveyardedActions} from '../graphql/queries';
 
 const StyledImageListItemBar = styled(ImageListItemBar)`
   .MuiImageListItemBar-title {
@@ -39,24 +38,10 @@ const StyledImageListItem = styled(ImageListItem)`
   }
 `;
 
-const AllActions = ({ setSelectedAction, setActionOptions, actionOptions }) => {
+const AllActions = ({ setSelectedAction }) => {
+  const [actionOptions, setActionOptions] = useState();
   const displayDefaultMsg = actionOptions && actionOptions.length === 0;
-  const nav = useNavigate();
 
-  /**
-   * @param {number} actionIndex
-   * @returns {ChangeEventHandler<HTMLButtonElement>}
-   */
-  function handleActionSelect(actionIndex) {
-    return () => {
-      const action = actionOptions[actionIndex];
-      setSelectedAction(action);
-      /** @type {string} */
-      const u = action.action_name;
-      const urlParam = u.toLowerCase().trim().replaceAll(' ', '-');
-      nav(`/log-action/${encodeURIComponent(urlParam)}`);
-    };
-  }
   const translation = useTranslation();
   const { contentTranslations } = useContentTranslationsContext();
 
@@ -135,7 +120,7 @@ const AllActions = ({ setSelectedAction, setActionOptions, actionOptions }) => {
                   opacity: '0.7',
                 },
               }}
-              onClick={handleActionSelect(index)}
+              onClick={() => setSelectedAction(action)}
             >
               {action.action_icon ? (
                 <img
