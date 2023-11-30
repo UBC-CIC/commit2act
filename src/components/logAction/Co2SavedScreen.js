@@ -140,7 +140,7 @@ const CO2SavedScreen = ({
               <Typography variant="h3" component="p">
                 {translation.co2SavedScreenApproval}
               </Typography>
-              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: '#34b198' }}>
+              <Typography variant="subtitle2" sx={{ mt: '1.5em', fontSize: '1em', marginBottom: '1.3em', color: actionStyle.color }}>
                 {translation.formatString(translation.co2SavedScreenImpact, totalCO2Saved)}
               </Typography>
             </Box>

@@ -30,8 +30,8 @@ const ActionStyles = {
   0: {color: '#ffffff'},
   1: {color: '#8EDAAC'},
   2: {color:'#E661AE'},
-  3: {color: '#8CBD5B'},
-  5: {color: '#6FDDDD'},
+  5: {color: '#8CBD5B'},
+  3: {color: '#6FDDDD'},
   11: {color: '#F1A660'},
   12: {color: '#FFD467'},
 }
@@ -289,7 +289,7 @@ const SelfReportMenu = ({ user }) => {
       <Grid
         item
         sx={{
-          backgroundColor: '#303839',
+          backgroundColor: 'none',
           width: { xs: '100%', md: '85%' },
           padding: { xs: '1em', md: '2em 2em 5em' },
           borderRadius: '7px',
@@ -304,7 +304,7 @@ const SelfReportMenu = ({ user }) => {
       >
         <Typography
           variant="h2"
-          sx={{ m: { xs: '2em 0 2em 0', md: '3.5em 0 2em 0' } }}
+          sx={{ m: { xs: '2em 0 2em 0', md: '2em 0 2em 0' } }}
         >
           {steps[activeStep]}
         </Typography>

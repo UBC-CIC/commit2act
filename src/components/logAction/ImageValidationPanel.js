@@ -206,7 +206,7 @@ const ImageValidationPanel = ({
           {translation.uploadImage}
         </StyledButton>
       ) : (
-        <StyledButton onClick={handleButtonClick} color="error" variant="outlined">
+        <StyledButton onClick={handleButtonClick} variant="outlined">
           {translation.skip}
         </StyledButton>
       )}

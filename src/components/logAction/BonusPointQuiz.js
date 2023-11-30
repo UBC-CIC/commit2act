@@ -79,7 +79,6 @@ const BonusPointQuiz = ({
               setActiveStep(activeStep + 1);
             }}
             variant="outlined"
-            color="error"
             sx={{
               width: '80%',
               maxWidth: '300px',
