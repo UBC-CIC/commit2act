@@ -238,8 +238,10 @@ const SelfReportMenu = ({ user }) => {
     >
       <Typography
         variant="h1"
-        sx={{ mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
-        style={{color: actionStyle.color}}
+        sx={{ 
+          fontSize: '1.5rem',
+          color: actionStyle.color, 
+          mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
       >
         {activeStep > 0 && selectedAction ?
           selectedAction.action_name
@@ -251,7 +253,7 @@ const SelfReportMenu = ({ user }) => {
         
       <Stepper
           activeStep={activeStep}
-          sx={{ mb: '2em', display: { xs: 'none', md: 'flex' } }}
+          sx={{ mb: '1em', display: { xs: 'none', md: 'flex' } }}
         >
           {steps.map((step, index) => (
             <Step key={index}
@@ -278,7 +280,7 @@ const SelfReportMenu = ({ user }) => {
             display: { xs: 'flex', md: 'none' },
             justifyContent: 'center',
             background: 'none',
-            mb: '2em',
+            mb: '1em',
             '& .MuiMobileStepper-dotActive': {
               backgroundColor: actionStyle.color
             }
