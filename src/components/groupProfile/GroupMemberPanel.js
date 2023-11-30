@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Grid, Avatar, Tooltip, IconButton, Paper, Badge, Box } from '@mui/material';
+import {
+  Grid,
+  Avatar,
+  Tooltip,
+  IconButton,
+  Paper,
+  Badge,
+  Box,
+} from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import GroupMemberPanelDialog from './GroupMemberPanelDialog';
 import useTranslation from '../customHooks/translations';
@@ -35,13 +43,12 @@ const GroupMemberPanel = ({
           columnSpacing={{ xs: 0, md: 1 }}
           sx={{
             width: '100%',
-            backgroundColor: '#DBE2EF',
             minHeight: '50vh',
             borderRadius: '8px',
             padding: '1.5em',
             mt: '2em',
             alignItems: 'center',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
           }}
         >
           {groupMembers.map((member) => {
@@ -101,16 +108,26 @@ const GroupMemberPanel = ({
                       {name.charAt(0)}
                   </Avatar>
                 </Badge>
-                  <Box
-                    sx={{
-                  color: '#000',
-                  fontSize: '0.75rem',
-                  maxWidth: '80%',
-                  paddingTop: '10px',
-                  margin: '0 auto'
-                }}
+                <Box
+                  component="div"
+                  sx={{
+                    color: '#000',
+                    fontSize: '0.75rem',
+                    width: '138px',
+                    paddingTop: '10px',
+                    margin: '0 auto',
+                  }}
+                >
+                  <p
+                    style={{
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      color: 'white',
+                    }}
                   >
-                    {name}
+                    {member.name}
+                  </p>
                 </Box>
               </IconButton>
             </Tooltip>
