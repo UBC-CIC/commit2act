@@ -10,6 +10,7 @@ const CO2SavedScreen = ({
   activeStep,
   skipBonusQuestion,
   validationSuccess,
+  actionStyle,
 }) => {
   const translation = useTranslation();
 
@@ -28,10 +29,14 @@ const CO2SavedScreen = ({
         {
           <>
             <Typography
-              variant="h2"
-              sx={{ fontWeight: '700', fontSize: '1em' }}
+              variant="h1"
+              sx={{ fontWeight: '700', color: actionStyle.color }}
             >
-              Thank you!
+              + {totalCO2Saved}
+            </Typography>
+            <Typography sx={{ paddingTop: '1rem' }}>of CO2 saved</Typography>
+            <Typography variant="h2" sx={{ color: actionStyle.color }}>
+              Amazing! You are saving the planet!
             </Typography>
             {validationSuccess ? (
               <Box>
@@ -60,9 +65,10 @@ const CO2SavedScreen = ({
                   }}
                 >
                   {translation.formatString(
-                    translation.co2SavedScreenImpact,
+                    translation.co2SavedScreenSaved,
                     totalCO2Saved
                   )}
+                  {translation.takeBonusQuiz}
                 </Typography>
               </Box>
             )}

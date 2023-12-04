@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
   Typography,
   FormControl,
-  FormLabel,
   FormControlLabel,
   RadioGroup,
   Radio,
@@ -43,14 +42,18 @@ const BonusPointQuiz = ({
   const displayQuiz = () => {
     return (
       <>
-        <Typography variant="subtitle2" sx={{ color: actionStyle.color }}>
-          {quiz?.question_text}
+        <Typography
+          variant="subtitle2"
+          sx={{
+            fontSize: '1em',
+            color: '#34b198',
+          }}
+        >
+          {translation.extraPoints}
         </Typography>
+        <Typography variant="h3">{quiz?.question_text}</Typography>
         <FormControl>
           <>
-            <FormLabel id="bonus-quiz-answer-choices">
-              {translation.bonusQuizChoicesLabel}
-            </FormLabel>
             <RadioGroup
               aria-labelledby="bonus-quiz-answer-choices"
               name="quiz-answer-choices-group"
@@ -128,46 +131,56 @@ const BonusPointQuiz = ({
         display: 'flex',
         flexDirection: 'column',
         gap: '20px',
-        alignItems: 'center',
-        textAlign: 'center',
+        alignItems: 'start',
+        textAlign: 'start',
       }}
     >
       {isAnswerSelected ? displayAnswer() : displayQuiz()}
-      {!userAnswer ? (
-        <ActionButtons
-          forwardOnClick={() => {
-            setIsAnswerSelected(true);
-            setQuizAnswered(true);
-          }}
-          backOnClick={() => setActiveStep(activeStep + 1)}
-          backText="Skip"
-          forwardText="Submit"
-        />
-      ) : (
-        <Box
-          component="div"
-          sx={{
-            m: '0 0 1.25em',
-            width: { xs: '50%' },
-          }}
-        >
-          <Button
-            onClick={() => {
-              setActiveStep(activeStep + 1);
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          width: '100%',
+        }}
+      >
+        {!userAnswer ? (
+          <ActionButtons
+            forwardOnClick={() => {
+              setIsAnswerSelected(true);
+              setQuizAnswered(true);
             }}
-            variant="contained"
+            backOnClick={() => setActiveStep(activeStep + 1)}
+            backText="Skip"
+            forwardText="Submit"
+          />
+        ) : (
+          <Box
+            component="div"
             sx={{
-              width: '100%',
-              padding: '.5em 1em',
-              fontSize: '1.2rem',
-              borderRadius: '35px',
-              color: 'white',
+              m: '0 0 1.25em',
+              width: { xs: '50%' },
             }}
           >
-            Continue
-          </Button>
-        </Box>
-      )}
+            <Button
+              onClick={() => {
+                setActiveStep(activeStep + 1);
+              }}
+              variant="contained"
+              sx={{
+                width: '100%',
+                padding: '.5em 1em',
+                fontSize: '1.2rem',
+                borderRadius: '35px',
+                color: 'white',
+              }}
+            >
+              Continue
+            </Button>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };

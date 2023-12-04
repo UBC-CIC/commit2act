@@ -171,19 +171,13 @@ const ActionFact = ({
   const renderFact = () => {
     if (quiz) {
       return (
-        <Typography
-          variant="p"
-          sx={{ color: actionStyle.color, fontSize: '.5em', lineHeight: '1.5' }}
-        >
+        <Typography variant="p" sx={{ lineHeight: '1.5' }}>
           {quiz.fact_text}
         </Typography>
       );
     } else if (noPossibleQuizzes) {
       return selectedAction.fallback_quiz_media ? (
-        <Typography
-          variant="p"
-          sx={{ color: actionStyle.color, fontSize: '.5em', lineHeight: '1.5' }}
-        >
+        <Typography variant="p" sx={{ lineHeight: '1.5' }}>
           {selectedAction.fallback_quiz_media}
         </Typography>
       ) : (
@@ -199,8 +193,6 @@ const ActionFact = ({
     }
   };
 
-  console.log();
-
   return (
     <Grid
       item
@@ -213,7 +205,11 @@ const ActionFact = ({
     >
       <Box>
         <Typography>
-          Your {selectedAction.action_name} action is being submitted.
+          Your{' '}
+          <Typography sx={{ color: actionStyle.color, display: 'inline' }}>
+            {selectedAction.action_name}
+          </Typography>{' '}
+          action is being submitted.
         </Typography>
       </Box>
       <Box
@@ -228,12 +224,21 @@ const ActionFact = ({
           paddingTop: '2rem',
         }}
       >
-        <Typography variant="h2">Did you know? </Typography>
+        <Typography
+          variant="h2"
+          sx={{
+            color: actionStyle.color,
+            fontWeight: 'bold',
+            paddingBottom: '1rem',
+          }}
+        >
+          Did you know?{' '}
+        </Typography>
         {/* <button onClick={openModal}>Open Modal</button> */}
         {renderFact()}
       </Box>
 
-      <Modal
+      {/* <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
         onRequestClose={closeModal}
@@ -243,11 +248,11 @@ const ActionFact = ({
         <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
         <button onClick={closeModal}>close</button>
         <div>I am a modal</div>
-      </Modal>
+      </Modal> */}
       <Box
         component="div"
         sx={{
-          m: '0 0 1.25em',
+          m: '1.25em 0 1.25em',
           width: { xs: '50%' },
         }}
       >

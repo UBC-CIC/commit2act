@@ -211,10 +211,11 @@ const translations = {
   co2SavedScreenSkip: 'Press skip to view validation results at a later time',
   thankYou: 'Thank you!',
   co2SavedScreenValidated: 'Your action has been validated',
-  co2SavedScreenSaved: 'You have saved {0} g of CO2',
+  co2SavedScreenSaved: 'Nice Work! You have saved {0} g of CO2!',
   co2SavedScreenApproval: 'Your action is awaiting admin approval',
   co2SavedScreenImpact: 'The impact of your action is {0} g of CO2 saved',
   co2SavedScreenAnother: 'Add Another Action',
+  takeBonusQuiz: 'Take the bonus quiz for extra points!',
   createGroupTitle: 'Create New Group',
   uploadGroupIcon: 'Upload Group Icon',
   groupName: 'Group Name',
@@ -302,6 +303,7 @@ const translations = {
     'Total Grams of CO2 Saved Per Day For All Actions',
   continue: 'Continue',
   done: 'Done',
+  extraPoints: 'Get Extra Points!',
 };
 
 export default translations;

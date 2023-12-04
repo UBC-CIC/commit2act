@@ -167,6 +167,7 @@ const SelfReportMenu = ({ user }) => {
             skipBonusQuestion={skipBonusQuestion}
             validationSuccess={validationSuccess}
             activeStep={activeStep}
+            actionStyle={actionStyle}
           />
         )}
         {activeStep === 4 && (
@@ -272,7 +273,15 @@ const SelfReportMenu = ({ user }) => {
       >
         <Typography
           variant="h2"
-          sx={{ m: { xs: '2em 0 2em 0', md: '2em 0 2em 0' } }}
+          sx={{
+            m: {
+              xs: '2em 0 2em 0',
+              md: '2em 0 2em 0',
+              color: actionStyle.color,
+              textTransform: 'uppercase',
+              fontWeight: 'bold',
+            },
+          }}
         >
           {steps[activeStep]}
         </Typography>
