@@ -23,7 +23,6 @@ const ActionFact = ({
   setSkipBonusQuestion,
   activeStep,
   setActiveStep,
-  actionId,
   actionDate,
   totalCO2Saved,
   actionItemValues,
@@ -112,11 +111,10 @@ const ActionFact = ({
 
   const submitAction = async () => {
     //creates and submits the action, returns the submitted action id that is stored in database
-
     const res = await API.graphql({
       query: createSubmittedAction,
       variables: {
-        action_id: actionId,
+        action_id: selectedAction?.action_id,
         date_of_action: actionDate,
         first_quiz_answer_correct: false,
         g_co2_saved: totalCO2Saved,
@@ -200,6 +198,8 @@ const ActionFact = ({
       return <CircularProgress />;
     }
   };
+
+  console.log();
 
   return (
     <Grid

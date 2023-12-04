@@ -2,19 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import { getAllUngraveyardedActions } from '../graphql/queries';
 import {
-  TextField,
-  Box,
   Typography,
   Grid,
-  Button,
   Stepper,
   Step,
   StepLabel,
   MobileStepper,
   CircularProgress,
 } from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { format } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
@@ -158,7 +153,6 @@ const SelfReportMenu = ({ user }) => {
             setSkipBonusQuestion={setSkipBonusQuestion}
             activeStep={activeStep}
             setActiveStep={setActiveStep}
-            actionId={selectedAction.action_id}
             actionDate={selectedDate}
             totalCO2Saved={totalCO2Saved}
             actionItemValues={actionItemValues}
@@ -189,8 +183,13 @@ const SelfReportMenu = ({ user }) => {
         {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
         {activeStep === 5 && (
           <ShareOnSocialPanel
-            quizAnswer={quizAnswered}
+            quizAnswered={quizAnswered}
             firstQuizAnswerCorrect={firstQuizAnswerCorrect}
+            userId={user?.user_id}
+            quizId={quiz ? quiz.quiz_id : null}
+            actionDate={selectedDate}
+            totalCO2Saved={totalCO2Saved}
+            actionId={selectedAction?.action_id}
           />
         )}
       </>

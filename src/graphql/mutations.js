@@ -45,6 +45,48 @@ export const updateUser = /* GraphQL */ `
     }
   }
 `;
+
+export const updateSubmittedAction = /* GraphQL */ `
+  mutation UpdateSubmittedAction(
+    $user_id: Int!
+    $action_id: Int!
+    $quiz_id: Int
+    $g_co2_saved: Float!
+    $date_of_action: String!
+    $first_quiz_answer_correct: Boolean!
+    $quiz_answered: Boolean!
+    $is_validated: Boolean!
+    $points_earned: Int!
+  ) {
+    updateSubmittedAction(
+      user_id: $user_id
+      action_id: $action_id
+      quiz_id: $quiz_id
+      g_co2_saved: $g_co2_saved
+      date_of_action: $date_of_action
+      first_quiz_answer_correct: $first_quiz_answer_correct
+      quiz_answered: $quiz_answered
+      is_validated: $is_validated
+      points_earned: $points_earned
+    ) {
+      sa_id
+      user_id
+      action_id
+      quiz_id
+      g_co2_saved
+      date_of_action
+      time_submitted
+      first_quiz_answer_correct
+      quiz_answered
+      is_validated
+      points_earned
+      submitted_image
+      is_rejected
+      is_image_explicit
+    }
+  }
+`;
+
 export const deleteUser = /* GraphQL */ `
   mutation DeleteUser($user_id: Int!) {
     deleteUser(user_id: $user_id)

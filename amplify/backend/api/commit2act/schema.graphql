@@ -100,68 +100,96 @@ type GroupUser {
 type Mutation {
   # Put a single value of type User
   createUser(
-    name: String!,
-    email: String!,
-    avatar: String,
+    name: String!
+    email: String!
+    avatar: String
     username: String
   ): User
   # update a single value of type User, needs at least one of name, email, avatar
   updateUser(
-    user_id: Int!,
-    name: String,
-    email: String,
-    avatar: String,
+    user_id: Int!
+    name: String
+    email: String
+    avatar: String
     username: String
   ): User
   deleteUser(user_id: Int!): String
   createSubmittedAction(
-    user_id: Int!,
-    action_id: Int!,
-    quiz_id: Int,
-    g_co2_saved: Float!,
-    date_of_action: String!,
-    first_quiz_answer_correct: Boolean!,
-    quiz_answered: Boolean!,
-    is_validated: Boolean!,
+    user_id: Int!
+    action_id: Int!
+    quiz_id: Int
+    g_co2_saved: Float!
+    date_of_action: String!
+    first_quiz_answer_correct: Boolean!
+    quiz_answered: Boolean!
+    is_validated: Boolean!
     points_earned: Int!
   ): SubmittedAction
-  createSubmittedActionItem(sa_id: Int!, item_name: String!, input_value: Float!): SubmittedActionItem
-  createSubmittedActionItems(sa_id: Int!, submitted_action_items: [SubmittedActionItemInput!]!): [SubmittedActionItem]
+  updateSubmittedAction(
+    user_id: Int!
+    action_id: Int!
+    quiz_id: Int
+    g_co2_saved: Float!
+    date_of_action: String!
+    first_quiz_answer_correct: Boolean!
+    quiz_answered: Boolean!
+    is_validated: Boolean!
+    points_earned: Int!
+  ): SubmittedAction
+  createSubmittedActionItem(
+    sa_id: Int!
+    item_name: String!
+    input_value: Float!
+  ): SubmittedActionItem
+  createSubmittedActionItems(
+    sa_id: Int!
+    submitted_action_items: [SubmittedActionItemInput!]!
+  ): [SubmittedActionItem]
   createAction(
-    action_name: String!,
-    page_media: String,
-    action_icon: String,
-    fallback_quiz_media: String,
+    action_name: String!
+    page_media: String
+    action_icon: String
+    fallback_quiz_media: String
     translations: String
   ): Action
-  createActionItems(action_id: Int!, action_items: [ActionItemInput!]!): [ActionItem]
-  createActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+  createActionItems(
+    action_id: Int!
+    action_items: [ActionItemInput!]!
+  ): [ActionItem]
+  createActionValidationLabels(
+    action_id: Int!
+    validation_labels: [String!]!
+  ): [ActionValidationLabel]
   deleteAction(action_id: Int!): String
   createGroup(
-    group_name: String!,
-    group_description: String,
-    group_image: String,
-    is_public: Boolean!,
+    group_name: String!
+    group_description: String
+    group_image: String
+    is_public: Boolean!
     private_password: String
   ): Group
   createGroupAndOwner(
-    owner_user_id: Int!,
-    group_name: String!,
-    group_description: String,
-    group_image: String,
-    is_public: Boolean!,
+    owner_user_id: Int!
+    group_name: String!
+    group_description: String
+    group_image: String
+    is_public: Boolean!
     private_password: String
   ): Group
   updateGroup(
-    group_id: Int!,
-    group_name: String,
-    group_description: String,
-    group_image: String,
-    is_public: Boolean,
+    group_id: Int!
+    group_name: String
+    group_description: String
+    group_image: String
+    is_public: Boolean
     private_password: String
   ): Group
   deleteGroup(group_id: Int!): String
-  addGroupUser(group_id: Int!, user_id: Int!, user_role: UserRoleInGroup!): GroupUser
+  addGroupUser(
+    group_id: Int!
+    user_id: Int!
+    user_role: UserRoleInGroup!
+  ): GroupUser
   addGroupOwner(group_id: Int!, user_id: Int!): GroupUser
   addGroupMember(group_id: Int!, user_id: Int!): GroupUser
   demoteGroupOwner(group_id: Int!, user_id: Int!): GroupUser
@@ -170,23 +198,42 @@ type Mutation {
   approveSubmittedAction(sa_id: Int!): SubmittedAction
   rejectSubmittedAction(sa_id: Int!): String
   updateAction(
-    action_id: Int!,
-    action_name: String,
-    page_media: String,
-    action_icon: String,
-    fallback_quiz_media: String,
+    action_id: Int!
+    action_name: String
+    page_media: String
+    action_icon: String
+    fallback_quiz_media: String
     translations: String
   ): Action
-  remakeActionItems(action_id: Int!, action_items: [ActionItemInputId!]!): [ActionItem]
-  remakeActionValidationLabels(action_id: Int!, validation_labels: [String!]!): [ActionValidationLabel]
+  remakeActionItems(
+    action_id: Int!
+    action_items: [ActionItemInputId!]!
+  ): [ActionItem]
+  remakeActionValidationLabels(
+    action_id: Int!
+    validation_labels: [String!]!
+  ): [ActionValidationLabel]
   deleteActionItem(action_id: Int!, item_name: String): String
-  deleteActionValidationLabel(action_id: Int!, validation_label: String!): String
+  deleteActionValidationLabel(
+    action_id: Int!
+    validation_label: String!
+  ): String
   graveyardAction(action_id: Int!): Action
   restoreAction(action_id: Int!): Action
-  createQuiz(action_id: Int!, fact_text: String!, question_text: String!): ActionQuiz
-  createQuizAnswers(quiz_id: Int!, answers: [ActionQuizAnswerNoId!]!): [ActionQuizAnswer]
+  createQuiz(
+    action_id: Int!
+    fact_text: String!
+    question_text: String!
+  ): ActionQuiz
+  createQuizAnswers(
+    quiz_id: Int!
+    answers: [ActionQuizAnswerNoId!]!
+  ): [ActionQuizAnswer]
   updateQuiz(quiz_id: Int, fact_text: String, question_text: String): ActionQuiz
-  remakeQuizAnswers(quiz_id: Int!, answers: [ActionQuizAnswerNoId!]!): [ActionQuizAnswer]
+  remakeQuizAnswers(
+    quiz_id: Int!
+    answers: [ActionQuizAnswerNoId!]!
+  ): [ActionQuizAnswer]
   deleteQuiz(quiz_id: Int!): String
 }
 
@@ -206,21 +253,36 @@ type Query {
   getAllSubmittedActions: [SubmittedAction]
   getAllActionItems: [ActionItem]
   getActionItemsForAction(action_id: Int!): [ActionItem]
-  getAllSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
-  getAllValidatedSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
-  getAllUnvalidatedSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
-  getAllGraveyardedSubmittedActionsForUser(user_id: Int!): [SubmittedActionWithItemsEmbedded]
+  getAllSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllValidatedSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllUnvalidatedSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
+  getAllGraveyardedSubmittedActionsForUser(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbedded]
   getAllGroups: [Group]
   getSingleGroup(group_id: Int!): Group
   getSingleGroupByName(group_name: String!): Group
   getAllUsersInGroup(group_id: Int): [UserWithRoleAndStats]
   getAllOwnersInGroup(group_id: Int): [User]
   getAllMembersInGroup(group_id: Int): [User]
-  getAllValidatedSubmittedActionsInGroup(group_id: Int): [SubmittedActionWithItemsEmbeddedAndUser]
+  getAllValidatedSubmittedActionsInGroup(
+    group_id: Int
+  ): [SubmittedActionWithItemsEmbeddedAndUser]
   getAllGroupsForUser(user_id: Int): [Group]
   getAllGroupsUserOwns(user_id: Int): [Group]
-  isPrivateGroupPasswordCorrect(group_id: Int!, private_password: String!): Boolean
-  getAllSubmittedActionsToValidate(user_id: Int!): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
+  isPrivateGroupPasswordCorrect(
+    group_id: Int!
+    private_password: String!
+  ): Boolean
+  getAllSubmittedActionsToValidate(
+    user_id: Int!
+  ): [SubmittedActionWithItemsEmbeddedAndUserAndGroup]
   getAllSubmittedActionsOfUsersWithoutGroupToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
   getAllSubmittedActionsToValidateForAdmin: [SubmittedActionWithItemsEmbeddedAndUser]
   getAllQuizzes: [ActionQuizWithAnswers]

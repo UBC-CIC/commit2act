@@ -5,9 +5,6 @@ import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 
 const CO2SavedScreen = ({
-  actionId,
-  actionDate,
-  actionStyle,
   totalCO2Saved,
   setActiveStep,
   activeStep,
