@@ -3,7 +3,6 @@ import { Grid, Box, Typography, CircularProgress, Button } from '@mui/material';
 import { API } from 'aws-amplify';
 import { getQuizPoolForUser } from '../../graphql/queries';
 import Modal from 'react-modal';
-
 import useTranslation from '../customHooks/translations';
 import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 import {
@@ -11,6 +10,7 @@ import {
   createSubmittedActionItems,
 } from '../../graphql/mutations';
 import { getSingleSubmittedAction } from '../../graphql/queries';
+import ActionButtons from './ActionButtons';
 
 Modal.setAppElement('#root');
 
@@ -259,21 +259,16 @@ const ActionFact = ({
           width: { xs: '50%' },
         }}
       >
-        <Button
-          onClick={() => setActiveStep(activeStep + 1)}
-          variant="contained"
-          sx={{
-            width: '100%',
-            padding: '.5em 1em',
-            fontSize: '1.2rem',
-            borderRadius: '35px',
-            color: 'white',
-          }}
-          disabled={loading}
-        >
-          {translation.done}{' '}
-          {loading && <CircularProgress sx={{ margin: '0 1em' }} />}
-        </Button>
+        <ActionButtons
+          forwardOnClick={() => setActiveStep(activeStep + 1)}
+          forwardDisabled={loading}
+          forwardText={
+            <>
+              {translation.done}
+              {loading && <CircularProgress sx={{ margin: '0 1em' }} />}
+            </>
+          }
+        />
       </Box>
     </Grid>
   );

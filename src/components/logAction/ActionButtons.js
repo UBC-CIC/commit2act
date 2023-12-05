@@ -1,48 +1,51 @@
 import React from 'react';
 import { Box, Button } from '@mui/material';
 
+const buttonStyles = {
+  padding: '0.5em 1.5em',
+  borderRadius: '2rem',
+  fontWeight: 'bold',
+  textTransform: 'capitalize',
+  flex: '1 0 max-content',
+  maxWidth: '14em',
+};
+
 const ActionButtons = ({
+  backOnClick = () => {},
+  backText = null,
+  forwardDisabled = false,
   forwardOnClick,
-  backOnClick,
   forwardText,
-  backText,
 }) => {
   return (
     <Box
-      component="div"
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
-        m: '0 0 1.25em',
-        flexDirection: { xs: 'row' },
-        gap: { xs: '10px', md: '10px' },
-        width: { xs: '100%' },
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '0.75rem',
+        justifyContent: 'center',
+        marginBottom: '1.25rem',
       }}
     >
+      {backText && (
+        <Button
+          onClick={backOnClick}
+          sx={{
+            ...buttonStyles,
+            color: 'white',
+            borderColor: 'white',
+          }}
+          variant="outlined"
+        >
+          {backText}
+        </Button>
+      )}
       <Button
-        onClick={backOnClick}
-        variant="outlined"
-        sx={{
-          width: '100%',
-          padding: '.5em 1em',
-          fontSize: '1.2rem',
-          borderRadius: '35px',
-          color: 'white',
-        }}
-      >
-        {backText}
-      </Button>
-      <Button
+        disabled={forwardDisabled}
         onClick={forwardOnClick}
+        sx={buttonStyles}
         variant="contained"
-        // disabled={disableButton}
-        sx={{
-          width: '100%',
-          padding: '.5em 1em',
-          fontSize: '1.2rem',
-          borderRadius: '35px',
-        }}
       >
         {forwardText}
       </Button>

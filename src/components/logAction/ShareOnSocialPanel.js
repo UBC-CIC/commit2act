@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 import { useUpdateSubmittedAction } from '../customHooks/use-update-submitted-action';
@@ -25,7 +25,20 @@ const ShareOnSocialPanel = ({ addAnotherAction, ...props }) => {
 
   return (
     <Box>
-      <div>I dare you to match my action by...</div>
+      <Box
+        sx={{
+          background: 'white',
+          padding: '0.75rem',
+          marginBottom: '2.5rem',
+        }}
+      >
+        <Typography color="black">
+          I dare you to match my action by [placeholder for activity info]
+        </Typography>
+        <Typography color="black" textTransform="uppercase">
+          <strong>{translation.commit2ActHashtag}</strong>
+        </Typography>
+      </Box>
       <ActionButtons
         backOnClick={addAnotherAction}
         backText={translation.logActionButtonAddAnother}

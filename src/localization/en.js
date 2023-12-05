@@ -306,6 +306,7 @@ const translations = {
   extraPoints: 'Get Extra Points!',
   logActionButtonAddAnother: 'Add Another',
   logActionButtonAllDone: 'All Done',
+  commit2ActHashtag: '#Commit2Act',
 };
 
 export default translations;
