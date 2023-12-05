@@ -6,8 +6,8 @@ const buttonStyles = {
   borderRadius: '2rem',
   fontWeight: 'bold',
   textTransform: 'capitalize',
-  flex: '1 0 max-content',
-  maxWidth: '14em',
+  flex: '1 0 calc(50% - 0.75rem)',
+  minWidth: 'max-content',
 };
 
 const ActionButtons = ({

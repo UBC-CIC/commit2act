@@ -265,12 +265,6 @@ const SelfReportMenu = ({ user }) => {
         item
         sx={{
           backgroundColor: 'none',
-          width: { xs: '100%', md: '85%' },
-          padding: { xs: '1em', md: '2em 2em 5em' },
-          borderRadius: '7px',
-          borderWidth: '2px',
-          borderStyle: 'solid',
-          borderColor: actionStyle.color,
           '& .Mui-focused, & .Mui-focused .MuiOutlinedInput-notchedOutline': {
             color: actionStyle.color,
             borderColor: actionStyle.color,
