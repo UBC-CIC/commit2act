@@ -60,6 +60,11 @@ const SelfReportMenu = ({ user }) => {
     translation.logActionStep6,
   ];
 
+  const resetLogAction = () => {
+    setSelectedAction(undefined);
+    setActiveStep(0);
+  };
+
   const [actionOptions, setActionOptions] = useState([]);
   /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} */
   const [loading, setLoading] = useState(true);
@@ -191,6 +196,7 @@ const SelfReportMenu = ({ user }) => {
             actionDate={selectedDate}
             totalCO2Saved={totalCO2Saved}
             actionId={selectedAction?.action_id}
+            addAnotherAction={resetLogAction}
           />
         )}
       </>
