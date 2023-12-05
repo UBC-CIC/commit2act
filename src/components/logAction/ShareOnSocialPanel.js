@@ -1,46 +1,52 @@
-import React, { useEffect } from 'react';
-
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
-import { updateSubmittedAction } from '../../graphql/mutations';
-import { API } from 'aws-amplify';
+import { useUpdateSubmittedAction } from '../customHooks/use-update-submitted-action';
+import { PAGE_PATHS } from '../../constants/page-paths';
 
-const ShareOnSocialPanel = ({
-  quizAnswered,
-  firstQuizAnswerCorrect,
-  quizId,
-  userId,
-  totalCO2Saved,
-  actionId,
-  actionDate,
-}) => {
-  useEffect(() => {
-    submitBonus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const filterUpdateDataFromProps = (props) => ({
+  actionDate: props.actionDate,
+  actionId: props.actionId,
+  firstQuizAnswerCorrect: props.firstQuizAnswerCorrect,
+  quizAnswered: props.quizAnswered,
+  quizId: props.quizId,
+  totalCO2Saved: props.totalCO2Saved,
+  userId: props.userId,
+});
 
-  const submitBonus = async () => {
-    //creates and submits the action, returns the submitted action id that is stored in database
-
-    await API.graphql({
-      query: updateSubmittedAction,
-      variables: {
-        action_id: actionId,
-        date_of_action: actionDate,
-        first_quiz_answer_correct: firstQuizAnswerCorrect,
-        g_co2_saved: totalCO2Saved,
-        is_validated: false,
-        points_earned: Math.ceil(totalCO2Saved),
-        quiz_answered: quizAnswered,
-        user_id: userId,
-        quiz_id: quizId,
-      },
-    });
-  };
+const ShareOnSocialPanel = ({ addAnotherAction, ...props }) => {
   const translation = useTranslation();
+  const navigate = useNavigate();
 
-  //Update submitted action here and add quizAnswered and firstQuizAnswerCorrect
+  // Update the current action with quiz info on init of this panel
+  useUpdateSubmittedAction(filterUpdateDataFromProps(props), true);
 
-  return <div>I dare you to match my action by...</div>;
+  return (
+    <Box>
+      <Box
+        sx={{
+          background: 'white',
+          padding: '0.75rem',
+          marginBottom: '2.5rem',
+        }}
+      >
+        <Typography color="black">
+          I dare you to match my action by [placeholder for activity info]
+        </Typography>
+        <Typography color="black" textTransform="uppercase">
+          <strong>{translation.commit2ActHashtag}</strong>
+        </Typography>
+      </Box>
+      <ActionButtons
+        backOnClick={addAnotherAction}
+        backText={translation.logActionButtonAddAnother}
+        forwardOnClick={() => navigate(PAGE_PATHS.DASHBOARD)}
+        forwardText={translation.logActionButtonAllDone}
+      />
+    </Box>
+  );
 };
 
 export default ShareOnSocialPanel;

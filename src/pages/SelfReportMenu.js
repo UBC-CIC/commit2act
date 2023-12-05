@@ -60,6 +60,11 @@ const SelfReportMenu = ({ user }) => {
     translation.logActionStep6,
   ];
 
+  const resetLogAction = () => {
+    setSelectedAction(undefined);
+    setActiveStep(0);
+  };
+
   const [actionOptions, setActionOptions] = useState([]);
   /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} */
   const [loading, setLoading] = useState(true);
@@ -191,6 +196,7 @@ const SelfReportMenu = ({ user }) => {
             actionDate={selectedDate}
             totalCO2Saved={totalCO2Saved}
             actionId={selectedAction?.action_id}
+            addAnotherAction={resetLogAction}
           />
         )}
       </>
@@ -259,12 +265,6 @@ const SelfReportMenu = ({ user }) => {
         item
         sx={{
           backgroundColor: 'none',
-          width: { xs: '100%', md: '85%' },
-          padding: { xs: '1em', md: '2em 2em 5em' },
-          borderRadius: '7px',
-          borderWidth: '2px',
-          borderStyle: 'solid',
-          borderColor: actionStyle.color,
           '& .Mui-focused, & .Mui-focused .MuiOutlinedInput-notchedOutline': {
             color: actionStyle.color,
             borderColor: actionStyle.color,
