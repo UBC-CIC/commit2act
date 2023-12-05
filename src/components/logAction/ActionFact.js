@@ -205,10 +205,13 @@ const ActionFact = ({
     >
       <Box>
         <Typography>
-          Your{' '}
-          <Typography sx={{ color: actionStyle.color, display: 'inline' }}>
-            {selectedAction.action_name}
-          </Typography>{' '}
+          Your
+          <Typography
+            variant="span"
+            sx={{ color: actionStyle.color, display: 'inline' }}
+          >
+            {` ${selectedAction.action_name} `}
+          </Typography>
           action is being submitted.
         </Typography>
       </Box>
