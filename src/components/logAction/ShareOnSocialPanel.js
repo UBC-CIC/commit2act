@@ -1,46 +1,36 @@
-import React, { useEffect } from 'react';
-
+import React from 'react';
+import { Box } from '@mui/material';
+import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
-import { updateSubmittedAction } from '../../graphql/mutations';
-import { API } from 'aws-amplify';
+import { useUpdateSubmittedAction } from '../customHooks/use-update-submitted-action';
 
-const ShareOnSocialPanel = ({
-  quizAnswered,
-  firstQuizAnswerCorrect,
-  quizId,
-  userId,
-  totalCO2Saved,
-  actionId,
-  actionDate,
-}) => {
-  useEffect(() => {
-    submitBonus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const filterUpdateDataFromProps = (props) => ({
+  actionId: props.actionId,
+  actionDate: props.actionDate,
+  firstQuizAnswerCorrect: props.firstQuizAnswerCorrect,
+  totalCO2Saved: props.totalCO2Saved,
+  quizAnswered: props.quizAnswered,
+  userId: props.userId,
+  quizId: props.quizId,
+});
 
-  const submitBonus = async () => {
-    //creates and submits the action, returns the submitted action id that is stored in database
-
-    await API.graphql({
-      query: updateSubmittedAction,
-      variables: {
-        action_id: actionId,
-        date_of_action: actionDate,
-        first_quiz_answer_correct: firstQuizAnswerCorrect,
-        g_co2_saved: totalCO2Saved,
-        is_validated: false,
-        points_earned: Math.ceil(totalCO2Saved),
-        quiz_answered: quizAnswered,
-        user_id: userId,
-        quiz_id: quizId,
-      },
-    });
-  };
+const ShareOnSocialPanel = (props) => {
   const translation = useTranslation();
 
-  //Update submitted action here and add quizAnswered and firstQuizAnswerCorrect
+  // Update the current action with quiz info on init of this panel
+  useUpdateSubmittedAction(filterUpdateDataFromProps(props), true);
 
-  return <div>I dare you to match my action by...</div>;
+  return (
+    <Box>
+      <div>I dare you to match my action by...</div>
+      <ActionButtons
+        forwardOnClick={() => {}}
+        backOnClick={() => {}}
+        backText={translation.logActionButtonAddAnother}
+        forwardText={translation.logActionButtonAllDone}
+      />
+    </Box>
+  );
 };
 
 export default ShareOnSocialPanel;

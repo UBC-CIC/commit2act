@@ -304,6 +304,8 @@ const translations = {
   continue: 'Continue',
   done: 'Done',
   extraPoints: 'Get Extra Points!',
+  logActionButtonAddAnother: 'Add Another',
+  logActionButtonAllDone: 'All Done',
 };
 
 export default translations;
