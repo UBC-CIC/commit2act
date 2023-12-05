@@ -15,7 +15,6 @@ const ActionPanel = ({
   activeStep,
   setActiveStep,
 }) => {
-  const { action_id, action_name } = selectedAction;
   const [actionItems, setActionItems] = useState();
   const [inputError, setInputError] = useState(false);
   const [disableButton, setDisableButton] = useState(true);
@@ -31,14 +30,21 @@ const ActionPanel = ({
   //gets all action items related to the user selected action
   const getActionItems = async () => {
     if (translation.getLanguage() !== 'en') {
-      const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
-      const relevantAction = relevantTranslationObject?.translationJSON?.actions?.find((action) => action.action_id === selectedAction.action_id);
+      const relevantTranslationObject = contentTranslations.find(
+        (contentTranslation) =>
+          contentTranslation.langCode.toLowerCase() ===
+          translation.getLanguage().toLowerCase()
+      );
+      const relevantAction =
+        relevantTranslationObject?.translationJSON?.actions?.find(
+          (action) => action.action_id === selectedAction?.action_id
+        );
       setActionItems(relevantAction?.action_items || []);
       return;
     }
     const res = await API.graphql({
       query: getActionItemsForAction,
-      variables: { action_id: action_id },
+      variables: { action_id: selectedAction?.action_id },
     });
     const items = res.data.getActionItemsForAction;
     setActionItems(items);
@@ -72,10 +78,10 @@ const ActionPanel = ({
       let updatedItemValues = actionItemValues.map((itemValue) =>
         itemValue.item_name === item.item_name
           ? {
-            ...itemValue,
-            input_value: value,
-            co2: value * item.co2_saved_per_unit,
-          }
+              ...itemValue,
+              input_value: value,
+              co2: value * item.co2_saved_per_unit,
+            }
           : itemValue
       );
       setActionItemValues(updatedItemValues);
@@ -106,18 +112,6 @@ const ActionPanel = ({
     }
   };
 
-  const calculateCO2 = () => {
-    //get the total CO2 saved by summing the values for the co2 property of all the items in actionItemValues
-    let sumCO2 = actionItemValues.reduce((sum, { co2 }) => sum + co2, 0);
-    setTotalCO2Saved(sumCO2);
-    //remove the co2 object property from every item in actionItemValues
-    //so that actionItemValues will be in proper format to be used in CO2SavedScreen mutation
-    let removedCO2 = actionItemValues.map(({ co2, ...value }) => value);
-    setActionItemValues(removedCO2);
-    //advances log action form to next step
-    setActiveStep(activeStep + 1);
-  };
-
   return (
     <Grid
       item
@@ -137,50 +131,12 @@ const ActionPanel = ({
           width: '80%',
         }}
       >
-  
         {inputError && (
           <Typography variant="subtitle2">
             {translation.mustBeNumber}
           </Typography>
         )}
         {renderActionForm()}
-        <Box
-          component="div"
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            m: '0 0 1.25em',
-            flexDirection: { xs: 'row' },
-            gap: { xs: '10px', md: '10px' }
-          }}
-        >
-          <Button
-            onClick={() => {
-              setActiveStep(activeStep - 1);
-            }}
-            variant="contained"
-            sx={{
-              width: '50%',
-              padding: '1em 1em 1em',
-              fontSize: '1.2rem',
-            }}
-          >
-            {translation.previous}
-          </Button>
-          <Button
-            onClick={calculateCO2}
-            variant="contained"
-            disabled={disableButton}
-            sx={{
-              width: '50%',
-              padding: '1em 1em 1em',
-              fontSize: '1.2rem',
-            }}
-          >
-            {translation.next}
-          </Button>
-        </Box>
       </Box>
     </Grid>
   );

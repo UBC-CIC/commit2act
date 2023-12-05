@@ -12,28 +12,14 @@
       "AmplifyAppId": "d1ha5pbjl3ysbn"
     },
     "categories": {
-      "storage": {
-        "s3commit2act": {}
-      },
       "auth": {
         "commit2act480c60ba": {
           "facebookAppId": "1250783402535608",
           "googleClientId": "497146325730-sjbdj86ov2mch3l0rdtuce333cal9n3n.apps.googleusercontent.com"
         }
       },
-      "api": {
-        "commit2act": {}
-      },
-      "custom": {
-        "parameterstoreGraphQL": {}
-      }
-    }
-  },
-  "danstage": {
-    "awscloudformation": {},
-    "categories": {
-      "auth": {
-        "commit2act": {}
+      "storage": {
+        "s3commit2act": {}
       }
     }
   }

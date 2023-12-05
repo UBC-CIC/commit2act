@@ -60,7 +60,8 @@ const translations = {
   alertNewActionText: 'Vous avez {0} actions à valider !',
   startValidating: 'Commencer la validation',
   alertActionsPendingTitle: '{0} actions en attente de validation',
-  alertActionsPendingText: 'L’impact de vos actions en attente est de {0} de CO2 économisés',
+  alertActionsPendingText:
+    'L’impact de vos actions en attente est de {0} de CO2 économisés',
   recentProgress: 'Progrès récents',
   logANewAction: 'Enregistrer une nouvelle action',
   co2SavedWeek: 'CO2 économisé cette semaine',
@@ -83,7 +84,8 @@ const translations = {
   weeklyCO2Colon: 'CO2 hebdomadaire :',
   weeklyPointsColon: 'Points hebdomadaires :',
   leaderboards: 'Classements',
-  noMyGroups: 'Aucun groupe à afficher. Créez ou rejoignez un groupe pour commencer !',
+  noMyGroups:
+    'Aucun groupe à afficher. Créez ou rejoignez un groupe pour commencer !',
   viewGroupStats: 'Voir les statistiques du groupe',
   myContributions: 'Mes contributions',
   myContribution: 'Ma contribution',
@@ -123,9 +125,12 @@ const translations = {
   successUserNowMember: '{0} est maintenant un membre du groupe',
   successUserNowRemoved: '{0} a été retiré du groupe',
   demotionErrorTitle: 'Erreur de rétrogradation',
-  demotionErrorText: 'Les groupes doivent avoir au moins 1 propriétaire de groupe',
-  addMembersDescription: 'Ajouter des utilisateurs à ce groupe en leur envoyant votre lien de groupe',
-  addMembersDescriptionPassword: 'Ajouter des utilisateurs à ce groupe en leur envoyant votre lien de groupe et votre mot de passe',
+  demotionErrorText:
+    'Les groupes doivent avoir au moins 1 propriétaire de groupe',
+  addMembersDescription:
+    'Ajouter des utilisateurs à ce groupe en leur envoyant votre lien de groupe',
+  addMembersDescriptionPassword:
+    'Ajouter des utilisateurs à ce groupe en leur envoyant votre lien de groupe et votre mot de passe',
   groupLinkLabel: 'Votre lien de groupe est :',
   groupPasswordLabel: 'Votre mot de passe de groupe est :',
   linkCopied: 'Lien copié !',
@@ -149,19 +154,25 @@ const translations = {
   groupDeletedMsg: '{0} a été supprimé !',
   homepageRedirectMsg: "Vous serez redirigé vers la page d'accueil",
   deleteGroupPrompt: 'Supprimer {0}',
-  deletePrompAlert: "Cette action est irréversible",
+  deletePrompAlert: 'Cette action est irréversible',
   logout: 'Déconnexion',
-  leaveGroupLastMemberWarning: "Ce groupe sera supprimé puisqu'il n'y aura plus de membres.",
-  promoteOtherUserBeforeLeavingGroup: 'Vous devez promouvoir un autre utilisateur comme propriétaire de groupe avant de quitter le groupe.',
+  leaveGroupLastMemberWarning:
+    "Ce groupe sera supprimé puisqu'il n'y aura plus de membres.",
+  promoteOtherUserBeforeLeavingGroup:
+    'Vous devez promouvoir un autre utilisateur comme propriétaire de groupe avant de quitter le groupe.',
   removeGroupOwner: 'Retirer le propriétaire de groupe',
-  promoteOtherUserBeforeRemovingUser: 'Vous devez promouvoir un autre utilisateur en tant que propriétaire du groupe avant de supprimer cet utilisateur.',
+  promoteOtherUserBeforeRemovingUser:
+    'Vous devez promouvoir un autre utilisateur en tant que propriétaire du groupe avant de supprimer cet utilisateur.',
   leftGroup: 'Vous avez quitté le groupe !',
   joinGroupAlreadyMember: 'Vous êtes déjà membre de ce groupe !',
   joinGroupTitle: 'Vous avez été invité à rejoindre {0}',
-  successRedirectProfilePage: 'Succès ! Redirection vers la page de profil de {0}',
+  successRedirectProfilePage:
+    'Succès ! Redirection vers la page de profil de {0}',
   joinGroupConfirm: 'Veuillez confirmer en sélectionnant Rejoindre.',
-  joinGroupSelectCancel: "Sélectionnez Annuler pour être redirigé vers la page du groupe.",
-  joinGroupEnterPassword: 'Pour rejoindre ce groupe, veuillez entrer le mot de passe du groupe et sélectionner Rejoindre.',
+  joinGroupSelectCancel:
+    'Sélectionnez Annuler pour être redirigé vers la page du groupe.',
+  joinGroupEnterPassword:
+    'Pour rejoindre ce groupe, veuillez entrer le mot de passe du groupe et sélectionner Rejoindre.',
   incorrectPassword: 'Mot de passe incorrect',
   logAction: "Enregistrer l'action",
   dashboard: 'Tableau de bord',
@@ -174,15 +185,15 @@ const translations = {
   logActionStep1: 'Sélectionner une action',
   logActionStep2: 'Sélectionner des dates',
   logActionStep3: "Fait sur l'action",
-  logActionStep4: "Eléments de l'action",
-  logActionStep5: 'Validation',
-  logActionStep6: 'Question bonus',
-  logActionStep7: 'CO2 économisé',
+  logActionStep4: 'Validation',
+  logActionStep5: 'Question bonus',
+  logActionStep6: 'CO2 économisé',
   next: 'Suivant',
   previous: 'Précédente',
   chooseDate: 'Choisir une date',
   mustBeNumber: 'La valeur doit être un nombre ou un décimal supérieur à 0',
-  imageValidationText: "Veuillez télécharger une image liée à l'élément d'action pour la vérification",
+  imageValidationText:
+    "Veuillez télécharger une image liée à l'élément d'action pour la vérification",
   imageValidationDimensions: 'Dimensions minimales 100x100 px',
   imageValidationError: "Ce n'est pas un fichier image",
   imageValidationSelected: 'Image sélectionnée !',
@@ -195,6 +206,7 @@ const translations = {
   bonusQuizChoicesLabel: 'Choix de réponse',
   bonusQuizSubmit: 'Soumettre le quiz',
   bonusQuizSkip: 'Passer le quiz',
+  bonsuQuiz: 'Bonus le quiz',
   correct: 'Correct !',
   incorrect: 'Incorrect !',
   finish: 'Terminer',
@@ -202,12 +214,15 @@ const translations = {
   co2SavedScreenState: 'Votre action est en cours de',
   submitted: 'soumission',
   validated: 'validation',
-  co2SavedScreenSkip: 'Appuyez sur "Passer" pour afficher les résultats de validation ultérieurement',
+  co2SavedScreenSkip:
+    'Appuyez sur "Passer" pour afficher les résultats de validation ultérieurement',
   thankYou: 'Merci !',
   co2SavedScreenValidated: 'Votre action a été validée',
   co2SavedScreenSaved: 'Vous avez économisé {0} g de CO2',
-  co2SavedScreenApproval: "Votre action est en attente d'approbation de l'administrateur",
-  co2SavedScreenImpact: "L'impact de votre action est de {0} g de CO2 économisé",
+  co2SavedScreenApproval:
+    "Votre action est en attente d'approbation de l'administrateur",
+  co2SavedScreenImpact:
+    "L'impact de votre action est de {0} g de CO2 économisé",
   co2SavedScreenAnother: 'Ajouter une autre action',
   createGroupTitle: 'Créer un nouveau groupe',
   uploadGroupIcon: 'Télécharger une icône de groupe',
@@ -238,18 +253,22 @@ const translations = {
   savePassword: 'Enregistrer le mot de passe',
   toggleCurrentPassword: 'basculer la visibilité du mot de passe actuel',
   toggleNewPassword: 'basculer la visibilité du nouveau mot de passe',
-  toggleConfirmNewPassword: 'basculer la visibilité de la confirmation du nouveau mot de passe',
+  toggleConfirmNewPassword:
+    'basculer la visibilité de la confirmation du nouveau mot de passe',
   findGroupTitle: 'Recherchez un groupe',
   findGroupDescription: 'Entrez le nom de groupe d’un groupe public',
-  findGroupErrorSearch: 'Votre recherche pour « {0} » ne correspond à aucun groupe public',
-  findGroupTopGroups: 'Voici les 5 meilleurs groupes publics auxquels vous pourriez vouloir appartenir',
+  findGroupErrorSearch:
+    'Votre recherche pour « {0} » ne correspond à aucun groupe public',
+  findGroupTopGroups:
+    'Voici les 5 meilleurs groupes publics auxquels vous pourriez vouloir appartenir',
   searchResults: 'Résultats de la recherche',
   validateActionsUsersWithoutGroupsTab: 'Utilisateurs sans groupes',
   validateActionsAllUnvalidatedActionsTab: 'Toutes les actions non validées',
   searchByC: 'Recherche par :',
   actionName: 'Nom de l’action',
   search: 'Rechercher',
-  groupNameSearchEmptySearch: 'Votre recherche pour « {0} » ne correspond à aucun de vos groupes',
+  groupNameSearchEmptySearch:
+    'Votre recherche pour « {0} » ne correspond à aucun de vos groupes',
   groupNameSearchNoGroups: 'Vous ne possédez actuellement aucun groupe',
   filteringBy: 'Filtrage par :',
   sortingBy: 'Trier par',
@@ -257,7 +276,8 @@ const translations = {
   groupNameSearchAllFilter: 'Tous mes groupes',
   validateActionsNoActions: 'Il n’y a aucune action à valider',
   actionNameSearchAllFilter: 'Tous les types d’actions',
-  actionNameSearchEmptySearch: 'Votre recherche pour « {0} » ne correspond à aucun nom de type d’action',
+  actionNameSearchEmptySearch:
+    'Votre recherche pour « {0} » ne correspond à aucun nom de type d’action',
   actionNameSearchNoActions: 'Il n’y a actuellement aucun type d’action',
   submittedInC: 'Soumis dans :',
   accept: 'Accepter',
@@ -270,8 +290,10 @@ const translations = {
   actionsSubmittedFilter: 'Actions soumises au cours des {0} derniers',
   allTimeStats: 'Statistiques Toutes Périodes',
   totalActionsSubmitted: "Nombre Total d'Actions Soumises",
-  actionsFirstAnswerCorrect: 'Actions Avec la Première Réponse de Quiz Correcte',
-  actionsFirstAnswerIncorrect: 'Actions Avec la Première Réponse de Quiz Incorrecte',
+  actionsFirstAnswerCorrect:
+    'Actions Avec la Première Réponse de Quiz Correcte',
+  actionsFirstAnswerIncorrect:
+    'Actions Avec la Première Réponse de Quiz Incorrecte',
   actionsSubmittedWithImage: 'Actions Soumises Avec Image',
   actionsSubmittedWithoutImage: 'Actions Soumises Sans Image',
   numberActionsSubmittedWithImage: "Nombre d'Actions Soumises Avec Image",
@@ -288,6 +310,8 @@ const translations = {
   oneYear: 'Année',
   co2SavedDuring: 'CO2 Sauvé au cours des {0} derniers',
   userNoteGroupOwner: ' (propriétaire)',
+  totalGramsSavedCO2PerDayAllActions:
+    'Grammes CO2 Sauvés au Total Par Jour Pour Toutes les Actions',
 };
 
 export default translations;

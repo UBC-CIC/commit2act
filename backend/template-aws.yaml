@@ -140,14 +140,14 @@ Outputs:
     Value: '{{resolve:ssm:BucketName:1:1677894839400}}'
   ValidationLambdaArn:
     Description: The ARN of the Lambda function for image validation
-    Value: !GetAtt 
+    Value: !GetAtt
       - validateImageWithRekognition
       - Arn
   CloudFrontDistributionDomainName:
     Description: The domain name of our CloudFront distibution
-    Value: !Sub 
+    Value: !Sub
       - 'https://${Domain}/'
-      - Domain: !GetAtt 
+      - Domain: !GetAtt
           - CloudFrontDistribution
           - DomainName
   CloudFrontOriginAccessIdentity:
@@ -157,10 +157,10 @@ Outputs:
     Description: >-
       Run the following command to set up the Lambda trigger! NOTE: This only
       works on Linux, Mac, or WSL
-    Value: !Sub 
+    Value: !Sub
       - './scripts/lambda_trigger.sh ${Bucket} ${Lambda} ${Oai}'
       - Bucket: '{{resolve:ssm:BucketName:1:1677894839400}}'
-        Lambda: !GetAtt 
+        Lambda: !GetAtt
           - validateImageWithRekognition
           - Arn
         Oai: !Ref OriginAccessIdentity
@@ -216,7 +216,7 @@ Resources:
       - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select 
+      AvailabilityZone: !Select
         - 0
         - !GetAZs ''
       CidrBlock: 10.0.0.0/24
@@ -236,7 +236,7 @@ Resources:
       - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select 
+      AvailabilityZone: !Select
         - 1
         - !GetAZs ''
       CidrBlock: 10.0.1.0/24
@@ -256,7 +256,7 @@ Resources:
       - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select 
+      AvailabilityZone: !Select
         - 0
         - !GetAZs ''
       CidrBlock: 10.0.2.0/24
@@ -276,7 +276,7 @@ Resources:
       - VPC
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select 
+      AvailabilityZone: !Select
         - 1
         - !GetAZs ''
       CidrBlock: 10.0.3.0/24
@@ -687,7 +687,7 @@ Resources:
       EngineFamily: MYSQL
       IdleClientTimeout: 120
       RequireTLS: false
-      RoleArn: !GetAtt 
+      RoleArn: !GetAtt
         - RDSProxyRole
         - Arn
       Auth:
@@ -738,7 +738,7 @@ Resources:
     Type: 'AWS::Logs::LogGroup'
     DependsOn: graphQLMySQLResolver
     Properties:
-      LogGroupName: !Join 
+      LogGroupName: !Join
         - ''
         - - /aws/lambda/
           - !Ref graphQLMySQLResolver
@@ -749,13 +749,13 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     DependsOn: validateImageWithRekognition
     Properties:
-      FunctionName: !GetAtt 
+      FunctionName: !GetAtt
         - validateImageWithRekognition
         - Arn
       Action: 'lambda:InvokeFunction'
       Principal: s3.amazonaws.com
       SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !Join 
+      SourceArn: !Join
         - ''
         - - 'arn:aws:s3:::'
           - '{{resolve:ssm:BucketName:1:1677894839400}}'
@@ -765,7 +765,7 @@ Resources:
     Type: 'AWS::Logs::LogGroup'
     DependsOn: validateImageWithRekognition
     Properties:
-      LogGroupName: !Join 
+      LogGroupName: !Join
         - ''
         - - /aws/lambda/
           - !Ref validateImageWithRekognition
@@ -788,7 +788,7 @@ Resources:
         Origins:
           - ConnectionAttempts: 3
             ConnectionTimeout: 10
-            DomainName: !Join 
+            DomainName: !Join
               - ''
               - - '{{resolve:ssm:BucketName:1:1677894839400}}'
                 - .s3.
@@ -858,16 +858,16 @@ Resources:
       - graphQLMySQLResolver
       - GraphQLApiSchema
     Properties:
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
       Name: LambdaHandler
       Type: AWS_LAMBDA
-      ServiceRoleArn: !GetAtt 
+      ServiceRoleArn: !GetAtt
         - LambdaServiceRole
         - Arn
       LambdaConfig:
-        LambdaFunctionArn: !GetAtt 
+        LambdaFunctionArn: !GetAtt
           - graphQLMySQLResolver
           - Arn
     Metadata:
@@ -875,7 +875,7 @@ Resources:
   GraphQLApiSchema:
     Type: 'AWS::AppSync::GraphQLSchema'
     Properties:
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
       Definition: |
@@ -996,6 +996,17 @@ Resources:
           ): User
           deleteUser(user_id: Int!): String
           createSubmittedAction(
+            user_id: Int!,
+            action_id: Int!,
+            quiz_id: Int,
+            g_co2_saved: Float!,
+            date_of_action: String!,
+            first_quiz_answer_correct: Boolean!,
+            quiz_answered: Boolean!,
+            is_validated: Boolean!,
+            points_earned: Int!
+          ): SubmittedAction
+           updateSubmittedAction(
             user_id: Int!,
             action_id: Int!,
             quiz_id: Int,
@@ -1318,10 +1329,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1350,10 +1361,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1390,10 +1401,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: "$util.toJson($context.result)\n## {\n## \t\"action_id\": $context.result.get(\"action_id\"),\n## \t\"action_name\": $context.result.get(\"action_name\"),\n## \t\"page_media\": $context.result.get(\"page_media\"),\n## \t\"action_icon\": $context.result.get(\"action_icon\"),\n## \t\"fallback_quiz_media\": $context.result.get(\"fallback_quiz_media\"),\n## \t\"translations\": $context.result.get(\"translations\"),\n## \t\"validation_label\": null\n## }\n"
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1425,10 +1436,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1457,10 +1468,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1490,10 +1501,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1518,10 +1529,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1551,10 +1562,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1584,10 +1595,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1612,10 +1623,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1646,10 +1657,10 @@ Resources:
         }
       ResponseMappingTemplate: |
         $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1681,10 +1692,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1711,10 +1722,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1744,10 +1755,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1776,10 +1787,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1808,10 +1819,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1841,10 +1852,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1874,10 +1885,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1907,10 +1918,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1940,10 +1951,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -1973,10 +1984,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2002,10 +2013,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2034,10 +2045,10 @@ Resources:
         }
       ResponseMappingTemplate: |
         $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2088,10 +2099,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2131,10 +2142,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2180,10 +2191,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2217,10 +2228,10 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2255,10 +2266,10 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2293,10 +2304,10 @@ Resources:
         #else
           0.0
         #end
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2337,10 +2348,10 @@ Resources:
         #else
           false
         #end
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2386,10 +2397,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2430,10 +2441,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2465,10 +2476,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2496,10 +2507,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2527,10 +2538,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2559,10 +2570,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2594,10 +2605,10 @@ Resources:
         }
       ResponseMappingTemplate: |
         $util.toJson($context.result[0])
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2664,10 +2675,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2732,10 +2743,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2789,10 +2800,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2851,10 +2862,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2924,10 +2935,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -2973,10 +2984,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3005,10 +3016,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3069,10 +3080,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3114,10 +3125,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3147,10 +3158,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted action with and its associated items"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3184,10 +3195,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted action item"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3221,10 +3232,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted validation label"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3252,10 +3263,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted group!"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3285,10 +3296,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted user"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3320,10 +3331,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3355,10 +3366,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3390,10 +3401,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3424,10 +3435,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Rejected Submitted Action"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3497,10 +3508,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3556,10 +3567,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3590,10 +3601,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Removed user from group"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3626,10 +3637,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3717,10 +3728,10 @@ Resources:
 
 
         $util.toJson($context.result[0])
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3813,10 +3824,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3883,10 +3894,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3910,10 +3921,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3941,10 +3952,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -3971,10 +3982,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4004,10 +4015,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4034,10 +4045,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$context.result[0].get("is_correct_answer")'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4070,10 +4081,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4120,10 +4131,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4188,10 +4199,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '$util.toJson($context.result[0])'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4237,10 +4248,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: $util.toJson($context.result)
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4270,10 +4281,10 @@ Resources:
           }
         }
       ResponseMappingTemplate: '"Deleted quiz"'
-      ApiId: !GetAtt 
+      ApiId: !GetAtt
         - GraphQlApiIdParameter
         - Value
-      DataSourceName: !GetAtt 
+      DataSourceName: !GetAtt
         - LambdaAppSyncDataSource
         - Name
       Kind: UNIT
@@ -4299,7 +4310,7 @@ Resources:
       FunctionName: graphQL-MySQL-Resolver
       Handler: index.handler
       MemorySize: 1000
-      Role: !GetAtt 
+      Role: !GetAtt
         - graphQLMySQLResolverRole
         - Arn
       Runtime: nodejs14.x
@@ -4315,7 +4326,7 @@ Resources:
           DBNAME: !Ref DBName
           PASSWORD: !Ref DBPassword
           USERNAME: !Ref DBUser
-          RDSPROXY_ENDPOINT: !GetAtt 
+          RDSPROXY_ENDPOINT: !GetAtt
             - RDSProxy
             - Endpoint
           ADMIN_NAME: !Ref CognitoAdminName
@@ -4362,7 +4373,7 @@ Resources:
                     arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/GraphQL-MySQL-Resolver:*
               - Effect: Allow
                 Action: 'rds-db:connect'
-                Resource: !GetAtt 
+                Resource: !GetAtt
                   - RDSProxy
                   - DBProxyArn
               - Effect: Allow
@@ -4391,7 +4402,7 @@ Resources:
       FunctionName: validateImageWithRekognition
       Handler: lambda_function.lambda_handler
       MemorySize: 128
-      Role: !GetAtt 
+      Role: !GetAtt
         - validateImageWithRekognitionRole
         - Arn
       Runtime: python3.8
@@ -4405,11 +4416,11 @@ Resources:
       Environment:
         Variables:
           AMPLIFY_BUCKET: '{{resolve:ssm:BucketName:1:1677894839400}}'
-          CLOUDFRONT_URL: !GetAtt 
+          CLOUDFRONT_URL: !GetAtt
             - CloudFrontDistribution
             - DomainName
           DBNAME: !Ref DBName
-          ENDPOINT: !GetAtt 
+          ENDPOINT: !GetAtt
             - RDSProxy
             - Endpoint
           PASSWORD: !Ref DBPassword

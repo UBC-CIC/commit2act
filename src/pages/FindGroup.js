@@ -27,6 +27,7 @@ const FindGroup = ({ user }) => {
           variables: { user_id: user.user_id },
         }),
       ]);
+
       setGroups(allGroupsRes.data.getAllGroups);
       setUsersGroups(usersGroupsRes.data.getAllGroupsForUser);
 
@@ -101,7 +102,10 @@ const FindGroup = ({ user }) => {
           InputProps={{
             startAdornment: <Search sx={{ mr: '1em' }} />,
             endAdornment: input && (
-              <IconButton aria-label={translation.clearSearch} onClick={(e) => setInput('')}>
+              <IconButton
+                aria-label={translation.clearSearch}
+                onClick={(e) => setInput('')}
+              >
                 <Clear />
               </IconButton>
             ),

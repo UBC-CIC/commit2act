@@ -2,39 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import { getAllUngraveyardedActions } from '../graphql/queries';
 import {
-  TextField,
-  Box,
   Typography,
   Grid,
-  Button,
   Stepper,
   Step,
   StepLabel,
   MobileStepper,
   CircularProgress,
 } from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
-import ActionPanel from '../components/logAction/ActionPanel';
-import ImageValidationPanel from '../components/logAction/ImageValidationPanel';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
 import { useNavigate } from 'react-router-dom';
+import AddActionPanel from '../components/logAction/AddActionPanel';
 
 import useTranslation from '../components/customHooks/translations';
+import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 
 const ActionStyles = {
-  0: {color: '#ffffff'},
-  1: {color: '#8EDAAC'},
-  2: {color:'#E661AE'},
-  5: {color: '#8CBD5B'},
-  3: {color: '#6FDDDD'},
-  11: {color: '#F1A660'},
-  12: {color: '#FFD467'},
-}
+  0: { color: '#ffffff' },
+  1: { color: '#8EDAAC' },
+  2: { color: '#E661AE' },
+  5: { color: '#8CBD5B' },
+  3: { color: '#6FDDDD' },
+  11: { color: '#F1A660' },
+  12: { color: '#FFD467' },
+};
 
 const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
@@ -51,6 +46,8 @@ const SelfReportMenu = ({ user }) => {
   const [quizAnswered, setQuizAnswered] = useState(false);
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
+  const [validationSuccess, setValidationSuccess] = useState(false);
+
   const translation = useTranslation();
   const nav = useNavigate();
 
@@ -61,7 +58,6 @@ const SelfReportMenu = ({ user }) => {
     translation.logActionStep4,
     translation.logActionStep5,
     translation.logActionStep6,
-    translation.logActionStep7,
   ];
 
   const [actionOptions, setActionOptions] = useState([]);
@@ -105,7 +101,7 @@ const SelfReportMenu = ({ user }) => {
   // handles push path if when user manually selects an action
   useEffect(() => {
     if (selectedAction) {
-      setActionStyle(ActionStyles[selectedAction.action_id] || ActionStyles[0] )
+      setActionStyle(ActionStyles[selectedAction.action_id] || ActionStyles[0]);
       setActiveStep(1);
       const p = selectedAction.action_name
         .trim()
@@ -132,37 +128,20 @@ const SelfReportMenu = ({ user }) => {
           />
         )}
         {activeStep === 1 && (
-          <Grid
-            item
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column',
-              color: actionStyle.color
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                gap: '20px',
-                width: '80%',
-              }}
-            >
-              <LocalizationProvider dateAdapter={AdapterDateFns} >
-                <DatePicker
-                  label={translation.chooseDate}
-                  value={parseISO(selectedDate)}
-                  onChange={handleDateChange}
-                  renderInput={(selectedDate) => (
-                    <TextField {...selectedDate} />
-                  )}
-                />
-              </LocalizationProvider>
-            </Box>
-          </Grid>
+          <AddActionPanel
+            selectedDate={selectedDate}
+            handleDateChange={handleDateChange}
+            selectedAction={selectedAction}
+            setTotalCO2Saved={setTotalCO2Saved}
+            actionItemValues={actionItemValues}
+            setActionItemValues={setActionItemValues}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+            skipBonusQuestion={skipBonusQuestion}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            actionStyle={actionStyle}
+          />
         )}
         {selectedAction && activeStep === 2 && (
           <ActionFact
@@ -172,56 +151,46 @@ const SelfReportMenu = ({ user }) => {
             quiz={quiz}
             setQuiz={setQuiz}
             setSkipBonusQuestion={setSkipBonusQuestion}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+            actionDate={selectedDate}
+            totalCO2Saved={totalCO2Saved}
+            actionItemValues={actionItemValues}
+            selectedImage={selectedImage}
+            setValidationSuccess={setValidationSuccess}
           />
         )}
         {activeStep === 3 && (
-          <ActionPanel
-            selectedAction={selectedAction}
-            actionStyle={actionStyle}
-            setTotalCO2Saved={setTotalCO2Saved}
-            actionItemValues={actionItemValues}
-            setActionItemValues={setActionItemValues}
-            activeStep={activeStep}
+          <CO2SavedScreen
+            totalCO2Saved={totalCO2Saved}
             setActiveStep={setActiveStep}
+            skipBonusQuestion={skipBonusQuestion}
+            validationSuccess={validationSuccess}
+            activeStep={activeStep}
+            actionStyle={actionStyle}
           />
         )}
         {activeStep === 4 && (
-          <ImageValidationPanel
-            skipBonusQuestion={skipBonusQuestion}
-            actionStyle={actionStyle}
-            setActiveStep={setActiveStep}
-            activeStep={activeStep}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-          />
-        )}
-        {activeStep === 5 && (
           <BonusPointQuiz
             quiz={quiz}
-            actionStyle={actionStyle}
             setQuizAnswered={setQuizAnswered}
             setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
             setActiveStep={setActiveStep}
             activeStep={activeStep}
+            actionStyle={actionStyle}
           />
         )}
-        {activeStep === 6 && (
-          <CO2SavedScreen
-            actionId={selectedAction.action_id}
-            actionStyle={actionStyle}
-            actionDate={selectedDate}
-            totalCO2Saved={totalCO2Saved}
-            setTotalCO2Saved={setTotalCO2Saved}
-            quiz={quiz}
+
+        {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
+        {activeStep === 5 && (
+          <ShareOnSocialPanel
             quizAnswered={quizAnswered}
             firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-            user={user}
-            actionItemValues={actionItemValues}
-            setActionItemValues={setActionItemValues}
-            setActiveStep={setActiveStep}
-            setSelectedAction={setSelectedAction}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
+            userId={user?.user_id}
+            quizId={quiz ? quiz.quiz_id : null}
+            actionDate={selectedDate}
+            totalCO2Saved={totalCO2Saved}
+            actionId={selectedAction?.action_id}
           />
         )}
       </>
@@ -236,56 +205,56 @@ const SelfReportMenu = ({ user }) => {
       textAlign="center"
       flexDirection="column"
     >
-      {activeStep > 0 && selectedAction &&
-      <Typography
-        variant="h1"
-        sx={{ 
-          fontSize: '1.5rem',
-          color: actionStyle.color, 
-          mt: { xs: '1.5em', md: '0' }, mb: '1.5em' }}
-      >
-        
-          {selectedAction.action_name}
-        
-      </Typography>
-      }
-      {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
-        
-      <Stepper
-          activeStep={activeStep}
-          sx={{ mb: '1em', display: { xs: 'none', md: 'flex' } }}
+      {activeStep > 0 && selectedAction && (
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.5rem',
+            color: actionStyle.color,
+            mt: { xs: '1.5em', md: '0' },
+            mb: '1.5em',
+          }}
         >
-          {steps.map((step, index) => (
-            <Step key={index}
-              sx={{
-                '& .MuiStepLabel-root .MuiStepLabel-iconContainer .Mui-active': {
-                  color: actionStyle.color, // circle color (ACTIVE)
-                },
-                '& .MuiStepLabel-root .MuiStepLabel-iconContainer .Mui-completed ': {
+          {selectedAction.action_name}
+        </Typography>
+      )}
+      {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
+      <Stepper
+        activeStep={activeStep}
+        sx={{ mb: '1em', display: { xs: 'none', md: 'flex' } }}
+      >
+        {steps.map((step, index) => (
+          <Step
+            key={index}
+            sx={{
+              '& .MuiStepLabel-root .MuiStepLabel-iconContainer .Mui-active': {
+                color: actionStyle.color, // circle color (ACTIVE)
+              },
+              '& .MuiStepLabel-root .MuiStepLabel-iconContainer .Mui-completed ':
+                {
                   color: actionStyle.color, // circle color (COMPLETED)
                 },
-                
-              }}
-            >
-              <StepLabel>{step}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <MobileStepper
-          variant="dots"
-          steps={7}
-          position="static"
-          activeStep={activeStep}
-          sx={{
-            display: { xs: 'flex', md: 'none' },
-            justifyContent: 'center',
-            background: 'none',
-            mb: '1em',
-            '& .MuiMobileStepper-dotActive': {
-              backgroundColor: actionStyle.color
-            }
-          }}
-        />{' '}
+            }}
+          >
+            <StepLabel>{step}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <MobileStepper
+        variant="dots"
+        steps={7}
+        position="static"
+        activeStep={activeStep}
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          justifyContent: 'center',
+          background: 'none',
+          mb: '1em',
+          '& .MuiMobileStepper-dotActive': {
+            backgroundColor: actionStyle.color,
+          },
+        }}
+      />{' '}
       <Grid
         item
         sx={{
@@ -296,73 +265,27 @@ const SelfReportMenu = ({ user }) => {
           borderWidth: '2px',
           borderStyle: 'solid',
           borderColor: actionStyle.color,
-          "& .Mui-focused, & .Mui-focused .MuiOutlinedInput-notchedOutline": {
+          '& .Mui-focused, & .Mui-focused .MuiOutlinedInput-notchedOutline': {
             color: actionStyle.color,
-            borderColor: actionStyle.color
+            borderColor: actionStyle.color,
           },
         }}
       >
         <Typography
           variant="h2"
-          sx={{ m: { xs: '2em 0 2em 0', md: '2em 0 2em 0' } }}
+          sx={{
+            m: {
+              xs: '2em 0 2em 0',
+              md: '2em 0 2em 0',
+              color: actionStyle.color,
+              textTransform: 'uppercase',
+              fontWeight: 'bold',
+            },
+          }}
         >
           {steps[activeStep]}
         </Typography>
         {renderFormStep()}
-        <Box
-          component="div"
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            m: '0 0 1.25em',
-            flexDirection: { xs: 'row' },
-            gap: { xs: '10px', md: '10px' },
-
-          }}
-        >
-          {![0, 3, 5, 6].includes(activeStep) && (
-            <Button
-              onClick={() => {
-                setActiveStep((s) => {
-                  if (s - 1 === 0) {
-                    nav('/log-action');
-                  }
-                  return s - 1;
-                });
-              }}
-              variant="contained"
-              sx={{
-                padding: '1em 1em 1em',
-                fontSize: '1.2rem',
-                marginTop: '1em',
-                minWidth: '50%',
-              }}
-            >
-              {translation.previous}
-            </Button>
-          )}
-          {![0, 3, 5, 6].includes(activeStep) && (
-            <Button
-              onClick={() => {
-                if (activeStep === 4 && skipBonusQuestion) {
-                  setActiveStep(activeStep + 2);
-                } else {
-                  setActiveStep(activeStep + 1);
-                }
-              }}
-              variant="contained"
-              sx={{
-                padding: '1em 1em 1em',
-                fontSize: '1.2rem',
-                marginTop: '1em',
-                minWidth: '50%',
-              }}
-            >
-              {translation.next}
-            </Button>
-          )}
-        </Box>
       </Grid>
     </Grid>
   );
@@ -387,4 +310,3 @@ function validOption(actionOptions, action) {
   }
   return -1;
 }
-

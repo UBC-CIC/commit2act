@@ -23,7 +23,7 @@ const Dropbox = styled('div')`
     padding: 0.3em 1.2em 0.5em;
     cursor: pointer;
     border-radius: 5px;
-    background: #380FD1;
+    background: #380fd1;
     color: #fff;
     font-size: 16px;
     font-weight: 600;
@@ -161,7 +161,11 @@ const ImageValidationPanel = ({
         >
           {selectedImage ? (
             <>
-              <Typography component="div" variant="subtitle2" sx={{ my: '0.5em' }}>
+              <Typography
+                component="div"
+                variant="subtitle2"
+                sx={{ my: '0.5em' }}
+              >
                 {translation.imageValidationSelected}
               </Typography>
               <Box id="image-preview" sx={{ width: '100%' }}>
@@ -189,7 +193,9 @@ const ImageValidationPanel = ({
               </Typography>
 
               <label htmlFor="image-upload" id="browse">
-                <Typography variant="subtitle2">{translation.browse}</Typography>
+                <Typography variant="subtitle2">
+                  {translation.browse}
+                </Typography>
               </label>
               <input
                 accept="image/*"
@@ -201,7 +207,7 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      {selectedImage ? (
+      {/* {selectedImage ? (
         <StyledButton onClick={handleButtonClick} variant="contained">
           {translation.uploadImage}
         </StyledButton>
@@ -209,8 +215,7 @@ const ImageValidationPanel = ({
         <StyledButton onClick={handleButtonClick} variant="outlined">
           {translation.skip}
         </StyledButton>
-      )}
-     
+      )} */}
     </Box>
   );
 };

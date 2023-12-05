@@ -54,9 +54,16 @@ const AllActions = ({ setSelectedAction }) => {
   const getActions = async () => {
     const res = await API.graphql({ query: getAllUngraveyardedActions });
     const actions = res.data.getAllUngraveyardedActions;
-    if (translation.getLanguage() != 'en') {
-      const relevantTranslationObject = contentTranslations.find((contentTranslation) => contentTranslation.langCode.toLowerCase() === translation.getLanguage().toLowerCase());
-      const updatedActions = disassembleInto(actions, relevantTranslationObject?.translationJSON?.actions || []);
+    if (translation.getLanguage() !== 'en') {
+      const relevantTranslationObject = contentTranslations.find(
+        (contentTranslation) =>
+          contentTranslation.langCode.toLowerCase() ===
+          translation.getLanguage().toLowerCase()
+      );
+      const updatedActions = disassembleInto(
+        actions,
+        relevantTranslationObject?.translationJSON?.actions || []
+      );
       setActionOptions(updatedActions);
     } else {
       setActionOptions(actions);
@@ -65,13 +72,15 @@ const AllActions = ({ setSelectedAction }) => {
 
   const disassembleInto = (actions, translatedActions) => {
     return actions.map((action) => {
-      const translatedAction = translatedActions.find((translatedAction) => translatedAction.action_id === action.action_id);
+      const translatedAction = translatedActions.find(
+        (translatedAction) => translatedAction.action_id === action.action_id
+      );
       return {
         ...action,
-        ...translatedAction
-      }
+        ...translatedAction,
+      };
     });
-  }
+  };
 
   return (
     <Grid
