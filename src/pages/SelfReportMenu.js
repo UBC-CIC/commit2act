@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import { getAllUngraveyardedActions } from '../graphql/queries';
-import {
-  Typography,
-  Grid,
-  Stepper,
-  Step,
-  StepLabel,
-  MobileStepper,
-  CircularProgress,
-} from '@mui/material';
+import { Typography, Grid, CircularProgress } from '@mui/material';
 import { format } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
@@ -20,6 +12,7 @@ import AddActionPanel from '../components/logAction/AddActionPanel';
 
 import useTranslation from '../components/customHooks/translations';
 import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
+import { StepCounter } from '../components/StepCounter';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -224,43 +217,7 @@ const SelfReportMenu = ({ user }) => {
           {selectedAction.action_name}
         </Typography>
       )}
-      {/* display full stepper on screens larger than 900px, otherwise display mobile stepper */}
-      <Stepper
-        activeStep={activeStep}
-        sx={{ mb: '1em', display: { xs: 'none', md: 'flex' } }}
-      >
-        {steps.map((step, index) => (
-          <Step
-            key={index}
-            sx={{
-              '& .MuiStepLabel-root .MuiStepLabel-iconContainer .Mui-active': {
-                color: actionStyle.color, // circle color (ACTIVE)
-              },
-              '& .MuiStepLabel-root .MuiStepLabel-iconContainer .Mui-completed ':
-                {
-                  color: actionStyle.color, // circle color (COMPLETED)
-                },
-            }}
-          >
-            <StepLabel>{step}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <MobileStepper
-        variant="dots"
-        steps={7}
-        position="static"
-        activeStep={activeStep}
-        sx={{
-          display: { xs: 'flex', md: 'none' },
-          justifyContent: 'center',
-          background: 'none',
-          mb: '1em',
-          '& .MuiMobileStepper-dotActive': {
-            backgroundColor: actionStyle.color,
-          },
-        }}
-      />{' '}
+      <StepCounter currentColor={actionStyle.color} activeStep={activeStep} />
       <Grid
         item
         sx={{

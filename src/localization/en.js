@@ -179,7 +179,7 @@ const translations = {
   logActionStep1: 'Select Action',
   logActionStep2: 'Add Action',
   logActionStep3: 'Nice Work',
-  logActionStep4: '',
+  logActionStep4: 'CO2 Saved',
   logActionStep5: 'Bonus Question',
   logActionStep6: 'Share On Social',
   next: 'Next',
@@ -307,6 +307,9 @@ const translations = {
   logActionButtonAddAnother: 'Add Another',
   logActionButtonAllDone: 'All Done',
   commit2ActHashtag: '#Commit2Act',
+  logActionStepCompleted: 'Completed',
+  logActionStepCurrent: 'Current',
+  logActionStepOfTotal: 'Step {0} of {1}',
 };
 
 export default translations;
