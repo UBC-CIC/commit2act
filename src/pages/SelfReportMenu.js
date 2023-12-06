@@ -7,7 +7,6 @@ import {
   Stepper,
   Step,
   StepLabel,
-  MobileStepper,
   CircularProgress,
 } from '@mui/material';
 import { format } from 'date-fns';
@@ -20,6 +19,7 @@ import AddActionPanel from '../components/logAction/AddActionPanel';
 
 import useTranslation from '../components/customHooks/translations';
 import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
+import { StepCounter } from '../components/StepCounter';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -246,21 +246,7 @@ const SelfReportMenu = ({ user }) => {
           </Step>
         ))}
       </Stepper>
-      <MobileStepper
-        variant="dots"
-        steps={7}
-        position="static"
-        activeStep={activeStep}
-        sx={{
-          display: { xs: 'flex', md: 'none' },
-          justifyContent: 'center',
-          background: 'none',
-          mb: '1em',
-          '& .MuiMobileStepper-dotActive': {
-            backgroundColor: actionStyle.color,
-          },
-        }}
-      />{' '}
+      <StepCounter currentColor={actionStyle.color} activeStep={activeStep} />
       <Grid
         item
         sx={{
