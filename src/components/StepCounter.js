@@ -6,15 +6,15 @@ import useTranslation from './customHooks/translations';
 const getStepStatus = (activeStep, currentStep) => {
   const stepStatus = {
     className: '',
-    helperText: null,
+    statusText: null,
   };
   if (currentStep === activeStep) {
     stepStatus.className = 'current';
-    stepStatus.helperText = 'logActionStepCurrent';
+    stepStatus.statusText = 'logActionStepCurrent';
   }
   if (currentStep < activeStep) {
     stepStatus.className = 'completed';
-    stepStatus.helperText = 'logActionStepCompleted';
+    stepStatus.statusText = 'logActionStepCompleted';
   }
   return stepStatus;
 };
@@ -71,33 +71,32 @@ export const StepCounter = ({ activeStep, currentColor }) => {
   const translation = useTranslation();
   const stepCounterStyles = getStepCounterStyles(currentColor);
 
-  if (activeStep === 0) return null;
-
   return (
     <Box sx={stepCounterStyles}>
       <Box aria-live="polite" sx={visuallyHidden}>
         {translation.formatString(
           translation.logActionStepOfTotal,
-          activeStep,
+          activeStep + 1,
           TOTAL_LOG_STEPS
         )}
       </Box>
       <ol>
-        {LOG_STEPS.map((step) => {
-          const { className, helperText } = getStepStatus(
-            activeStep,
-            step.number
-          );
+        {LOG_STEPS.map(({ number, title, name }) => {
+          const { className, statusText } = getStepStatus(activeStep, number);
+
+          const visuallyHiddenText = [
+            number + 1,
+            statusText ? translation[statusText] : '',
+            translation[title] ? translation[title] : '',
+          ].join(' ');
 
           return (
-            <li key={step.name} className={className}>
+            <li key={name} className={className}>
               <Typography variant="span" sx={visuallyHidden}>
-                {step.number}
-                {' ' + helperText ? translation[helperText] : ''}
-                {' ' + translation[step.title] ? translation[step.title] : ''}
+                {visuallyHiddenText}
               </Typography>
               <Typography variant="span" className="title">
-                {translation[step.title] ? translation[step.title] : ''}
+                {translation[title] ? translation[title] : ''}
               </Typography>
             </li>
           );

@@ -1,5 +1,10 @@
 export const LOG_STEPS = [
   {
+    number: 0,
+    name: 'select-action',
+    title: 'logActionStep1',
+  },
+  {
     number: 1,
     name: 'add-action',
     title: 'logActionStep2',
