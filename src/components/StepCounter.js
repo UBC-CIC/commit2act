@@ -1,24 +1,23 @@
 import { Box, Typography } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { LOG_STEPS, TOTAL_LOG_STEPS } from '../constants/log-steps';
 import useTranslation from './customHooks/translations';
+import { LOG_STEPS, TOTAL_LOG_STEPS } from '../constants/log-steps';
 
 const getStepCounterStyles = (currentColor) => ({
-  margin: '1em auto',
+  margin: '0 auto',
   textAlign: 'center',
   fontSize: {
     xs: '0.725rem',
-    md: '0.825rem',
+    sm: '0.825rem',
     lg: '1rem',
   },
   ol: {
-    display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
     listStyle: 'none',
     padding: '0',
-    margin: '0',
+    margin: '1em 0',
     gap: {
       xs: '0.75em',
       lg: '1.25em',
@@ -41,11 +40,11 @@ const getStepCounterStyles = (currentColor) => ({
       display: 'block',
       color: 'black',
       width: {
-        xs: '3em',
+        xs: '2.25em',
         md: '1.75em',
       },
       height: {
-        xs: '0.75em',
+        xs: '0.5em',
         md: '1.75em',
       },
     },
@@ -71,6 +70,15 @@ const getStepCounterStyles = (currentColor) => ({
 
 export const StepCounter = ({ activeStep, currentColor }) => {
   const translation = useTranslation();
+
+  // We don't count the final screen as a numbered step, so we'll
+  // render nothing if it is not included in the LOG_STEPS array.
+  if (!LOG_STEPS.find((step) => step.number === activeStep)) return null;
+
+  // We aren't showing the counter while selecting an action type
+  // but it still counts as a numbered step, so we'll conditionally
+  // hide the visual counter for the first screen.
+  const listDisplayStyle = { display: activeStep === 0 ? 'none' : 'flex' };
   const stepCounterStyles = getStepCounterStyles(currentColor);
 
   return (
@@ -82,12 +90,13 @@ export const StepCounter = ({ activeStep, currentColor }) => {
           TOTAL_LOG_STEPS
         )}
       </Box>
-      <Box component="ol">
+      <Box component="ol" sx={listDisplayStyle}>
         {LOG_STEPS.map(({ number, title, name }) => {
           const isCompleted = number < activeStep;
           const displayNumber = number + 1;
 
           let className = '',
+            dotContent = `"${displayNumber}"`,
             statusText = null;
 
           if (number === activeStep) {
@@ -96,9 +105,12 @@ export const StepCounter = ({ activeStep, currentColor }) => {
           }
           if (isCompleted) {
             className = 'completed';
+            dotContent = '"\\2714"';
             statusText = 'logActionStepCompleted';
           }
 
+          // Concatenate the step number, completed/current status,
+          // and step title as the visually-hidden label per step.
           const visuallyHiddenText = [
             displayNumber,
             statusText ? translation[statusText] : '',
@@ -114,7 +126,7 @@ export const StepCounter = ({ activeStep, currentColor }) => {
                 '&:before': {
                   content: {
                     xs: '""',
-                    md: `"${isCompleted ? '\\2714' : displayNumber}"`,
+                    md: dotContent,
                   },
                 },
               }}
