@@ -1,36 +1,36 @@
 import * as cdk from '@aws-cdk/core';
 import * as AmplifyHelpers from '@aws-amplify/cli-extensibility-helper';
 import * as ssm from '@aws-cdk/aws-ssm';
-import { AmplifyDependentResourcesAttributes } from '../../types/amplify-dependent-resources-ref';
+// import { AmplifyDependentResourcesAttributes } from '../../types/amplify-dependent-resources-ref';
 
-// type AmplifyDependentResourcesAttributes = {
-//   "api": {
-//     "commit2act": {
-//       "GraphQLAPIEndpointOutput": "string",
-//       "GraphQLAPIIdOutput": "string",
-//       "GraphQLAPIKeyOutput": "string"
-//     }
-//   },
-//   "auth": {
-//     "commit2act480c60ba": {
-//       "AppClientID": "string",
-//       "AppClientIDWeb": "string",
-//       "FacebookWebClient": "string",
-//       "GoogleWebClient": "string",
-//       "IdentityPoolId": "string",
-//       "IdentityPoolName": "string",
-//       "UserPoolArn": "string",
-//       "UserPoolId": "string",
-//       "UserPoolName": "string"
-//     }
-//   },
-//   "storage": {
-//     "s3commit2act": {
-//       "BucketName": "string",
-//       "Region": "string"
-//     }
-//   }
-// }
+type AmplifyDependentResourcesAttributes = {
+  "api": {
+    "commit2act": {
+      "GraphQLAPIEndpointOutput": "string",
+      "GraphQLAPIIdOutput": "string",
+      "GraphQLAPIKeyOutput": "string"
+    }
+  },
+  "auth": {
+    "commit2act480c60ba": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "FacebookWebClient": "string",
+      "GoogleWebClient": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
+    }
+  },
+  "storage": {
+    "s3commit2act": {
+      "BucketName": "string",
+      "Region": "string"
+    }
+  }
+}
 
 export class cdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps, amplifyResourceProps?: AmplifyHelpers.AmplifyResourceProps) {
@@ -42,25 +42,25 @@ export class cdkStack extends cdk.Stack {
     });
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
     // Access other Amplify Resources 
-    
-    const dependencies:AmplifyDependentResourcesAttributes = AmplifyHelpers.addResourceDependency(this, 
-      amplifyResourceProps.category, 
-      amplifyResourceProps.resourceName, 
+
+    const dependencies: AmplifyDependentResourcesAttributes = AmplifyHelpers.addResourceDependency(this,
+      amplifyResourceProps.category,
+      amplifyResourceProps.resourceName,
       [
-        {category: 'api', resourceName: "commit2act"},
-        {category: 'storage', resourceName: "s3commit2act"},
-        {category: 'auth', resourceName: "commit2act480c60ba" },
+        { category: 'api', resourceName: "commit2act" },
+        { category: 'storage', resourceName: "s3commit2act" },
+        { category: 'auth', resourceName: "commit2act480c60ba" },
       ]
     );
 
-    // if (!dependencies.storage){
-    //   dependencies.storage = {
-    //     s3commit2act: {
-    //       BucketName: 'commit2act-storage14231-staging' as "string",
-    //       Region: 'us-east-1' as "string"
-    //     }
-    //   };
-    // }
+    if (!dependencies.storage) {
+      dependencies.storage = {
+        s3commit2act: {
+          BucketName: 'commit2act-storage14231-staging' as "string",
+          Region: 'us-east-1' as "string"
+        }
+      };
+    }
 
     const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIIdOutput)
     const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.commit2act.GraphQLAPIEndpointOutput)
@@ -85,5 +85,5 @@ export class cdkStack extends cdk.Stack {
       parameterName: 'UserPoolId',
       stringValue: UserPoolIdOutput,
     });
-  }  
   }
+}
