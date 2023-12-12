@@ -40,21 +40,25 @@ const AddActionPanel = ({
     <>
       <Grid
         item
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-        }}
+        sx={
+          {
+            // display: 'flex',
+            // justifyContent: 'center',
+            // alignItems: 'center',
+            // flexDirection: 'column',
+          }
+        }
       >
         <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: '20px',
-            width: '80%',
-          }}
+          sx={
+            {
+              // display: 'flex',
+              // flexDirection: 'column',
+              // justifyContent: 'center',
+              // gap: '20px',
+              // width: '80%',
+            }
+          }
         >
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker

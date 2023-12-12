@@ -5,6 +5,7 @@ import { getActionItemsForAction } from '../../graphql/queries';
 
 import useTranslation from '../customHooks/translations';
 import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
+import { AddActionTextField } from '../AddActionTextField';
 
 const ActionPanel = ({
   selectedAction,
@@ -99,15 +100,22 @@ const ActionPanel = ({
   const renderActionForm = () => {
     if (actionItems) {
       return actionItems.map((item, index) => (
-        <TextField
-          key={index}
-          id="outlined-basic"
-          label={item.item_name}
-          variant="outlined"
-          helperText={item.item_description}
-          InputLabelProps={{ shrink: true }}
-          onChange={(e) => handleActionItemInput(e.target.value, item)}
-        />
+        <>
+          <AddActionTextField
+            key={item.item_name}
+            actionItem={item}
+            onChange={(e) => handleActionItemInput(e.target.value, item)}
+          />
+          {/* <TextField
+            key={index}
+            id="outlined-basic"
+            label={item.item_name}
+            variant="outlined"
+            helperText={item.item_description}
+            InputLabelProps={{ shrink: true }}
+            onChange={(e) => handleActionItemInput(e.target.value, item)}
+          /> */}
+        </>
       ));
     }
   };
@@ -115,21 +123,25 @@ const ActionPanel = ({
   return (
     <Grid
       item
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
+      sx={
+        {
+          // display: 'flex',
+          // justifyContent: 'center',
+          // alignItems: 'center',
+          // flexDirection: 'column',
+        }
+      }
     >
       <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2em',
-          alignContent: 'center',
-          width: '80%',
-        }}
+        sx={
+          {
+            // display: 'flex',
+            // flexDirection: 'column',
+            // gap: '2em',
+            // alignContent: 'center',
+            // width: '80%',
+          }
+        }
       >
         {inputError && (
           <Typography variant="subtitle2">
