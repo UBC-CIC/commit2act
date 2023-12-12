@@ -1,10 +1,16 @@
 import { Box, Typography } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import useTranslation from './customHooks/translations';
+import { useActiveStepContext } from '../hooks/use-active-step-context';
 import { LOG_STEPS, TOTAL_LOG_STEPS } from '../constants/log-steps';
 
-const getStepCounterStyles = (currentColor) => ({
+const getStepCounterStyles = (color) => ({
   margin: '0 auto',
+  mt: {
+    xs: '1.5em',
+    sm: '2em',
+    md: '2.5em',
+  },
   textAlign: 'center',
   fontSize: {
     xs: '0.725rem',
@@ -49,10 +55,10 @@ const getStepCounterStyles = (currentColor) => ({
       },
     },
     '&.current:before, &.completed:before': {
-      background: currentColor,
+      background: color,
     },
     '&.current:before': {
-      outlineColor: currentColor,
+      outlineColor: color,
     },
   },
   '.title': {
@@ -68,8 +74,9 @@ const getStepCounterStyles = (currentColor) => ({
   },
 });
 
-export const StepCounter = ({ activeStep, currentColor }) => {
+export const StepCounter = () => {
   const translation = useTranslation();
+  const { activeStep, actionStyle } = useActiveStepContext();
 
   // We don't count the final screen as a numbered step, so we'll
   // render nothing if it is not included in the LOG_STEPS array.
@@ -79,7 +86,7 @@ export const StepCounter = ({ activeStep, currentColor }) => {
   // but it still counts as a numbered step, so we'll conditionally
   // hide the visual counter for the first screen.
   const listDisplayStyle = { display: activeStep === 0 ? 'none' : 'flex' };
-  const stepCounterStyles = getStepCounterStyles(currentColor);
+  const stepCounterStyles = getStepCounterStyles(actionStyle.color);
 
   return (
     <Box sx={stepCounterStyles}>

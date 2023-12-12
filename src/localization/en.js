@@ -176,7 +176,7 @@ const translations = {
   adminDashboard: 'Admin Dashboard',
   myAccount: 'My Account',
   logActionTitle: 'Log New Action',
-  logActionStep1: 'Select Action',
+  logActionStep1: 'Select an Action',
   logActionStep2: 'Add Action',
   logActionStep3: 'Nice Work',
   logActionStep4: 'CO2 Saved',
