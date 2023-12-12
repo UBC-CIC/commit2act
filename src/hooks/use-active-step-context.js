@@ -4,10 +4,9 @@ export const ActiveStepContext = createContext({
   activeStep: 0,
   actionStyle: { color: '#fff' },
   selectedAction: null,
+  setActiveStep: () => {},
 });
 
 export const useActiveStepContext = () => {
-  const { activeStep, actionStyle, selectedAction } =
-    useContext(ActiveStepContext);
-  return { activeStep, actionStyle, selectedAction };
+  return useContext(ActiveStepContext);
 };

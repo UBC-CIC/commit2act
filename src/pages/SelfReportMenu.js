@@ -119,16 +119,12 @@ const SelfReportMenu = ({ user }) => {
           <AddActionPanel
             selectedDate={selectedDate}
             handleDateChange={handleDateChange}
-            selectedAction={selectedAction}
             setTotalCO2Saved={setTotalCO2Saved}
             actionItemValues={actionItemValues}
             setActionItemValues={setActionItemValues}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
             skipBonusQuestion={skipBonusQuestion}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
-            actionStyle={actionStyle}
           />
         )}
         {selectedAction && activeStep === 2 && (
@@ -188,7 +184,12 @@ const SelfReportMenu = ({ user }) => {
 
   return (
     <ActiveStepContext.Provider
-      value={{ activeStep, actionStyle, selectedAction }}
+      value={{
+        activeStep,
+        actionStyle,
+        selectedAction,
+        setActiveStep,
+      }}
     >
       <Grid
         container
@@ -198,7 +199,6 @@ const SelfReportMenu = ({ user }) => {
         flexDirection="column"
       >
         <LogStepHeader />
-
         <Grid
           item
           sx={{
