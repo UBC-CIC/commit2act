@@ -22,7 +22,7 @@ export const getContainerStyles = (color) => ({
   alignItems: 'center',
   textAlign: 'left',
   margin: '2.5em auto',
-  maxWidth: '36em',
+  maxWidth: '32em',
 });
 
 export const labelStyles = {
