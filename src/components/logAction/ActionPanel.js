@@ -1,48 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { API } from 'aws-amplify';
-import { Typography, Box, Grid } from '@mui/material';
-import { getActionItemsForAction } from '../../graphql/queries';
+import { Typography, Box, Grid, CircularProgress } from '@mui/material';
 import useTranslation from '../customHooks/translations';
-import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 import { AddActionTextField } from '../AddActionTextField';
-import { useActiveStepContext } from '../../hooks/use-active-step-context';
+import { useGetActionItems } from '../../hooks/use-get-action-items';
 
 const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
-  const [actionItems, setActionItems] = useState();
+  const { actionItems, loadingItems } = useGetActionItems();
   const [inputError, setInputError] = useState(false);
   const [disableButton, setDisableButton] = useState(true);
-  const { selectedAction } = useActiveStepContext();
 
   const translation = useTranslation();
-  const { contentTranslations } = useContentTranslationsContext();
-
-  useEffect(() => {
-    getActionItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  //gets all action items related to the user selected action
-  const getActionItems = async () => {
-    if (translation.getLanguage() !== 'en') {
-      const relevantTranslationObject = contentTranslations.find(
-        (contentTranslation) =>
-          contentTranslation.langCode.toLowerCase() ===
-          translation.getLanguage().toLowerCase()
-      );
-      const relevantAction =
-        relevantTranslationObject?.translationJSON?.actions?.find(
-          (action) => action.action_id === selectedAction?.action_id
-        );
-      setActionItems(relevantAction?.action_items || []);
-      return;
-    }
-    const res = await API.graphql({
-      query: getActionItemsForAction,
-      variables: { action_id: selectedAction?.action_id },
-    });
-    const items = res.data.getActionItemsForAction;
-    setActionItems(items);
-  };
 
   //updates total co2 saved value and records what user inputs for each item field on the form
   const handleActionItemInput = (value, item) => {
@@ -98,15 +65,17 @@ const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
             {translation.mustBeNumber}
           </Typography>
         )}
-        {actionItems &&
-          actionItems.map((item) => (
-            <AddActionTextField
-              key={item.item_name}
-              label={item.item_name}
-              helperText={item.item_description}
-              onChange={(e) => handleActionItemInput(e.target.value, item)}
-            />
-          ))}
+        {loadingItems ? <CircularProgress /> : null}
+        {actionItems && actionItems.length > 0
+          ? actionItems.map((item) => (
+              <AddActionTextField
+                key={item.item_name}
+                label={item.item_name}
+                helperText={item.item_description}
+                onChange={(e) => handleActionItemInput(e.target.value, item)}
+              />
+            ))
+          : null}
       </Box>
     </Grid>
   );
