@@ -79,14 +79,15 @@ const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
               fontSize="1em"
               fontWeight="bold"
               marginBottom="-1.25em"
+              textAlign="left"
             >
               <ErrorOutlineOutlined
                 alt={translation.logActionItemsErrorAlt}
                 fontSize="large"
                 sx={{
                   display: 'block',
-                  width: '1.75em',
-                  height: '1.75em',
+                  width: { xs: '1em', sm: '1.25em', md: '1.75em' },
+                  height: { xs: '1em', sm: '1.25em', md: '1.75em' },
                 }}
               />
               <span>{translation.mustBeNumber}</span>
