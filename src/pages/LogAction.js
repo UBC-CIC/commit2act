@@ -23,7 +23,7 @@ const ActionStyles = {
   12: { color: '#FFD467' },
 };
 
-const SelfReportMenu = ({ user }) => {
+const LogAction = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
@@ -105,83 +105,6 @@ const SelfReportMenu = ({ user }) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
 
-  const renderFormStep = () => {
-    return (
-      <>
-        {loading ? <CircularProgress /> : <></>}
-        {activeStep === 0 && (
-          <AllActions
-            setSelectedAction={setSelectedAction}
-            actionOptions={actionOptions}
-          />
-        )}
-        {activeStep === 1 && (
-          <AddActionPanel
-            selectedDate={selectedDate}
-            handleDateChange={handleDateChange}
-            setTotalCO2Saved={setTotalCO2Saved}
-            actionItemValues={actionItemValues}
-            setActionItemValues={setActionItemValues}
-            skipBonusQuestion={skipBonusQuestion}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-          />
-        )}
-        {selectedAction && activeStep === 2 && (
-          <ActionFact
-            selectedAction={selectedAction}
-            actionStyle={actionStyle}
-            user={user}
-            quiz={quiz}
-            setQuiz={setQuiz}
-            setSkipBonusQuestion={setSkipBonusQuestion}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-            actionDate={selectedDate}
-            totalCO2Saved={totalCO2Saved}
-            actionItemValues={actionItemValues}
-            selectedImage={selectedImage}
-            setValidationSuccess={setValidationSuccess}
-          />
-        )}
-        {activeStep === 3 && (
-          <CO2SavedScreen
-            totalCO2Saved={totalCO2Saved}
-            setActiveStep={setActiveStep}
-            skipBonusQuestion={skipBonusQuestion}
-            validationSuccess={validationSuccess}
-            activeStep={activeStep}
-            actionStyle={actionStyle}
-          />
-        )}
-        {activeStep === 4 && (
-          <BonusPointQuiz
-            quiz={quiz}
-            setQuizAnswered={setQuizAnswered}
-            setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-            setActiveStep={setActiveStep}
-            activeStep={activeStep}
-            actionStyle={actionStyle}
-          />
-        )}
-
-        {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
-        {activeStep === 5 && (
-          <ShareOnSocialPanel
-            quizAnswered={quizAnswered}
-            firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-            userId={user?.user_id}
-            quizId={quiz ? quiz.quiz_id : null}
-            actionDate={selectedDate}
-            totalCO2Saved={totalCO2Saved}
-            actionId={selectedAction?.action_id}
-            addAnotherAction={resetLogAction}
-          />
-        )}
-      </>
-    );
-  };
-
   return (
     <ActiveStepContext.Provider
       value={{
@@ -209,14 +132,83 @@ const SelfReportMenu = ({ user }) => {
             },
           }}
         >
-          {renderFormStep()}
+          {loading ? <CircularProgress /> : null}
+          {activeStep === 0 && (
+            <AllActions
+              setSelectedAction={setSelectedAction}
+              actionOptions={actionOptions}
+            />
+          )}
+          {activeStep === 1 && (
+            <AddActionPanel
+              selectedDate={selectedDate}
+              handleDateChange={handleDateChange}
+              setTotalCO2Saved={setTotalCO2Saved}
+              actionItemValues={actionItemValues}
+              setActionItemValues={setActionItemValues}
+              skipBonusQuestion={skipBonusQuestion}
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+            />
+          )}
+          {selectedAction && activeStep === 2 && (
+            <ActionFact
+              selectedAction={selectedAction}
+              actionStyle={actionStyle}
+              user={user}
+              quiz={quiz}
+              setQuiz={setQuiz}
+              setSkipBonusQuestion={setSkipBonusQuestion}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+              actionDate={selectedDate}
+              totalCO2Saved={totalCO2Saved}
+              actionItemValues={actionItemValues}
+              selectedImage={selectedImage}
+              setValidationSuccess={setValidationSuccess}
+            />
+          )}
+          {activeStep === 3 && (
+            <CO2SavedScreen
+              totalCO2Saved={totalCO2Saved}
+              setActiveStep={setActiveStep}
+              skipBonusQuestion={skipBonusQuestion}
+              validationSuccess={validationSuccess}
+              activeStep={activeStep}
+              actionStyle={actionStyle}
+            />
+          )}
+          {activeStep === 4 && (
+            <BonusPointQuiz
+              quiz={quiz}
+              setQuizAnswered={setQuizAnswered}
+              setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+              setActiveStep={setActiveStep}
+              activeStep={activeStep}
+              actionStyle={actionStyle}
+            />
+          )}
+
+          {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
+          {activeStep === 5 && (
+            <ShareOnSocialPanel
+              quizAnswered={quizAnswered}
+              firstQuizAnswerCorrect={firstQuizAnswerCorrect}
+              userId={user?.user_id}
+              quizId={quiz ? quiz.quiz_id : null}
+              actionDate={selectedDate}
+              totalCO2Saved={totalCO2Saved}
+              actionId={selectedAction?.action_id}
+              addAnotherAction={resetLogAction}
+            />
+          )}
         </Grid>
       </Grid>
     </ActiveStepContext.Provider>
   );
 };
 
-export default SelfReportMenu;
+export default LogAction;
 
 /**
  * @param {any[]} actionOptions

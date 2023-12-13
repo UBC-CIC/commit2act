@@ -28,7 +28,7 @@ import { updateMenuState } from '../../actions/menuActions';
 import Landing from '../../pages/Landing';
 import FindGroup from '../../pages/FindGroup';
 import AccountSettings from '../../pages/AccountSettings';
-import SelfReportMenu from '../../pages/SelfReportMenu';
+import LogAction from '../../pages/LogAction';
 import ValidateActions from '../../pages/ValidateActions';
 import CreateGroup from '../../pages/CreateGroup';
 import GroupProfile from '../../pages/GroupProfile';
@@ -407,7 +407,7 @@ function PageContainer(props) {
             <Route
               exact
               path={'/log-action/*'}
-              element={<SelfReportMenu user={user} />}
+              element={<LogAction user={user} />}
             />
             <Route
               exact
