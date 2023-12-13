@@ -310,6 +310,7 @@ const translations = {
   logActionStepCompleted: 'Completed',
   logActionStepCurrent: 'Current',
   logActionStepOfTotal: 'Step {0} of {1}',
+  logActionItemsErrorAlt: 'Error',
 };
 
 export default translations;

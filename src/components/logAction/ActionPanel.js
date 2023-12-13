@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Box, Grid, CircularProgress } from '@mui/material';
+import { ErrorOutlineOutlined } from '@mui/icons-material';
 import useTranslation from '../customHooks/translations';
 import { AddActionTextField } from '../AddActionTextField';
 import { useGetActionItems } from '../../hooks/use-get-action-items';
+
+const getActionItemId = (actionItemName) =>
+  actionItemName
+    .trim()
+    .toLowerCase()
+    .replace(/[^A-Z0-9]+/gi, '-');
 
 const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
   const { actionItems, loadingItems } = useGetActionItems();
@@ -61,20 +68,45 @@ const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
     <Grid item>
       <Box>
         {inputError && (
-          <Typography variant="subtitle2">
-            {translation.mustBeNumber}
-          </Typography>
+          <Box aria-live="assertive">
+            <Typography
+              component="p"
+              display="flex"
+              gap="0.5em"
+              justifyContent="flex-start"
+              alignItems="center"
+              color="error"
+              fontSize="1em"
+              fontWeight="bold"
+              marginBottom="-1.25em"
+            >
+              <ErrorOutlineOutlined
+                alt={translation.logActionItemsErrorAlt}
+                fontSize="large"
+                sx={{
+                  display: 'block',
+                  width: '1.75em',
+                  height: '1.75em',
+                }}
+              />
+              <span>{translation.mustBeNumber}</span>
+            </Typography>
+          </Box>
         )}
         {loadingItems ? <CircularProgress /> : null}
         {actionItems && actionItems.length > 0
-          ? actionItems.map((item) => (
-              <AddActionTextField
-                key={item.item_name}
-                label={item.item_name}
-                helperText={item.item_description}
-                onChange={(e) => handleActionItemInput(e.target.value, item)}
-              />
-            ))
+          ? actionItems.map((item) => {
+              const actionItemId = getActionItemId(item.item_name);
+              return (
+                <AddActionTextField
+                  key={actionItemId}
+                  id={actionItemId}
+                  label={item.item_name}
+                  helperText={item.item_description}
+                  onChange={(e) => handleActionItemInput(e.target.value, item)}
+                />
+              );
+            })
           : null}
       </Box>
     </Grid>
