@@ -8,28 +8,34 @@ import {
   labelStyles,
 } from '../styles/add-action-text-field';
 
-export const AddActionTextField = ({ actionItem, ...props }) => {
+export const AddActionTextField = ({
+  InputProps = {},
+  InputLabelProps = {},
+  FormHelperTextProps = {},
+  sx = {},
+  ...props
+}) => {
   const { actionStyle } = useActiveStepContext();
-  const containerStyles = getContainerStyles(actionStyle.color);
-  const { item_name: name, item_description: description } = actionItem;
+  const containerStyles = { ...sx, ...getContainerStyles(actionStyle.color) };
   return (
     <TextField
       fullWidth
       FormHelperTextProps={{
+        ...FormHelperTextProps,
         sx: helperTextStyles,
       }}
-      helperText={description}
       InputProps={{
+        ...InputProps,
         fullWidth: true,
         disableUnderline: true,
         sx: inputStyles,
       }}
       InputLabelProps={{
+        ...InputLabelProps,
         disableAnimation: true,
         shrink: false,
         sx: labelStyles,
       }}
-      label={name}
       sx={containerStyles}
       variant="standard"
       {...props}

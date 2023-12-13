@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Grid, TextField, Button } from '@mui/material';
 import { API } from 'aws-amplify';
+import { Typography, Box, Grid } from '@mui/material';
 import { getActionItemsForAction } from '../../graphql/queries';
-
 import useTranslation from '../customHooks/translations';
 import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
 import { AddActionTextField } from '../AddActionTextField';
+import { useActiveStepContext } from '../../hooks/use-active-step-context';
 
-const ActionPanel = ({
-  selectedAction,
-  actionStyle,
-  actionItemValues,
-  setActionItemValues,
-  setTotalCO2Saved,
-  activeStep,
-  setActiveStep,
-}) => {
+const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
   const [actionItems, setActionItems] = useState();
   const [inputError, setInputError] = useState(false);
   const [disableButton, setDisableButton] = useState(true);
+  const { selectedAction } = useActiveStepContext();
 
   const translation = useTranslation();
   const { contentTranslations } = useContentTranslationsContext();
@@ -97,58 +90,23 @@ const ActionPanel = ({
     setDisableButton(actionItemValues.length === 0 || inputError);
   }, [actionItemValues, inputError]);
 
-  const renderActionForm = () => {
-    if (actionItems) {
-      return actionItems.map((item, index) => (
-        <>
-          <AddActionTextField
-            key={item.item_name}
-            actionItem={item}
-            onChange={(e) => handleActionItemInput(e.target.value, item)}
-          />
-          {/* <TextField
-            key={index}
-            id="outlined-basic"
-            label={item.item_name}
-            variant="outlined"
-            helperText={item.item_description}
-            InputLabelProps={{ shrink: true }}
-            onChange={(e) => handleActionItemInput(e.target.value, item)}
-          /> */}
-        </>
-      ));
-    }
-  };
-
   return (
-    <Grid
-      item
-      sx={
-        {
-          // display: 'flex',
-          // justifyContent: 'center',
-          // alignItems: 'center',
-          // flexDirection: 'column',
-        }
-      }
-    >
-      <Box
-        sx={
-          {
-            // display: 'flex',
-            // flexDirection: 'column',
-            // gap: '2em',
-            // alignContent: 'center',
-            // width: '80%',
-          }
-        }
-      >
+    <Grid item>
+      <Box>
         {inputError && (
           <Typography variant="subtitle2">
             {translation.mustBeNumber}
           </Typography>
         )}
-        {renderActionForm()}
+        {actionItems &&
+          actionItems.map((item) => (
+            <AddActionTextField
+              key={item.item_name}
+              label={item.item_name}
+              helperText={item.item_description}
+              onChange={(e) => handleActionItemInput(e.target.value, item)}
+            />
+          ))}
       </Box>
     </Grid>
   );

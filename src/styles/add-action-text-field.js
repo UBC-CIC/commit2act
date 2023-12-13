@@ -30,7 +30,7 @@ export const labelStyles = {
   flex: '1 1',
   flexBasis: {
     xs: '50%',
-    sm: '60%',
+    sm: '55%',
   },
   overflow: 'visible',
   transform: 'none',
@@ -53,11 +53,38 @@ export const inputStyles = {
   flex: '0 1',
   flexBasis: {
     xs: '50%',
-    sm: '40%',
+    sm: '45%',
   },
   maxWidth: '100%',
   'label + &': {
     marginTop: '0',
+  },
+  '&.MuiInputBase-adornedEnd': {
+    position: 'relative',
+    '& > input': {
+      paddingRight: '2.5em',
+    },
+    '.MuiInputAdornment-root': {
+      position: 'absolute',
+      right: '0.75em',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      '.MuiButtonBase-root': {
+        color: 'rgba(0, 0, 0, 0.75)',
+        border: 'solid 0.15em transparent',
+        transition: 'color 100ms, border 100ms',
+        '&:focus, &:hover': {
+          color: 'black',
+        },
+        '&:focus': {
+          borderColor: 'var(--action-style-color)',
+        },
+      },
+    },
+    '.MuiSvgIcon-root': {
+      width: { xs: '1em', sm: '1.25em', md: '1.5em' },
+      height: { xs: '1em', sm: '1.25em', md: '1.5em' },
+    },
   },
   '& > input': {
     ...commonStyles,
