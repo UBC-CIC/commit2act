@@ -176,7 +176,7 @@ const translations = {
   adminDashboard: 'Admin Dashboard',
   myAccount: 'My Account',
   logActionTitle: 'Log New Action',
-  logActionStep1: 'Select Action',
+  logActionStep1: 'Select an Action',
   logActionStep2: 'Add Action',
   logActionStep3: 'Nice Work',
   logActionStep4: 'CO2 Saved',
@@ -310,6 +310,7 @@ const translations = {
   logActionStepCompleted: 'Completed',
   logActionStepCurrent: 'Current',
   logActionStepOfTotal: 'Step {0} of {1}',
+  logActionItemsErrorAlt: 'Error',
 };
 
 export default translations;

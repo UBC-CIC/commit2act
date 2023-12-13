@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import { getAllUngraveyardedActions } from '../graphql/queries';
-import { Typography, Grid, CircularProgress } from '@mui/material';
+import { Grid, CircularProgress } from '@mui/material';
 import { format } from 'date-fns';
 import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
@@ -9,10 +9,9 @@ import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
 import { useNavigate } from 'react-router-dom';
 import AddActionPanel from '../components/logAction/AddActionPanel';
-
-import useTranslation from '../components/customHooks/translations';
 import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
-import { StepCounter } from '../components/StepCounter';
+import { LogStepHeader } from '../components/LogStepHeader';
+import { ActiveStepContext } from '../hooks/use-active-step-context';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -28,10 +27,11 @@ const SelfReportMenu = ({ user }) => {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
-  const [selectedAction, setSelectedAction] = useState();
-  const [actionStyle, setActionStyle] = useState(ActionStyles[0]);
 
   const [activeStep, setActiveStep] = useState(0);
+  const [actionStyle, setActionStyle] = useState(ActionStyles[0]);
+  const [selectedAction, setSelectedAction] = useState();
+
   const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCO2Saved, setTotalCO2Saved] = useState(0);
   const [skipBonusQuestion, setSkipBonusQuestion] = useState(false);
@@ -41,17 +41,7 @@ const SelfReportMenu = ({ user }) => {
   const [selectedImage, setSelectedImage] = useState();
   const [validationSuccess, setValidationSuccess] = useState(false);
 
-  const translation = useTranslation();
   const nav = useNavigate();
-
-  const steps = [
-    translation.logActionStep1,
-    translation.logActionStep2,
-    translation.logActionStep3,
-    translation.logActionStep4,
-    translation.logActionStep5,
-    translation.logActionStep6,
-  ];
 
   const resetLogAction = () => {
     setSelectedAction(undefined);
@@ -129,16 +119,12 @@ const SelfReportMenu = ({ user }) => {
           <AddActionPanel
             selectedDate={selectedDate}
             handleDateChange={handleDateChange}
-            selectedAction={selectedAction}
             setTotalCO2Saved={setTotalCO2Saved}
             actionItemValues={actionItemValues}
             setActionItemValues={setActionItemValues}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
             skipBonusQuestion={skipBonusQuestion}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
-            actionStyle={actionStyle}
           />
         )}
         {selectedAction && activeStep === 2 && (
@@ -197,54 +183,36 @@ const SelfReportMenu = ({ user }) => {
   };
 
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
-      flexDirection="column"
+    <ActiveStepContext.Provider
+      value={{
+        activeStep,
+        actionStyle,
+        selectedAction,
+        setActiveStep,
+      }}
     >
-      {activeStep > 0 && selectedAction && (
-        <Typography
-          variant="h1"
-          sx={{
-            fontSize: '1.5rem',
-            color: actionStyle.color,
-            mt: { xs: '1.5em', md: '0' },
-            mb: '1.5em',
-          }}
-        >
-          {selectedAction.action_name}
-        </Typography>
-      )}
-      <StepCounter currentColor={actionStyle.color} activeStep={activeStep} />
       <Grid
-        item
-        sx={{
-          backgroundColor: 'none',
-          '& .Mui-focused, & .Mui-focused .MuiOutlinedInput-notchedOutline': {
-            color: actionStyle.color,
-            borderColor: actionStyle.color,
-          },
-        }}
+        container
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        flexDirection="column"
       >
-        <Typography
-          variant="h2"
+        <LogStepHeader />
+        <Grid
+          item
           sx={{
-            m: {
-              xs: '2em 0 2em 0',
-              md: '2em 0 2em 0',
+            backgroundColor: 'none',
+            '& .Mui-focused, & .Mui-focused .MuiOutlinedInput-notchedOutline': {
               color: actionStyle.color,
-              textTransform: 'uppercase',
-              fontWeight: 'bold',
+              borderColor: actionStyle.color,
             },
           }}
         >
-          {steps[activeStep]}
-        </Typography>
-        {renderFormStep()}
+          {renderFormStep()}
+        </Grid>
       </Grid>
-    </Grid>
+    </ActiveStepContext.Provider>
   );
 };
 

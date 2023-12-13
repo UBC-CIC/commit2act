@@ -1,54 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Grid, TextField, Button } from '@mui/material';
-import { API } from 'aws-amplify';
-import { getActionItemsForAction } from '../../graphql/queries';
-
+import { Typography, Box, Grid, CircularProgress } from '@mui/material';
+import { ErrorOutlineOutlined } from '@mui/icons-material';
 import useTranslation from '../customHooks/translations';
-import { useContentTranslationsContext } from '../contexts/ContentTranslationsContext';
+import { AddActionTextField } from '../AddActionTextField';
+import { useGetActionItems } from '../../hooks/use-get-action-items';
 
-const ActionPanel = ({
-  selectedAction,
-  actionStyle,
-  actionItemValues,
-  setActionItemValues,
-  setTotalCO2Saved,
-  activeStep,
-  setActiveStep,
-}) => {
-  const [actionItems, setActionItems] = useState();
+const getActionItemId = (actionItemName) =>
+  actionItemName
+    .trim()
+    .toLowerCase()
+    .replace(/[^A-Z0-9]+/gi, '-');
+
+const ActionPanel = ({ actionItemValues, setActionItemValues }) => {
+  const { actionItems, loadingItems } = useGetActionItems();
   const [inputError, setInputError] = useState(false);
   const [disableButton, setDisableButton] = useState(true);
 
   const translation = useTranslation();
-  const { contentTranslations } = useContentTranslationsContext();
-
-  useEffect(() => {
-    getActionItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  //gets all action items related to the user selected action
-  const getActionItems = async () => {
-    if (translation.getLanguage() !== 'en') {
-      const relevantTranslationObject = contentTranslations.find(
-        (contentTranslation) =>
-          contentTranslation.langCode.toLowerCase() ===
-          translation.getLanguage().toLowerCase()
-      );
-      const relevantAction =
-        relevantTranslationObject?.translationJSON?.actions?.find(
-          (action) => action.action_id === selectedAction?.action_id
-        );
-      setActionItems(relevantAction?.action_items || []);
-      return;
-    }
-    const res = await API.graphql({
-      query: getActionItemsForAction,
-      variables: { action_id: selectedAction?.action_id },
-    });
-    const items = res.data.getActionItemsForAction;
-    setActionItems(items);
-  };
 
   //updates total co2 saved value and records what user inputs for each item field on the form
   const handleActionItemInput = (value, item) => {
@@ -96,47 +64,50 @@ const ActionPanel = ({
     setDisableButton(actionItemValues.length === 0 || inputError);
   }, [actionItemValues, inputError]);
 
-  const renderActionForm = () => {
-    if (actionItems) {
-      return actionItems.map((item, index) => (
-        <TextField
-          key={index}
-          id="outlined-basic"
-          label={item.item_name}
-          variant="outlined"
-          helperText={item.item_description}
-          InputLabelProps={{ shrink: true }}
-          onChange={(e) => handleActionItemInput(e.target.value, item)}
-        />
-      ));
-    }
-  };
-
   return (
-    <Grid
-      item
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2em',
-          alignContent: 'center',
-          width: '80%',
-        }}
-      >
+    <Grid item>
+      <Box>
         {inputError && (
-          <Typography variant="subtitle2">
-            {translation.mustBeNumber}
-          </Typography>
+          <Box aria-live="assertive">
+            <Typography
+              component="p"
+              display="flex"
+              gap="0.5em"
+              justifyContent="flex-start"
+              alignItems="center"
+              color="error"
+              fontSize="1em"
+              fontWeight="bold"
+              marginBottom="-1.25em"
+            >
+              <ErrorOutlineOutlined
+                alt={translation.logActionItemsErrorAlt}
+                fontSize="large"
+                sx={{
+                  display: 'block',
+                  width: '1.75em',
+                  height: '1.75em',
+                }}
+              />
+              <span>{translation.mustBeNumber}</span>
+            </Typography>
+          </Box>
         )}
-        {renderActionForm()}
+        {loadingItems ? <CircularProgress /> : null}
+        {actionItems && actionItems.length > 0
+          ? actionItems.map((item) => {
+              const actionItemId = getActionItemId(item.item_name);
+              return (
+                <AddActionTextField
+                  key={actionItemId}
+                  id={actionItemId}
+                  label={item.item_name}
+                  helperText={item.item_description}
+                  onChange={(e) => handleActionItemInput(e.target.value, item)}
+                />
+              );
+            })
+          : null}
       </Box>
     </Grid>
   );
