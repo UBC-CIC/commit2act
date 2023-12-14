@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { API } from 'aws-amplify';
 import { getAllUngraveyardedActions } from '../graphql/queries';
 import { Grid, CircularProgress } from '@mui/material';
@@ -7,7 +8,6 @@ import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
-import { useNavigate } from 'react-router-dom';
 import AddActionPanel from '../components/logAction/AddActionPanel';
 import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 import { LogStepHeader } from '../components/LogStepHeader';
@@ -104,6 +104,12 @@ const LogAction = ({ user }) => {
   const handleDateChange = (newDate) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
+
+  const { actionId } = useParams();
+
+  useEffect(() => {
+    if (!actionId) resetLogAction();
+  }, [actionId]);
 
   return (
     <ActiveStepContext.Provider
