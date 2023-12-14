@@ -7,6 +7,23 @@ import { useUpdateSubmittedAction } from '../customHooks/use-update-submitted-ac
 import { PAGE_PATHS } from '../../constants/page-paths';
 import { formatCo2Saved } from '../../utils/format-co2-saved';
 import { copyToClipboard } from '../../utils/copy-to-clipboard';
+import { LogoInstagram } from '../LogoInstagram';
+import { LogoTikTok } from '../LogoTikTok';
+
+const socialLinks = [
+  {
+    key: 'instagram',
+    link: 'https://www.instagram.com/',
+    label: 'shareOnInstagram',
+    icon: LogoInstagram,
+  },
+  {
+    key: 'tiktok',
+    link: 'https://www.tiktok.com/',
+    label: 'shareOnTikTok',
+    icon: LogoTikTok,
+  },
+];
 
 const filterUpdateDataFromProps = (props) => ({
   actionDate: props.actionDate,
@@ -84,6 +101,24 @@ const ShareOnSocialPanel = ({ addAnotherAction, ...props }) => {
           {translation[copied ? 'copyButtonCopied' : 'copyButtonCopy']}
         </Button>
       </Box>
+      <Box marginBottom="2.5em">
+        {socialLinks.map(({ link, key, label, icon: LinkIcon }) => (
+          <Box key={key} margin="1.5em auto" width="85%">
+            <Typography
+              alignItems="center"
+              component="a"
+              display="flex"
+              fontSize="1.25em"
+              gap="0.75em"
+              href={link}
+              justifyContent="flex-start"
+              target="_blank"
+            >
+              <LinkIcon aria-hidden="true" />
+              <span>{translation[label]}</span>
+            </Typography>
+          </Box>
+        ))}
       </Box>
       <ActionButtons
         backOnClick={addAnotherAction}

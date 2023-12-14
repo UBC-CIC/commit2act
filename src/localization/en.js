@@ -313,6 +313,8 @@ const translations = {
   logActionItemsErrorAlt: 'Error',
   logActionShareSummarySimple:
     'I dare you to match my action by saving +{0}g of CO2!',
+  shareOnInstagram: 'Share on Instagram',
+  shareOnTikTok: 'Share on TikTok',
   copyButtonCopy: 'Copy',
   copyButtonCopied: 'Copied!',
 };
