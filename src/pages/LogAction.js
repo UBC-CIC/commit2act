@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Grid, CircularProgress, Typography, Box } from '@mui/material';
+import { ChevronLeft } from '@mui/icons-material';
 import { API } from 'aws-amplify';
-import { getAllUngraveyardedActions } from '../graphql/queries';
-import { Grid, CircularProgress } from '@mui/material';
 import { format } from 'date-fns';
+import { getAllUngraveyardedActions } from '../graphql/queries';
 import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
 import AllActions from '../components/AllActions';
-import { useNavigate } from 'react-router-dom';
 import AddActionPanel from '../components/logAction/AddActionPanel';
 import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 import { LogStepHeader } from '../components/LogStepHeader';
 import { ActiveStepContext } from '../hooks/use-active-step-context';
+import useTranslation from '../components/customHooks/translations';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -23,7 +25,8 @@ const ActionStyles = {
   12: { color: '#FFD467' },
 };
 
-const SelfReportMenu = ({ user }) => {
+const LogAction = ({ user }) => {
+  const t = useTranslation();
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
@@ -105,82 +108,11 @@ const SelfReportMenu = ({ user }) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
 
-  const renderFormStep = () => {
-    return (
-      <>
-        {loading ? <CircularProgress /> : <></>}
-        {activeStep === 0 && (
-          <AllActions
-            setSelectedAction={setSelectedAction}
-            actionOptions={actionOptions}
-          />
-        )}
-        {activeStep === 1 && (
-          <AddActionPanel
-            selectedDate={selectedDate}
-            handleDateChange={handleDateChange}
-            setTotalCO2Saved={setTotalCO2Saved}
-            actionItemValues={actionItemValues}
-            setActionItemValues={setActionItemValues}
-            skipBonusQuestion={skipBonusQuestion}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-          />
-        )}
-        {selectedAction && activeStep === 2 && (
-          <ActionFact
-            selectedAction={selectedAction}
-            actionStyle={actionStyle}
-            user={user}
-            quiz={quiz}
-            setQuiz={setQuiz}
-            setSkipBonusQuestion={setSkipBonusQuestion}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-            actionDate={selectedDate}
-            totalCO2Saved={totalCO2Saved}
-            actionItemValues={actionItemValues}
-            selectedImage={selectedImage}
-            setValidationSuccess={setValidationSuccess}
-          />
-        )}
-        {activeStep === 3 && (
-          <CO2SavedScreen
-            totalCO2Saved={totalCO2Saved}
-            setActiveStep={setActiveStep}
-            skipBonusQuestion={skipBonusQuestion}
-            validationSuccess={validationSuccess}
-            activeStep={activeStep}
-            actionStyle={actionStyle}
-          />
-        )}
-        {activeStep === 4 && (
-          <BonusPointQuiz
-            quiz={quiz}
-            setQuizAnswered={setQuizAnswered}
-            setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-            setActiveStep={setActiveStep}
-            activeStep={activeStep}
-            actionStyle={actionStyle}
-          />
-        )}
+  const { actionId } = useParams();
 
-        {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
-        {activeStep === 5 && (
-          <ShareOnSocialPanel
-            quizAnswered={quizAnswered}
-            firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-            userId={user?.user_id}
-            quizId={quiz ? quiz.quiz_id : null}
-            actionDate={selectedDate}
-            totalCO2Saved={totalCO2Saved}
-            actionId={selectedAction?.action_id}
-            addAnotherAction={resetLogAction}
-          />
-        )}
-      </>
-    );
-  };
+  useEffect(() => {
+    if (!actionId) resetLogAction();
+  }, [actionId]);
 
   return (
     <ActiveStepContext.Provider
@@ -198,6 +130,28 @@ const SelfReportMenu = ({ user }) => {
         textAlign="center"
         flexDirection="column"
       >
+        <Box
+          display="flex"
+          justifyContent="flex-start"
+          width="100%"
+          margin="-0.75em 0 0.5em"
+        >
+          {activeStep === 1 && (
+            <Typography
+              component={Link}
+              to="/log-action"
+              display="flex"
+              alignItems="center"
+              justifyContent="flex-start"
+              fontSize={{ xs: '0.775em' }}
+              marginLeft="-0.75em"
+              gap="0.25em"
+            >
+              <ChevronLeft alt="" />
+              <Box component="span">{t.back}</Box>
+            </Typography>
+          )}
+        </Box>
         <LogStepHeader />
         <Grid
           item
@@ -209,14 +163,83 @@ const SelfReportMenu = ({ user }) => {
             },
           }}
         >
-          {renderFormStep()}
+          {loading ? <CircularProgress /> : null}
+          {activeStep === 0 && (
+            <AllActions
+              setSelectedAction={setSelectedAction}
+              actionOptions={actionOptions}
+            />
+          )}
+          {activeStep === 1 && (
+            <AddActionPanel
+              selectedDate={selectedDate}
+              handleDateChange={handleDateChange}
+              setTotalCO2Saved={setTotalCO2Saved}
+              actionItemValues={actionItemValues}
+              setActionItemValues={setActionItemValues}
+              skipBonusQuestion={skipBonusQuestion}
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+            />
+          )}
+          {selectedAction && activeStep === 2 && (
+            <ActionFact
+              selectedAction={selectedAction}
+              actionStyle={actionStyle}
+              user={user}
+              quiz={quiz}
+              setQuiz={setQuiz}
+              setSkipBonusQuestion={setSkipBonusQuestion}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+              actionDate={selectedDate}
+              totalCO2Saved={totalCO2Saved}
+              actionItemValues={actionItemValues}
+              selectedImage={selectedImage}
+              setValidationSuccess={setValidationSuccess}
+            />
+          )}
+          {activeStep === 3 && (
+            <CO2SavedScreen
+              totalCO2Saved={totalCO2Saved}
+              setActiveStep={setActiveStep}
+              skipBonusQuestion={skipBonusQuestion}
+              validationSuccess={validationSuccess}
+              activeStep={activeStep}
+              actionStyle={actionStyle}
+            />
+          )}
+          {activeStep === 4 && (
+            <BonusPointQuiz
+              quiz={quiz}
+              setQuizAnswered={setQuizAnswered}
+              setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+              setActiveStep={setActiveStep}
+              activeStep={activeStep}
+              actionStyle={actionStyle}
+            />
+          )}
+
+          {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
+          {activeStep === 5 && (
+            <ShareOnSocialPanel
+              quizAnswered={quizAnswered}
+              firstQuizAnswerCorrect={firstQuizAnswerCorrect}
+              userId={user?.user_id}
+              quizId={quiz ? quiz.quiz_id : null}
+              actionDate={selectedDate}
+              totalCO2Saved={totalCO2Saved}
+              actionId={selectedAction?.action_id}
+              addAnotherAction={resetLogAction}
+            />
+          )}
         </Grid>
       </Grid>
     </ActiveStepContext.Provider>
   );
 };
 
-export default SelfReportMenu;
+export default LogAction;
 
 /**
  * @param {any[]} actionOptions
