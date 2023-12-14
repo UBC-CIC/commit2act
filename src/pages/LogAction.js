@@ -129,12 +129,13 @@ const LogAction = ({ user }) => {
         alignItems="center"
         textAlign="center"
         flexDirection="column"
+        paddingBottom="3rem"
       >
         <Box
           display="flex"
           justifyContent="flex-start"
-          width="100%"
           margin="-0.75em 0 0.5em"
+          width="100%"
         >
           {activeStep === 1 && (
             <Typography

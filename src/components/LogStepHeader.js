@@ -28,7 +28,7 @@ export const LogStepHeader = () => {
   const { activeStep, actionStyle, selectedAction } = useActiveStepContext();
   const stepHeadingText = translation[logStepHeadings[activeStep]];
   return (
-    <Box m={{ xs: '0.5em 0 1.5em' }} textAlign="center">
+    <Box m="0.5em 0" textAlign="center">
       <Box component="header">
         {activeStep > 0 && selectedAction && (
           <Typography

@@ -3,52 +3,65 @@ import { Box, Button } from '@mui/material';
 
 const buttonStyles = {
   padding: '0.5em 1.5em',
-  borderRadius: '2rem',
+  borderRadius: '2em',
   fontWeight: 'bold',
   textTransform: 'capitalize',
-  flex: '1 0 calc(50% - 0.75rem)',
-  minWidth: 'max-content',
+  borderWidth: 'solid 0.1em transparent',
+  fontSize: { xs: '0.925em', sm: '1em', md: '0.875em' },
+  margin: '0.5em',
+  flexBasis: '50%',
+  minWidth: '10em',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '1.5em',
+  '&:first-of-type': {
+    marginLeft: '0',
+  },
+  '&:last-of-type': {
+    marginRight: '0',
+  },
 };
 
 const ActionButtons = ({
   backOnClick = () => {},
   backText = null,
-  forwardDisabled = false,
   forwardOnClick,
   forwardText,
+  forwardProps = {},
+  backProps = {},
+  children,
 }) => {
+  const backButtonStyles = {
+    ...buttonStyles,
+    color: 'white',
+    borderColor: 'white',
+  };
   return (
-    <Box
-      sx={{
-        alignItems: 'center',
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
-        justifyContent: 'center',
-        marginBottom: '1.25rem',
-      }}
-    >
-      {backText && (
+    <Box maxWidth="50rem" margin="1em auto">
+      {children}
+      <Box display="flex" alignItems="center" justifyContent="center">
+        {backText && (
+          <Button
+            onClick={backOnClick}
+            sx={backButtonStyles}
+            variant="outlined"
+            size="large"
+            {...backProps}
+          >
+            {backText}
+          </Button>
+        )}
         <Button
-          onClick={backOnClick}
-          sx={{
-            ...buttonStyles,
-            color: 'white',
-            borderColor: 'white',
-          }}
-          variant="outlined"
+          onClick={forwardOnClick}
+          sx={buttonStyles}
+          variant="contained"
+          size="large"
+          {...forwardProps}
         >
-          {backText}
+          {forwardText}
         </Button>
-      )}
-      <Button
-        disabled={forwardDisabled}
-        onClick={forwardOnClick}
-        sx={buttonStyles}
-        variant="contained"
-      >
-        {forwardText}
-      </Button>
+      </Box>
     </Box>
   );
 };

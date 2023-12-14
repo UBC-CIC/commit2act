@@ -136,51 +136,19 @@ const BonusPointQuiz = ({
       }}
     >
       {isAnswerSelected ? displayAnswer() : displayQuiz()}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          width: '100%',
+      <ActionButtons
+        forwardOnClick={() => {
+          if (userAnswer) {
+            setActiveStep(activeStep + 1);
+          } else {
+            setIsAnswerSelected(true);
+            setQuizAnswered(true);
+          }
         }}
-      >
-        {!userAnswer ? (
-          <ActionButtons
-            forwardOnClick={() => {
-              setIsAnswerSelected(true);
-              setQuizAnswered(true);
-            }}
-            backOnClick={() => setActiveStep(activeStep + 1)}
-            backText="Skip"
-            forwardText="Submit"
-          />
-        ) : (
-          <Box
-            component="div"
-            sx={{
-              m: '0 0 1.25em',
-              width: { xs: '50%' },
-            }}
-          >
-            <Button
-              onClick={() => {
-                setActiveStep(activeStep + 1);
-              }}
-              variant="contained"
-              sx={{
-                width: '100%',
-                padding: '.5em 1em',
-                fontSize: '1.2rem',
-                borderRadius: '35px',
-                color: 'white',
-              }}
-            >
-              Continue
-            </Button>
-          </Box>
-        )}
-      </Box>
+        backOnClick={() => setActiveStep(activeStep + 1)}
+        backText={translation.bonusQuizSkip}
+        forwardText={translation[userAnswer ? 'continue' : 'bonusQuizSubmit']}
+      />
     </Box>
   );
 };
