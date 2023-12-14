@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Box, Typography, CircularProgress, Button } from '@mui/material';
+import { Grid, Box, Typography, CircularProgress } from '@mui/material';
+import { visuallyHidden } from '@mui/utils';
 import { API } from 'aws-amplify';
 import { getQuizPoolForUser } from '../../graphql/queries';
 import Modal from 'react-modal';
@@ -237,39 +238,30 @@ const ActionFact = ({
         >
           Did you know?{' '}
         </Typography>
-        {/* <button onClick={openModal}>Open Modal</button> */}
         {renderFact()}
       </Box>
-
-      {/* <Modal
-        isOpen={modalIsOpen}
-        onAfterOpen={afterOpenModal}
-        onRequestClose={closeModal}
-        contentLabel="Example Modal"
-        className="sourceModal"
-      >
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-        <button onClick={closeModal}>close</button>
-        <div>I am a modal</div>
-      </Modal> */}
-      <Box
-        component="div"
-        sx={{
-          m: '1.25em 0 1.25em',
-          width: { xs: '50%' },
+      <ActionButtons
+        forwardOnClick={() => setActiveStep(activeStep + 1)}
+        forwardProps={{
+          disabled: loading,
         }}
+        forwardText={
+          <>
+            {translation.done}
+            {loading && <CircularProgress />}
+          </>
+        }
       >
-        <ActionButtons
-          forwardOnClick={() => setActiveStep(activeStep + 1)}
-          forwardDisabled={loading}
-          forwardText={
-            <>
-              {translation.done}
-              {loading && <CircularProgress sx={{ margin: '0 1em' }} />}
-            </>
+        <Box aria-live="polite" sx={visuallyHidden}>
+          {
+            translation[
+              loading
+                ? 'logActionValidationLoading'
+                : 'logActionValidationComplete'
+            ]
           }
-        />
-      </Box>
+        </Box>
+      </ActionButtons>
     </Grid>
   );
 };

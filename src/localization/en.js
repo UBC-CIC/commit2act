@@ -317,6 +317,8 @@ const translations = {
   shareOnTikTok: 'Share on TikTok',
   copyButtonCopy: 'Copy',
   copyButtonCopied: 'Copied!',
+  logActionValidationLoading: 'Validating action details',
+  logActionValidationComplete: 'Validation complete',
 };
 
 export default translations;
