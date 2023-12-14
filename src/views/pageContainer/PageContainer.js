@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, Link } from 'react-router-dom';
 import {
   Drawer,
   Toolbar,
@@ -10,6 +10,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemButton,
   Box,
 } from '@mui/material';
 import {
@@ -187,34 +188,26 @@ function PageContainer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSideMenu = () => {
+  const handleMenuNavItem = (toPath = null) => {
     updateMenuState(!menuEnabled);
+    if (toPath) navigate(toPath);
   };
 
   useEffect(() => {
     if (mobileView) {
-      handleSideMenu();
+      handleMenuNavItem();
     }
   }, [mobileView]);
 
-  const handleChangePage = (event, newPage) => {
-    handleSideMenu();
-  };
-  //   {
-  //     /* Example side menu is provided below */
-  //   }
   const list = () => (
-    <div
-      className={classes.drawerContainer}
-      // onClick={handleSideMenuClose(false)}
-      // onKeyDown={handleSideMenuClose(false)}
-    >
+    <div className={classes.drawerContainer}>
       <List>
-        <ListItem
-          button
-          key={'logAction'}
-          onClick={() => navigate('/log-action')}
+        <ListItemButton
+          key="logAction"
           className={classes.logAction}
+          component={Link}
+          onClick={handleMenuNavItem}
+          to="/log-action"
         >
           <ListItemIcon>
             <Box
@@ -227,8 +220,8 @@ function PageContainer(props) {
             />
           </ListItemIcon>
           <ListItemText primary={translation.logAction} />
-        </ListItem>
-        <ListItem button key={'home'} onClick={() => navigate('/')}>
+        </ListItemButton>
+        <ListItemButton key={'home'} onClick={() => handleMenuNavItem('/')}>
           <ListItemIcon>
             <Box
               component="img"
@@ -240,8 +233,12 @@ function PageContainer(props) {
             />
           </ListItemIcon>
           <ListItemText primary={translation.dashboard} />
-        </ListItem>
-        <ListItem button key={'Actions'} onClick={() => navigate('/actions')}>
+        </ListItemButton>
+        <ListItem
+          button
+          key={'Actions'}
+          onClick={() => handleMenuNavItem('/actions')}
+        >
           <ListItemIcon>
             <Box
               component="img"
@@ -257,7 +254,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'mygroups'}
-          onClick={() => navigate('/my-groups')}
+          onClick={() => handleMenuNavItem('/my-groups')}
         >
           <ListItemIcon>
             <Box
@@ -274,7 +271,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'findGroup'}
-          onClick={() => navigate('/find-group')}
+          onClick={() => handleMenuNavItem('/find-group')}
         >
           <ListItemIcon>
             <Box
@@ -292,7 +289,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'createGroup'}
-          onClick={() => navigate('/create-group')}
+          onClick={() => handleMenuNavItem('/create-group')}
         >
           <ListItemIcon>
             <Box
@@ -310,7 +307,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'validateActions'}
-          onClick={() => navigate('/validate-actions')}
+          onClick={() => handleMenuNavItem('/validate-actions')}
         >
           <ListItemIcon>
             <Box
@@ -330,7 +327,7 @@ function PageContainer(props) {
             <ListItem
               button
               key={'adminDashboard'}
-              onClick={() => navigate('/admin-dashboard')}
+              onClick={() => handleMenuNavItem('/admin-dashboard')}
             >
               <ListItemIcon>
                 <AdminPanelSettings />
@@ -347,7 +344,7 @@ function PageContainer(props) {
         <ListItem
           button
           key={'myAccount'}
-          onClick={() => navigate(`/account-settings`)}
+          onClick={() => handleMenuNavItem(`/account-settings`)}
         >
           <ListItemIcon>
             <Box
@@ -404,11 +401,12 @@ function PageContainer(props) {
                 with your app's contents */}
 
           <Routes>
+            <Route path="/log-action" element={<LogAction user={user} />}>
             <Route
-              exact
-              path={'/log-action/*'}
+                path="/log-action/:actionId"
               element={<LogAction user={user} />}
             />
+            </Route>
             <Route
               exact
               path={'/actions'}
