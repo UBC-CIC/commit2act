@@ -129,7 +129,7 @@ const useStyles = makeStyles()((theme) => {
 
 function PageContainer(props) {
   const theme = useTheme();
-  const mobileView = useMediaQuery(theme.breakpoints.down('sm'));
+  const mobileView = useMediaQuery(theme.breakpoints.down('md'));
   const { menuEnabled, updateMenuState } = props;
 
   const { classes } = useStyles();
@@ -189,7 +189,7 @@ function PageContainer(props) {
   }, []);
 
   const handleMenuNavItem = (toPath = null) => {
-    updateMenuState(!menuEnabled);
+    if (mobileView) updateMenuState(!menuEnabled);
     if (toPath) navigate(toPath);
   };
 
@@ -402,10 +402,10 @@ function PageContainer(props) {
 
           <Routes>
             <Route path="/log-action" element={<LogAction user={user} />}>
-            <Route
+              <Route
                 path="/log-action/:actionId"
-              element={<LogAction user={user} />}
-            />
+                element={<LogAction user={user} />}
+              />
             </Route>
             <Route
               exact
