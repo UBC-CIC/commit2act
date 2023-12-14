@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ActionButtons from './ActionButtons';
-
 import useTranslation from '../customHooks/translations';
+import { formatCo2Saved } from '../../utils/format-co2-saved';
 
 const CO2SavedScreen = ({
   totalCO2Saved,
@@ -13,6 +13,7 @@ const CO2SavedScreen = ({
   actionStyle,
 }) => {
   const translation = useTranslation();
+  const formattedCo2Saved = formatCo2Saved(totalCO2Saved);
 
   return (
     <>
@@ -32,7 +33,7 @@ const CO2SavedScreen = ({
               variant="h1"
               sx={{ fontWeight: '700', color: actionStyle.color }}
             >
-              + {totalCO2Saved}
+              +{formattedCo2Saved}g
             </Typography>
             <Typography sx={{ paddingTop: '1rem' }}>of CO2 saved</Typography>
             <Typography variant="h2" sx={{ color: actionStyle.color }}>
@@ -46,7 +47,7 @@ const CO2SavedScreen = ({
                 <Typography variant="subtitle2" sx={{ mt: '1.5em' }}>
                   {translation.formatString(
                     translation.co2SavedScreenSaved,
-                    totalCO2Saved
+                    formattedCo2Saved
                   )}
                 </Typography>
               </Box>
