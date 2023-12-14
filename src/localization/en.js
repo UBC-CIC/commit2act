@@ -313,6 +313,8 @@ const translations = {
   logActionItemsErrorAlt: 'Error',
   logActionShareSummarySimple:
     'I dare you to match my action by saving +{0}g of CO2!',
+  copyButtonCopy: 'Copy',
+  copyButtonCopied: 'Copied!',
 };
 
 export default translations;
