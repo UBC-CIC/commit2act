@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 import { formatCo2Saved } from '../../utils/format-co2-saved';
@@ -77,28 +77,10 @@ const CO2SavedScreen = ({
         }
       </Box>
       {skipBonusQuestion ? (
-        <Box
-          component="div"
-          sx={{
-            m: 'auto 1.25em',
-          }}
-        >
-          <Button
-            onClick={() => {
-              setActiveStep(activeStep + 2);
-            }}
-            variant="contained"
-            sx={{
-              width: '50%',
-              padding: '.5em 1em',
-              fontSize: '1.2rem',
-              borderRadius: '35px',
-              color: 'white',
-            }}
-          >
-            {translation.continue}
-          </Button>
-        </Box>
+        <ActionButtons
+          forwardOnClick={() => setActiveStep(activeStep + 2)}
+          forwardText={translation.continue}
+        />
       ) : (
         <ActionButtons
           forwardOnClick={() => setActiveStep(activeStep + 1)}
