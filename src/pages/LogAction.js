@@ -14,6 +14,7 @@ import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 import { LogStepHeader } from '../components/LogStepHeader';
 import { ActiveStepContext } from '../hooks/use-active-step-context';
 import useTranslation from '../components/customHooks/translations';
+import { ActionDetailsContext } from '../hooks/use-action-details-context';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -26,15 +27,16 @@ const ActionStyles = {
 };
 
 const LogAction = () => {
+  const { actionId } = useParams();
   const t = useTranslation();
-  const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), 'yyyy-MM-dd')
-  );
 
   const [activeStep, setActiveStep] = useState(0);
   const [actionStyle, setActionStyle] = useState(ActionStyles[0]);
   const [selectedAction, setSelectedAction] = useState();
 
+  const [selectedDate, setSelectedDate] = useState(
+    format(new Date(), 'yyyy-MM-dd')
+  );
   const [actionItemValues, setActionItemValues] = useState([]);
   const [totalCO2Saved, setTotalCO2Saved] = useState(0);
   const [skipBonusQuestion, setSkipBonusQuestion] = useState(false);
@@ -108,8 +110,6 @@ const LogAction = () => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
 
-  const { actionId } = useParams();
-
   useEffect(() => {
     if (!actionId) resetLogAction();
   }, [actionId]);
@@ -164,6 +164,19 @@ const LogAction = () => {
             },
           }}
         >
+          <ActionDetailsContext.Provider
+            value={{
+              selectedDate,
+              actionItemValues,
+              totalCO2Saved,
+              skipBonusQuestion,
+              quiz,
+              quizAnswered,
+              firstQuizAnswerCorrect,
+              selectedImage,
+              validationSuccess,
+            }}
+          >
           {loading ? <CircularProgress /> : null}
           {activeStep === 0 && (
             <AllActions setSelectedAction={setSelectedAction} />
@@ -216,6 +229,7 @@ const LogAction = () => {
               addAnotherAction={resetLogAction}
             />
           )}
+          </ActionDetailsContext.Provider>
         </Grid>
       </Grid>
     </ActiveStepContext.Provider>
