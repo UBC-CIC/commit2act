@@ -3,15 +3,14 @@ import { Box, Typography } from '@mui/material';
 import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 import { formatCo2Saved } from '../../utils/format-co2-saved';
+import { useActiveStepContext } from '../../hooks/use-active-step-context';
 
 const CO2SavedScreen = ({
   totalCO2Saved,
-  setActiveStep,
-  activeStep,
   skipBonusQuestion,
   validationSuccess,
-  actionStyle,
 }) => {
+  const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
   const translation = useTranslation();
   const formattedCo2Saved = formatCo2Saved(totalCO2Saved);
 

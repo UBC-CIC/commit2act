@@ -12,28 +12,27 @@ import {
 } from '../../graphql/mutations';
 import { getSingleSubmittedAction } from '../../graphql/queries';
 import ActionButtons from './ActionButtons';
+import { useActiveStepContext } from '../../hooks/use-active-step-context';
+import { useUserInfoContext } from '../../hooks/use-user-info-context';
 
 Modal.setAppElement('#root');
 
 const ActionFact = ({
-  selectedAction,
-  actionStyle,
   setQuiz,
   quiz,
-  user,
   setSkipBonusQuestion,
-  activeStep,
-  setActiveStep,
   actionDate,
   totalCO2Saved,
   actionItemValues,
   selectedImage,
   setValidationSuccess,
 }) => {
+  const { activeStep, actionStyle, setActiveStep, selectedAction } =
+    useActiveStepContext();
+  const { user } = useUserInfoContext();
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
-  // Modal.setAppElement('#yourAppElement');
 
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);

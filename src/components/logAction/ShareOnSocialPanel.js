@@ -9,6 +9,8 @@ import { formatCo2Saved } from '../../utils/format-co2-saved';
 import { copyToClipboard } from '../../utils/copy-to-clipboard';
 import { LogoInstagram } from '../LogoInstagram';
 import { LogoTikTok } from '../LogoTikTok';
+import { useActiveStepContext } from '../../hooks/use-active-step-context';
+import { useUserInfoContext } from '../../hooks/use-user-info-context';
 
 const socialLinks = [
   {
@@ -36,13 +38,22 @@ const filterUpdateDataFromProps = (props) => ({
 });
 
 const ShareOnSocialPanel = ({ addAnotherAction, ...props }) => {
+  const { selectedAction } = useActiveStepContext();
+  const { user } = useUserInfoContext();
   const translation = useTranslation();
   const navigate = useNavigate();
   const formattedCo2Saved = formatCo2Saved(props.totalCO2Saved);
   const [copied, setCopied] = useState(false);
 
   // Update the current action with quiz info on init of this panel
-  useUpdateSubmittedAction(filterUpdateDataFromProps(props), true);
+  useUpdateSubmittedAction(
+    filterUpdateDataFromProps({
+      ...props,
+      actionId: selectedAction?.action_id,
+      userId: user?.user_id,
+    }),
+    true
+  );
 
   const shareSummary = translation.formatString(
     translation.logActionShareSummarySimple,

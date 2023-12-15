@@ -12,8 +12,8 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { styled } from '@mui/material/styles';
 import ActionButtons from './ActionButtons';
-
 import useTranslation from '../customHooks/translations';
+import { useActiveStepContext } from '../../hooks/use-active-step-context';
 
 const StyledButton = styled(Button)`
   margin-top: 5em;
@@ -22,12 +22,10 @@ const StyledButton = styled(Button)`
 
 const BonusPointQuiz = ({
   quiz,
-  setActiveStep,
-  actionStyle,
   setQuizAnswered,
   setFirstQuizAnswerCorrect,
-  activeStep,
 }) => {
+  const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
   const answers = quiz?.answers;
   const correctAnswers = quiz?.correct_answers;
   const answersArray = answers ? answers.split('\n') : [];

@@ -14,7 +14,6 @@ import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 import { LogStepHeader } from '../components/LogStepHeader';
 import { ActiveStepContext } from '../hooks/use-active-step-context';
 import useTranslation from '../components/customHooks/translations';
-import { useUserInfoContext } from '../hooks/use-user-info-context';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -28,7 +27,6 @@ const ActionStyles = {
 
 const LogAction = () => {
   const t = useTranslation();
-  const { user } = useUserInfoContext();
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );
@@ -168,10 +166,7 @@ const LogAction = () => {
         >
           {loading ? <CircularProgress /> : null}
           {activeStep === 0 && (
-            <AllActions
-              setSelectedAction={setSelectedAction}
-              actionOptions={actionOptions}
-            />
+            <AllActions setSelectedAction={setSelectedAction} />
           )}
           {activeStep === 1 && (
             <AddActionPanel
@@ -187,14 +182,9 @@ const LogAction = () => {
           )}
           {selectedAction && activeStep === 2 && (
             <ActionFact
-              selectedAction={selectedAction}
-              actionStyle={actionStyle}
-              user={user}
               quiz={quiz}
               setQuiz={setQuiz}
               setSkipBonusQuestion={setSkipBonusQuestion}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
               actionDate={selectedDate}
               totalCO2Saved={totalCO2Saved}
               actionItemValues={actionItemValues}
@@ -205,11 +195,8 @@ const LogAction = () => {
           {activeStep === 3 && (
             <CO2SavedScreen
               totalCO2Saved={totalCO2Saved}
-              setActiveStep={setActiveStep}
               skipBonusQuestion={skipBonusQuestion}
               validationSuccess={validationSuccess}
-              activeStep={activeStep}
-              actionStyle={actionStyle}
             />
           )}
           {activeStep === 4 && (
@@ -217,22 +204,15 @@ const LogAction = () => {
               quiz={quiz}
               setQuizAnswered={setQuizAnswered}
               setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-              setActiveStep={setActiveStep}
-              activeStep={activeStep}
-              actionStyle={actionStyle}
             />
           )}
-
-          {/* To Do: Update submitted action with firstQuizAnswerCorrect and quiz_answered */}
           {activeStep === 5 && (
             <ShareOnSocialPanel
               quizAnswered={quizAnswered}
               firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-              userId={user?.user_id}
               quizId={quiz ? quiz.quiz_id : null}
               actionDate={selectedDate}
               totalCO2Saved={totalCO2Saved}
-              actionId={selectedAction?.action_id}
               addAnotherAction={resetLogAction}
             />
           )}
