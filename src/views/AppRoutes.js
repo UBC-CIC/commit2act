@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { PAGE_PATHS } from '../constants/page-paths';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 import LogAction from '../pages/LogAction';
 import Actions from '../pages/Actions';
 import Landing from '../pages/Landing';
@@ -16,7 +17,8 @@ import AccountSettings from '../pages/AccountSettings';
 import UserProfile from '../pages/UserProfile';
 import AdminDashboard from '../pages/AdminDashboard';
 
-export const AppRoutes = ({ user, userType, userIsAdmin, setUser }) => {
+export const AppRoutes = () => {
+  const { user, userType, userIsAdmin, setUser } = useUserInfoContext();
   return (
     <Routes>
       <Route path={PAGE_PATHS.LOG_ACTION} element={<LogAction user={user} />}>

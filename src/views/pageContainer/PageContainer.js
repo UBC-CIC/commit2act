@@ -6,6 +6,7 @@ import { Drawer, Toolbar, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { API, Auth } from 'aws-amplify';
+import { UserInfoContext } from '../../hooks/use-user-info-context';
 import { updateMenuState } from '../../actions/menuActions';
 import { getSingleUserByEmail } from '../../graphql/queries';
 import { createUser } from '../../graphql/mutations';
@@ -87,51 +88,52 @@ function PageContainer(props) {
   }, [mobileView]);
 
   return (
-    <Grid container direction="column">
-      <a className={classes.skip_button} href="#main">
-        Skip to Content
-      </a>
-      {/* Navbar component, set side menu button parameter -->
+    <UserInfoContext.Provider
+      value={{
+        user,
+        userType,
+        userIsAdmin,
+        setUser,
+      }}
+    >
+      <Grid container direction="column">
+        <a className={classes.skip_button} href="#main">
+          Skip to Content
+        </a>
+        {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
-      {/* App content example below with sidebar */}
-      <Grid item xs={12} className="App-header">
-        {/* Side menu component */}
-        <Drawer
-          anchor={'left'}
-          open={menuEnabled}
-          // onClose={handleSideMenuClose}
-          variant="persistent"
-          style={{ zIndex: 2 }}
-          sx={{
-            width: 312,
-            color: 'success.main',
-          }}
-          className={clsx(classes.drawer, {
-            [classes.menuClosed]: !menuEnabled,
-          })}
-        >
-          <Toolbar />
-          <AppNav
-            userIsAdmin={userIsAdmin}
-            handleMenuNavItem={handleMenuNavItem}
-          />
-        </Drawer>
-        <main
-          id="main"
-          className={clsx(classes.content, {
-            [classes.contentShift]: menuEnabled,
-          })}
-        >
-          <AppRoutes
-            user={user}
-            userType={userType}
-            userIsAdmin={userIsAdmin}
-            setUser={setUser}
-          />
-        </main>
+        <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
+        {/* App content example below with sidebar */}
+        <Grid item xs={12} className="App-header">
+          {/* Side menu component */}
+          <Drawer
+            anchor={'left'}
+            open={menuEnabled}
+            // onClose={handleSideMenuClose}
+            variant="persistent"
+            style={{ zIndex: 2 }}
+            sx={{
+              width: 312,
+              color: 'success.main',
+            }}
+            className={clsx(classes.drawer, {
+              [classes.menuClosed]: !menuEnabled,
+            })}
+          >
+            <Toolbar />
+            <AppNav handleMenuNavItem={handleMenuNavItem} />
+          </Drawer>
+          <main
+            id="main"
+            className={clsx(classes.content, {
+              [classes.contentShift]: menuEnabled,
+            })}
+          >
+            <AppRoutes />
+          </main>
+        </Grid>
       </Grid>
-    </Grid>
+    </UserInfoContext.Provider>
   );
 }
 

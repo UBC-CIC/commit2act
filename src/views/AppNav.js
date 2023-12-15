@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { AdminPanelSettings } from '@mui/icons-material';
 import { usePageContainerStyles } from '../styles/page-container';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 import useTranslation from '../components/customHooks/translations';
 import { PAGE_PATHS } from '../constants/page-paths';
 
@@ -58,7 +59,8 @@ const mainNavItems = [
   },
 ];
 
-export const AppNav = ({ handleMenuNavItem, userIsAdmin }) => {
+export const AppNav = ({ handleMenuNavItem }) => {
+  const { userIsAdmin } = useUserInfoContext();
   const { classes } = usePageContainerStyles();
   const t = useTranslation();
 
