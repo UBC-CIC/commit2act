@@ -1,39 +1,16 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Avatar,
-} from '@mui/material';
+import { Box, Button, Typography, Grid, Avatar } from '@mui/material';
 import { API } from 'aws-amplify';
-import {
-  getSingleUser,
-} from '../graphql/queries';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { getSingleUser } from '../graphql/queries';
 import EditAccountInfo from '../components/accountSettings/EditAccountInfo';
 import useTranslation from '../components/customHooks/translations';
 import UserActions from '../components/UserActions';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
-const AccountSettings = ({user, setUser, userType }) => {
-  const translation = useTranslation();
-  const [showMore, setShowMore] = useState({
-    validated: false,
-    unvalidated: false,
-    failed: false,
-  });
-  const [validatedActions, setValidatedActions] = useState();
-  const [unvalidatedActions, setUnvalidatedActions] = useState();
-  const [failedActions, setFailedActions] = useState();
-  const tabs = [
-    translation.validated,
-    translation.awaitingValidation,
-    translation.notPassValidation,
-  ];
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+const AccountSettings = () => {
+  const { user, setUser } = useUserInfoContext();
   const [editUser, setEditUser] = useState(false);
-
-  const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const translation = useTranslation();
 
   const getCurrentDatabaseUser = async (id) => {
     const userRes = await API.graphql({
@@ -128,8 +105,10 @@ const AccountSettings = ({user, setUser, userType }) => {
               </Grid>
             </Grid>
 
-            <Typography variant="h2" sx={{ mt: '1em', mb: '0.5em' }}>{translation.myActions}</Typography>
-            <UserActions databaseUser={user}/>
+            <Typography variant="h2" sx={{ mt: '1em', mb: '0.5em' }}>
+              {translation.myActions}
+            </Typography>
+            <UserActions databaseUser={user} />
             <EditAccountInfo
               open={editUser}
               databaseUser={user}

@@ -36,8 +36,8 @@ import GroupPageLeaderboard from '../components/groupProfile/GroupPageLeaderboar
 import EditGroupPanel from '../components/groupProfile/EditGroupPanel';
 import { v4 as uuidv4 } from 'uuid';
 import LeaveGroupDialogContent from '../components/groupProfile/LeaveGroupDialogContent';
-
-import useTranslation from "../components/customHooks/translations";
+import useTranslation from '../components/customHooks/translations';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -47,8 +47,9 @@ const StyledPaper = styled(Paper)`
   }
 `;
 
-const GroupProfile = ({ user }) => {
+const GroupProfile = () => {
   const translation = useTranslation();
+  const { user } = useUserInfoContext();
   const { groupName } = useParams();
   const tabs = [
     translation.groupInfo,
@@ -207,17 +208,21 @@ const GroupProfile = ({ user }) => {
                     display: 'flex',
                     gap: '20px',
                     color: '#BCF10C',
-                  }}>
+                  }}
+                >
                   <Stack direction="row" alignItems="center" gap={1}>
                     <PeopleAlt />
                     <Typography component="div" variant="subtitle2">
-                      {translation.membersColon} {groupMembers && groupMembers.length}
+                      {translation.membersColon}{' '}
+                      {groupMembers && groupMembers.length}
                     </Typography>
                   </Stack>
                   <Stack direction="row" alignItems="center" gap={1}>
                     {groupInfo.is_public ? <Public /> : <Lock />}
                     <Typography component="div" variant="subtitle2">
-                      {groupInfo.is_public ? translation.public : translation.private}
+                      {groupInfo.is_public
+                        ? translation.public
+                        : translation.private}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -256,21 +261,32 @@ const GroupProfile = ({ user }) => {
                     justifyContent: 'space-evenly',
                     backgroundColor: '#DBE2EF',
                     borderRadius: '10px',
-                    background: 'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
+                    background:
+                      'linear-gradient(91.49deg, #56C573 0.29%, #5BC0AC 100%)',
                     padding: '1em',
                     width: '100%',
                     gap: { xs: '0.5em', md: '2' },
                   }}
                 >
-                  <StyledPaper elevation={6} sx={{ background: 'white', flex: '1' }}>
-                    <Typography variant="h4">{translation.co2SavedWeek}</Typography>
+                  <StyledPaper
+                    elevation={6}
+                    sx={{ background: 'white', flex: '1' }}
+                  >
+                    <Typography variant="h4">
+                      {translation.co2SavedWeek}
+                    </Typography>
                     <Typography variant="h5" className="statValue">
                       <AutoGraphOutlined fontSize="large" />
                       {groupInfo.weekly_co2.toFixed(4)}g
                     </Typography>
                   </StyledPaper>
-                  <StyledPaper elevation={6} sx={{ background: 'white', flex: '1' }}>
-                    <Typography variant="h4">{translation.totalCO2Saved}</Typography>
+                  <StyledPaper
+                    elevation={6}
+                    sx={{ background: 'white', flex: '1' }}
+                  >
+                    <Typography variant="h4">
+                      {translation.totalCO2Saved}
+                    </Typography>
                     <Typography variant="h5" className="statValue">
                       {Math.ceil(groupInfo.total_co2)}g
                     </Typography>
@@ -302,7 +318,9 @@ const GroupProfile = ({ user }) => {
                 width: { xs: '90%' },
               }}
             >
-              <Typography variant="h2" paddingBottom={4}>{translation.groupInfo}</Typography>
+              <Typography variant="h2" paddingBottom={4}>
+                {translation.groupInfo}
+              </Typography>
               <TabContext value={selectedTab}>
                 <Box
                   sx={{

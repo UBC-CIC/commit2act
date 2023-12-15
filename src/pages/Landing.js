@@ -28,6 +28,7 @@ import {
 import GlobalLeaderboard from '../components/GlobalLeaderboard';
 import useTranslation from '../components/customHooks/translations';
 import UserActions from '../components/UserActions';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
 const StyledPaper = styled(Paper)`
   padding: 1em 2em;
@@ -38,8 +39,9 @@ const StyledPaper = styled(Paper)`
   }
 `;
 
-const Landing = ({ user, userType }) => {
+const Landing = () => {
   const navigate = useNavigate();
+  const { user, userType } = useUserInfoContext();
   const [progressStats, setProgressStats] = useState({
     globalCO2: '',
     totalCO2: '',
@@ -179,7 +181,7 @@ const Landing = ({ user, userType }) => {
                   flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                   alignItems: { xs: 'center', sm: 'flex-start' },
-                  textAlign: { xs: 'left' }
+                  textAlign: { xs: 'left' },
                 }}
                 color="info"
                 action={
@@ -208,7 +210,7 @@ const Landing = ({ user, userType }) => {
                   flexDirection: { xs: 'column', sm: 'row' },
                   justifyContent: { xs: 'center', sm: 'flex-start' },
                   alignItems: { xs: 'center', sm: 'flex-start' },
-                  textAlign: { xs: 'left' }
+                  textAlign: { xs: 'left' },
                 }}
                 color="success"
               >
@@ -289,7 +291,7 @@ const Landing = ({ user, userType }) => {
                 gap: { xs: '0.5em', lg: '0.5em' },
                 '> div': {
                   flex: '1',
-                }
+                },
               }}
             >
               <StyledPaper elevation={6}>
@@ -378,9 +380,7 @@ const Landing = ({ user, userType }) => {
           <Typography variant="h2">{translation.myActions}</Typography>
         </Box>
       </Grid>
-      <UserActions
-        databaseUser={user}
-      />
+      <UserActions databaseUser={user} />
     </>
   );
 };

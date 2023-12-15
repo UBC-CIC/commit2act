@@ -14,6 +14,7 @@ import ShareOnSocialPanel from '../components/logAction/ShareOnSocialPanel';
 import { LogStepHeader } from '../components/LogStepHeader';
 import { ActiveStepContext } from '../hooks/use-active-step-context';
 import useTranslation from '../components/customHooks/translations';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -25,8 +26,9 @@ const ActionStyles = {
   12: { color: '#FFD467' },
 };
 
-const LogAction = ({ user }) => {
+const LogAction = () => {
   const t = useTranslation();
+  const { user } = useUserInfoContext();
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   );

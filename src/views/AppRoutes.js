@@ -18,52 +18,29 @@ import UserProfile from '../pages/UserProfile';
 import AdminDashboard from '../pages/AdminDashboard';
 
 export const AppRoutes = () => {
-  const { user, userType, userIsAdmin, setUser } = useUserInfoContext();
+  const { userIsAdmin } = useUserInfoContext();
   return (
     <Routes>
-      <Route path={PAGE_PATHS.LOG_ACTION} element={<LogAction user={user} />}>
+      <Route path={PAGE_PATHS.LOG_ACTION} element={<LogAction />}>
         <Route
           path={PAGE_PATHS.LOG_ACTION_ADD_ACTION}
-          element={<LogAction user={user} />}
+          element={<LogAction />}
         />
       </Route>
-      <Route
-        exact
-        path={PAGE_PATHS.ACTIONS}
-        element={<Actions user={user} userType={userType} />}
-      />
-      <Route
-        exact
-        path={PAGE_PATHS.DASHBOARD}
-        element={<Landing user={user} userType={userType} />}
-      />
-      <Route
-        exact
-        path={PAGE_PATHS.MY_GROUPS}
-        element={<MyGroups user={user} />}
-      />
-      <Route
-        exact
-        path={PAGE_PATHS.FIND_GROUP}
-        element={<FindGroup user={user} />}
-      />
-      <Route
-        exact
-        path={PAGE_PATHS.CREATE_GROUP}
-        element={<CreateGroup user={user} />}
-      />
-      <Route
-        path={PAGE_PATHS.GROUP_PROFILE}
-        element={<GroupProfile user={user} />}
-      />
+      <Route exact path={PAGE_PATHS.ACTIONS} element={<Actions />} />
+      <Route exact path={PAGE_PATHS.DASHBOARD} element={<Landing />} />
+      <Route exact path={PAGE_PATHS.MY_GROUPS} element={<MyGroups />} />
+      <Route exact path={PAGE_PATHS.FIND_GROUP} element={<FindGroup />} />
+      <Route exact path={PAGE_PATHS.CREATE_GROUP} element={<CreateGroup />} />
+      <Route path={PAGE_PATHS.GROUP_PROFILE} element={<GroupProfile />} />
       <Route
         path={PAGE_PATHS.GROUP_PROFILE_ADD_USER}
-        element={<PrivateRoute Component={JoinGroup} user={user} />}
+        element={<PrivateRoute Component={<JoinGroup />} />}
       />
       <Route
         exact
         path={PAGE_PATHS.VALIDATE_ACTIONS}
-        element={<ValidateActions user={user} userType={userType} />}
+        element={<ValidateActions />}
       />
       {userIsAdmin && (
         <Route
@@ -72,13 +49,7 @@ export const AppRoutes = () => {
           element={<CreateAction />}
         />
       )}
-      <Route
-        exact
-        path={PAGE_PATHS.MY_ACCOUNT}
-        element={
-          <AccountSettings user={user} setUser={setUser} userType={userType} />
-        }
-      />
+      <Route exact path={PAGE_PATHS.MY_ACCOUNT} element={<AccountSettings />} />
       <Route exact path={PAGE_PATHS.USER_PROFILE} element={<UserProfile />} />
       <Route
         exact
