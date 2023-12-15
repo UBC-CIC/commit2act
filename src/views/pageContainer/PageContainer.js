@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { Route, Routes, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import {
   Drawer,
   Toolbar,
@@ -13,40 +14,19 @@ import {
   ListItemButton,
   Box,
 } from '@mui/material';
-import {
-  Assessment,
-  Home,
-  Group,
-  AccountCircle,
-  AssignmentTurnedIn,
-  AdminPanelSettings,
-  Create,
-} from '@mui/icons-material';
-import { makeStyles } from 'tss-react/mui';
-import Navbar from '../../components/Navbar';
-import { connect } from 'react-redux';
-import { updateMenuState } from '../../actions/menuActions';
-import Landing from '../../pages/Landing';
-import FindGroup from '../../pages/FindGroup';
-import AccountSettings from '../../pages/AccountSettings';
-import LogAction from '../../pages/LogAction';
-import ValidateActions from '../../pages/ValidateActions';
-import CreateGroup from '../../pages/CreateGroup';
-import GroupProfile from '../../pages/GroupProfile';
-import CreateAction from '../../pages/CreateAction';
-import JoinGroup from '../../pages/JoinGroup';
-import MyGroups from '../../pages/MyGroups';
-import UserProfile from '../../pages/UserProfile';
-import Actions from '../../pages/Actions';
-import AdminDashboard from '../../pages/AdminDashboard';
-import { API, Auth, autoShowTooltip } from 'aws-amplify';
-import { getSingleUserByEmail } from '../../graphql/queries';
-import { createUser } from '../../graphql/mutations';
-import PrivateRoute from './PrivateRoute';
+import { AdminPanelSettings } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { makeStyles } from 'tss-react/mui';
+import { API, Auth } from 'aws-amplify';
+import Navbar from '../../components/Navbar';
+import { updateMenuState } from '../../actions/menuActions';
+import { getSingleUserByEmail } from '../../graphql/queries';
+import { createUser } from '../../graphql/mutations';
 
 import useTranslation from '../../components/customHooks/translations';
+import { AppRoutes } from '../AppRoutes';
+
 const drawerWidth = 312;
 
 const useStyles = makeStyles()((theme) => {
@@ -397,79 +377,7 @@ function PageContainer(props) {
             [classes.contentShift]: menuEnabled,
           })}
         >
-          {/* Routes are added here if you need multiple page views. otherwise this Switch can be deleted and replaced
-                with your app's contents */}
-
-          <Routes>
-            <Route path="/log-action" element={<LogAction user={user} />}>
-              <Route
-                path="/log-action/:actionId"
-                element={<LogAction user={user} />}
-              />
-            </Route>
-            <Route
-              exact
-              path={'/actions'}
-              element={<Actions user={user} userType={userType} />}
-            />
-            <Route
-              exact
-              path={'/'}
-              element={<Landing user={user} userType={userType} />}
-            />
-            <Route
-              exact
-              path={'/my-groups'}
-              element={<MyGroups user={user} />}
-            />
-            <Route
-              exact
-              path={'/find-group'}
-              element={<FindGroup user={user} />}
-            />
-            <Route
-              exact
-              path={'/create-group'}
-              element={<CreateGroup user={user} />}
-            />
-            <Route
-              path="/group-profile/:groupName"
-              element={<GroupProfile user={user} />}
-            />
-            <Route
-              path="/group-profile/:groupName/add/:addUserLink"
-              element={<PrivateRoute Component={JoinGroup} user={user} />}
-            />
-            <Route
-              exact
-              path={'/validate-actions'}
-              element={<ValidateActions user={user} userType={userType} />}
-            />
-            {userType === 'Admin' && (
-              <Route exact path={'/create-action'} element={<CreateAction />} />
-            )}
-            <Route
-              exact
-              path={'/account-settings'}
-              element={
-                <AccountSettings
-                  user={user}
-                  setUser={setUser}
-                  userType={userType}
-                />
-              }
-            />
-            <Route
-              exact
-              path={'/user-profile/:userId'}
-              element={<UserProfile />}
-            />
-            <Route
-              exact
-              path={'/admin-dashboard'}
-              element={<AdminDashboard />}
-            />
-          </Routes>
+          <AppRoutes user={user} userType={userType} setUser={setUser} />
         </main>
       </Grid>
     </Grid>
