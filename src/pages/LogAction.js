@@ -209,14 +209,7 @@ const LogAction = () => {
             />
           )}
           {activeStep === 5 && (
-            <ShareOnSocialPanel
-              quizAnswered={quizAnswered}
-              firstQuizAnswerCorrect={firstQuizAnswerCorrect}
-              quizId={quiz ? quiz.quiz_id : null}
-              actionDate={selectedDate}
-              totalCO2Saved={totalCO2Saved}
-              addAnotherAction={resetLogAction}
-            />
+              <ShareOnSocialPanel addAnotherAction={resetLogAction} />
           )}
           </ActionDetailsContext.Provider>
         </Grid>
