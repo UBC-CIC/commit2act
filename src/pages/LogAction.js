@@ -183,13 +183,9 @@ const LogAction = () => {
           )}
           {activeStep === 1 && (
             <AddActionPanel
-              selectedDate={selectedDate}
               handleDateChange={handleDateChange}
               setTotalCO2Saved={setTotalCO2Saved}
-              actionItemValues={actionItemValues}
               setActionItemValues={setActionItemValues}
-              skipBonusQuestion={skipBonusQuestion}
-              selectedImage={selectedImage}
               setSelectedImage={setSelectedImage}
             />
           )}
@@ -205,16 +201,9 @@ const LogAction = () => {
               setValidationSuccess={setValidationSuccess}
             />
           )}
-          {activeStep === 3 && (
-            <CO2SavedScreen
-              totalCO2Saved={totalCO2Saved}
-              skipBonusQuestion={skipBonusQuestion}
-              validationSuccess={validationSuccess}
-            />
-          )}
+            {activeStep === 3 && <CO2SavedScreen />}
           {activeStep === 4 && (
             <BonusPointQuiz
-              quiz={quiz}
               setQuizAnswered={setQuizAnswered}
               setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
             />

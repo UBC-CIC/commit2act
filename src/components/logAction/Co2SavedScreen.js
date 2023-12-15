@@ -4,13 +4,12 @@ import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 import { formatCo2Saved } from '../../utils/format-co2-saved';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
+import { useActionDetailsContext } from '../../hooks/use-action-details-context';
 
-const CO2SavedScreen = ({
-  totalCO2Saved,
-  skipBonusQuestion,
-  validationSuccess,
-}) => {
+const CO2SavedScreen = () => {
   const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
+  const { totalCO2Saved, skipBonusQuestion, validationSuccess } =
+    useActionDetailsContext();
   const translation = useTranslation();
   const formattedCo2Saved = formatCo2Saved(totalCO2Saved);
 

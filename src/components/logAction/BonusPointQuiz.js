@@ -14,18 +14,16 @@ import { styled } from '@mui/material/styles';
 import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
+import { useActionDetailsContext } from '../../hooks/use-action-details-context';
 
 const StyledButton = styled(Button)`
   margin-top: 5em;
   width: 80%;
 `;
 
-const BonusPointQuiz = ({
-  quiz,
-  setQuizAnswered,
-  setFirstQuizAnswerCorrect,
-}) => {
+const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
   const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
+  const { quiz } = useActionDetailsContext();
   const answers = quiz?.answers;
   const correctAnswers = quiz?.correct_answers;
   const answersArray = answers ? answers.split('\n') : [];
