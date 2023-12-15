@@ -177,40 +177,35 @@ const LogAction = () => {
               validationSuccess,
             }}
           >
-          {loading ? <CircularProgress /> : null}
-          {activeStep === 0 && (
-            <AllActions setSelectedAction={setSelectedAction} />
-          )}
-          {activeStep === 1 && (
-            <AddActionPanel
-              handleDateChange={handleDateChange}
-              setTotalCO2Saved={setTotalCO2Saved}
-              setActionItemValues={setActionItemValues}
-              setSelectedImage={setSelectedImage}
-            />
-          )}
-          {selectedAction && activeStep === 2 && (
-            <ActionFact
-              quiz={quiz}
-              setQuiz={setQuiz}
-              setSkipBonusQuestion={setSkipBonusQuestion}
-              actionDate={selectedDate}
-              totalCO2Saved={totalCO2Saved}
-              actionItemValues={actionItemValues}
-              selectedImage={selectedImage}
-              setValidationSuccess={setValidationSuccess}
-            />
-          )}
+            {loading ? <CircularProgress /> : null}
+            {activeStep === 0 && (
+              <AllActions setSelectedAction={setSelectedAction} />
+            )}
+            {activeStep === 1 && (
+              <AddActionPanel
+                handleDateChange={handleDateChange}
+                setTotalCO2Saved={setTotalCO2Saved}
+                setActionItemValues={setActionItemValues}
+                setSelectedImage={setSelectedImage}
+              />
+            )}
+            {selectedAction && activeStep === 2 && (
+              <ActionFact
+                setQuiz={setQuiz}
+                setSkipBonusQuestion={setSkipBonusQuestion}
+                setValidationSuccess={setValidationSuccess}
+              />
+            )}
             {activeStep === 3 && <CO2SavedScreen />}
-          {activeStep === 4 && (
-            <BonusPointQuiz
-              setQuizAnswered={setQuizAnswered}
-              setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
-            />
-          )}
-          {activeStep === 5 && (
+            {activeStep === 4 && (
+              <BonusPointQuiz
+                setQuizAnswered={setQuizAnswered}
+                setFirstQuizAnswerCorrect={setFirstQuizAnswerCorrect}
+              />
+            )}
+            {activeStep === 5 && (
               <ShareOnSocialPanel addAnotherAction={resetLogAction} />
-          )}
+            )}
           </ActionDetailsContext.Provider>
         </Grid>
       </Grid>
