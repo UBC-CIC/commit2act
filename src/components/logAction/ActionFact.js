@@ -28,27 +28,12 @@ const ActionFact = ({
   const { quiz, selectedDate, totalCO2Saved, actionItemValues, selectedImage } =
     useActionDetailsContext();
   const { user } = useUserInfoContext();
+  const { contentTranslations } = useContentTranslationsContext();
+  const translation = useTranslation();
+
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
-
-  let subtitle;
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = '#f00';
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-  const translation = useTranslation();
-  const { contentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
     const getFact = async () => {
@@ -100,7 +85,14 @@ const ActionFact = ({
       }
     };
     getFact();
-  }, [selectedAction, setQuiz, setSkipBonusQuestion, user.user_id]);
+  }, [
+    selectedAction,
+    setQuiz,
+    setSkipBonusQuestion,
+    user.user_id,
+    contentTranslations,
+    translation,
+  ]);
 
   const submitAction = async () => {
     let submittedActionId = null;
