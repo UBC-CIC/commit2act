@@ -16,7 +16,7 @@ import AccountSettings from '../pages/AccountSettings';
 import UserProfile from '../pages/UserProfile';
 import AdminDashboard from '../pages/AdminDashboard';
 
-export const AppRoutes = ({ user, userType, setUser }) => {
+export const AppRoutes = ({ user, userType, userIsAdmin, setUser }) => {
   return (
     <Routes>
       <Route path={PAGE_PATHS.LOG_ACTION} element={<LogAction user={user} />}>
@@ -63,7 +63,7 @@ export const AppRoutes = ({ user, userType, setUser }) => {
         path={PAGE_PATHS.VALIDATE_ACTIONS}
         element={<ValidateActions user={user} userType={userType} />}
       />
-      {userType === 'Admin' && (
+      {userIsAdmin && (
         <Route
           exact
           path={PAGE_PATHS.CREATE_ACTION}
