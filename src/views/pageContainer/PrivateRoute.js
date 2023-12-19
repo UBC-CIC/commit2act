@@ -4,7 +4,7 @@ import { updateLoginState } from '../../actions/loginActions';
 import { CircularProgress, Box } from '@mui/material';
 import { useUserInfoContext } from '../../hooks/use-user-info-context';
 
-const PrivateRoute = ({ Component }) => {
+const PrivateRoute = ({ children }) => {
   const { user } = useUserInfoContext();
   const [isLoggedIn, setIsLoggedIn] = useState();
 
@@ -20,23 +20,20 @@ const PrivateRoute = ({ Component }) => {
     checkLogin();
   }, []);
 
-  return isLoggedIn ? (
-    user ? (
-      <Component user={user} />
-    ) : (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100%',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    )
-  ) : (
-    updateLoginState('signIn')
+  if (!isLoggedIn) return updateLoginState('signIn');
+  if (isLoggedIn && user) return <>{children}</>;
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      }}
+    >
+      <CircularProgress />
+    </Box>
   );
 };
 

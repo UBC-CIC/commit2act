@@ -35,7 +35,11 @@ export const AppRoutes = () => {
       <Route path={PAGE_PATHS.GROUP_PROFILE} element={<GroupProfile />} />
       <Route
         path={PAGE_PATHS.GROUP_PROFILE_ADD_USER}
-        element={<PrivateRoute Component={<JoinGroup />} />}
+        element={
+          <PrivateRoute>
+            <JoinGroup />
+          </PrivateRoute>
+        }
       />
       <Route
         exact
