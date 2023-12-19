@@ -24,8 +24,8 @@ import { Storage, API } from 'aws-amplify';
 import { createGroupAndOwner } from '../graphql/mutations';
 import { getAllGroups } from '../graphql/queries';
 import { useNavigate } from 'react-router-dom';
-
 import useTranslation from '../components/customHooks/translations';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
 const Input = styled('input')`
   display: none;
@@ -35,7 +35,7 @@ const SectionTitle = styled(Typography)`
   margin: 1.5em 0 0.5em 0;
 `;
 
-const CreateGroup = ({ user }) => {
+const CreateGroup = () => {
   const emptyCreateGroupForm = {
     group_name: '',
     group_description: '',
@@ -43,6 +43,7 @@ const CreateGroup = ({ user }) => {
     is_public: true,
     private_password: '',
   };
+  const { user } = useUserInfoContext();
   const [createGroupForm, setCreateGroupForm] = useState(emptyCreateGroupForm);
   const [allGroupNames, setAllGroupNames] = useState();
   const [avatarFile, setAvatarFile] = useState();
@@ -204,7 +205,7 @@ const CreateGroup = ({ user }) => {
                   gap: '1em',
                   maxWidth: '800px',
                   margin: '0 auto',
-                  width: '100%'
+                  width: '100%',
                 }}
               >
                 {avatarPreview ? (
@@ -231,7 +232,8 @@ const CreateGroup = ({ user }) => {
                     onChange={handleAvatarChange}
                   />
                   <Button
-                    variant="outlined" component="span"
+                    variant="outlined"
+                    component="span"
                     sx={{ m: { xs: '1.5em 0 0', md: '0' } }}
                   >
                     {translation.uploadGroupIcon}
@@ -246,12 +248,14 @@ const CreateGroup = ({ user }) => {
                   mt: '1em',
                   maxWidth: '800px',
                   margin: '0 auto',
-                  width: '100%'
+                  width: '100%',
                 }}
               >
                 <>
                   {' '}
-                  <SectionTitle variant="h2">{translation.groupName}</SectionTitle>
+                  <SectionTitle variant="h2">
+                    {translation.groupName}
+                  </SectionTitle>
                   <TextField
                     required
                     label={translation.groupName}
@@ -266,13 +270,15 @@ const CreateGroup = ({ user }) => {
                         'A group already exists with the given name')
                     }
                     onChange={updateForm}
-                    sx={{ 
+                    sx={{
                       width: '100%',
                     }}
                   />
                 </>
                 <>
-                  <SectionTitle variant="h2">{translation.groupDescription}</SectionTitle>
+                  <SectionTitle variant="h2">
+                    {translation.groupDescription}
+                  </SectionTitle>
                   <TextField
                     multiline
                     rows={6}
@@ -281,14 +287,16 @@ const CreateGroup = ({ user }) => {
                     value={createGroupForm.group_description}
                     InputLabelProps={{ shrink: true }}
                     onChange={updateForm}
-                    sx={{ 
+                    sx={{
                       width: '100%',
                     }}
                   />
                 </>
                 <>
                   {' '}
-                  <SectionTitle variant="h2">{translation.groupPrivacy}</SectionTitle>
+                  <SectionTitle variant="h2">
+                    {translation.groupPrivacy}
+                  </SectionTitle>
                   <RadioGroup
                     aria-labelledby="group-privacy-label"
                     defaultValue={createGroupForm.is_public}
@@ -398,7 +406,10 @@ const CreateGroup = ({ user }) => {
               }}
               open={createGroupSuccess}
             >
-              <DialogTitle sx={{ textAlign: 'center' }}> {translation.success}</DialogTitle>
+              <DialogTitle sx={{ textAlign: 'center' }}>
+                {' '}
+                {translation.success}
+              </DialogTitle>
               <DialogContent
                 sx={{
                   display: 'flex',
@@ -407,9 +418,7 @@ const CreateGroup = ({ user }) => {
                   textAlign: 'center',
                 }}
               >
-                <Typography>
-                  {translation.redirectGroupPage}
-                </Typography>
+                <Typography>{translation.redirectGroupPage}</Typography>
                 <CircularProgress sx={{ mt: '2em' }} />
               </DialogContent>
             </Dialog>

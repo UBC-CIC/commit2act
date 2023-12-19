@@ -21,6 +21,7 @@ import {
 import { styled } from '@mui/material/styles';
 
 import useTranslation from '../components/customHooks/translations';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
 const StyledDialog = styled(Dialog)`
   text-align: center;
@@ -31,8 +32,9 @@ const StyledDialog = styled(Dialog)`
   }
 `;
 
-const JoinGroup = ({ user }) => {
+const JoinGroup = () => {
   const { groupName, addUserLink } = useParams();
+  const { user } = useUserInfoContext();
   const [group, setGroup] = useState();
   const [alreadyInGroup, setAlreadyInGroup] = useState(false);
   const [addPublicMember, setAddPublicMember] = useState(false);
@@ -159,13 +161,18 @@ const JoinGroup = ({ user }) => {
       )}
       {addPublicMember && (
         <StyledDialog aria-labelledby="add-public-member-dialog" open={true}>
-          <DialogTitle>{translation.formatString(translation.joinGroupTitle, groupName)}</DialogTitle>
+          <DialogTitle>
+            {translation.formatString(translation.joinGroupTitle, groupName)}
+          </DialogTitle>
           {userAdded ? (
             <>
               <DialogContent>
                 <CircularProgress />
                 <Alert severity="success" sx={{ mt: '1em' }}>
-                  {translation.formatString(translation.successRedirectProfilePage, groupName)}
+                  {translation.formatString(
+                    translation.successRedirectProfilePage,
+                    groupName
+                  )}
                 </Alert>
               </DialogContent>
             </>
@@ -173,7 +180,8 @@ const JoinGroup = ({ user }) => {
             <>
               <DialogContent>
                 <DialogContentText>
-                  {translation.joinGroupConfirm} <br></br>{translation.joinGroupSelectCancel}
+                  {translation.joinGroupConfirm} <br></br>
+                  {translation.joinGroupSelectCancel}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -186,13 +194,18 @@ const JoinGroup = ({ user }) => {
       )}
       {addPrivateMember && (
         <StyledDialog aria-labelledby="add-private-member-dialog" open={true}>
-          <DialogTitle>{translation.formatString(translation.joinGroupTitle, groupName)}</DialogTitle>
+          <DialogTitle>
+            {translation.formatString(translation.joinGroupTitle, groupName)}
+          </DialogTitle>
           {userAdded ? (
             <>
               <DialogContent>
                 <CircularProgress />
                 <Alert severity="success" sx={{ mt: '1em' }}>
-                  {translation.formatString(translation.successRedirectProfilePage, groupName)}
+                  {translation.formatString(
+                    translation.successRedirectProfilePage,
+                    groupName
+                  )}
                 </Alert>
               </DialogContent>
             </>
@@ -200,7 +213,8 @@ const JoinGroup = ({ user }) => {
             <>
               <DialogContent>
                 <DialogContentText>
-                  {translation.joinGroupEnterPassword} <br></br> {translation.joinGroupSelectCancel}
+                  {translation.joinGroupEnterPassword} <br></br>{' '}
+                  {translation.joinGroupSelectCancel}
                 </DialogContentText>
                 <TextField
                   autoFocus

@@ -7,17 +7,25 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import UsersWithoutGroupPanel from '../components/validateActions/UsersWithoutGroupPanel';
 import AllUnvalidatedActionsPanel from '../components/validateActions/AllUnvalidatedActionsPanel';
 import MyGroupsPanel from '../components/validateActions/MyGroupsPanel';
-import { useLanguageContext } from "../components/contexts/LanguageContext";
-
+import { useLanguageContext } from '../components/contexts/LanguageContext';
 import useTranslation from '../components/customHooks/translations';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
-const ValidateActions = ({ user, userType }) => {
+const ValidateActions = () => {
+  const { user, userType } = useUserInfoContext();
   const translation = useTranslation();
-  const tabs = useMemo(() => [
-    translation.myGroups,
-    translation.validateActionsUsersWithoutGroupsTab,
-    translation.validateActionsAllUnvalidatedActionsTab,
-  ], [translation.myGroups, translation.validateActionsAllUnvalidatedActionsTab, translation.validateActionsUsersWithoutGroupsTab]);
+  const tabs = useMemo(
+    () => [
+      translation.myGroups,
+      translation.validateActionsUsersWithoutGroupsTab,
+      translation.validateActionsAllUnvalidatedActionsTab,
+    ],
+    [
+      translation.myGroups,
+      translation.validateActionsAllUnvalidatedActionsTab,
+      translation.validateActionsUsersWithoutGroupsTab,
+    ]
+  );
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const scrollableTabs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const { language } = useLanguageContext();
@@ -40,7 +48,9 @@ const ValidateActions = ({ user, userType }) => {
       {/* render tab view if user is an Admin, render single page search bar view if user is not */}
       {userType &&
         (userType === 'Admin' ? (
-          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
+          <TabContext
+            value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}
+          >
             <Box
               sx={{
                 mt: '4em',
@@ -61,8 +71,14 @@ const ValidateActions = ({ user, userType }) => {
                 centered={!scrollableTabs}
               >
                 <Tab label={translation.myGroups} value={tabs[0]} />
-                <Tab label={translation.validateActionsUsersWithoutGroupsTab} value={tabs[1]} />
-                <Tab label={translation.validateActionsAllUnvalidatedActionsTab} value={tabs[2]} />
+                <Tab
+                  label={translation.validateActionsUsersWithoutGroupsTab}
+                  value={tabs[1]}
+                />
+                <Tab
+                  label={translation.validateActionsAllUnvalidatedActionsTab}
+                  value={tabs[2]}
+                />
               </TabList>
             </Box>
             <TabPanel value={tabs[0]}>

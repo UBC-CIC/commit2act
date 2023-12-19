@@ -9,6 +9,9 @@ import { formatCo2Saved } from '../../utils/format-co2-saved';
 import { copyToClipboard } from '../../utils/copy-to-clipboard';
 import { LogoInstagram } from '../LogoInstagram';
 import { LogoTikTok } from '../LogoTikTok';
+import { useActiveStepContext } from '../../hooks/use-active-step-context';
+import { useUserInfoContext } from '../../hooks/use-user-info-context';
+import { useActionDetailsContext } from '../../hooks/use-action-details-context';
 
 const socialLinks = [
   {
@@ -25,24 +28,34 @@ const socialLinks = [
   },
 ];
 
-const filterUpdateDataFromProps = (props) => ({
-  actionDate: props.actionDate,
-  actionId: props.actionId,
-  firstQuizAnswerCorrect: props.firstQuizAnswerCorrect,
-  quizAnswered: props.quizAnswered,
-  quizId: props.quizId,
-  totalCO2Saved: props.totalCO2Saved,
-  userId: props.userId,
-});
-
-const ShareOnSocialPanel = ({ addAnotherAction, ...props }) => {
+const ShareOnSocialPanel = ({ addAnotherAction }) => {
+  const { selectedAction } = useActiveStepContext();
+  const {
+    selectedDate,
+    firstQuizAnswerCorrect,
+    quiz,
+    quizAnswered,
+    totalCO2Saved,
+  } = useActionDetailsContext();
+  const { user } = useUserInfoContext();
   const translation = useTranslation();
   const navigate = useNavigate();
-  const formattedCo2Saved = formatCo2Saved(props.totalCO2Saved);
+  const formattedCo2Saved = formatCo2Saved(totalCO2Saved);
   const [copied, setCopied] = useState(false);
 
   // Update the current action with quiz info on init of this panel
-  useUpdateSubmittedAction(filterUpdateDataFromProps(props), true);
+  useUpdateSubmittedAction(
+    {
+      actionDate: selectedDate,
+      firstQuizAnswerCorrect,
+      quizAnswered,
+      totalCO2Saved,
+      quizId: quiz?.quiz_id,
+      actionId: selectedAction?.action_id,
+      userId: user?.user_id,
+    },
+    true
+  );
 
   const shareSummary = translation.formatString(
     translation.logActionShareSummarySimple,

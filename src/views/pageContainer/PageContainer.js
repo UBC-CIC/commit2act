@@ -1,144 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { Route, Routes, useNavigate, Link } from 'react-router-dom';
-import {
-  Drawer,
-  Toolbar,
-  Divider,
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton,
-  Box,
-} from '@mui/material';
-import {
-  Assessment,
-  Home,
-  Group,
-  AccountCircle,
-  AssignmentTurnedIn,
-  AdminPanelSettings,
-  Create,
-} from '@mui/icons-material';
-import { makeStyles } from 'tss-react/mui';
-import Navbar from '../../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { updateMenuState } from '../../actions/menuActions';
-import Landing from '../../pages/Landing';
-import FindGroup from '../../pages/FindGroup';
-import AccountSettings from '../../pages/AccountSettings';
-import LogAction from '../../pages/LogAction';
-import ValidateActions from '../../pages/ValidateActions';
-import CreateGroup from '../../pages/CreateGroup';
-import GroupProfile from '../../pages/GroupProfile';
-import CreateAction from '../../pages/CreateAction';
-import JoinGroup from '../../pages/JoinGroup';
-import MyGroups from '../../pages/MyGroups';
-import UserProfile from '../../pages/UserProfile';
-import Actions from '../../pages/Actions';
-import AdminDashboard from '../../pages/AdminDashboard';
-import { API, Auth, autoShowTooltip } from 'aws-amplify';
-import { getSingleUserByEmail } from '../../graphql/queries';
-import { createUser } from '../../graphql/mutations';
-import PrivateRoute from './PrivateRoute';
+import { Drawer, Toolbar, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
-import useTranslation from '../../components/customHooks/translations';
-const drawerWidth = 312;
-
-const useStyles = makeStyles()((theme) => {
-  return {
-    menuClosed: {
-      pointerEvents: 'none',
-    },
-    drawerContainer: {
-      overflow: 'auto',
-      backgroundColor: '#303839',
-      height: '100%',
-      width: drawerWidth,
-      '& .MuiListItem-button': {
-        paddingTop: 16,
-        paddingBottom: 16,
-      },
-      '& svg': {
-        fontSize: 30,
-      },
-    },
-    content: {
-      flexGrow: 1,
-      [theme.breakpoints.down('sm')]: {
-        padding: theme.spacing(3),
-      },
-      padding: theme.spacing(8),
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      marginLeft: -drawerWidth,
-      maxWidth: '100%',
-    },
-    contentShift: {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-      maxWidth: '100%',
-      [theme.breakpoints.up('md')]: {
-        maxWidth: '70%',
-      },
-    },
-    logAction: {
-      background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
-      marginBottom: 10,
-      marginTop: 5,
-      marginLeft: 10,
-      marginRight: 10,
-      borderRadius: 5,
-      width: 'auto',
-      '& span': {
-        color: '#000',
-        fontWeight: 500,
-      },
-      '& img': {
-        fontSize: 30,
-        color: '#000',
-        filter: 'invert(1)',
-      },
-    },
-    skip_button: {
-      position: 'absolute',
-      background: '#fff',
-      color: '#262a2c',
-      textDecoration: 'none',
-      borderRadius: '0.25em',
-      padding: '0.5em 1em',
-      margin: '0.25em',
-      transform: 'translateY(-150%)',
-      transition: 'transform 0.3s',
-      '&:focus': {
-        transform: 'translateY(0%)',
-        zIndex: '2000',
-      },
-    },
-  };
-});
+import { API, Auth } from 'aws-amplify';
+import { UserInfoContext } from '../../hooks/use-user-info-context';
+import { updateMenuState } from '../../actions/menuActions';
+import { getSingleUserByEmail } from '../../graphql/queries';
+import { createUser } from '../../graphql/mutations';
+import { usePageContainerStyles } from '../../styles/page-container';
+import Navbar from '../../components/Navbar';
+import { AppRoutes } from '../AppRoutes';
+import { AppNav } from '../AppNav';
 
 function PageContainer(props) {
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('md'));
   const { menuEnabled, updateMenuState } = props;
 
-  const { classes } = useStyles();
+  const { classes } = usePageContainerStyles();
 
   const navigate = useNavigate();
   const [user, setUser] = useState();
   const [userType, setUserType] = useState();
 
-  const translation = useTranslation();
+  const userIsAdmin = userType === 'Admin';
 
   //gets currently authenticated cognito user
   const getCognitoUser = async () => {
@@ -199,280 +87,53 @@ function PageContainer(props) {
     }
   }, [mobileView]);
 
-  const list = () => (
-    <div className={classes.drawerContainer}>
-      <List>
-        <ListItemButton
-          key="logAction"
-          className={classes.logAction}
-          component={Link}
-          onClick={handleMenuNavItem}
-          to="/log-action"
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-log.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.logAction} />
-        </ListItemButton>
-        <ListItemButton key={'home'} onClick={() => handleMenuNavItem('/')}>
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-home.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.dashboard} />
-        </ListItemButton>
-        <ListItem
-          button
-          key={'Actions'}
-          onClick={() => handleMenuNavItem('/actions')}
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-validate.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.actions} />
-        </ListItem>
-        <ListItem
-          button
-          key={'mygroups'}
-          onClick={() => handleMenuNavItem('/my-groups')}
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-create-group.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.myGroups} />
-        </ListItem>
-        <ListItem
-          button
-          key={'findGroup'}
-          onClick={() => handleMenuNavItem('/find-group')}
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-find.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.findGroup} />
-        </ListItem>
-
-        <ListItem
-          button
-          key={'createGroup'}
-          onClick={() => handleMenuNavItem('/create-group')}
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-create-group.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.createGroup} />
-        </ListItem>
-
-        <ListItem
-          button
-          key={'validateActions'}
-          onClick={() => handleMenuNavItem('/validate-actions')}
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-validate.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.validateActions} />
-        </ListItem>
-
-        {userType === 'Admin' && (
-          <>
-            <ListItem
-              button
-              key={'adminDashboard'}
-              onClick={() => handleMenuNavItem('/admin-dashboard')}
-            >
-              <ListItemIcon>
-                <AdminPanelSettings />
-              </ListItemIcon>
-              <ListItemText primary={translation.adminDashboard} />
-            </ListItem>
-          </>
-        )}
-        <Divider
-          sx={{
-            margin: '15px 0',
-          }}
-        />
-        <ListItem
-          button
-          key={'myAccount'}
-          onClick={() => handleMenuNavItem(`/account-settings`)}
-        >
-          <ListItemIcon>
-            <Box
-              component="img"
-              sx={{
-                width: 28,
-              }}
-              alt=""
-              src="./assets/images/icon-my-account.png"
-            />
-          </ListItemIcon>
-          <ListItemText primary={translation.myAccount} />
-        </ListItem>
-      </List>
-    </div>
-  );
-
   return (
-    <Grid container direction="column">
-      <a className={classes.skip_button} href="#main">
-        Skip to Content
-      </a>
-      {/* Navbar component, set side menu button parameter -->
+    <UserInfoContext.Provider
+      value={{
+        user,
+        userType,
+        userIsAdmin,
+        setUser,
+      }}
+    >
+      <Grid container direction="column">
+        <a className={classes.skip_button} href="#main">
+          Skip to Content
+        </a>
+        {/* Navbar component, set side menu button parameter -->
         button updates redux state to show/hide left sidebar */}
-      <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
-      {/* App content example below with sidebar */}
-      <Grid item xs={12} className="App-header">
-        {/* Side menu component */}
-        <Drawer
-          anchor={'left'}
-          open={menuEnabled}
-          // onClose={handleSideMenuClose}
-          variant="persistent"
-          style={{ zIndex: 2 }}
-          sx={{
-            width: 312,
-            color: 'success.main',
-          }}
-          className={clsx(classes.drawer, {
-            [classes.menuClosed]: !menuEnabled,
-          })}
-        >
-          <Toolbar />
-          {/* Side menu items added for rendering */}
-          {list()}
-        </Drawer>
-        <main
-          id="main"
-          className={clsx(classes.content, {
-            [classes.contentShift]: menuEnabled,
-          })}
-        >
-          {/* Routes are added here if you need multiple page views. otherwise this Switch can be deleted and replaced
-                with your app's contents */}
-
-          <Routes>
-            <Route path="/log-action" element={<LogAction user={user} />}>
-              <Route
-                path="/log-action/:actionId"
-                element={<LogAction user={user} />}
-              />
-            </Route>
-            <Route
-              exact
-              path={'/actions'}
-              element={<Actions user={user} userType={userType} />}
-            />
-            <Route
-              exact
-              path={'/'}
-              element={<Landing user={user} userType={userType} />}
-            />
-            <Route
-              exact
-              path={'/my-groups'}
-              element={<MyGroups user={user} />}
-            />
-            <Route
-              exact
-              path={'/find-group'}
-              element={<FindGroup user={user} />}
-            />
-            <Route
-              exact
-              path={'/create-group'}
-              element={<CreateGroup user={user} />}
-            />
-            <Route
-              path="/group-profile/:groupName"
-              element={<GroupProfile user={user} />}
-            />
-            <Route
-              path="/group-profile/:groupName/add/:addUserLink"
-              element={<PrivateRoute Component={JoinGroup} user={user} />}
-            />
-            <Route
-              exact
-              path={'/validate-actions'}
-              element={<ValidateActions user={user} userType={userType} />}
-            />
-            {userType === 'Admin' && (
-              <Route exact path={'/create-action'} element={<CreateAction />} />
-            )}
-            <Route
-              exact
-              path={'/account-settings'}
-              element={
-                <AccountSettings
-                  user={user}
-                  setUser={setUser}
-                  userType={userType}
-                />
-              }
-            />
-            <Route
-              exact
-              path={'/user-profile/:userId'}
-              element={<UserProfile />}
-            />
-            <Route
-              exact
-              path={'/admin-dashboard'}
-              element={<AdminDashboard />}
-            />
-          </Routes>
-        </main>
+        <Navbar showSideMenuButton={true} sx={{ position: 'sticky' }} />
+        {/* App content example below with sidebar */}
+        <Grid item xs={12} className="App-header">
+          {/* Side menu component */}
+          <Drawer
+            anchor={'left'}
+            open={menuEnabled}
+            // onClose={handleSideMenuClose}
+            variant="persistent"
+            style={{ zIndex: 2 }}
+            sx={{
+              width: 312,
+              color: 'success.main',
+            }}
+            className={clsx(classes.drawer, {
+              [classes.menuClosed]: !menuEnabled,
+            })}
+          >
+            <Toolbar />
+            <AppNav handleMenuNavItem={handleMenuNavItem} />
+          </Drawer>
+          <main
+            id="main"
+            className={clsx(classes.content, {
+              [classes.contentShift]: menuEnabled,
+            })}
+          >
+            <AppRoutes />
+          </main>
+        </Grid>
       </Grid>
-    </Grid>
+    </UserInfoContext.Provider>
   );
 }
 

@@ -4,10 +4,11 @@ import { Search, Clear } from '@mui/icons-material';
 import { getAllGroups, getAllGroupsForUser } from '../graphql/queries';
 import { API } from 'aws-amplify';
 import GroupCard from '../components/GroupCard';
-
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 import useTranslation from '../components/customHooks/translations';
 
-const FindGroup = ({ user }) => {
+const FindGroup = () => {
+  const { user } = useUserInfoContext();
   const [groups, setGroups] = useState();
   const [usersGroups, setUsersGroups] = useState();
   const [input, setInput] = useState('');

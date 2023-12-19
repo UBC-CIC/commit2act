@@ -10,19 +10,18 @@ import ImageValidationPanel from './ImageValidationPanel';
 import useTranslation from '../customHooks/translations';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
 import { AddActionTextField } from '../AddActionTextField';
+import { useActionDetailsContext } from '../../hooks/use-action-details-context';
 
 const AddActionPanel = ({
-  selectedDate,
   handleDateChange,
   setTotalCO2Saved,
-  actionItemValues,
   setActionItemValues,
-  skipBonusQuestion,
-  selectedImage,
   setSelectedImage,
 }) => {
   const translation = useTranslation();
   const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
+  const { selectedDate, actionItemValues, skipBonusQuestion, selectedImage } =
+    useActionDetailsContext();
 
   const calculateCO2 = () => {
     //get the total CO2 saved by summing the values for the co2 property of all the items in actionItemValues

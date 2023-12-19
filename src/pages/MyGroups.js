@@ -1,20 +1,16 @@
-import React, { useEffect, useState}  from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {
-  Box,
-  Typography,
-  Button
-} from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import useTranslation from '../components/customHooks/translations';
 import GroupCard from '../components/GroupCard';
 import { API } from 'aws-amplify';
-import {
-  getAllGroupsForUser,
-} from '../graphql/queries';
+import { getAllGroupsForUser } from '../graphql/queries';
 import { useNavigate } from 'react-router-dom';
+import { useUserInfoContext } from '../hooks/use-user-info-context';
 
-const MyGroups = ({user, userType}) => {
+const MyGroups = () => {
   const navigate = useNavigate();
+  const { user } = useUserInfoContext();
   const [userGroups, setUserGroups] = useState([]);
 
   useEffect(() => {
@@ -47,31 +43,31 @@ const MyGroups = ({user, userType}) => {
   };
   return (
     <>
-    <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-      <Typography variant="h1">{translation.myGroups}</Typography>
-      <Box
-        component="div"
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          m: '4em 0 1.25em',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: { xs: '1em' },
-        }}
-      >
-        <Button
-          variant="contained"
-          onClick={() => {
-            navigate('/create-group');
+      <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+        <Typography variant="h1">{translation.myGroups}</Typography>
+        <Box
+          component="div"
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            m: '4em 0 1.25em',
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: { xs: '1em' },
           }}
         >
-          {translation.createNewGroup}
-        </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate('/create-group');
+            }}
+          >
+            {translation.createNewGroup}
+          </Button>
+        </Box>
+        {renderGroupCards()}
       </Box>
-      {renderGroupCards()}
-    </Box>
-   </>
+    </>
   );
 };
 
