@@ -289,8 +289,8 @@ const GroupProfile = () => {
                     </Typography>
                     <Typography variant="h5" className="statValue">
                       {groupInfo.total_co2 > 9999
-                        ? `${Math.ceil(groupInfo.total_co2 / 1000).toLocaleString()} kg`
-                        : `${Math.ceil(groupInfo.total_co2).toLocaleString()} g`}
+                        ? `${Math.ceil(groupInfo.total_co2 / 1000).toLocaleString()}kg`
+                        : `${Math.ceil(groupInfo.total_co2).toLocaleString()}g`}
                     </Typography>
                   </StyledPaper>
                 </Box>
