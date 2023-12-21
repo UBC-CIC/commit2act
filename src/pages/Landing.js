@@ -71,9 +71,10 @@ const Landing = () => {
       }),
       API.graphql({ query: getTotalGlobalCO2 }),
     ]);
+    const globalCO2Kg = Math.ceil(globalCO2Res.data.getTotalGlobalCO2 / 1000);
     setProgressStats((prev) => ({
       ...prev,
-      globalCO2: Math.ceil(globalCO2Res.data.getTotalGlobalCO2),
+      globalCO2: globalCO2Kg.toLocaleString(),
       totalCO2: userRes.data.getSingleUser.total_co2.toFixed(2),
       weekCO2: userRes.data.getSingleUser.weekly_co2.toFixed(2),
     }));
@@ -122,8 +123,11 @@ const Landing = () => {
       if (unvalidatedSubmittedActions.length === 0) return;
       const pendingCO2 = unvalidatedSubmittedActions
         .map((action) => action.g_co2_saved)
-        .reduce((prev, next) => prev + next);
+        .reduce((prev, next) => prev + next, 0); // Ensure initial value for reduce
 
+      // Round to two decimal points and convert back to a number
+      const roundedPendingCO2 = parseFloat(pendingCO2.toFixed(2));
+      
       setPendingActions(unvalidatedSubmittedActions);
       setPendingCO2Saved(pendingCO2);
     } catch (e) {
@@ -314,7 +318,7 @@ const Landing = () => {
                   {translation.collectiveImpact}
                 </Typography>
                 <Typography variant="h5" className="statValue">
-                  {progressStats.globalCO2}g
+                  {progressStats.globalCO2}kg
                 </Typography>
               </StyledPaper>
             </Box>
