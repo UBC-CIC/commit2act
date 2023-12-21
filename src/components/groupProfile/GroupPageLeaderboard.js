@@ -363,7 +363,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             </TableHead>
             <StyledTableBody>
               {/* if Global Groups tab is selected, display all groups data in table body*/}
-              {selectedTab === tabs[0] &&
+              {selectedTab === tabs[1] &&
                 filteredGroups &&
                 (rowsPerPage > 0
                   ? filteredGroups.slice(
