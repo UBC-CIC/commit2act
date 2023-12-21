@@ -216,9 +216,17 @@ const GlobalLeaderboard = () => {
                         {group.group_name}
                       </Link>
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
+                    <TableCell align="right">
+                      {group.total_co2 > 9999
+                        ? `${(group.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(group.total_co2)} g`}
+                    </TableCell>
                     <TableCell align="right">{group.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(group.weekly_co2)}</TableCell>
+                    <TableCell align="right">
+                      {group.weekly_co2 > 9999
+                        ? `${(group.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(group.weekly_co2)} g`}
+                    </TableCell>
                     <TableCell align="right">{group.weekly_points}</TableCell>
                   </TableRow>
                 ))}
