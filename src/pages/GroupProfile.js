@@ -52,8 +52,8 @@ const GroupProfile = () => {
   const { user } = useUserInfoContext();
   const { groupName } = useParams();
   const tabs = [
-    translation.groupInfo,
     translation.memberActions,
+    translation.groupInfo,
     translation.groupMembers,
     translation.addMembers,
     translation.editGroupInfo,
@@ -288,7 +288,9 @@ const GroupProfile = () => {
                       {translation.totalCO2Saved}
                     </Typography>
                     <Typography variant="h5" className="statValue">
-                      {Math.ceil(groupInfo.total_co2)}g
+                      {groupInfo.total_co2 > 9999
+                        ? `${(groupInfo.total_co2 / 1000).toLocaleString()} kg`
+                        : `${Math.ceil(groupInfo.total_co2).toLocaleString()} g`}
                     </Typography>
                   </StyledPaper>
                 </Box>
@@ -340,8 +342,8 @@ const GroupProfile = () => {
                     allowScrollButtonsMobile
                     variant="scrollable"
                   >
-                    <Tab label={translation.groupInfo} value={tabs[0]} />
-                    <Tab label={translation.memberActions} value={tabs[1]} />
+                    <Tab label={translation.memberActions} value={tabs[0]} />
+                    <Tab label={translation.groupInfo} value={tabs[1]} />
                     <Tab label={translation.groupMembers} value={tabs[2]} />
                     {/* only display following tabs if current user is a group owner */}
                     {currentUserOwner && (
@@ -355,17 +357,6 @@ const GroupProfile = () => {
                 <TabPanel
                   value={tabs[0]}
                   sx={{
-                    width: '100%',
-                  }}
-                >
-                  <GroupInfoPanel
-                    groupOwners={groupOwners}
-                    groupInfo={groupInfo}
-                  />
-                </TabPanel>
-                <TabPanel
-                  value={tabs[1]}
-                  sx={{
                     padding: { xs: '0' },
                     width: '100%',
                   }}
@@ -373,6 +364,17 @@ const GroupProfile = () => {
                   <MemberActionsPanel
                     groupInfo={groupInfo}
                     cognitoUser={cognitoUser}
+                  />
+                </TabPanel>
+                <TabPanel
+                  value={tabs[1]}
+                  sx={{
+                    width: '100%',
+                  }}
+                >
+                  <GroupInfoPanel
+                    groupOwners={groupOwners}
+                    groupInfo={groupInfo}
                   />
                 </TabPanel>
                 <TabPanel
