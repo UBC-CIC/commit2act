@@ -34,7 +34,6 @@ import { styled } from '@mui/material/styles';
 import { SortLeaderboard } from '../SortLeaderboard';
 import UserContributionDonutChart from '../UserContributionDonutChart';
 import { useNavigate } from 'react-router-dom';
-
 import useTranslation from "../customHooks/translations";
 
 const StyledTableBody = styled(TableBody)`
@@ -57,8 +56,8 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const navigate = useNavigate();
   const translation = useTranslation();
   const tabs = [
-    translation.globalGroups,
     translation.groupMembers,
+    translation.globalGroups,
   ];
   const filters = [
     { name: translation.totalCO2Saved, property: 'total_co2' },
@@ -145,9 +144,9 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   let emptyRows =
     page <= 0
       ? 0
-      : selectedTab === tabs[0]
+      : selectedTab === tabs[1]
         ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
-        : selectedTab === tabs[1]
+        : selectedTab === tabs[0]
           ? Math.max(0, (1 + page) * rowsPerPage - groupMembers.length)
           : 0;
 
@@ -200,7 +199,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const handleFilterSelection = () => {
     const propertySelected = selectedFilter.property;
     //if Global Group tab is selected, apply the selected filter to all groups
-    if (selectedTab === tabs[0] && groups) {
+    if (selectedTab === tabs[1] && groups) {
       //make a mutable copy of the groups array, sort that array and update the in state version of groups
       let groupsArrayCopy = [...groups];
       let sortedByFilter = groupsArrayCopy.sort(
@@ -209,7 +208,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
       setFilteredGroups(sortedByFilter);
     }
     //if Group Members tab is selected, apply the selected filter to all users
-    if (selectedTab === tabs[1] && groupMembers) {
+    if (selectedTab === tabs[0] && groupMembers) {
       //make a mutable copy of the groupMembers array, sort that array and update the in state version of groupMembers
       let groupMemberArrayCopy = [...groupMembers];
       let sortedByFilter = groupMemberArrayCopy.sort(
@@ -258,7 +257,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             mt: { xs: '2em', sm: '0' },
           }}
         >
-          {filteredGroups && selectedTab === tabs[0] && (
+          {filteredGroups && selectedTab === tabs[1] && (
             <Typography
               variant="h3"
               component="div"
@@ -280,7 +279,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
           )}
           {/* if Group Members tab is selected, check if user is a group member, then render user's current place. If user doesn't belong to the group, don't render current place */}
           {filteredMembers &&
-            selectedTab === tabs[1] &&
+            selectedTab === tabs[0] &&
             groupMembers.findIndex((member) => member.user_id === userId) !==
             -1 && (
               <Box
@@ -415,7 +414,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                 ))}
 
               {/* if Group Members tab is selected, display all member data in table body*/}
-              {selectedTab === tabs[1] &&
+              {selectedTab === tabs[0] &&
                 filteredMembers &&
                 (rowsPerPage > 0
                   ? filteredMembers.slice(
@@ -456,7 +455,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
           </Table>
         </TableContainer>
         {/* render the correct pagination options for each table */}
-        {selectedTab === tabs[0] && groups && (
+        {selectedTab === tabs[1] && groups && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
@@ -475,7 +474,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
             }
           />
         )}
-        {selectedTab === tabs[1] && groupMembers && (
+        {selectedTab === tabs[0] && groupMembers && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
@@ -568,8 +567,8 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label={translation.globalGroups} value={tabs[0]} />
-                <Tab label={translation.groupMembers} value={tabs[1]} />
+                <Tab label={translation.groupMembers} value={tabs[0]} />
+                <Tab label={translation.globalGroups} value={tabs[1]} />
               </TabList>
               <TabPanel
                 value={tabs[0]}
