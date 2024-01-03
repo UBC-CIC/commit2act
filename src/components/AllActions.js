@@ -20,7 +20,7 @@ const StyledImageListItemBar = styled(ImageListItemBar)`
     overflow: visible;
     white-space: normal;
     overflow-wrap: break-word;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #fff;
     text-align: center;
   }
@@ -99,7 +99,7 @@ const AllActions = ({ setSelectedAction }) => {
       <Box
         sx={{
           display: 'grid',
-          gap: '20px',
+          gap: '10px',
           gridTemplateColumns: {
             xs: 'repeat(2, 1fr)',
             md: 'repeat(3, 1fr)',
