@@ -15,6 +15,8 @@ import ActionButtons from './ActionButtons';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
 import { useUserInfoContext } from '../../hooks/use-user-info-context';
 import { useActionDetailsContext } from '../../hooks/use-action-details-context';
+import { useLanguageContext } from '../contexts/LanguageContext';
+import translations from '../../localization/en';
 
 Modal.setAppElement('#root');
 
@@ -34,16 +36,16 @@ const ActionFact = ({
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
+  const { language } = useLanguageContext();
 
   useEffect(() => {
     const getFact = async () => {
       let possibleQuizzes = [];
 
-      if (translation.getLanguage() !== 'en') {
+      if (language !== 'en') {
         const relevantTranslationObject = contentTranslations.find(
           (contentTranslation) =>
-            contentTranslation.langCode.toLowerCase() ===
-            translation.getLanguage().toLowerCase()
+            contentTranslation.langCode.toLowerCase() === language.toLowerCase()
         );
         const relevantAction =
           relevantTranslationObject?.translationJSON?.actions?.find(
@@ -91,7 +93,7 @@ const ActionFact = ({
     setSkipBonusQuestion,
     user.user_id,
     contentTranslations,
-    translation,
+    language,
   ]);
 
   const submitAction = async () => {
@@ -208,14 +210,14 @@ const ActionFact = ({
     >
       <Box>
         <Typography>
-          Your
+          {translation.your}
           <Typography
             variant="span"
             sx={{ color: actionStyle.color, display: 'inline' }}
           >
             {` ${selectedAction.action_name} `}
           </Typography>
-          action is being submitted.
+          {translation.actionIsSubmitted}
         </Typography>
       </Box>
       <Box

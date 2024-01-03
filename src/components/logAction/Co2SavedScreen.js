@@ -35,7 +35,7 @@ const CO2SavedScreen = () => {
             </Typography>
             <Typography sx={{ paddingTop: '1rem' }}>of CO2 saved</Typography>
             <Typography variant="h2" sx={{ color: actionStyle.color }}>
-              Amazing! You are saving the planet!
+              {translation.savingThePlanet}
             </Typography>
             {validationSuccess ? (
               <Box>
