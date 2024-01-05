@@ -55,37 +55,29 @@ const LogAction = () => {
 
   const [actionOptions, setActionOptions] = useState([]);
   /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} */
-  const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async function () {
       try {
         // fetch all action options
         const res = await API.graphql({ query: getAllUngraveyardedActions });
         const actions = res.data.getAllUngraveyardedActions;
-        setActionOptions(() => actions);
+        setActionOptions(actions);
 
         // push path if user input action in url, ie: /log-action/plant-based-eating
-        const a = window.location.pathname.split('/');
-        const action = a[a.length - 1]
-          .trim()
-          .toLowerCase()
-          .replaceAll(' ', '-');
-        if (action === 'log-action') return;
+        if (actionId === 'log-action' || actionId === '') return;
 
         // if the action is invalid, redirect back to /log-action
-        const i = validOption(actions, action);
+        const i = validOption(actions, actionId);
         if (i === -1) {
           nav('/log-action');
-          setSelectedAction(undefined);
+          setSelectedAction('');
         } else {
-          nav(`/log-action/${action}`);
-          setActiveStep(() => 1);
-          setSelectedAction(() => actions[i]);
+          nav(`/log-action/${actionId}`);
+          setActiveStep(1);
+          setSelectedAction(actions[i]);
         }
       } catch (e) {
         console.error(e);
-      } finally {
-        setLoading(() => false);
       }
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,11 +88,7 @@ const LogAction = () => {
     if (selectedAction) {
       setActionStyle(ActionStyles[selectedAction.action_id] || ActionStyles[0]);
       setActiveStep(1);
-      const p = selectedAction.action_name
-        .trim()
-        .toLowerCase()
-        .replaceAll(' ', '-');
-      nav(`/log-action/${p}`);
+      nav(`/log-action/${actionId}`);
     } else {
       setActiveStep(0);
     }
@@ -177,7 +165,6 @@ const LogAction = () => {
               validationSuccess,
             }}
           >
-            {loading ? <CircularProgress /> : null}
             {activeStep === 0 && (
               <AllActions setSelectedAction={setSelectedAction} />
             )}
