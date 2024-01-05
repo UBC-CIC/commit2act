@@ -54,7 +54,10 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
               aria-labelledby="bonus-quiz-answer-choices"
               name="quiz-answer-choices-group"
               value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
+              onChange={(e) => {
+                setUserAnswer(e.target.value);
+                setIsAnswerSelected(true);
+              }}
               sx={{
                 mt: '0.5em',
                 alignSelf: 'center',
@@ -92,15 +95,6 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
                 ? '0 bonus points will be added to your entry'
                 : '10 bonus points will be added to your entry'}
             </Typography>
-            <StyledButton
-              onClick={() => {
-                setFirstQuizAnswerCorrect(true);
-                setActiveStep(activeStep + 1);
-              }}
-              variant="contained"
-            >
-              {translation.finish}
-            </StyledButton>
           </>
         ) : (
           <>
