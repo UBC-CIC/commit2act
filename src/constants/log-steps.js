@@ -24,6 +24,11 @@ export const LOG_STEPS = [
     name: 'bonus-question',
     title: 'logActionStep5',
   },
+  {
+    number: 5,
+    name: 'social',
+    title: 'logActionStep6',
+  },
 ];
 
 export const TOTAL_LOG_STEPS = LOG_STEPS.length;
