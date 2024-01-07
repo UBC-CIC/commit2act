@@ -44,6 +44,7 @@ const LogAction = () => {
   const [firstQuizAnswerCorrect, setFirstQuizAnswerCorrect] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
   const [validationSuccess, setValidationSuccess] = useState(false);
+  const [imageDetails, setImageDetails] = useState('');
 
   const nav = useNavigate();
 
@@ -142,6 +143,8 @@ const LogAction = () => {
                 setTotalCO2Saved={setTotalCO2Saved}
                 setActionItemValues={setActionItemValues}
                 setSelectedImage={setSelectedImage}
+                imageDetails={imageDetails}
+                setImageDetails={setImageDetails}
               />
             )}
             {selectedAction && activeStep === 2 && (

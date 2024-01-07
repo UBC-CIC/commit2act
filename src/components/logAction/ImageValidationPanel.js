@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Typography, Alert } from '@mui/material';
+import { Box, Typography, Alert, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { CloudUpload, Delete, CameraAlt } from '@mui/icons-material';
+import { Delete, CameraAlt } from '@mui/icons-material';
 
 import useTranslation from '../customHooks/translations';
 
@@ -60,6 +60,8 @@ const ImageValidationPanel = ({
   selectedImage,
   actionStyle,
   setSelectedImage,
+  imageDetails,
+  setImageDetails,
 }) => {
   const [itemDrag, setItemDrag] = useState(false);
   const [selectedImagePreview, setSelectedImagePreview] = useState();
@@ -189,6 +191,11 @@ const ImageValidationPanel = ({
           ) : (
             <>
               <CameraAlt sx={{ fontSize: '120px' }} />
+              <label htmlFor="image-upload" id="browse">
+                <Typography variant="subtitle2">
+                  {translation.browse}
+                </Typography>
+              </label>
               <input
                 accept="image/*"
                 id="image-upload"
@@ -204,17 +211,38 @@ const ImageValidationPanel = ({
         variant="h2"
         sx={{
           display: 'flex',
-          justifyContent: 'flex-start',
-          alignContent: 'start',
+          alignSelf: 'start',
           my: '0.5em',
-          color: 'white',
-          alignSelf: 'flex-start',
           fontSize: '40px',
           fontWeight: 'bold',
         }}
       >
         Tell us about it!
       </Typography>
+      <Typography
+        component="div"
+        variant="subtitle1"
+        sx={{
+          display: 'flex',
+          alignSelf: 'start',
+          my: '0.5em',
+        }}
+      >
+        Molestie sed sed quisque volutpat et leo pulvinar semper sapien.
+      </Typography>
+      <TextField
+        multiline
+        rows={10}
+        plaaceholder="Type thought here..."
+        value={imageDetails}
+        onChange={(e) => setImageDetails(e.target.value)}
+        sx={{
+          width: '100%',
+          borderRadius: '10px',
+          border: '#e661ae',
+          variant: 'outlined',
+        }}
+      />
     </Box>
   );
 };

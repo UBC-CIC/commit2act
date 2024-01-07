@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { parseISO } from 'date-fns';
@@ -17,6 +17,8 @@ const AddActionPanel = ({
   setTotalCO2Saved,
   setActionItemValues,
   setSelectedImage,
+  imageDetails,
+  setImageDetails,
 }) => {
   const translation = useTranslation();
   const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
@@ -58,6 +60,8 @@ const AddActionPanel = ({
         selectedImage={selectedImage}
         setSelectedImage={setSelectedImage}
         actionStyle={actionStyle}
+        imageDetails={imageDetails}
+        setImageDetails={setImageDetails}
       />
       <ActionButtons
         forwardOnClick={calculateCO2}
