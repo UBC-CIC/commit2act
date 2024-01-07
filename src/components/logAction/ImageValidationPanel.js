@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { CloudUpload, Delete } from '@mui/icons-material';
+import { CloudUpload, Delete, CameraAlt } from '@mui/icons-material';
 
 import useTranslation from '../customHooks/translations';
 
@@ -11,11 +11,11 @@ const Dropbox = styled('div')`
   justify-content: center;
   align-items: center;
   min-height: 20vh;
-  border-radius: 5px;
+  border-radius: 20px;
   padding: 1em 2em 2em;
   width: 80%;
   opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
-  background: #1a1c1e;
+  background: #e661ae;
   svg {
     color: #fff;
   }
@@ -60,9 +60,6 @@ const ImageValidationPanel = ({
   selectedImage,
   actionStyle,
   setSelectedImage,
-  setActiveStep,
-  activeStep,
-  skipBonusQuestion,
 }) => {
   const [itemDrag, setItemDrag] = useState(false);
   const [selectedImagePreview, setSelectedImagePreview] = useState();
@@ -103,15 +100,6 @@ const ImageValidationPanel = ({
     }
   };
 
-  const handleButtonClick = (e) => {
-    //skip to CO2SavedScreen step if skipBonusQuestion is true
-    if (skipBonusQuestion) {
-      setActiveStep(activeStep + 2);
-    } else {
-      setActiveStep(activeStep + 1);
-    }
-  };
-
   const translation = useTranslation();
 
   return (
@@ -123,6 +111,22 @@ const ImageValidationPanel = ({
         alignItems: 'center',
       }}
     >
+      <Typography
+        component="div"
+        variant="h2"
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignContent: 'start',
+          my: '0.5em',
+          color: 'white',
+          alignSelf: 'flex-start',
+          fontSize: '40px',
+          fontWeight: 'bold',
+        }}
+      >
+        Show us the proof!
+      </Typography>
       <Box
         sx={{
           display: 'flex',
@@ -135,7 +139,11 @@ const ImageValidationPanel = ({
           borderRadius: '5px',
         }}
       >
-        <Typography component="div" variant="subtitle2" sx={{ my: '0.5em', color: actionStyle.color }}>
+        <Typography
+          component="div"
+          variant="subtitle2"
+          sx={{ my: '0.5em', color: actionStyle.color }}
+        >
           {translation.imageValidationText}
         </Typography>
         <Typography sx={{ fontSize: '15px' }}>
@@ -180,16 +188,7 @@ const ImageValidationPanel = ({
             </>
           ) : (
             <>
-              <CloudUpload fontSize="large" />
-              <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
-                {translation.imageValidationDrop}{' '}
-              </Typography>
-
-              <label htmlFor="image-upload" id="browse">
-                <Typography variant="subtitle2">
-                  {translation.browse}
-                </Typography>
-              </label>
+              <CameraAlt sx={{ fontSize: '120px' }} />
               <input
                 accept="image/*"
                 id="image-upload"
@@ -200,15 +199,22 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      {/* {selectedImage ? (
-        <StyledButton onClick={handleButtonClick} variant="contained">
-          {translation.uploadImage}
-        </StyledButton>
-      ) : (
-        <StyledButton onClick={handleButtonClick} variant="outlined">
-          {translation.skip}
-        </StyledButton>
-      )} */}
+      <Typography
+        component="div"
+        variant="h2"
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignContent: 'start',
+          my: '0.5em',
+          color: 'white',
+          alignSelf: 'flex-start',
+          fontSize: '40px',
+          fontWeight: 'bold',
+        }}
+      >
+        Tell us about it!
+      </Typography>
     </Box>
   );
 };

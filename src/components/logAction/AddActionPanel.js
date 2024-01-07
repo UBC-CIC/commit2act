@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { parseISO } from 'date-fns';
@@ -36,7 +36,7 @@ const AddActionPanel = ({
   };
 
   return (
-    <Grid item>
+    <>
       <Box>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
@@ -65,7 +65,7 @@ const AddActionPanel = ({
         forwardText={translation.next}
         backText={translation.previous}
       />
-    </Grid>
+    </>
   );
 };
 

@@ -184,7 +184,7 @@ const translations = {
   logActionStep6: 'Share On Social',
   next: 'Next',
   previous: 'Previous',
-  chooseDate: 'Choose Date',
+  chooseDate: 'Date Complete',
   mustBeNumber: 'Input must be a number or decimal greater than 0',
   imageValidationText:
     'Please upload an image related to your action item for verification',
