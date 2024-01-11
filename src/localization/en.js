@@ -322,6 +322,7 @@ const translations = {
   your: 'Your',
   actionIsSubmitted: 'action is being submitted',
   savingThePlanet: 'Amazing! You are saving the planet!',
+  checkAnswer: 'Check Answer',
 };
 
 export default translations;

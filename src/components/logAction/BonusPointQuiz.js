@@ -56,7 +56,6 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
               value={userAnswer}
               onChange={(e) => {
                 setUserAnswer(e.target.value);
-                setIsAnswerSelected(true);
               }}
               sx={{
                 mt: '0.5em',
@@ -77,6 +76,13 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
             </RadioGroup>
           </>
         </FormControl>
+        <Button
+          variant="contained"
+          disabled={!userAnswer}
+          onClick={() => setIsAnswerSelected(true)}
+        >
+          {translation.checkAnswer}
+        </Button>
       </>
     );
   };
