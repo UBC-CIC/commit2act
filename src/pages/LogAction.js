@@ -70,7 +70,7 @@ const LogAction = () => {
         const i = validOption(actions, actionId);
         if (i === -1) {
           nav('/log-action');
-          setSelectedAction('');
+          setSelectedAction();
         } else {
           nav(`/log-action/${actionId}`);
           setActiveStep(1);
