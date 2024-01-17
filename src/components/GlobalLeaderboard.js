@@ -104,7 +104,7 @@ const GlobalLeaderboard = () => {
       handleFilterSelection();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, users, selectedFilter]);
+  }, [groups, users, selectedFilter, selectedTab]);
 
   //sets filter back to default (total co2) and sets page back to first page on tab change
   const handleTabChange = (e, newValue) => {
