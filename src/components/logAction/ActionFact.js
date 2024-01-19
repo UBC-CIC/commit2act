@@ -18,7 +18,9 @@ import { useActionDetailsContext } from '../../hooks/use-action-details-context'
 import { useLanguageContext } from '../contexts/LanguageContext';
 import translations from '../../localization/en';
 
-Modal.setAppElement('#root');
+if (document.getElementById('root')) {
+  Modal.setAppElement('#root');
+}
 
 const ActionFact = ({
   setQuiz,
