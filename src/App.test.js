@@ -23,6 +23,12 @@ jest.mock('./views/pageContainer/PageContainer', () => (props) => (
   <MockPageContainer {...props} />
 ));
 
+jest.mock('aws-amplify', () => ({
+  Amplify: () => ({
+    configure: jest.fn(),
+  }),
+}));
+
 jest.mock('./components/contexts/ContentTranslationsContext', () => ({
   useContentTranslationsContext: () => ({
     setContentTranslations: jest.fn(),
