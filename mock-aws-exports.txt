@@ -1,0 +1,7 @@
+const awsmobile = {
+  "oauth": {
+    "redirectSignIn": "1,2",
+  },
+};
+
+export default awsmobile;
