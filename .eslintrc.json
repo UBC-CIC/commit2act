@@ -18,25 +18,23 @@
     "docs/*",
     "node_modules/*",
     "public/*",
-    "*.d.ts"
+    "*.d.ts",
+    "*.test.js"
   ],
   "overrides": [
     {
       "files": ["*.js"],
       "rules": {
-        "array-callback-return": "off",
-        "import/no-anonymous-default-export": "off",
-        "no-case-declarations": "off",
-        "no-empty": "off",
-        "no-extra-boolean-cast": "off",
-        "no-extra-semi": "off",
-        "no-unused-vars": "off",
-        "react/jsx-key": "off",
-        "react/jsx-no-duplicate-props": "off",
-        "react/no-unescaped-entities": "off",
-        "react/prop-types": "off",
-        "react/react-in-jsx-scope": "off",
-        "react-hooks/exhaustive-deps": "off"
+        "no-case-declarations": "warn",
+        "no-empty": "warn",
+        "no-extra-boolean-cast": "warn",
+        "no-extra-semi": "warn",
+        "no-unused-vars": "warn",
+        "react/jsx-key": "warn",
+        "react/jsx-no-duplicate-props": "warn",
+        "react/no-unescaped-entities": "warn",
+        "react/prop-types": "warn",
+        "react/react-in-jsx-scope": "warn"
       }
     }
   ]
