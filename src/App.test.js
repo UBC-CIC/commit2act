@@ -34,14 +34,6 @@ jest.mock('./services/translations', () => ({
 }));
 
 describe('App', () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders Login when user is not authenticated', () => {
     render(<App />, { wrapper: MockReduxStoreProvider });
     expect(screen.getByTestId('login')).toBeInTheDocument();

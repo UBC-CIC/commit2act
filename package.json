@@ -51,7 +51,9 @@
       "!src/models/*",
       "!src/reducers/*",
       "!src/styles/*"
-    ]
+    ],
+    "clearMocks": true,
+    "resetMocks": true
   },
   "eslintConfig": {
     "extends": [
