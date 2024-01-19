@@ -1,13 +1,29 @@
 import * as React from 'react';
-import { applyMiddleware, createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import reducers from '../reducers';
+import loginReducer from '../reducers/loginReducer';
+import appStateReducer from '../reducers/appStateReducer';
 
-const mockReduxStore = createStore(reducers, applyMiddleware(thunk));
+export const mockInitialReduxStore = createStore(
+  combineReducers({
+    loginState: loginReducer,
+    appState: appStateReducer,
+  })
+);
 
-export const MockReduxStoreProvider = ({ children, ...props }) => (
-  <Provider store={mockReduxStore} {...props}>
+export const mockAuthReduxStore = createStore(
+  combineReducers({
+    loginState: () => ({ currentState: 'signedIn' }),
+    appState: appStateReducer,
+  })
+);
+
+export const MockReduxStoreProvider = ({
+  children,
+  store = mockInitialReduxStore,
+  ...props
+}) => (
+  <Provider store={store} {...props}>
     {children}
   </Provider>
 );

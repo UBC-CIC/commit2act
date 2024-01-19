@@ -1,16 +1,26 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MockReduxStoreProvider } from './utils/mock-redux-store-provider';
+import {
+  MockReduxStoreProvider,
+  mockAuthReduxStore,
+} from './utils/mock-redux-store-provider';
 import { Box } from '@mui/material';
 import App from './App';
 
-const mockSignedOutState = 'signIn';
-const mockUpdateLoginState = jest.fn();
+// Mock window object native functions
+global.scrollTo = jest.fn();
 
-const MockLogin = (props) => <Box {...props} data-testid="login-view" />;
+const MockLogin = (props) => <Box {...props} data-testid="login" />;
+const MockPageContainer = (props) => (
+  <Box {...props} data-testid="page-container" />
+);
 
 jest.mock('./components/authentication/Login_material', () => (props) => (
   <MockLogin {...props} />
+));
+
+jest.mock('./views/pageContainer/PageContainer', () => (props) => (
+  <MockPageContainer {...props} />
 ));
 
 jest.mock('./components/contexts/ContentTranslationsContext', () => ({
@@ -24,15 +34,25 @@ jest.mock('./services/translations', () => ({
 }));
 
 describe('App', () => {
-  it('renders Login view when user is not authenticated', () => {
-    render(
-      <MockReduxStoreProvider>
-        <App
-          loginState={mockSignedOutState}
-          updateLoginState={mockUpdateLoginState}
-        />
-      </MockReduxStoreProvider>
-    );
-    expect(screen.getByTestId('login-view')).toBeInTheDocument();
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders Login when user is not authenticated', () => {
+    render(<App />, { wrapper: MockReduxStoreProvider });
+    expect(screen.getByTestId('login')).toBeInTheDocument();
+  });
+
+  it('renders PageContainer when user is authenticated', () => {
+    render(<App />, {
+      wrapper: (props) => (
+        <MockReduxStoreProvider {...props} store={mockAuthReduxStore} />
+      ),
+    });
+    expect(screen.getByTestId('page-container')).toBeInTheDocument();
   });
 });
