@@ -24,9 +24,12 @@ jest.mock('./views/pageContainer/PageContainer', () => (props) => (
 ));
 
 jest.mock('aws-amplify', () => ({
-  Amplify: () => ({
+  Amplify: {
     configure: jest.fn(),
-  }),
+  },
+  Hub: {
+    listen: jest.fn(),
+  },
 }));
 
 jest.mock('./components/contexts/ContentTranslationsContext', () => ({
