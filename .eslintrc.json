@@ -1,0 +1,43 @@
+{
+  "root": true,
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "ignorePatterns": [
+    "amplify/*",
+    "backend/*",
+    "coverage/*",
+    "docs/*",
+    "node_modules/*",
+    "public/*",
+    "*.d.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "rules": {
+        "array-callback-return": "off",
+        "import/no-anonymous-default-export": "off",
+        "no-case-declarations": "off",
+        "no-empty": "off",
+        "no-extra-boolean-cast": "off",
+        "no-extra-semi": "off",
+        "no-unused-vars": "off",
+        "react/jsx-key": "off",
+        "react/jsx-no-duplicate-props": "off",
+        "react/no-unescaped-entities": "off",
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
+        "react-hooks/exhaustive-deps": "off"
+      }
+    }
+  ]
+}
