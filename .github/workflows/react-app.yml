@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Mock AWS config
-        run: mv mock-aws-exports.txt ./src/aws-exports.js
-      - name: Install NPM
+      - name: Install dependencies
         run: npm ci
       - name: Test with coverage
-        run: npm run test:coverage
+        run: |
+          mv mock-aws-exports.txt ./src/aws-exports.js
+          npm run test:coverage
