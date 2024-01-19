@@ -37,6 +37,8 @@
     "test:watch": "react-scripts test --watchAll=true",
     "test:coverage": "react-scripts test --watchAll=false --coverage",
     "test": "npm run test:watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "eject": "react-scripts eject"
   },
   "jest": {
