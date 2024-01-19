@@ -12,12 +12,12 @@ jobs:
         node-version: [16.x]
     steps:
       - name: Configure environment
-        uses:
-          - actions/checkout@v3
-          - actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - name: Checkout branch
+        uses: actions/checkout@v3
       - name: Install NPM
         run: npm ci
       - name: Test with coverage
