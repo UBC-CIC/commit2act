@@ -45,7 +45,7 @@ jest.mock('./services/translations', () => ({
 describe('App', () => {
   it('renders Login when user is not authenticated', () => {
     render(<App />, { wrapper: MockReduxStoreProvider });
-    expect(screen.getByTestId('login')).toBeInTheDocument();
+    expect(screen.getByTestId('login-FOO')).toBeInTheDocument();
   });
 
   it('renders PageContainer when user is authenticated', () => {
@@ -54,6 +54,6 @@ describe('App', () => {
         <MockReduxStoreProvider {...props} store={mockAuthReduxStore} />
       ),
     });
-    expect(screen.getByTestId('page-container')).toBeInTheDocument();
+    expect(screen.getByTestId('page-container-BAR')).toBeInTheDocument();
   });
 });
