@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Grid, Typography, Box, CircularProgress } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
 import { ChevronLeft } from '@mui/icons-material';
 import { API } from 'aws-amplify';
 import { format } from 'date-fns';

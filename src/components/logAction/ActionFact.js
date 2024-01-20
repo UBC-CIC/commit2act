@@ -16,7 +16,6 @@ import { useActiveStepContext } from '../../hooks/use-active-step-context';
 import { useUserInfoContext } from '../../hooks/use-user-info-context';
 import { useActionDetailsContext } from '../../hooks/use-action-details-context';
 import { useLanguageContext } from '../contexts/LanguageContext';
-import translations from '../../localization/en';
 
 if (document.getElementById('root')) {
   Modal.setAppElement('#root');
