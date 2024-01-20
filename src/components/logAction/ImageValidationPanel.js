@@ -12,7 +12,7 @@ const Dropbox = styled('div')`
   justify-content: center;
   align-items: center;
   min-height: 20vh;
-  border-radius: 20px;
+  border-radius: 1.5rem;
   padding: 1em 2em 2em;
   width: 80%;
   opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
@@ -117,7 +117,6 @@ const ImageValidationPanel = ({
           gap: '20px',
           alignItems: 'center',
           padding: '1rem',
-          borderRadius: '5px',
         }}
       >
         {fileTypeError && (
