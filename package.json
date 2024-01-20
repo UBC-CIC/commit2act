@@ -39,6 +39,22 @@
     "test": "npm run test:watch",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/*.js",
+      "src/App.js",
+      "!src/actions/*",
+      "!src/constants/*",
+      "!src/graphql/*",
+      "!src/localization/*",
+      "!src/models/*",
+      "!src/reducers/*",
+      "!src/styles/*"
+    ],
+    "clearMocks": true,
+    "resetMocks": true
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

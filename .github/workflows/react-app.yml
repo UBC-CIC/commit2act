@@ -1,0 +1,26 @@
+name: React App CI
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+      - name: Configure environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Test with coverage
+        run: |
+          mv mock-aws-exports.txt ./src/aws-exports.js
+          npm run test:coverage

@@ -23,6 +23,15 @@ jest.mock('./views/pageContainer/PageContainer', () => (props) => (
   <MockPageContainer {...props} />
 ));
 
+jest.mock('aws-amplify', () => ({
+  Amplify: {
+    configure: jest.fn(),
+  },
+  Hub: {
+    listen: jest.fn(),
+  },
+}));
+
 jest.mock('./components/contexts/ContentTranslationsContext', () => ({
   useContentTranslationsContext: () => ({
     setContentTranslations: jest.fn(),
@@ -34,14 +43,6 @@ jest.mock('./services/translations', () => ({
 }));
 
 describe('App', () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders Login when user is not authenticated', () => {
     render(<App />, { wrapper: MockReduxStoreProvider });
     expect(screen.getByTestId('login')).toBeInTheDocument();

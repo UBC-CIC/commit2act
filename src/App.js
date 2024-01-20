@@ -1,12 +1,11 @@
 import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import PageContainer from './views/pageContainer/PageContainer';
-import { Amplify } from 'aws-amplify';
+import { Amplify, Hub } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { StylesProvider } from '@material-ui/core/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import Login from './components/authentication/Login_material';
-import { Hub } from 'aws-amplify';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateLoginState } from './actions/loginActions';
