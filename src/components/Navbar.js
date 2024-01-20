@@ -168,6 +168,7 @@ function Navbar(props) {
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
+      onClick={handleMobileMenuClose}
     >
       <MenuItem disabled>
         <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
