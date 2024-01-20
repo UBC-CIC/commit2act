@@ -193,7 +193,13 @@ const translations = {
   imageValidationSelected: 'Image Selected!',
   imageValidationDrop: 'Drop Your Image Here, Or',
   browse: 'Browse',
+  linkHere: 'Link Here',
+  showUsTheProof: 'Show us the proof!',
+  uploadImageInfo:
+    'Keep it professional. An AI may check your photo but so may a human.',
   uploadImage: 'Upload Image',
+  topTips: 'Top Tips',
+  uploadPhoto: 'Upload a photo!',
   skip: 'Skip',
   actionFactResponse: 'Thank you for submitting an action!',
   actionFactAllFacts: 'You have viewed all the facts for this action',

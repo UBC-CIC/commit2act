@@ -199,6 +199,7 @@ const translations = {
   imageValidationSelected: '¡Imagen Seleccionada!',
   imageValidationDrop: 'Arrastra tu imagen aquí, o',
   browse: 'Navegar',
+  linkHere: 'Navegar',
   uploadImage: 'Subir Imagen',
   skip: 'Saltar',
   actionFactResponse: '¡Gracias por enviar una acción!',

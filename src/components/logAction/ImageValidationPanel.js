@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Box, Typography, Alert, TextField } from '@mui/material';
+import { Box, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Delete, CameraAlt } from '@mui/icons-material';
 
 import useTranslation from '../customHooks/translations';
+import UploadPhotoTitlePopover from './UploadPhotoTitlePopover';
 
 const Dropbox = styled('div')`
   display: flex;
@@ -20,12 +21,12 @@ const Dropbox = styled('div')`
     color: #fff;
   }
   #browse {
-    padding: 0.3em 1.2em 0.5em;
+    padding: 0.5em 1.5em 0.5em;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 1.5rem;
     background: #380fd1;
-    color: #fff;
-    font-size: 16px;
+    color: white;
+    font-size: 20px;
     font-weight: 600;
     :hover {
       opacity: 0.7;
@@ -105,52 +106,20 @@ const ImageValidationPanel = ({
   const translation = useTranslation();
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Typography
-        component="div"
-        variant="h2"
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignContent: 'start',
-          my: '0.5em',
-          color: 'white',
-          alignSelf: 'flex-start',
-          fontSize: '40px',
-          fontWeight: 'bold',
-        }}
-      >
-        Show us the proof!
-      </Typography>
+    <>
+      <UploadPhotoTitlePopover />
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'center',
           flexDirection: 'column',
+          justifyContent: 'center',
+          alignSelf: 'center',
           gap: '20px',
           alignItems: 'center',
-          padding: '0 0 3em',
-          width: '65%',
+          padding: '1rem',
           borderRadius: '5px',
         }}
       >
-        <Typography
-          component="div"
-          variant="subtitle2"
-          sx={{ my: '0.5em', color: actionStyle.color }}
-        >
-          {translation.imageValidationText}
-        </Typography>
-        <Typography sx={{ fontSize: '15px' }}>
-          {translation.imageValidationDimensions}
-        </Typography>
         {fileTypeError && (
           <Alert severity="error" onClose={() => setFileTypeError(false)}>
             {translation.imageValidationError}
@@ -191,10 +160,12 @@ const ImageValidationPanel = ({
           ) : (
             <>
               <CameraAlt sx={{ fontSize: '120px' }} />
-              <label htmlFor="image-upload" id="browse">
-                <Typography variant="subtitle2">
-                  {translation.browse}
-                </Typography>
+              <label
+                htmlFor="image-upload"
+                id="browse"
+                sx={{ borderRadius: '2rem' }}
+              >
+                <Typography variant="div">{translation.linkHere}</Typography>
               </label>
               <input
                 accept="image/*"
@@ -206,44 +177,7 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      <Typography
-        component="div"
-        variant="h2"
-        sx={{
-          display: 'flex',
-          alignSelf: 'start',
-          my: '0.5em',
-          fontSize: '40px',
-          fontWeight: 'bold',
-        }}
-      >
-        Tell us about it!
-      </Typography>
-      <Typography
-        component="div"
-        variant="subtitle1"
-        sx={{
-          display: 'flex',
-          alignSelf: 'start',
-          my: '0.5em',
-        }}
-      >
-        Molestie sed sed quisque volutpat et leo pulvinar semper sapien.
-      </Typography>
-      <TextField
-        multiline
-        rows={10}
-        plaaceholder="Type thought here..."
-        value={imageDetails}
-        onChange={(e) => setImageDetails(e.target.value)}
-        sx={{
-          width: '100%',
-          borderRadius: '10px',
-          border: '#e661ae',
-          variant: 'outlined',
-        }}
-      />
-    </Box>
+    </>
   );
 };
 
