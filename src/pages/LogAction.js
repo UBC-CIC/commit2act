@@ -72,7 +72,8 @@ const LogAction = () => {
           nav('/log-action');
           setSelectedAction();
         } else {
-          nav(`/log-action/${actionId}`);
+          const actionUID = nameToUID(actions[i].action_name);
+          nav(`/log-action/${actionUID}`);
           setActiveStep(1);
           setSelectedAction(actions[i]);
         }
@@ -85,10 +86,12 @@ const LogAction = () => {
   // resets the form everytime a new action is selected
   // handles push path if when user manually selects an action
   useEffect(() => {
+    console.log(selectedAction);
     if (selectedAction) {
+      const actionUID = nameToUID(selectedAction.action_name);
       setActionStyle(ActionStyles[selectedAction.action_id] || ActionStyles[0]);
       setActiveStep(1);
-      nav(`/log-action/${actionId}`);
+      nav(`/log-action/${actionUID}`);
     } else {
       setActiveStep(0);
     }
@@ -212,10 +215,14 @@ function validOption(actionOptions, action) {
     const a = actionOptions[i];
     /** @type {string} */
     let name = a.action_name;
-    name = name.toLowerCase().trim().replaceAll(' ', '-');
+    name = nameToUID(name);
     if (name === action) {
       return i;
     }
   }
   return -1;
+}
+
+function nameToUID(name) {
+  return (name = name.toLowerCase().trim().replaceAll(' ', '-'));
 }
