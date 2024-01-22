@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Grid, Typography, Box, CircularProgress } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
 import { ChevronLeft } from '@mui/icons-material';
-import { API } from 'aws-amplify';
 import { format } from 'date-fns';
-import { getAllUngraveyardedActions } from '../graphql/queries';
 import ActionFact from '../components/logAction/ActionFact';
 import BonusPointQuiz from '../components/logAction/BonusPointQuiz';
 import CO2SavedScreen from '../components/logAction/Co2SavedScreen';
@@ -15,6 +13,7 @@ import { LogStepHeader } from '../components/LogStepHeader';
 import { ActiveStepContext } from '../hooks/use-active-step-context';
 import useTranslation from '../components/customHooks/translations';
 import { ActionDetailsContext } from '../hooks/use-action-details-context';
+import { PAGE_PATHS } from '../constants/page-paths';
 
 const ActionStyles = {
   0: { color: '#ffffff' },
@@ -51,59 +50,22 @@ const LogAction = () => {
   const resetLogAction = () => {
     setSelectedAction(undefined);
     setActiveStep(0);
+    nav(PAGE_PATHS.LOG_ACTION);
   };
-
-  const [actionOptions, setActionOptions] = useState([]);
-  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} */
-  useEffect(() => {
-    (async function () {
-      try {
-        // fetch all action options
-        const res = await API.graphql({ query: getAllUngraveyardedActions });
-        const actions = res.data.getAllUngraveyardedActions;
-        setActionOptions(actions);
-
-        // push path if user input action in url, ie: /log-action/plant-based-eating
-        if (actionId === 'log-action' || actionId === '') return;
-
-        // if the action is invalid, redirect back to /log-action
-        const i = validOption(actions, actionId);
-        if (i === -1) {
-          nav('/log-action');
-          setSelectedAction();
-        } else {
-          const actionUID = nameToUID(actions[i].action_name);
-          nav(`/log-action/${actionUID}`);
-          setActiveStep(1);
-          setSelectedAction(actions[i]);
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // resets the form everytime a new action is selected
-  // handles push path if when user manually selects an action
-  useEffect(() => {
-    console.log(selectedAction);
-    if (selectedAction) {
-      const actionUID = nameToUID(selectedAction.action_name);
-      setActionStyle(ActionStyles[selectedAction.action_id] || ActionStyles[0]);
-      setActiveStep(1);
-      nav(`/log-action/${actionUID}`);
-    } else {
-      setActiveStep(0);
-    }
-  }, [selectedAction]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDateChange = (newDate) => {
     setSelectedDate(format(new Date(newDate), 'yyyy-MM-dd'));
   };
 
   useEffect(() => {
-    if (!actionId) resetLogAction();
-  }, [actionId]);
+    const actionUID = selectedAction?.action_name
+      .toLowerCase()
+      .trim()
+      .replaceAll(' ', '-');
+    if (!actionId || actionId !== actionUID) {
+      resetLogAction();
+    }
+  }, [actionId, selectedAction?.action_name]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ActiveStepContext.Provider
@@ -169,7 +131,10 @@ const LogAction = () => {
             }}
           >
             {activeStep === 0 && (
-              <AllActions setSelectedAction={setSelectedAction} />
+              <AllActions
+                setSelectedAction={setSelectedAction}
+                setActiveStep={setActiveStep}
+              />
             )}
             {activeStep === 1 && (
               <AddActionPanel
@@ -204,25 +169,3 @@ const LogAction = () => {
 };
 
 export default LogAction;
-
-/**
- * @param {any[]} actionOptions
- * @param {string} action
- * @returns {number} index - action index
- */
-function validOption(actionOptions, action) {
-  for (let i = 0; i < actionOptions.length; i++) {
-    const a = actionOptions[i];
-    /** @type {string} */
-    let name = a.action_name;
-    name = nameToUID(name);
-    if (name === action) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-function nameToUID(name) {
-  return (name = name.toLowerCase().trim().replaceAll(' ', '-'));
-}
