@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import {
   MockReduxStoreProvider,
   mockAuthReduxStore,
@@ -43,17 +44,23 @@ jest.mock('./services/translations', () => ({
 }));
 
 describe('App', () => {
-  it('renders Login when user is not authenticated', () => {
-    render(<App />, { wrapper: MockReduxStoreProvider });
+  it('renders Login when user is not authenticated', async () => {
+    const { container } = render(<App />, { wrapper: MockReduxStoreProvider });
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
     expect(screen.getByTestId('login')).toBeInTheDocument();
   });
 
-  it('renders PageContainer when user is authenticated', () => {
-    render(<App />, {
+  it('renders PageContainer when user is authenticated', async () => {
+    const { container } = render(<App />, {
       wrapper: (props) => (
         <MockReduxStoreProvider {...props} store={mockAuthReduxStore} />
       ),
     });
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
     expect(screen.getByTestId('page-container')).toBeInTheDocument();
   });
 });
