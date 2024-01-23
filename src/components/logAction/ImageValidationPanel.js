@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Alert, Button } from '@mui/material';
+import { Box, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { CloudUpload, Delete } from '@mui/icons-material';
 
@@ -54,13 +54,6 @@ const Dropbox = styled('div')`
     align-items: center;
     margin-bottom: 0.5em;
   }
-`;
-
-const StyledButton = styled(Button)`
-  width: 80%;
-  max-width: 300px;
-  padding: 1em 1em 1.3em;
-  font-size: 1.2rem;
 `;
 
 const ImageValidationPanel = ({
