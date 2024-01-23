@@ -255,10 +255,18 @@ const GlobalLeaderboard = () => {
                     <TableCell component="th" scope="row">
                       {user.name}
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(user.total_co2)}</TableCell>
-                    <TableCell align="right">{user.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(user.weekly_co2)}</TableCell>
-                    <TableCell align="right">{user.weekly_points}</TableCell>
+                    <TableCell align="right">
+                      {user.total_co2 > 9999
+                        ? `${(user.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(user.total_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{user.total_points.toLocaleString()}</TableCell>
+                    <TableCell align="right">
+                      {user.weekly_co2 > 9999
+                        ? `${(user.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(user.weekly_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{user.weekly_points.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (
