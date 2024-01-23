@@ -35,11 +35,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test:watch": "react-scripts test --watchAll=true",
+    "test:basic": "react-scripts test --watchAll=false",
     "test:coverage": "react-scripts test --watchAll=false --coverage",
     "test": "npm run test:watch",
-    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "eject": "react-scripts eject"
+    "lint": "eslint .",
+    "eject": "react-scripts eject",
+    "checkup": "npm run lint:fix && npm run test:once"
   },
   "jest": {
     "collectCoverageFrom": [

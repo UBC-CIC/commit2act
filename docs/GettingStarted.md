@@ -106,3 +106,16 @@ npm run lint:fix
 ```
 
 ESLint settings can be adjusted from the `.eslintrc.json` file at the project root.
+
+## Pushing Branches and Opening PRs
+
+By default, we have `npm run test:coverage` and `npm run lint` running on CI via GitHub Actions for the following conditions:
+
+- Any new PR opened against the `main` branch
+- New or rebased commits pushed to any remote branch
+
+Before pushing your branch or any additional commits, be sure to run the test and lint scripts locally. You can run them in one script, using:
+
+```bash
+npm run checkup
+```
