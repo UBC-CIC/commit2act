@@ -406,10 +406,18 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                         {group.group_name}
                       </Link>
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
-                    <TableCell align="right">{group.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(group.weekly_co2)}</TableCell>
-                    <TableCell align="right">{group.weekly_points}</TableCell>
+                    <TableCell align="right">
+                      {group.total_co2 > 9999
+                        ? `${(group.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(group.total_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{group.total_points.toLocaleString()}</TableCell>
+                    <TableCell align="right">
+                      {group.weekly_co2 > 9999
+                        ? `${(group.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(group.weekly_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{group.weekly_points.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
 
@@ -440,10 +448,18 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     <TableCell component="th" scope="row">
                       {member.name}
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(member.total_co2)}</TableCell>
-                    <TableCell align="right">{member.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(member.weekly_co2)}</TableCell>
-                    <TableCell align="right">{member.weekly_points}</TableCell>
+                    <TableCell align="right">
+                      {member.total_co2 > 9999
+                        ? `${(member.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(member.total_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{member.total_points.toLocaleString()}</TableCell>
+                    <TableCell align="right">
+                      {user.weekly_co2 > 9999
+                        ? `${(user.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(user.weekly_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{member.weekly_points.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (
