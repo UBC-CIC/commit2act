@@ -78,7 +78,6 @@
     ]
   },
   "devDependencies": {
-    "axe-core": "^4.8.3",
     "eslint-plugin-react": "^7.33.2",
     "jest-axe": "^8.0.0",
     "jest-environment-jsdom": "^29.7.0"
