@@ -8,9 +8,6 @@ import {
 import { Box } from '@mui/material';
 import App from './App';
 
-// Mock window object native functions
-global.scrollTo = jest.fn();
-
 const MockLogin = (props) => <Box {...props} data-testid="login" />;
 const MockPageContainer = (props) => (
   <Box {...props} data-testid="page-container" />
