@@ -1,4 +1,4 @@
-name: React App CI
+name: React App - Lint
 on:
   push:
   pull_request:
@@ -22,7 +22,3 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
-      - name: Test
-        run: |
-          mv mock-aws-exports.txt ./src/aws-exports.js
-          npm run test:coverage
