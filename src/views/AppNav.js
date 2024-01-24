@@ -4,6 +4,7 @@ import {
   Box,
   Divider,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -33,16 +34,18 @@ const NavItem = ({
   to,
   onClick,
 }) => (
-  <ListItemButton
-    className={className}
-    component={Link}
-    onClick={onClick}
-    to={to}
-  >
-    {icon && icon}
-    {iconName && <NavItemIcon name={iconName} />}
-    <ListItemText primary={label} />
-  </ListItemButton>
+  <ListItem sx={{ margin: 0, padding: 0 }}>
+    <ListItemButton
+      className={className}
+      component={Link}
+      onClick={onClick}
+      to={to}
+    >
+      {icon && icon}
+      {iconName && <NavItemIcon name={iconName} />}
+      <ListItemText primary={label} />
+    </ListItemButton>
+  </ListItem>
 );
 
 const mainNavItems = [
@@ -77,7 +80,13 @@ export const AppNav = ({ handleMenuNavItem }) => {
             to={PAGE_PATHS[pathName]}
           />
         ))}
-        <Divider />
+        <ListItem
+          sx={{ padding: 0, margin: 0, display: 'block' }}
+          aria-hidden="true"
+          role="presentation"
+        >
+          <Divider />
+        </ListItem>
         {userIsAdmin && (
           <NavItem
             label={t.adminDashboard}
