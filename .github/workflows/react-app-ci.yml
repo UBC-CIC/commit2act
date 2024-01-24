@@ -6,29 +6,49 @@ on:
       - master
 jobs:
   setup:
+    name: Setup
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [16.x]
     steps:
-      - name: Checkout branch
+      - name: Checkout Branch
         uses: actions/checkout@v3
-      - name: Configure environment
+      - name: Configure Environment
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
+      - name: Upload Node Modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules
+          path: ./node_modules
+
   lint:
+    name: Lint
     needs: setup
+    runs-on: ubuntu-latest
     steps:
-      - name: Lint
+      - name: Download Node Modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+      - name: Linter
         run: npm run lint
+
   test:
+    name: Test
     needs: setup
+    runs-on: ubuntu-latest
     steps:
-      - name: Test
+      - name: Download Node Modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+      - name: Tests
         run: |
           mv mock-aws-exports.txt ./src/aws-exports.js
           npm run test:coverage
