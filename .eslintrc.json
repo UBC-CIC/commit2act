@@ -4,7 +4,8 @@
     "react-app",
     "react-app/jest",
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -25,6 +26,9 @@
     {
       "files": ["*.js"],
       "rules": {
+        "jsx-a11y/click-events-have-key-events": "warn",
+        "jsx-a11y/no-autofocus": "warn",
+        "jsx-a11y/no-static-element-interactions": "warn",
         "no-case-declarations": "warn",
         "no-empty": "warn",
         "no-extra-boolean-cast": "warn",
