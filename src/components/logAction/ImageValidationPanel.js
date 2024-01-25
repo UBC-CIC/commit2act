@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { CloudUpload, Delete } from '@mui/icons-material';
+import { Delete, CameraAlt } from '@mui/icons-material';
 
 import useTranslation from '../customHooks/translations';
+import UploadPhotoTitlePopover from './UploadPhotoTitlePopover';
 
 const Dropbox = styled('div')`
   display: flex;
@@ -11,21 +12,21 @@ const Dropbox = styled('div')`
   justify-content: center;
   align-items: center;
   min-height: 20vh;
-  border-radius: 5px;
+  border-radius: 1.5rem;
   padding: 1em 2em 2em;
   width: 80%;
   opacity: ${(props) => (props.itemdraggedover ? '0.5' : '1')};
-  background: #1a1c1e;
+  background: #e661ae;
   svg {
     color: #fff;
   }
   #browse {
-    padding: 0.3em 1.2em 0.5em;
+    padding: 0.5em 1.5em 0.5em;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 1.5rem;
     background: #380fd1;
-    color: #fff;
-    font-size: 16px;
+    color: white;
+    font-size: 20px;
     font-weight: 600;
     :hover {
       opacity: 0.7;
@@ -56,14 +57,7 @@ const Dropbox = styled('div')`
   }
 `;
 
-const ImageValidationPanel = ({
-  selectedImage,
-  actionStyle,
-  setSelectedImage,
-  setActiveStep,
-  activeStep,
-  skipBonusQuestion,
-}) => {
+const ImageValidationPanel = ({ selectedImage, setSelectedImage }) => {
   const [itemDrag, setItemDrag] = useState(false);
   const [selectedImagePreview, setSelectedImagePreview] = useState();
   const [fileTypeError, setFileTypeError] = useState(false);
@@ -103,44 +97,17 @@ const ImageValidationPanel = ({
     }
   };
 
-  const handleButtonClick = (e) => {
-    //skip to CO2SavedScreen step if skipBonusQuestion is true
-    if (skipBonusQuestion) {
-      setActiveStep(activeStep + 2);
-    } else {
-      setActiveStep(activeStep + 1);
-    }
-  };
-
   const translation = useTranslation();
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
+    <>
+      <UploadPhotoTitlePopover />
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: '20px',
-          alignItems: 'center',
-          padding: '0 0 3em',
-          width: '65%',
-          borderRadius: '5px',
+          width: { md: '50%' },
+          margin: { md: '0 auto' },
         }}
       >
-        <Typography component="div" variant="subtitle2" sx={{ my: '0.5em', color: actionStyle.color }}>
-          {translation.imageValidationText}
-        </Typography>
-        <Typography sx={{ fontSize: '15px' }}>
-          {translation.imageValidationDimensions}
-        </Typography>
         {fileTypeError && (
           <Alert severity="error" onClose={() => setFileTypeError(false)}>
             {translation.imageValidationError}
@@ -180,15 +147,9 @@ const ImageValidationPanel = ({
             </>
           ) : (
             <>
-              <CloudUpload fontSize="large" />
-              <Typography component="div" variant="h2" sx={{ my: '0.5em' }}>
-                {translation.imageValidationDrop}{' '}
-              </Typography>
-
+              <CameraAlt sx={{ fontSize: '120px' }} />
               <label htmlFor="image-upload" id="browse">
-                <Typography variant="subtitle2">
-                  {translation.browse}
-                </Typography>
+                <Typography variant="div">{translation.linkHere}</Typography>
               </label>
               <input
                 accept="image/*"
@@ -200,16 +161,7 @@ const ImageValidationPanel = ({
           )}
         </Dropbox>
       </Box>
-      {/* {selectedImage ? (
-        <StyledButton onClick={handleButtonClick} variant="contained">
-          {translation.uploadImage}
-        </StyledButton>
-      ) : (
-        <StyledButton onClick={handleButtonClick} variant="outlined">
-          {translation.skip}
-        </StyledButton>
-      )} */}
-    </Box>
+    </>
   );
 };
 

@@ -184,7 +184,7 @@ const translations = {
   logActionStep6: 'Share On Social',
   next: 'Next',
   previous: 'Previous',
-  chooseDate: 'Choose Date',
+  chooseDate: 'Date Complete',
   mustBeNumber: 'Input must be a number or decimal greater than 0',
   imageValidationText:
     'Please upload an image related to your action item for verification',
@@ -193,7 +193,13 @@ const translations = {
   imageValidationSelected: 'Image Selected!',
   imageValidationDrop: 'Drop Your Image Here, Or',
   browse: 'Browse',
+  linkHere: 'Link Here',
+  showUsTheProof: 'Show us the proof!',
+  uploadImageInfo:
+    'Keep it professional. An AI may check your photo but so may a human.',
   uploadImage: 'Upload Image',
+  topTips: 'Top Tips',
+  uploadPhoto: 'Upload a photo!',
   skip: 'Skip',
   actionFactResponse: 'Thank you for submitting an action!',
   actionFactAllFacts: 'You have viewed all the facts for this action',
