@@ -57,13 +57,7 @@ const Dropbox = styled('div')`
   }
 `;
 
-const ImageValidationPanel = ({
-  selectedImage,
-  actionStyle,
-  setSelectedImage,
-  imageDetails,
-  setImageDetails,
-}) => {
+const ImageValidationPanel = ({ selectedImage, setSelectedImage }) => {
   const [itemDrag, setItemDrag] = useState(false);
   const [selectedImagePreview, setSelectedImagePreview] = useState();
   const [fileTypeError, setFileTypeError] = useState(false);
@@ -110,13 +104,8 @@ const ImageValidationPanel = ({
       <UploadPhotoTitlePopover />
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignSelf: 'center',
-          gap: '20px',
-          alignItems: 'center',
-          padding: '1rem',
+          width: { sx: '100%', md: '50%' },
+          margin: { md: '0 auto' },
         }}
       >
         {fileTypeError && (

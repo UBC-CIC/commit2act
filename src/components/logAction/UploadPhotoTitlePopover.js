@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, Typography, Popover, List, ListItem } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Popover,
+  List,
+  ListItem,
+  IconButton,
+} from '@mui/material';
 import { HelpRounded, SmartToyOutlined, Lightbulb } from '@mui/icons-material';
 
 import useTranslation from '../customHooks/translations';
@@ -16,17 +23,23 @@ const UploadPhotoTitlePopover = () => {
   };
 
   const open = Boolean(anchorEl);
+  const id = open ? 'upload-popover' : undefined;
 
   const translation = useTranslation();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'start',
+      }}
+    >
       <Typography
         component="div"
         variant="h5"
         sx={{
           display: 'inline-flex',
-          alignItems: 'center',
           gap: '1rem',
           my: '0.5em',
           color: 'white',
@@ -35,32 +48,31 @@ const UploadPhotoTitlePopover = () => {
         }}
       >
         {translation.showUsTheProof}
-        <Typography
-          aria-owns={open ? 'mouse-over-popover' : undefined}
-          aria-haspopup="true"
-          onMouseEnter={handlePopover}
-          onMouseLeave={handleClosePopover}
-        >
+        <IconButton onClick={handlePopover}>
           <HelpRounded />
-        </Typography>
+        </IconButton>
       </Typography>
-      <Typography variant="subtitle2" sx={{ my: '0.5em', color: 'white' }}>
+      <Typography
+        variant="subtitle2"
+        sx={{
+          my: '1.5rem',
+          mx: 0,
+          color: 'white',
+        }}
+      >
         {translation.imageValidationText}
       </Typography>
       <Popover
-        id="upload-photo-popover"
+        id={id}
         open={open}
         anchorEl={anchorEl}
+        onClose={handleClosePopover}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
         }}
-        sx={{
-          pointerEvents: 'none',
-        }}
-        disableRestoreFocus
       >
-        <Box sx={{ padding: '2rem' }}>
+        <Box sx={{ padding: '1rem' }}>
           <SmartToyOutlined fontSize="large" />
           <Typography sx={{ fontSize: '20px', paddingTop: '1rem' }}>
             {translation.uploadPhoto}
