@@ -27,14 +27,15 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { getAllGroups, getUserStatsForGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
-import { AutoGraph, ExpandMore } from '@mui/icons-material';
+import { ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { SortLeaderboard } from '../SortLeaderboard';
 import UserContributionDonutChart from '../UserContributionDonutChart';
 import { useNavigate } from 'react-router-dom';
-import useTranslation from "../customHooks/translations";
+import useTranslation from '../customHooks/translations';
+import { CurrentPlaceNumbers } from '../CurrentPlaceNumbers';
 
 const StyledTableBody = styled(TableBody)`
   td {
@@ -258,24 +259,14 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
           }}
         >
           {filteredGroups && selectedTab === tabs[1] && (
-            <Typography
-              variant="h3"
-              component="div"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              {translation.currentPlace}
-              <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                <AutoGraph />
-                {filteredGroups.findIndex(
+            <CurrentPlaceNumbers
+              placeNumber={
+                filteredGroups.findIndex(
                   (group) => group.group_name === currentGroup.group_name
-                ) + 1}{' '}
-                / {filteredGroups.length}
-              </Typography>
-            </Typography>
+                ) + 1
+              }
+              totalNumber={filteredGroups.length}
+            />
           )}
           {/* if Group Members tab is selected, check if user is a group member, then render user's current place. If user doesn't belong to the group, don't render current place */}
           {filteredMembers &&
@@ -290,36 +281,20 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   flexDirection: hideCharts ? 'column' : 'row',
                 }}
               >
-                <Typography
-                  variant="h3"
-                  component="div"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {translation.currentPlace}
-                  <Typography
-                    variant="h1"
-                    sx={{
-                      mt: '0.2em',
-                      wordBreak: 'break-all',
-                      whiteSpace: 'pre-wrap',
-                    }}
-                  >
-                    <AutoGraph />
-                    {filteredMembers.findIndex(
+                <CurrentPlaceNumbers
+                  placeNumber={
+                    filteredMembers.findIndex(
                       (member) => member.user_id === userId
-                    ) + 1}{' '}
-                    / {groupMembers.length}
-                  </Typography>
-                </Typography>
+                    ) + 1
+                  }
+                  totalNumber={groupMembers.length}
+                />
                 <Box
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-evenly',
+                    flexShrink: 1,
                   }}
                 >
                   {hideCharts ? (
@@ -581,6 +556,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   borderTopColor: { xs: 'divider', sm: 'transparent' },
                   borderRightColor: { xs: 'transparent', sm: 'divider' },
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
+                  minWidth: 'min-content',
                 }}
               >
                 <Tab label={translation.groupMembers} value={tabs[0]} />
