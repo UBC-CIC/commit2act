@@ -104,7 +104,7 @@ const ImageValidationPanel = ({ selectedImage, setSelectedImage }) => {
       <UploadPhotoTitlePopover />
       <Box
         sx={{
-          width: { sx: '100%', md: '50%' },
+          width: { md: '50%' },
           margin: { md: '0 auto' },
         }}
       >
@@ -148,11 +148,7 @@ const ImageValidationPanel = ({ selectedImage, setSelectedImage }) => {
           ) : (
             <>
               <CameraAlt sx={{ fontSize: '120px' }} />
-              <label
-                htmlFor="image-upload"
-                id="browse"
-                sx={{ borderRadius: '2rem' }}
-              >
+              <label htmlFor="image-upload" id="browse">
                 <Typography variant="div">{translation.linkHere}</Typography>
               </label>
               <input
