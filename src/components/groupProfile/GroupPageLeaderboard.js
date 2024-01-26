@@ -76,7 +76,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [userStats, setUserStats] = useState();
-  const [donutChartsData, setDonutChartsData] = useState();
+  const [donutChartsData, setDonutChartsData] = useState([]);
   const [userContributionPercentages, setUserContributionPercentages] =
     useState();
 
@@ -312,6 +312,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   ) : (
                     donutChartsData.map((data) => (
                       <UserContributionDonutChart
+                        key={data.title}
                         data={data}
                         displayTitles={true}
                       />
@@ -410,7 +411,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     key={member.user_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     className={
-                      userId === member.user_id && 'currentGroupOrUser'
+                      userId === member.user_id ? 'currentGroupOrUser' : ''
                     }
                   >
                     <TableCell
