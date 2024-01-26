@@ -32,10 +32,10 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { SortLeaderboard } from '../SortLeaderboard';
-import UserContributionDonutChart from '../UserContributionDonutChart';
 import { useNavigate } from 'react-router-dom';
 import useTranslation from '../customHooks/translations';
 import { CurrentPlaceNumbers } from '../CurrentPlaceNumbers';
+import { UserStatsCharts } from '../UserStatsCharts';
 
 const StyledTableBody = styled(TableBody)`
   td {
@@ -76,7 +76,6 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [userStats, setUserStats] = useState();
-  const [donutChartsData, setDonutChartsData] = useState([]);
   const [userContributionPercentages, setUserContributionPercentages] =
     useState();
 
@@ -86,30 +85,6 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
 
   useEffect(() => {
     if (userStats) {
-      const donutData = [
-        {
-          groupTotal: currentGroup.total_co2 - userStats.total_co2,
-          contribution: userStats.total_co2,
-          title: translation.totalCO2,
-        },
-        {
-          groupTotal: currentGroup.weekly_co2 - userStats.weekly_co2,
-          contribution: userStats.weekly_co2,
-          title: translation.weeklyCO2,
-        },
-        {
-          groupTotal: currentGroup.total_points - userStats.total_points,
-          contribution: userStats.total_points,
-          title: translation.totalPoints,
-        },
-        {
-          groupTotal: currentGroup.weekly_points - userStats.weekly_points,
-          contribution: userStats.weekly_points,
-          title: translation.weeklyPoints,
-        },
-      ];
-      setDonutChartsData(donutData);
-
       const percentageData = [
         {
           title: translation.totalCO2,
@@ -279,6 +254,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexDirection: hideCharts ? 'column' : 'row',
+                  flexWrap: 'wrap',
                 }}
               >
                 <CurrentPlaceNumbers
@@ -310,13 +286,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                       </AccordionDetails>
                     </Accordion>
                   ) : (
-                    donutChartsData.map((data) => (
-                      <UserContributionDonutChart
-                        key={data.title}
-                        data={data}
-                        displayTitles={true}
-                      />
-                    ))
+                    <UserStatsCharts group={currentGroup} />
                   )}
                 </Box>
               </Box>
