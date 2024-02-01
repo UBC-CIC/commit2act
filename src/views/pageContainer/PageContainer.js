@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -6,6 +7,7 @@ import { Drawer, Toolbar, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { API, Auth } from 'aws-amplify';
+import { BaseComponent } from '../../prop-types/component';
 import { UserInfoContext } from '../../hooks/use-user-info-context';
 import { updateMenuState } from '../../actions/menuActions';
 import { getSingleUserByEmail } from '../../graphql/queries';
@@ -136,6 +138,12 @@ function PageContainer(props) {
     </UserInfoContext.Provider>
   );
 }
+
+PageContainer.propTypes = {
+  ...BaseComponent,
+  menuEnabled: PropTypes.bool,
+  updateMenuState: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => {
   return {
