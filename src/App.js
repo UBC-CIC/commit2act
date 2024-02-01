@@ -1,4 +1,6 @@
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { BaseComponent } from './prop-types/component';
 import { BrowserRouter } from 'react-router-dom';
 import PageContainer from './views/pageContainer/PageContainer';
 import { Amplify, Hub } from 'aws-amplify';
@@ -6,29 +8,27 @@ import awsmobile from './aws-exports';
 import { StylesProvider } from '@material-ui/core/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import Login from './components/authentication/Login_material';
-import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateLoginState } from './actions/loginActions';
 import theme from './themes';
 import ScrollToTop from './components/ScrollToTop';
 import { useContentTranslationsContext } from './components/contexts/ContentTranslationsContext';
 import { getAllTranslations } from './services/translations';
+import './App.css';
 
 const isLocalhost = Boolean(
-  window.location.hostname === "localhost" ||
-  // [::1] is the IPv6 localhost address.
-  window.location.hostname === "[::1]" ||
-  // 127.0.0.1/8 is considered localhost for IPv4.
-  window.location.hostname.match(
-    /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-  )
+  window.location.hostname === 'localhost' ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === '[::1]' ||
+    // 127.0.0.1/8 is considered localhost for IPv4.
+    window.location.hostname.match(
+      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    )
 );
 
 // Assuming you have two redirect URIs, and the first is for localhost and second is for production
-const [
-  localRedirectURL,
-  productionRedirectURL,
-] = awsmobile.oauth.redirectSignIn.split(",");
+const [localRedirectURL, productionRedirectURL] =
+  awsmobile.oauth.redirectSignIn.split(',');
 
 const updatedAwsConfig = {
   ...awsmobile,
@@ -36,13 +36,12 @@ const updatedAwsConfig = {
     ...awsmobile.oauth,
     redirectSignIn: isLocalhost ? localRedirectURL : productionRedirectURL,
     redirectSignOut: isLocalhost ? localRedirectURL : productionRedirectURL,
-  }
-}
-
+  },
+};
 
 Amplify.configure(updatedAwsConfig);
 
-function App (props) {
+function App(props) {
   const { loginState, updateLoginState } = props;
 
   const [currentLoginState, updateCurrentLoginState] = useState(loginState);
@@ -56,7 +55,7 @@ function App (props) {
     updateCurrentLoginState(loginState);
   }, [loginState]);
 
-  async function setAuthListener () {
+  async function setAuthListener() {
     Hub.listen('auth', (data) => {
       switch (data.payload.event) {
         case 'signOut':
@@ -68,27 +67,26 @@ function App (props) {
     });
   }
 
-
   const downloadTranslations = async (langCode) => {
+    let translations;
     switch (langCode) {
       case 'fr':
-        const translations = await getAllTranslations();
+        translations = await getAllTranslations();
         setContentTranslations(translations);
         break;
       default:
         break;
     }
-  }
+  };
 
   useEffect(() => {
     downloadTranslations('fr');
-  }, [])
-
+  }, []);
 
   return (
     <StylesProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <div style={{ width: '100vw', height: '100vh', 'overflowX': 'hidden' }}>
+        <div style={{ width: '100vw', height: '100vh', overflowX: 'hidden' }}>
           {currentLoginState !== 'signedIn' && (
             /* Login component options:
              *
@@ -122,6 +120,12 @@ function App (props) {
     </StylesProvider>
   );
 }
+
+App.propTypes = {
+  ...BaseComponent,
+  loginState: PropTypes.object,
+  updateLoginState: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => {
   return {
