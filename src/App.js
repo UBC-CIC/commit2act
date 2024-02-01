@@ -48,40 +48,40 @@ function App(props) {
   const { setContentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
+    async function setAuthListener() {
+      Hub.listen('auth', (data) => {
+        switch (data.payload.event) {
+          case 'signOut':
+            updateLoginState('signIn');
+            break;
+          default:
+            break;
+        }
+      });
+    }
+
     setAuthListener();
-  }, []);
+  }, [updateLoginState]);
 
   useEffect(() => {
     updateCurrentLoginState(loginState);
   }, [loginState]);
 
-  async function setAuthListener() {
-    Hub.listen('auth', (data) => {
-      switch (data.payload.event) {
-        case 'signOut':
-          updateLoginState('signIn');
+  useEffect(() => {
+    const downloadTranslations = async (langCode) => {
+      let translations;
+      switch (langCode) {
+        case 'fr':
+          translations = await getAllTranslations();
+          setContentTranslations(translations);
           break;
         default:
           break;
       }
-    });
-  }
+    };
 
-  const downloadTranslations = async (langCode) => {
-    let translations;
-    switch (langCode) {
-      case 'fr':
-        translations = await getAllTranslations();
-        setContentTranslations(translations);
-        break;
-      default:
-        break;
-    }
-  };
-
-  useEffect(() => {
     downloadTranslations('fr');
-  }, []);
+  }, [setContentTranslations]);
 
   return (
     <StylesProvider injectFirst>

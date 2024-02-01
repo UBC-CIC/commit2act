@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
@@ -78,16 +78,19 @@ function PageContainer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleMenuNavItem = (toPath = null) => {
-    if (mobileView) updateMenuState(!menuEnabled);
-    if (toPath) navigate(toPath);
-  };
+  const handleMenuNavItem = useCallback(
+    (toPath = null) => {
+      if (mobileView) updateMenuState(!menuEnabled);
+      if (toPath) navigate(toPath);
+    },
+    [menuEnabled, mobileView, navigate, updateMenuState]
+  );
 
   useEffect(() => {
     if (mobileView) {
       handleMenuNavItem();
     }
-  }, [mobileView]);
+  }, [handleMenuNavItem, mobileView]);
 
   return (
     <UserInfoContext.Provider

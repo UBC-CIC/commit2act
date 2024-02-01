@@ -15,6 +15,7 @@
   "ignorePatterns": [
     "amplify/*",
     "backend/*",
+    "build/*",
     "coverage/*",
     "docs/*",
     "node_modules/*",
