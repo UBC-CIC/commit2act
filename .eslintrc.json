@@ -25,21 +25,7 @@
   "overrides": [
     {
       "files": ["*.js"],
-      "rules": {
-        "jsx-a11y/click-events-have-key-events": "warn",
-        "jsx-a11y/no-autofocus": "warn",
-        "jsx-a11y/no-static-element-interactions": "warn",
-        "no-case-declarations": "warn",
-        "no-empty": "warn",
-        "no-extra-boolean-cast": "warn",
-        "no-extra-semi": "warn",
-        "no-unused-vars": "warn",
-        "react/jsx-key": "warn",
-        "react/jsx-no-duplicate-props": "warn",
-        "react/no-unescaped-entities": "warn",
-        "react/prop-types": "warn",
-        "react/react-in-jsx-scope": "warn"
-      }
+      "rules": {}
     }
   ]
 }
