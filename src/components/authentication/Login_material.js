@@ -803,7 +803,7 @@ function Login(props) {
                   container
                   item
                   xs={12}
-                  className={!!newPasswordError ? classes.passwordReq : null}
+                  className={newPasswordError ? classes.passwordReq : null}
                 >
                   <PasswordRequirements requirements={passwordRequirements} />
                 </Grid>
@@ -893,7 +893,7 @@ function Login(props) {
                   item
                   xs={12}
                   className={
-                    !!accountCreationPasswordError ? classes.passwordReq : null
+                    accountCreationPasswordError ? classes.passwordReq : null
                   }
                 >
                   <PasswordRequirements requirements={passwordRequirements} />
