@@ -135,7 +135,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
     } else {
       return (
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="subtitle2">
+          <Typography component="p" variant="subtitle2">
             {translation.noValidatedActions}
           </Typography>
         </Box>
@@ -184,7 +184,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
     } else {
       return (
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="subtitle2">
+          <Typography component="p" variant="subtitle2">
             {translation.noUnvalidatedActions}
           </Typography>
         </Box>
@@ -233,7 +233,7 @@ const UserActions = ({ databaseUser, setUser, userType }) => {
     } else {
       return (
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="subtitle2">
+          <Typography component="p" variant="subtitle2">
             {translation.noFailedActions}
           </Typography>
         </Box>
