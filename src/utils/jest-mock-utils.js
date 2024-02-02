@@ -19,7 +19,7 @@ export const mockUser = {
 export const mockUserValues = {
   user: mockUser,
   userIsAdmin: false,
-  userType: '',
+  userType: 'Member',
   setUser: jest.fn(),
 };
 
