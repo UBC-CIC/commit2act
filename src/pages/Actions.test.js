@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import { UserInfoContext } from '../hooks/use-user-info-context';
-import { mockUser } from '../utils/jest-mock-utils';
+import { renderWithAppContext } from '../utils/jest-mock-utils';
 import Actions from './Actions';
 
 jest.mock('aws-amplify', () => ({
@@ -15,15 +14,9 @@ jest.mock('aws-amplify', () => ({
   },
 }));
 
-const ActionsWithProviders = (props) => (
-  <UserInfoContext.Provider value={{ user: mockUser }}>
-    <Actions {...props} />
-  </UserInfoContext.Provider>
-);
-
 describe('Actions', () => {
   it('renders main heading and passes basic a11y validation', async () => {
-    const { container } = render(<ActionsWithProviders />);
+    const { container } = renderWithAppContext(<Actions />);
 
     const heading = await screen.findByRole('heading', {
       level: 1,
@@ -36,7 +29,7 @@ describe('Actions', () => {
   });
 
   it('renders actions tabs', async () => {
-    render(<ActionsWithProviders />);
+    renderWithAppContext(<Actions />);
 
     const tabs = await screen.findAllByRole('tab');
 

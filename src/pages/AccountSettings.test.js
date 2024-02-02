@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
-import { UserInfoContext } from '../hooks/use-user-info-context';
-import { mockUser } from '../utils/jest-mock-utils';
+import { mockUser, renderWithAppContext } from '../utils/jest-mock-utils';
 import AccountSettings from './AccountSettings';
 
 jest.mock('aws-amplify', () => ({
@@ -17,15 +16,9 @@ jest.mock('aws-amplify', () => ({
   },
 }));
 
-const AccountSettingsWithProviders = (props) => (
-  <UserInfoContext.Provider value={{ user: mockUser, setUser: jest.fn() }}>
-    <AccountSettings {...props} />
-  </UserInfoContext.Provider>
-);
-
 describe('AccountSettings', () => {
   it('renders main heading with user avatar, name, and email', async () => {
-    const { container } = render(<AccountSettingsWithProviders />);
+    const { container } = renderWithAppContext(<AccountSettings />);
 
     // We're using the promise-based `findBy` util here because of the post-init async changes
     // caused by API requests, hooks, and other dependencies within the component's children.
@@ -48,7 +41,7 @@ describe('AccountSettings', () => {
   });
 
   it('renders edit info button which opens edit modal', async () => {
-    render(<AccountSettingsWithProviders />);
+    renderWithAppContext(<AccountSettings />);
 
     const button = await screen.findByRole('button', { name: /edit info/i });
     expect(button).toBeInTheDocument();
@@ -65,7 +58,7 @@ describe('AccountSettings', () => {
   });
 
   it('renders actions heading and tabs', async () => {
-    render(<AccountSettingsWithProviders />);
+    renderWithAppContext(<AccountSettings />);
 
     const tabs = await screen.findAllByRole('tab');
     const heading = await screen.findByRole('heading', {

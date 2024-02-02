@@ -1,19 +1,9 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { MemoryRouter } from 'react-router-dom';
-import { UserInfoContext } from '../hooks/use-user-info-context';
 import { AppNav, mainNavItems } from './AppNav';
-
-const mockHandleMenuNavItem = jest.fn();
-
-const AppNavWithProviders = ({ userIsAdmin = false, ...props }) => (
-  <MemoryRouter>
-    <UserInfoContext.Provider value={{ userIsAdmin }}>
-      <AppNav handleMenuNavItem={mockHandleMenuNavItem} {...props} />
-    </UserInfoContext.Provider>
-  </MemoryRouter>
-);
+import { renderWithAppContext } from '../utils/jest-mock-utils';
 
 const mainNavBaseLength = mainNavItems.length;
 const mainNavNotAdminLength = mainNavBaseLength + 1;
@@ -21,7 +11,9 @@ const mainNavAdminLength = mainNavBaseLength + 2;
 
 describe('AppNav', () => {
   it('renders links from mainNavItems plus my account link', async () => {
-    const { container } = render(<AppNavWithProviders />);
+    const { container } = renderWithAppContext(<AppNav />, {
+      wrapper: MemoryRouter,
+    });
 
     const results = await axe(container);
     const links = await screen.findAllByRole('link');
@@ -32,7 +24,7 @@ describe('AppNav', () => {
   });
 
   it('renders log action as first nav item', async () => {
-    render(<AppNavWithProviders />);
+    renderWithAppContext(<AppNav />, { wrapper: MemoryRouter });
 
     const links = await screen.findAllByRole('link');
 
@@ -40,7 +32,11 @@ describe('AppNav', () => {
   });
 
   it('renders additional admin dashboard link when user is admin', async () => {
-    const { container } = render(<AppNavWithProviders userIsAdmin={true} />);
+    const { container } = renderWithAppContext(
+      <AppNav />,
+      { wrapper: MemoryRouter },
+      true
+    );
 
     const results = await axe(container);
     const links = await screen.findAllByRole('link');

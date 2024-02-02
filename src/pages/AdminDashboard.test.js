@@ -23,15 +23,9 @@ jest.mock('react-chartjs-2', () => ({
   Doughnut: (props) => <div {...props} />,
 }));
 
-const AdminDashboardWithProviders = (props) => (
-  <MemoryRouter>
-    <AdminDashboard {...props} />
-  </MemoryRouter>
-);
-
 describe('AdminDashboard', () => {
   it('renders menu tabs with first (dashboard) selected', async () => {
-    const { container } = render(<AdminDashboardWithProviders />);
+    const { container } = render(<AdminDashboard />, { wrapper: MemoryRouter });
 
     const tabs = await screen.findAllByRole('tab');
     const heading = await screen.findByRole('heading', {
@@ -48,7 +42,7 @@ describe('AdminDashboard', () => {
   });
 
   it('selecting other tabs renders expected content', async () => {
-    render(<AdminDashboardWithProviders />);
+    render(<AdminDashboard />, { wrapper: MemoryRouter });
 
     const tabs = await screen.findAllByRole('tab');
 
@@ -62,6 +56,6 @@ describe('AdminDashboard', () => {
     });
 
     expect(heading).toBeInTheDocument();
-    // expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 });
