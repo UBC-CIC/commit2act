@@ -6,6 +6,7 @@ expect.extend(toHaveNoViolations);
 
 // Mock window object native functions
 global.scrollTo = jest.fn();
+global.createEvent = jest.fn();
 
 // Mock common hooks and dependencies
 jest.mock('./components/contexts/LanguageContext', () => ({
