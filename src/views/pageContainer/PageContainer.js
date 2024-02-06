@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
@@ -78,19 +78,21 @@ function PageContainer(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleMenuNavItem = useCallback(
-    (toPath = null) => {
-      if (mobileView) updateMenuState(!menuEnabled);
-      if (toPath) navigate(toPath);
-    },
-    [menuEnabled, mobileView, navigate, updateMenuState]
-  );
+  // This combination of menu state overrides and useEffect is causing trouble
+  // when a useCallback method is implemented. This needs to be sorted out, as
+  // overriding the menu's open/closed state based on screen size will prevent
+  // the user's menu button action from doing anything.
+  const handleMenuNavItem = (toPath = null) => {
+    if (mobileView) updateMenuState(!menuEnabled);
+    if (toPath) navigate(toPath);
+  };
 
   useEffect(() => {
     if (mobileView) {
       handleMenuNavItem();
     }
-  }, [handleMenuNavItem, mobileView]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mobileView]);
 
   return (
     <UserInfoContext.Provider
