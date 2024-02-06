@@ -46,7 +46,9 @@ const MyGroupsPanel = ({ user }) => {
           flexDirection: { xs: 'column', md: 'row' },
         }}
       >
-        <Typography variant="subtitle2">{translation.searchByC}</Typography>
+        <Typography component="p" variant="subtitle2">
+          {translation.searchByC}
+        </Typography>
         <ToggleButtonGroup
           color="primary"
           value={filterOption}

@@ -108,7 +108,9 @@ const GroupNameSearchBar = ({
 
   return (
     <>
-      {!groupsOwnedByUser && <LinearProgress sx={{ mt: '3em' }} />}
+      {!groupsOwnedByUser && (
+        <LinearProgress aria-label="loading groups search" sx={{ mt: '3em' }} />
+      )}
       {groupsOwnedByUser && (
         <>
           <Autocomplete
@@ -187,6 +189,7 @@ const GroupNameSearchBar = ({
         {((allActionsToValidate && allActionsToValidate.length === 0) ||
           (filteredActions && filteredActions.length === 0)) && (
           <Typography
+            component="p"
             variant="subtitle2"
             sx={{ textAlign: 'center', mt: '1em' }}
           >
