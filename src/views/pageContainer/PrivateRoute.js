@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Auth } from 'aws-amplify';
 import { updateLoginState } from '../../actions/loginActions';
 import { CircularProgress, Box } from '@mui/material';
 import { useUserInfoContext } from '../../hooks/use-user-info-context';
+import { BaseComponent } from '../../prop-types/component';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useUserInfoContext();
@@ -36,5 +37,7 @@ const PrivateRoute = ({ children }) => {
     </Box>
   );
 };
+
+PrivateRoute.propTypes = BaseComponent;
 
 export default PrivateRoute;

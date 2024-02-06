@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
   Box,
@@ -10,6 +11,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import { AdminPanelSettings } from '@mui/icons-material';
+import { BaseComponent, LinkComponent } from '../prop-types/component';
 import { usePageContainerStyles } from '../styles/page-container';
 import { useUserInfoContext } from '../hooks/use-user-info-context';
 import useTranslation from '../components/customHooks/translations';
@@ -25,6 +27,10 @@ const NavItemIcon = ({ name }) => (
     />
   </ListItemIcon>
 );
+
+NavItemIcon.propTypes = {
+  name: PropTypes.string.isRequired,
+};
 
 const NavItem = ({
   className = '',
@@ -47,6 +53,13 @@ const NavItem = ({
     </ListItemButton>
   </ListItem>
 );
+
+NavItem.propTypes = {
+  ...LinkComponent,
+  iconName: PropTypes.string,
+  icon: PropTypes.element,
+  label: PropTypes.string.isRequired,
+};
 
 const mainNavItems = [
   { name: 'logAction', iconName: 'log', pathName: 'LOG_ACTION' },
@@ -108,4 +121,9 @@ export const AppNav = ({ handleMenuNavItem }) => {
       </List>
     </Box>
   );
+};
+
+AppNav.propTypes = {
+  ...BaseComponent,
+  handleMenuNavItem: PropTypes.func.isRequired,
 };

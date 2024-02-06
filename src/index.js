@@ -3,15 +3,13 @@ import ReactDOM from 'react-dom';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import awsExports from './aws-exports';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Amplify } from 'aws-amplify';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reducers from './reducers';
-import LanguageContextProvider from "./components/contexts/LanguageContext";
+import LanguageContextProvider from './components/contexts/LanguageContext';
 import ContentTranslationsContextProvider from './components/contexts/ContentTranslationsContext';
+import './index.css';
 
 // Amplify.configure(awsExports);
 

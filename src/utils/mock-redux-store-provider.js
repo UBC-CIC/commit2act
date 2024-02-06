@@ -1,4 +1,6 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
+import { BaseComponent } from '../prop-types/component';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import loginReducer from '../reducers/loginReducer';
@@ -27,3 +29,8 @@ export const MockReduxStoreProvider = ({
     {children}
   </Provider>
 );
+
+MockReduxStoreProvider.propTypes = {
+  ...BaseComponent,
+  store: PropTypes.object,
+};
