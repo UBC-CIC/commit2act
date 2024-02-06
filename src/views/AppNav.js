@@ -125,5 +125,5 @@ export const AppNav = ({ handleMenuNavItem }) => {
 
 AppNav.propTypes = {
   ...BaseComponent,
-  handleMenuNavItem: PropTypes.func.isRequired,
+  handleMenuNavItem: PropTypes.func,
 };

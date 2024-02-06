@@ -123,7 +123,7 @@ function App(props) {
 
 App.propTypes = {
   ...BaseComponent,
-  loginState: PropTypes.object,
+  loginState: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   updateLoginState: PropTypes.func.isRequired,
 };
 
