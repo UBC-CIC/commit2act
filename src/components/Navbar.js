@@ -51,6 +51,9 @@ const useStyles = makeStyles()((theme) => {
       [theme.breakpoints.up('sm')]: {
         marginRight: 22,
       },
+      [theme.breakpoints.down('lg')]: {
+        display: 'none',
+      },
     },
     title: {
       fontSize: '1.1em',
