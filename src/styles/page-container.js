@@ -80,5 +80,17 @@ export const usePageContainerStyles = makeStyles()((theme) => {
         zIndex: '2000',
       },
     },
+
+    // Mobile Menu Styling Work
+
+    mobileNav: {
+      border: '1px solid #ff00a2',
+      display: 'flex',
+      height: '80px',
+
+      '.MuiListItemButton-root': {
+        display: 'block',
+      },
+    },
   };
 });
