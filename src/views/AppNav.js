@@ -61,7 +61,7 @@ NavItem.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
-const mainNavItems = [
+export const mainNavItems = [
   { name: 'logAction', iconName: 'log', pathName: 'LOG_ACTION' },
   { name: 'dashboard', iconName: 'home', pathName: 'DASHBOARD' },
   { name: 'actions', iconName: 'validate', pathName: 'ACTIONS' },
@@ -125,5 +125,5 @@ export const AppNav = ({ handleMenuNavItem }) => {
 
 AppNav.propTypes = {
   ...BaseComponent,
-  handleMenuNavItem: PropTypes.func.isRequired,
+  handleMenuNavItem: PropTypes.func,
 };

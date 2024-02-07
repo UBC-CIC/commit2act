@@ -111,7 +111,7 @@ const LineChart = ({ allSubmittedActions }) => {
           mb: '1.5em',
         }}
       >
-        <Typography variant="subtitle2">
+        <Typography component="p" variant="subtitle2">
           {translation.formatString(translation.co2SavedDuring, selectedFilter)}
         </Typography>
         <Box
