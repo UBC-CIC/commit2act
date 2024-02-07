@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Drawer, Toolbar, Grid } from '@mui/material';
+import { Paper, Box, Drawer, Toolbar, Grid, BottomNavigation } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { API, Auth } from 'aws-amplify';
@@ -106,23 +106,27 @@ function PageContainer(props) {
         {/* App content example below with sidebar */}
         <Grid item xs={12} className="App-header">
           {/* Side menu component */}
-          <Drawer
-            anchor={'left'}
-            open={menuEnabled}
-            // onClose={handleSideMenuClose}
-            variant="persistent"
-            style={{ zIndex: 2 }}
-            sx={{
-              width: 312,
-              color: 'success.main',
-            }}
-            className={clsx(classes.drawer, {
-              [classes.menuClosed]: !menuEnabled,
-            })}
-          >
-            <Toolbar />
-            <AppNav handleMenuNavItem={handleMenuNavItem} />
-          </Drawer>
+          {!mobileView &&
+            <Box className={classes.drawerContainer}>
+              <Drawer
+                anchor={'left'}
+                open={menuEnabled}
+                // onClose={handleSideMenuClose}
+                variant="persistent"
+                style={{ zIndex: 2 }}
+                sx={{
+                  width: 312,
+                  color: 'success.main',
+                }}
+                className={clsx(classes.drawer, {
+                  [classes.menuClosed]: !menuEnabled,
+                })}
+              >
+                <Toolbar />
+                <AppNav handleMenuNavItem={handleMenuNavItem} />
+              </Drawer>
+            </Box>
+          }
           <main
             id="main"
             className={clsx(classes.content, {
@@ -133,6 +137,19 @@ function PageContainer(props) {
           </main>
         </Grid>
       </Grid>
+      {mobileView && 
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+          <BottomNavigation
+            showLabels
+            // value={value}
+            // onChange={(event, newValue) => {
+            //   setValue(newValue);
+            // }}
+          >
+            <AppNav handleMenuNavItem={handleMenuNavItem} />
+          </BottomNavigation>
+        </Paper>
+        }
     </UserInfoContext.Provider>
   );
 }

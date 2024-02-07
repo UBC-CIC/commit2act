@@ -65,38 +65,36 @@ export const AppNav = ({ handleMenuNavItem }) => {
   const t = useTranslation();
 
   return (
-    <Box className={classes.drawerContainer}>
-      <List>
-        {mainNavItems.map(({ name, iconName, pathName }) => (
-          <NavItem
-            className={classes[name]}
-            iconName={iconName}
-            key={name}
-            label={t[name]}
-            onClick={handleMenuNavItem}
-            to={PAGE_PATHS[pathName]}
-          />
-        ))}
-        <Divider />
-        {userIsAdmin && (
-          <NavItem
-            label={t.adminDashboard}
-            to={PAGE_PATHS.ADMIN_DASHBOARD}
-            onClick={handleMenuNavItem}
-            icon={
-              <ListItemIcon>
-                <AdminPanelSettings />
-              </ListItemIcon>
-            }
-          />
-        )}
+    <List>
+      {mainNavItems.map(({ name, iconName, pathName }) => (
         <NavItem
-          label={t.myAccount}
-          to={PAGE_PATHS.MY_ACCOUNT}
+          className={classes[name]}
+          iconName={iconName}
+          key={name}
+          label={t[name]}
           onClick={handleMenuNavItem}
-          iconName="my-account"
+          to={PAGE_PATHS[pathName]}
         />
-      </List>
-    </Box>
+      ))}
+      <Divider />
+      {userIsAdmin && (
+        <NavItem
+          label={t.adminDashboard}
+          to={PAGE_PATHS.ADMIN_DASHBOARD}
+          onClick={handleMenuNavItem}
+          icon={
+            <ListItemIcon>
+              <AdminPanelSettings />
+            </ListItemIcon>
+          }
+        />
+      )}
+      <NavItem
+        label={t.myAccount}
+        to={PAGE_PATHS.MY_ACCOUNT}
+        onClick={handleMenuNavItem}
+        iconName="my-account"
+      />
+    </List>
   );
 };
