@@ -81,17 +81,19 @@ const mobileDrawerItems = [
   },
 ];
 
+
 export const AppNav = ({ handleMenuNavItem }) => {
-  const { menuEnabled, updateMenuState } = useState();
+  const [ menuEnabled, setMenuEnabled ] = useState(false);
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('md'));
   const { userIsAdmin } = useUserInfoContext();
   const { classes } = usePageContainerStyles();
   const t = useTranslation();
 
-  const handleSideMenu = () => {
-    updateMenuState(!menuEnabled);
+  const handleMoreMenu = () => {
+    setMenuEnabled(!menuEnabled)
   };
+  
   return (
     <>
     {!mobileView ?
@@ -144,25 +146,36 @@ export const AppNav = ({ handleMenuNavItem }) => {
               className={classes.menuButton}
               color="inherit"
               aria-label="Toggle menu drawer"
-              onClick={handleSideMenu}
+              onClick={handleMoreMenu}
             >
               More
             </IconButton>
         </List>
         <Drawer
-          anchor={'left'}
+          anchor={'right'}
           open={menuEnabled}
           // onClose={handleSideMenuClose}
-          variant="persistent"
-          style={{ zIndex: 2 }}
-          sx={{
-            width: 312,
-            color: 'success.main',
+          ModalProps={{
+            keepMounted: true,
           }}
-          className={clsx(classes.drawer, {
-            [classes.menuClosed]: !menuEnabled,
-          })}
           >
+          <IconButton
+            sx={{marginTop: '120px'}}
+            onClick={handleMoreMenu}
+          >
+            Close
+          </IconButton>
+          <List>
+            {mobileDrawerItems.map(({ name, pathName }) => (
+              <NavItem
+                className={classes[name]}
+                key={name}
+                label={t[name]}
+                onClick={ () => { handleMenuNavItem(); handleMoreMenu();} }
+                to={PAGE_PATHS[pathName]}
+              />
+            ))}
+          </List>
         </Drawer>
       </>
     }
