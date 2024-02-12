@@ -55,9 +55,6 @@ const BonusPointQuiz = ({ setQuizAnswered }) => {
               sx={{
                 mt: '0.5em',
                 alignSelf: 'center',
-                '& .Mui-checked': {
-                  color: answeredCorrectly ? '#34b198' : 'red',
-                },
               }}
             >
               {answersArray.map((answer, index) => {
@@ -67,16 +64,14 @@ const BonusPointQuiz = ({ setQuizAnswered }) => {
                     value={answer}
                     label={answer}
                     disabled={isAnswerSelected}
-                    control={
-                      <Radio
-                        sx={{
-                          '& .Mui-checked': {
-                            color: answeredCorrectly ? '#34b198' : 'red',
-                            borderColor: answeredCorrectly ? '#34b198' : 'red',
-                          },
-                        }}
-                      />
-                    }
+                    sx={{
+                      '& .Mui-checked': {
+                        color: `${
+                          answeredCorrectly ? '#34b198' : 'red'
+                        } !important`,
+                      },
+                    }}
+                    control={<Radio />}
                   />
                 );
               })}
