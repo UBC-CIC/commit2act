@@ -15,7 +15,10 @@ import ActionButtons from './ActionButtons';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
 import { useUserInfoContext } from '../../hooks/use-user-info-context';
 import { useActionDetailsContext } from '../../hooks/use-action-details-context';
+import { useActionFactImage } from '../../hooks/use-action-fact-image';
+
 import { useLanguageContext } from '../contexts/LanguageContext';
+import PropTypes from 'prop-types';
 
 if (document.getElementById('root')) {
   Modal.setAppElement('#root');
@@ -31,9 +34,9 @@ const ActionFact = ({
   const { quiz, selectedDate, totalCO2Saved, actionItemValues, selectedImage } =
     useActionDetailsContext();
   const { user } = useUserInfoContext();
+  const { randomImage, isLoading } = useActionFactImage();
   const { contentTranslations } = useContentTranslationsContext();
   const translation = useTranslation();
-
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionSubmitting, setActionSubmitting] = useState(true);
@@ -199,6 +202,38 @@ const ActionFact = ({
     }
   };
 
+  const renderImage = () =>
+    !isLoading ? (
+      randomImage ? (
+        <figure
+          style={{
+            position: 'relative',
+            margin: '1.5rem auto',
+          }}
+        >
+          <img
+            height="250px"
+            src={randomImage['Thumb228']}
+            alt={randomImage?.title}
+            style={{ borderRadius: '1.5rem' }}
+          />
+          <figcaption
+            style={{
+              position: 'absolute',
+              bottom: '1rem',
+              right: '10px',
+              color: 'white',
+              fontSize: '14px',
+            }}
+          >
+            Photo by {randomImage['Artist']} from {randomImage['Country']}
+          </figcaption>
+        </figure>
+      ) : null
+    ) : (
+      <CircularProgress />
+    );
+
   return (
     <Grid
       item
@@ -221,6 +256,7 @@ const ActionFact = ({
           {translation.actionIsSubmitted}
         </Typography>
       </Box>
+      {renderImage()}
       <Box
         sx={{
           display: 'flex',
@@ -230,7 +266,6 @@ const ActionFact = ({
           width: '80%',
           overflow: 'auto',
           fontSize: '1.8em',
-          paddingTop: '2rem',
         }}
       >
         <Typography
@@ -269,6 +304,12 @@ const ActionFact = ({
       </ActionButtons>
     </Grid>
   );
+};
+
+ActionFact.propTypes = {
+  setQuiz: PropTypes.func,
+  setSkipBonusQuestion: PropTypes.func,
+  setValidationSuccess: PropTypes.func,
 };
 
 export default ActionFact;
