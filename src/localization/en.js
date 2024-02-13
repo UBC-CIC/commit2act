@@ -170,6 +170,8 @@ const translations = {
   incorrectPassword: 'Incorrect Password',
   logAction: 'Log Action',
   dashboard: 'Dashboard',
+  home: 'Home',
+  groups: 'Groups',
   findGroup: 'Find Group',
   createGroup: 'Create Group',
   validateActions: 'Validate Actions',

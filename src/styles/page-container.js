@@ -84,13 +84,91 @@ export const usePageContainerStyles = makeStyles()((theme) => {
     // Mobile Menu Styling Work
 
     mobileNav: {
-      border: '1px solid #ff00a2',
       display: 'flex',
       height: '80px',
+      width: '100%',
+      padding: '0 15px',
+
+      '> *': {
+        flexGrow: '1',
+        flexBasis: '0',
+        minWidth: '0',
+      },
 
       '.MuiListItemButton-root': {
-        display: 'block',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      },
+      '.MuiListItemIcon-root': {
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        height: '25px'
+      }
+    },
+    drawerClose: {
+      position: 'absolute',
+      top: '60px',
+      right: '0',
+    },
+    moreDrawer: {
+      width: '40vw',
+      padding: '100px 20px 0 20px',
+      position: 'relative',
+
+      '.MuiList-root': {
+        borderBottom: '1px solid #A9A9A9',
+        marginBottom: '20px'
+      }
+    },
+    menuButton: {
+      display: 'flex-inline',
+      flexDirection: 'column',
+      flexGrow: '1',
+      flexBasis: '0',
+      alignItems: 'center',
+      fontSize: '1rem',
+      padding: '8px 16px',
+      borderRadius: '0',
+      margin: '0',
+      'span': {
+        margin: '8px 0 14px 0',
+      },
+
+      '&:hover, &:focus': {
+        borderRadius: '0',
+      }
+    },
+    languageLabel: {
+      paddingLeft: '15px',
+    },
+    logActionMobile: {
+      flexGrow: '0',
+      minWidth: 'auto',
+      background: '#380FD1',
+      borderRadius: '99em',
+      marginTop: '-20px',
+      alignSelf: 'flex-start',
+      height: '60px',
+      width: '60px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      border: '4px solid #121212',
+
+      '&:hover': {
+        background: '#380FD1',
+      },
+
+      '.MuiListItemIcon-root': {
+        height: '100%',
+        display: 'inline-flex',
+        alignItems: 'center',
       },
     },
+    logOut: {
+      'span': {
+        marginRight: '10px',
+      }
+    }
   };
 });

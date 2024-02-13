@@ -14,7 +14,7 @@ import {
   MenuItem,
   Box,
 } from '@mui/material';
-import { ExitToApp, More } from '@mui/icons-material';
+import { ExitToApp} from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Auth } from 'aws-amplify';
 import { connect } from 'react-redux';
@@ -76,6 +76,7 @@ const useStyles = makeStyles()((theme) => {
       display: 'none',
       [theme.breakpoints.up('md')]: {
         display: 'flex',
+        alignItems: 'center'
       },
     },
     sectionMobile: {
@@ -161,27 +162,6 @@ function Navbar(props) {
     </Menu>
   );
 
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem disabled>
-        <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
-      </MenuItem>
-      <MenuItem className={classes.logOut} onClick={handleLogout}>
-        <span>{translation.logout} </span>
-        <ExitToApp color={'error'} />
-      </MenuItem>
-    </Menu>
-  );
-
   useEffect(() => {
     async function retrieveUser() {
       try {
@@ -238,13 +218,13 @@ function Navbar(props) {
           </Typography>
 
           <div className={classes.grow} />
-          <div>
-            <label htmlFor="language" className={classes.languageLabel}>
-              {translation.changeLanguage}
-            </label>
-            <LanguageHandler />
-          </div>
           <div className={classes.sectionDesktop}>
+            <div>
+              <label htmlFor="language" className={classes.languageLabel}>
+                {translation.changeLanguage}
+              </label>
+              <LanguageHandler />
+            </div>
             <MenuItem className={classes.logOut} onClick={handleLogout}>
               <span>{translation.logout} </span>
               <ExitToApp color={'error'} />
@@ -263,16 +243,9 @@ function Navbar(props) {
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <More />
-            </IconButton>
-            {renderMobileMenu}
+            <Avatar className={classes.avatar}>
+              {user.charAt(0).toUpperCase()}
+            </Avatar>    
           </div>
         </Toolbar>
       </AppBar>

@@ -176,6 +176,8 @@ const translations = {
   incorrectPassword: 'Mot de passe incorrect',
   logAction: "Enregistrer l'action",
   dashboard: 'Tableau de bord',
+  home: 'Accueil',
+  groups: 'Groupes',
   findGroup: 'Trouver un groupe',
   createGroup: 'Créer un groupe',
   validateActions: 'Valider les actions',
