@@ -201,6 +201,7 @@ const translations = {
   imageValidationSelected: 'Image sélectionnée !',
   imageValidationDrop: 'Déposez votre image ici, ou',
   browse: 'Naviguer',
+  linkHere: ' Naviguer',
   uploadImage: "Télécharger l'image",
   skip: 'Passer',
   actionFactResponse: 'Merci pour la soumission de votre action !',

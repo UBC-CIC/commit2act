@@ -48,6 +48,7 @@ const AccountSettings = () => {
                 >
                   <Avatar
                     variant="rounded"
+                    alt=""
                     src={user.avatar + '?' + new Date()}
                     sx={{
                       width: 120,

@@ -116,7 +116,12 @@ const ActionNameSearchBar = ({
 
   return (
     <>
-      {!allActionTypes && <LinearProgress sx={{ mt: '3em' }} />}
+      {!allActionTypes && (
+        <LinearProgress
+          aria-label="loading actions search"
+          sx={{ mt: '3em' }}
+        />
+      )}
       {allActionTypes && (
         <>
           <Autocomplete

@@ -35,9 +35,29 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test:watch": "react-scripts test --watchAll=true",
+    "test:basic": "react-scripts test --watchAll=false",
     "test:coverage": "react-scripts test --watchAll=false --coverage",
     "test": "npm run test:watch",
-    "eject": "react-scripts eject"
+    "lint:fix": "eslint . --fix",
+    "lint": "eslint .",
+    "eject": "react-scripts eject",
+    "checkup": "npm run lint:fix && npm run test:once"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/*.js",
+      "src/App.js",
+      "!src/actions/*",
+      "!src/constants/*",
+      "!src/graphql/*",
+      "!src/localization/*",
+      "!src/models/*",
+      "!src/reducers/*",
+      "!src/styles/*"
+    ],
+    "clearMocks": true,
+    "resetMocks": true
   },
   "eslintConfig": {
     "extends": [
@@ -56,5 +76,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "jest-axe": "^8.0.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }

@@ -197,13 +197,19 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
           },
         }}
       >
-        <Typography variant="body1">{translation.totalCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(total_co2)} g{' '}</Box></Typography>
+        <Typography variant="body1">{translation.totalCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>
+                  {total_co2 > 9999
+                    ? `${(total_co2 / 1000).toFixed(2)} kg`
+                    : `${Math.ceil(total_co2)} g`}{' '}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">{translation.weeklyCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(weekly_co2)} g{' '}</Box></Typography>
+        <Typography variant="body1">{translation.weeklyCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>
+                  {weekly_co2 > 9999
+                    ? `${(weekly_co2 / 1000).toFixed(2)} kg`
+                    : `${Math.ceil(weekly_co2)} g`}{' '}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">{translation.totalPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{total_points}</Box></Typography>
+        <Typography variant="body1">{translation.totalPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{total_points.toLocaleString()}</Box></Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1">{translation.weeklyPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{weekly_points}</Box></Typography>
+        <Typography variant="body1">{translation.weeklyPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{weekly_points.toLocaleString()}</Box></Typography>
       </Box>
     ) : (
       <>
@@ -220,19 +226,27 @@ const GroupCard = ({ group, joinGroupOption, user }) => {
               }}
             >
               <Typography variant="body1">
-                {translation.totalCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(total_co2)} g</Box>
+                {translation.totalCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>
+                  {total_co2 > 9999
+                    ? `${(total_co2 / 1000).toFixed(2)} kg`
+                    : `${Math.ceil(total_co2)} g`}
+				</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                {translation.weeklyCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{Math.ceil(weekly_co2)} g</Box>
+                {translation.weeklyCO2Colon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>
+                  {weekly_co2 > 9999
+                    ? `${(weekly_co2 / 1000).toFixed(2)} kg`
+                    : `${Math.ceil(weekly_co2)} g`}
+				</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                {translation.totalPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{total_points}</Box>
+                {translation.totalPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{total_points.toLocaleString()}</Box>
               </Typography>
               <Divider orientation="vertical" flexItem />
               <Typography variant="body1">
-                {translation.weeklyPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{weekly_points}</Box>
+                {translation.weeklyPointsColon} <Box component="span" sx={{ color: theme.palette.tertiary.main, fontWeight: '600' }}>{weekly_points.toLocaleString()}</Box>
               </Typography>
             </Box>
           </AccordionSummary>

@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Typography,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import ImageListItem, {
   imageListItemClasses,
 } from '@mui/material/ImageListItem';
@@ -38,11 +39,12 @@ const StyledImageListItem = styled(ImageListItem)`
   }
 `;
 
-const AllActions = ({ setSelectedAction }) => {
+const AllActions = ({ setSelectedAction, setActiveStep }) => {
   const [actionOptions, setActionOptions] = useState();
   const displayDefaultMsg = actionOptions && actionOptions.length === 0;
 
   const translation = useTranslation();
+  const nav = useNavigate();
   const { contentTranslations } = useContentTranslationsContext();
 
   useEffect(() => {
@@ -80,6 +82,16 @@ const AllActions = ({ setSelectedAction }) => {
         ...translatedAction,
       };
     });
+  };
+
+  const handleSelectedAction = (action) => {
+    setSelectedAction(action);
+    setActiveStep(1);
+    const actionUID = action.action_name
+      .toLowerCase()
+      .trim()
+      .replaceAll(' ', '-');
+    nav(`/log-action/${actionUID}`);
   };
 
   return (
@@ -129,7 +141,7 @@ const AllActions = ({ setSelectedAction }) => {
                   opacity: '0.7',
                 },
               }}
-              onClick={() => setSelectedAction(action)}
+              onClick={() => handleSelectedAction(action)}
             >
               {action.action_icon ? (
                 <img

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -6,6 +7,7 @@ import {
   Divider,
   Drawer,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -15,6 +17,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { AdminPanelSettings, Close, ExitToApp, MoreHoriz } from '@mui/icons-material';
+import { BaseComponent, LinkComponent } from '../prop-types/component';
 import { usePageContainerStyles } from '../styles/page-container';
 import { useUserInfoContext } from '../hooks/use-user-info-context';
 import useTranslation from '../components/customHooks/translations';
@@ -35,6 +38,10 @@ const NavItemIcon = ({ name }) => (
   </ListItemIcon>
 );
 
+NavItemIcon.propTypes = {
+  name: PropTypes.string.isRequired,
+};
+
 const NavItem = ({
   className = '',
   iconName = '',
@@ -43,19 +50,28 @@ const NavItem = ({
   to,
   onClick,
 }) => (
-  <ListItemButton
-    className={className}
-    component={Link}
-    onClick={onClick}
-    to={to}
-  >
-    {icon && icon}
-    {iconName && <NavItemIcon name={iconName} />}
-    <ListItemText primary={label} />
-  </ListItemButton>
+  <ListItem sx={{ margin: 0, padding: 0 }}>
+    <ListItemButton
+      className={className}
+      component={Link}
+      onClick={onClick}
+      to={to}
+    >
+      {icon && icon}
+      {iconName && <NavItemIcon name={iconName} />}
+      <ListItemText primary={label} />
+    </ListItemButton>
+  </ListItem>
 );
 
-const mainNavItems = [
+NavItem.propTypes = {
+  ...LinkComponent,
+  iconName: PropTypes.string,
+  icon: PropTypes.element,
+  label: PropTypes.string.isRequired,
+};
+
+export const mainNavItems = [
   { name: 'logAction', iconName: 'log', pathName: 'LOG_ACTION' },
   { name: 'dashboard', iconName: 'home', pathName: 'DASHBOARD' },
   { name: 'actions', iconName: 'validate', pathName: 'ACTIONS' },
@@ -129,7 +145,13 @@ export const AppNav = ({ handleMenuNavItem }) => {
             to={PAGE_PATHS[pathName]}
           />
         ))}
-        <Divider />
+        <ListItem
+          sx={{ padding: 0, margin: 0, display: 'block' }}
+          aria-hidden="true"
+          role="presentation"
+        >
+          <Divider />
+        </ListItem>
         {userIsAdmin && (
           <NavItem
             label={t.adminDashboard}
@@ -214,4 +236,9 @@ export const AppNav = ({ handleMenuNavItem }) => {
     }
     </>
   );
+};
+
+AppNav.propTypes = {
+  ...BaseComponent,
+  handleMenuNavItem: PropTypes.func,
 };

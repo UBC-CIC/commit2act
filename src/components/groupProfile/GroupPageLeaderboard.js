@@ -27,14 +27,15 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { getAllGroups, getUserStatsForGroup } from '../../graphql/queries';
 import { API } from 'aws-amplify';
-import { AutoGraph, ExpandMore } from '@mui/icons-material';
+import { ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { SortLeaderboard } from '../SortLeaderboard';
-import UserContributionDonutChart from '../UserContributionDonutChart';
 import { useNavigate } from 'react-router-dom';
-import useTranslation from "../customHooks/translations";
+import useTranslation from '../customHooks/translations';
+import { CurrentPlaceNumbers } from '../CurrentPlaceNumbers';
+import { UserStatsCharts } from '../UserStatsCharts';
 
 const StyledTableBody = styled(TableBody)`
   td {
@@ -75,7 +76,6 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [userStats, setUserStats] = useState();
-  const [donutChartsData, setDonutChartsData] = useState();
   const [userContributionPercentages, setUserContributionPercentages] =
     useState();
 
@@ -85,30 +85,6 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
 
   useEffect(() => {
     if (userStats) {
-      const donutData = [
-        {
-          groupTotal: currentGroup.total_co2 - userStats.total_co2,
-          contribution: userStats.total_co2,
-          title: translation.totalCO2,
-        },
-        {
-          groupTotal: currentGroup.weekly_co2 - userStats.weekly_co2,
-          contribution: userStats.weekly_co2,
-          title: translation.weeklyCO2,
-        },
-        {
-          groupTotal: currentGroup.total_points - userStats.total_points,
-          contribution: userStats.total_points,
-          title: translation.totalPoints,
-        },
-        {
-          groupTotal: currentGroup.weekly_points - userStats.weekly_points,
-          contribution: userStats.weekly_points,
-          title: translation.weeklyPoints,
-        },
-      ];
-      setDonutChartsData(donutData);
-
       const percentageData = [
         {
           title: translation.totalCO2,
@@ -258,24 +234,14 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
           }}
         >
           {filteredGroups && selectedTab === tabs[1] && (
-            <Typography
-              variant="h3"
-              component="div"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              {translation.currentPlace}
-              <Typography variant="h1" sx={{ mt: '0.2em' }}>
-                <AutoGraph />
-                {filteredGroups.findIndex(
+            <CurrentPlaceNumbers
+              placeNumber={
+                filteredGroups.findIndex(
                   (group) => group.group_name === currentGroup.group_name
-                ) + 1}{' '}
-                / {filteredGroups.length}
-              </Typography>
-            </Typography>
+                ) + 1
+              }
+              totalNumber={filteredGroups.length}
+            />
           )}
           {/* if Group Members tab is selected, check if user is a group member, then render user's current place. If user doesn't belong to the group, don't render current place */}
           {filteredMembers &&
@@ -288,38 +254,23 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexDirection: hideCharts ? 'column' : 'row',
+                  flexWrap: 'wrap',
                 }}
               >
-                <Typography
-                  variant="h3"
-                  component="div"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {translation.currentPlace}
-                  <Typography
-                    variant="h1"
-                    sx={{
-                      mt: '0.2em',
-                      wordBreak: 'break-all',
-                      whiteSpace: 'pre-wrap',
-                    }}
-                  >
-                    <AutoGraph />
-                    {filteredMembers.findIndex(
+                <CurrentPlaceNumbers
+                  placeNumber={
+                    filteredMembers.findIndex(
                       (member) => member.user_id === userId
-                    ) + 1}{' '}
-                    / {groupMembers.length}
-                  </Typography>
-                </Typography>
+                    ) + 1
+                  }
+                  totalNumber={groupMembers.length}
+                />
                 <Box
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-evenly',
+                    flexShrink: 1,
                   }}
                 >
                   {hideCharts ? (
@@ -335,12 +286,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                       </AccordionDetails>
                     </Accordion>
                   ) : (
-                    donutChartsData.map((data) => (
-                      <UserContributionDonutChart
-                        data={data}
-                        displayTitles={true}
-                      />
-                    ))
+                    <UserStatsCharts group={currentGroup} />
                   )}
                 </Box>
               </Box>
@@ -406,10 +352,18 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                         {group.group_name}
                       </Link>
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(group.total_co2)}</TableCell>
-                    <TableCell align="right">{group.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(group.weekly_co2)}</TableCell>
-                    <TableCell align="right">{group.weekly_points}</TableCell>
+                    <TableCell align="right">
+                      {group.total_co2 > 9999
+                        ? `${(group.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(group.total_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{group.total_points.toLocaleString()}</TableCell>
+                    <TableCell align="right">
+                      {group.weekly_co2 > 9999
+                        ? `${(group.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(group.weekly_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{group.weekly_points.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
 
@@ -427,7 +381,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     key={member.user_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     className={
-                      userId === member.user_id && 'currentGroupOrUser'
+                      userId === member.user_id ? 'currentGroupOrUser' : ''
                     }
                   >
                     <TableCell
@@ -440,10 +394,18 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                     <TableCell component="th" scope="row">
                       {member.name}
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(member.total_co2)}</TableCell>
-                    <TableCell align="right">{member.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(member.weekly_co2)}</TableCell>
-                    <TableCell align="right">{member.weekly_points}</TableCell>
+                    <TableCell align="right">
+                      {member.total_co2 > 9999
+                        ? `${(member.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(member.total_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{member.total_points.toLocaleString()}</TableCell>
+                    <TableCell align="right">
+                      {user.weekly_co2 > 9999
+                        ? `${(user.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(user.weekly_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{member.weekly_points.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (
@@ -565,6 +527,7 @@ const GroupPageLeaderboard = ({ currentGroup, groupMembers, userId, user }) => {
                   borderTopColor: { xs: 'divider', sm: 'transparent' },
                   borderRightColor: { xs: 'transparent', sm: 'divider' },
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
+                  minWidth: 'min-content',
                 }}
               >
                 <Tab label={translation.groupMembers} value={tabs[0]} />

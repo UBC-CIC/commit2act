@@ -107,8 +107,11 @@ const BarChart = ({ allSubmittedActions }) => {
           mb: '1.5em',
         }}
       >
-        <Typography variant="subtitle2">
-          {translation.formatString(translation.actionsSubmittedFilter, selectedFilter)}
+        <Typography component="p" variant="subtitle2">
+          {translation.formatString(
+            translation.actionsSubmittedFilter,
+            selectedFilter
+          )}
         </Typography>
         <Box
           sx={{

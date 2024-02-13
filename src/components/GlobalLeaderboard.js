@@ -27,7 +27,9 @@ import { useNavigate } from 'react-router-dom';
 import { SortLeaderboard } from './SortLeaderboard';
 import { useLanguageContext } from '../components/contexts/LanguageContext';
 
-import useTranslation from ".//customHooks/translations";
+import useTranslation from './/customHooks/translations';
+
+export const tabKeys = ['globalGroups', 'globalUsers'];
 
 const StyledTableBody = styled(TableBody)`
   td {
@@ -48,19 +50,23 @@ const StyledTableBody = styled(TableBody)`
 const GlobalLeaderboard = () => {
   const navigate = useNavigate();
   const translation = useTranslation();
-  const tabs = useMemo(() => [
-    translation.globalGroups,
-    translation.globalUsers,
-  ], [translation.globalGroups, translation.globalUsers]);
-  const filters = useMemo(() => [
+  const filters = useMemo(
+    () => [
     { name: translation.totalCO2Saved, property: 'total_co2' },
     { name: translation.weeklyCO2Saved, property: 'weekly_co2' },
     { name: translation.totalPoints, property: 'total_points' },
     { name: translation.weeklyPoints, property: 'weekly_points' },
-  ], [translation.totalCO2Saved, translation.totalPoints, translation.weeklyCO2Saved, translation.weeklyPoints]);
+    ],
+    [
+      translation.totalCO2Saved,
+      translation.totalPoints,
+      translation.weeklyCO2Saved,
+      translation.weeklyPoints,
+    ]
+  );
   const [groups, setGroups] = useState();
   const [users, setUsers] = useState();
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const [selectedTab, setSelectedTab] = useState(tabKeys[0]);
   const [selectedFilter, setSelectedFilter] = useState(filters[0]);
   const [filteredGroups, setFilteredGroups] = useState();
   const [filteredUsers, setFilteredUsers] = useState();
@@ -77,9 +83,9 @@ const GlobalLeaderboard = () => {
   let emptyRows =
     page <= 0
       ? 0
-      : selectedTab === tabs[0]
+      : selectedTab === tabKeys[0]
         ? Math.max(0, (1 + page) * rowsPerPage - groups.length)
-        : selectedTab === tabs[1]
+      : selectedTab === tabKeys[1]
           ? Math.max(0, (1 + page) * rowsPerPage - users.length)
           : 0;
 
@@ -94,9 +100,9 @@ const GlobalLeaderboard = () => {
     };
 
     getTableData();
-    setSelectedTab(tabs[0]);
+    setSelectedTab(tabKeys[0]);
     setSelectedFilter(filters[0]);
-  }, [tabs, filters, language]);
+  }, [filters, language]);
 
   //filters groups when group state is initially set, filters groups and group members every time a new filter is selected
   useEffect(() => {
@@ -127,7 +133,7 @@ const GlobalLeaderboard = () => {
   const handleFilterSelection = () => {
     const propertySelected = selectedFilter.property;
     //if Global Group tab is selected, apply the selected filter to all groups
-    if (selectedTab === tabs[0] && groups) {
+    if (selectedTab === tabKeys[0] && groups) {
       //make a mutable copy of the groups array, sort that array and update the in state version of groups
       let groupsArrayCopy = [...groups];
       let sortedByFilter = groupsArrayCopy.sort(
@@ -136,7 +142,7 @@ const GlobalLeaderboard = () => {
       setFilteredGroups(sortedByFilter);
     }
     //if Group Members tab is selected, apply the selected filter to all users
-    if (selectedTab === tabs[1] && users) {
+    if (selectedTab === tabKeys[1] && users) {
       //make a mutable copy of the users array, sort that array and update the in state version of users
       let usersArrayCopy = [...users];
       let sortedByFilter = usersArrayCopy.sort(
@@ -164,7 +170,10 @@ const GlobalLeaderboard = () => {
         <TableContainer component={Paper} sx={{ mt: '1em', backgroundColor: '#131516' }}>
           <Table stickyHeader aria-label="group leaderboard">
             <caption>
-              {translation.formatString(translation.leaderboardDisplaying, { tab: selectedTab })}{selectedFilter.name}
+              {translation.formatString(translation.leaderboardDisplaying, {
+                tab: translation[selectedTab],
+              })}
+              {selectedFilter.name}
             </caption>
             <TableHead sx={{ mt: '1em', backgroundColor: '#131516' }}>
               <TableRow sx={{ position: 'relative', zIndex: '1' }}>
@@ -178,7 +187,7 @@ const GlobalLeaderboard = () => {
             </TableHead>
             <StyledTableBody>
               {/* if Global Groups tab is selected, display all groups data in table body*/}
-              {selectedTab === tabs[0] &&
+              {selectedTab === tabKeys[0] &&
                 filteredGroups &&
                 (rowsPerPage > 0
                   ? filteredGroups.slice(
@@ -232,7 +241,7 @@ const GlobalLeaderboard = () => {
                 ))}
 
               {/* if Global Users tab is selected, display all user data in table body*/}
-              {selectedTab === tabs[1] &&
+              {selectedTab === tabKeys[1] &&
                 filteredUsers &&
                 (rowsPerPage > 0
                   ? filteredUsers.slice(
@@ -255,10 +264,18 @@ const GlobalLeaderboard = () => {
                     <TableCell component="th" scope="row">
                       {user.name}
                     </TableCell>
-                    <TableCell align="right">{Math.ceil(user.total_co2)}</TableCell>
-                    <TableCell align="right">{user.total_points}</TableCell>
-                    <TableCell align="right">{Math.ceil(user.weekly_co2)}</TableCell>
-                    <TableCell align="right">{user.weekly_points}</TableCell>
+                    <TableCell align="right">
+                      {user.total_co2 > 9999
+                        ? `${(user.total_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(user.total_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{user.total_points.toLocaleString()}</TableCell>
+                    <TableCell align="right">
+                      {user.weekly_co2 > 9999
+                        ? `${(user.weekly_co2 / 1000).toFixed(2)} kg`
+                        : `${Math.ceil(user.weekly_co2)} g`}
+                    </TableCell>
+                    <TableCell align="right">{user.weekly_points.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
               {emptyRows > 0 && (
@@ -270,7 +287,7 @@ const GlobalLeaderboard = () => {
           </Table>
         </TableContainer>
         {/* render the correct pagination options for each table */}
-        {selectedTab === tabs[0] && groups && (
+        {selectedTab === tabKeys[0] && groups && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
@@ -289,7 +306,7 @@ const GlobalLeaderboard = () => {
             }
           />
         )}
-        {selectedTab === tabs[1] && users && (
+        {selectedTab === tabKeys[1] && users && (
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component="div"
@@ -356,7 +373,11 @@ const GlobalLeaderboard = () => {
               </Menu>
             </Box>
           </Box>
-          <TabContext value={tabs.indexOf(selectedTab) !== -1 ? selectedTab : tabs[0]}>
+          <TabContext
+            value={
+              tabKeys.indexOf(selectedTab) !== -1 ? selectedTab : tabKeys[0]
+            }
+          >
             <Box
               sx={{
                 borderTop: 1,
@@ -381,19 +402,17 @@ const GlobalLeaderboard = () => {
                   borderBottomColor: { xs: 'divider', sm: 'transparent' },
                 }}
               >
-                <Tab label={translation.globalGroups} value={tabs[0]} id={tabs[0]} />
-                <Tab label={translation.globalUsers} value={tabs[1]} id={tabs[1]} />
+                <Tab label={translation[tabKeys[0]]} value={tabKeys[0]} />
+                <Tab label={translation[tabKeys[1]]} value={tabKeys[1]} />
               </TabList>
               <TabPanel
-                value={tabs[0]}
-                aria-labelledby={tabs[0]}
+                value={tabKeys[0]}
                 sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
               >
                 {renderTable()}
               </TabPanel>
               <TabPanel
-                value={tabs[1]}
-                aria-labelledby={tabs[1]}
+                value={tabKeys[1]}
                 sx={{ width: '100%', padding: { xs: '0', sm: '1.5em' } }}
               >
                 {renderTable()}

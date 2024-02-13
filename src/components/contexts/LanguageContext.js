@@ -21,7 +21,7 @@ function getBrowserLocales(options = {}) {
 
 	if (!browserLocales) {
 		return undefined;
-	};
+	}
 
 	return browserLocales.map(locale => {
 		const trimmedLocale = locale.trim();
@@ -29,7 +29,7 @@ function getBrowserLocales(options = {}) {
 			? trimmedLocale.split(/-|_/)[0]
 			: trimmedLocale;
 	});
-};
+}
 
 function getDefaultLocale(browserLocale) {
 	const fallbackLanguage = 'en';
@@ -37,10 +37,10 @@ function getDefaultLocale(browserLocale) {
 
 	if (supportedLanguages.indexOf(browserLocale) > -1) {
 		return browserLocale;
-	};
+	}
 
 	return fallbackLanguage;
-};
+}
 
 export default function LanguageContextProvider({ children }) {
 	const browserLanguages = getBrowserLocales({languageCodeOnly: true});
@@ -65,4 +65,4 @@ export default function LanguageContextProvider({ children }) {
 			{children}
 		</LanguageContext.Provider>
 	);
-};
+}

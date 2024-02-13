@@ -112,7 +112,10 @@ const Dashboard = () => {
         <Grid item xs={12} md={3}>
           {allUsers && (
             <StyledPaper sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h7"> {translation.totalUsers}</Typography>
+              <Typography component="p" variant="h7">
+                {' '}
+                {translation.totalUsers}
+              </Typography>
               <Typography
                 variant="h2"
                 sx={{
@@ -133,7 +136,10 @@ const Dashboard = () => {
             <StyledPaper
               sx={{ display: 'flex', flexDirection: 'column', mt: '1em' }}
             >
-              <Typography variant="h7"> {translation.totalGroups}</Typography>
+              <Typography component="p" variant="h7">
+                {' '}
+                {translation.totalGroups}
+              </Typography>
               <Typography
                 variant="h2"
                 sx={{
@@ -213,7 +219,7 @@ const Dashboard = () => {
                 justifyContent: 'center',
               }}
             >
-              <Typography variant="h7">
+              <Typography component="p" variant="h7">
                 {' '}
                 {translation.totalActionsSubmitted}
               </Typography>
