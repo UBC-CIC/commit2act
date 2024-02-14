@@ -15,9 +15,9 @@ const useStyles = makeStyles()((theme) => {
       top: '10px',
       width: '100%',
       justifyContent: 'space-between',
-    },
-    label: {
-      color: '#fff',
+      'label': {
+        color: '#fff',
+      },
     },
     logo: {
       display: 'none',
@@ -46,10 +46,6 @@ function LoginNavbar(props) {
         src={`${process.env.PUBLIC_URL}/icon-192x192.png`}
       />
       <div>
-        <label className={classes.label} htmlFor="language">
-          {translation.changeLanguage}
-        </label>{' '}
-        &nbsp;
         <LanguageHandler />
       </div>
     </Grid>
