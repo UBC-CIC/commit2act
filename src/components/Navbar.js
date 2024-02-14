@@ -14,7 +14,7 @@ import {
   MenuItem,
   Box,
 } from '@mui/material';
-import { ExitToApp, More } from '@mui/icons-material';
+import { ExitToApp} from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Auth } from 'aws-amplify';
 import { connect } from 'react-redux';
@@ -51,6 +51,9 @@ const useStyles = makeStyles()((theme) => {
       [theme.breakpoints.up('sm')]: {
         marginRight: 22,
       },
+      [theme.breakpoints.down('lg')]: {
+        display: 'none',
+      },
     },
     title: {
       fontSize: '1.1em',
@@ -61,6 +64,7 @@ const useStyles = makeStyles()((theme) => {
     },
     avatar: {
       background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+      textTransform: 'uppercase',
     },
     logo: {
       display: 'none',
@@ -73,6 +77,7 @@ const useStyles = makeStyles()((theme) => {
       display: 'none',
       [theme.breakpoints.up('md')]: {
         display: 'flex',
+        alignItems: 'center'
       },
     },
     sectionMobile: {
@@ -106,25 +111,19 @@ function Navbar(props) {
   const translation = useTranslation();
 
   const [user, setUser] = useState('');
-  const [loadingBackdrop, setLoadingBackdrop] = React.useState(false);
+  const [loadingBackdrop, setLoadingBackdrop] = useState(false);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isMenuOpen = Boolean(anchorEl);
 
   const handleProfileMenuOpen = (event) => {
     navigate('/account-settings');
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
   };
 
   const handleLogout = async () => {
@@ -135,27 +134,18 @@ function Navbar(props) {
     setLoadingBackdrop(false);
   };
 
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
 
   const menuId = 'primary-search-account-menu';
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
+  const renderMenu = (
     <Menu
-      anchorEl={mobileMoreAnchorEl}
+      anchorEl={anchorEl}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
+      id={menuId}
       keepMounted
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-      onClick={handleMobileMenuClose}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
     >
-      <MenuItem disabled>
-        <Avatar>{user.charAt(0).toUpperCase()}</Avatar>
-      </MenuItem>
       <MenuItem className={classes.logOut} onClick={handleLogout}>
         <span>{translation.logout} </span>
         <ExitToApp color={'error'} />
@@ -219,13 +209,10 @@ function Navbar(props) {
           </Typography>
 
           <div className={classes.grow} />
-          <div>
-            <label htmlFor="language" className={classes.languageLabel}>
-              {translation.changeLanguage}
-            </label>
-            <LanguageHandler />
-          </div>
           <div className={classes.sectionDesktop}>
+            <div>
+              <LanguageHandler />
+            </div>
             <MenuItem className={classes.logOut} onClick={handleLogout}>
               <span>{translation.logout} </span>
               <ExitToApp color={'error'} />
@@ -239,21 +226,14 @@ function Navbar(props) {
               color="inherit"
             >
               <Avatar className={classes.avatar}>
-                {user.charAt(0).toUpperCase()}
+                {user.charAt(0)}
               </Avatar>
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <More />
-            </IconButton>
-            {renderMobileMenu}
+            <Avatar className={classes.avatar}>
+              {user.charAt(0)}
+            </Avatar>    
           </div>
         </Toolbar>
       </AppBar>

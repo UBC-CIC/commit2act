@@ -1,21 +1,31 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Divider,
+  Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  IconButton,
+  MenuItem
 } from '@mui/material';
-import { AdminPanelSettings } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { AdminPanelSettings, Close, ExitToApp, MoreHoriz } from '@mui/icons-material';
 import { BaseComponent, LinkComponent } from '../prop-types/component';
 import { usePageContainerStyles } from '../styles/page-container';
 import { useUserInfoContext } from '../hooks/use-user-info-context';
 import useTranslation from '../components/customHooks/translations';
 import { PAGE_PATHS } from '../constants/page-paths';
+import { Auth } from 'aws-amplify';
+import { updateLoginState } from '../actions/loginActions';
+import LanguageHandler from '../components/LanguageHandler';
+
 
 const NavItemIcon = ({ name }) => (
   <ListItemIcon>
@@ -75,13 +85,52 @@ export const mainNavItems = [
   },
 ];
 
+const mobileNavItems = [
+  { name: 'home', iconName: 'home', pathName: 'DASHBOARD' },
+  { name: 'actions', iconName: 'validate', pathName: 'ACTIONS' },
+  { name: 'logActionMobile', iconName: 'plus', pathName: 'LOG_ACTION' },
+  { name: 'groups', iconName: 'create-group', pathName: 'MY_GROUPS' },
+];
+
+const mobileDrawerItems = [
+  { name: 'findGroup', iconName: 'find', pathName: 'FIND_GROUP' },
+  { name: 'createGroup', iconName: 'create-group', pathName: 'CREATE_GROUP' },
+  {
+    name: 'validateActions',
+    iconName: 'validate',
+    pathName: 'VALIDATE_ACTIONS',
+  },
+];
+
+
 export const AppNav = ({ handleMenuNavItem }) => {
+  const [ menuEnabled, setMenuEnabled ] = useState(false);
+  const theme = useTheme();
+  const mobileView = useMediaQuery(theme.breakpoints.down('md'));
   const { userIsAdmin } = useUserInfoContext();
   const { classes } = usePageContainerStyles();
   const t = useTranslation();
+  const navigate = useNavigate();
+  const translation = useTranslation();
+
+  const handleMoreMenu = () => {
+    setMenuEnabled(!menuEnabled)
+  };
+  
+  async function onSignOut() {
+    updateLoginState('signIn');
+    navigate('/');
+    await Auth.signOut();
+  }
+
+  const handleLogout = async () => {
+    await new Promise((r) => setTimeout(r, 1000));
+    await onSignOut();
+  };
 
   return (
-    <Box className={classes.drawerContainer}>
+    <>
+    {!mobileView ?
       <List>
         {mainNavItems.map(({ name, iconName, pathName }) => (
           <NavItem
@@ -119,7 +168,67 @@ export const AppNav = ({ handleMenuNavItem }) => {
           iconName="my-account"
         />
       </List>
-    </Box>
+      :
+      <>
+        <List className={classes.mobileNav}>
+          {mobileNavItems.map(({ name, iconName, pathName }) => (
+            <NavItem
+              className={classes[name]}
+              iconName={iconName}
+              key={name}
+              label={t[name]}
+              onClick={handleMenuNavItem}
+              to={PAGE_PATHS[pathName]}
+            />
+          ))}
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Toggle menu drawer"
+              onClick={handleMoreMenu}
+            >
+              <MoreHoriz />
+              <span>{translation.more}</span>
+            </IconButton>
+        </List>
+        <Drawer
+          anchor={'right'}
+          open={menuEnabled}
+          onClose={handleMoreMenu}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          >
+            <div className={classes.moreDrawer}>
+              <IconButton
+                className={classes.drawerClose}
+                onClick={handleMoreMenu}
+                size='large'
+              >
+                <Close />
+              </IconButton>
+              <List>
+                {mobileDrawerItems.map(({ name, pathName }) => (
+                  <NavItem
+                    className={classes[name]}
+                    key={name}
+                    label={t[name]}
+                    onClick={ () => { handleMenuNavItem(); handleMoreMenu();} }
+                    to={PAGE_PATHS[pathName]}
+                  />
+                ))}
+              </List>
+              <LanguageHandler />
+              <MenuItem className={classes.logOut} onClick={handleLogout}>
+                <span>{translation.logout}</span>
+                <ExitToApp/>
+              </MenuItem>
+            </div>
+        </Drawer>
+      </>
+    }
+    </>
   );
 };
 
