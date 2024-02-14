@@ -107,7 +107,6 @@ export const AppNav = ({ handleMenuNavItem }) => {
   const [ menuEnabled, setMenuEnabled ] = useState(false);
   const theme = useTheme();
   const mobileView = useMediaQuery(theme.breakpoints.down('md'));
-  const [loadingBackdrop, setLoadingBackdrop] = React.useState(false);
   const { userIsAdmin } = useUserInfoContext();
   const { classes } = usePageContainerStyles();
   const t = useTranslation();
@@ -125,10 +124,8 @@ export const AppNav = ({ handleMenuNavItem }) => {
   }
 
   const handleLogout = async () => {
-    setLoadingBackdrop(true);
     await new Promise((r) => setTimeout(r, 1000));
     await onSignOut();
-    setLoadingBackdrop(false);
   };
 
   return (
@@ -192,7 +189,7 @@ export const AppNav = ({ handleMenuNavItem }) => {
               onClick={handleMoreMenu}
             >
               <MoreHoriz />
-              <span>More</span>
+              <span>{translation.more}</span>
             </IconButton>
         </List>
         <Drawer

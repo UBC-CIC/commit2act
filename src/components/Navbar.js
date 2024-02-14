@@ -110,10 +110,9 @@ function Navbar(props) {
   const translation = useTranslation();
 
   const [user, setUser] = useState('');
-  const [loadingBackdrop, setLoadingBackdrop] = React.useState(false);
+  const [loadingBackdrop, setLoadingBackdrop] = useState(false);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -229,13 +228,13 @@ function Navbar(props) {
               color="inherit"
             >
               <Avatar className={classes.avatar}>
-                {user.charAt(0).toUpperCase()}
+                {user.charAt(0)}
               </Avatar>
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
             <Avatar className={classes.avatar}>
-              {user.charAt(0).toUpperCase()}
+              {user.charAt(0)}
             </Avatar>    
           </div>
         </Toolbar>

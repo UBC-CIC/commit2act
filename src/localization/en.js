@@ -169,6 +169,7 @@ const translations = {
     'To join this group, please enter the group password and select Join.',
   incorrectPassword: 'Incorrect Password',
   logAction: 'Log Action',
+  logActionMobile: 'Log Action',
   dashboard: 'Dashboard',
   home: 'Home',
   groups: 'Groups',

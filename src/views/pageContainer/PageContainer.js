@@ -118,7 +118,6 @@ function PageContainer(props) {
               <Drawer
                 anchor={'left'}
                 open={menuEnabled}
-                // onClose={handleSideMenuClose}
                 variant="persistent"
                 style={{ zIndex: 2 }}
                 sx={{

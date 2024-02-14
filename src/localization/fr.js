@@ -175,6 +175,7 @@ const translations = {
     'Pour rejoindre ce groupe, veuillez entrer le mot de passe du groupe et sélectionner Rejoindre.',
   incorrectPassword: 'Mot de passe incorrect',
   logAction: "Enregistrer l'action",
+  logActionMobile: "Enregistrer l'action",
   dashboard: 'Tableau de bord',
   home: 'Accueil',
   groups: 'Groupes',

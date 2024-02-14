@@ -93,6 +93,7 @@ export const usePageContainerStyles = makeStyles()((theme) => {
         flexGrow: '1',
         flexBasis: '0',
         minWidth: '0',
+        justifyContent: 'center',
       },
 
       '.MuiListItemButton-root': {
@@ -103,7 +104,7 @@ export const usePageContainerStyles = makeStyles()((theme) => {
       '.MuiListItemIcon-root': {
         justifyContent: 'center',
         alignItems: 'flex-end',
-        height: '25px'
+        height: '30px'
       }
     },
     drawerClose: {
@@ -128,11 +129,15 @@ export const usePageContainerStyles = makeStyles()((theme) => {
       flexBasis: '0',
       alignItems: 'center',
       fontSize: '1rem',
-      padding: '8px 16px',
+      padding: '0',
       borderRadius: '0',
       margin: '0',
       'span': {
-        margin: '8px 0 14px 0',
+        margin: '8px 0 8px 0',
+      },
+
+      '.MuiSvgIcon-root': {
+        height: '30px',
       },
 
       '&:hover, &:focus': {
@@ -163,6 +168,9 @@ export const usePageContainerStyles = makeStyles()((theme) => {
         height: '100%',
         display: 'inline-flex',
         alignItems: 'center',
+      },
+      '.MuiListItemText-root': {
+        display: 'none',
       },
     },
     logOut: {
