@@ -47,6 +47,9 @@ export const usePageContainerStyles = makeStyles()((theme) => {
         maxWidth: '70%',
       },
     },
+    avatar: {
+      textTransform: 'uppercase',
+    },
     logAction: {
       background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
       marginBottom: 10,
@@ -85,7 +88,7 @@ export const usePageContainerStyles = makeStyles()((theme) => {
 
     mobileNav: {
       display: 'flex',
-      height: '80px',
+      minHeight: '80px',
       width: '100%',
       padding: '0 15px',
 
@@ -120,6 +123,10 @@ export const usePageContainerStyles = makeStyles()((theme) => {
       '.MuiList-root': {
         borderBottom: '1px solid #A9A9A9',
         marginBottom: '20px'
+      },
+      '.MuiListItem-root a': {
+        paddingLeft: '0',
+        paddingRight: '0',
       }
     },
     menuButton: {
@@ -143,9 +150,6 @@ export const usePageContainerStyles = makeStyles()((theme) => {
       '&:hover, &:focus': {
         borderRadius: '0',
       }
-    },
-    languageLabel: {
-      paddingLeft: '15px',
     },
     logActionMobile: {
       flexGrow: '0',
@@ -174,6 +178,8 @@ export const usePageContainerStyles = makeStyles()((theme) => {
       },
     },
     logOut: {
+      paddingLeft: '0',
+      paddingRight: '0',
       'span': {
         marginRight: '10px',
       }

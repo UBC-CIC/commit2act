@@ -219,9 +219,6 @@ export const AppNav = ({ handleMenuNavItem }) => {
                   />
                 ))}
               </List>
-              <label htmlFor="language" className={classes.languageLabel}>
-                {translation.changeLanguage}
-              </label>
               <LanguageHandler />
               <MenuItem className={classes.logOut} onClick={handleLogout}>
                 <span>{translation.logout}</span>

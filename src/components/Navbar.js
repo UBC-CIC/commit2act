@@ -64,6 +64,7 @@ const useStyles = makeStyles()((theme) => {
     },
     avatar: {
       background: 'linear-gradient(274.34deg, #33AF99 6.31%, #56C573 77.35%)',
+      textTransform: 'uppercase',
     },
     logo: {
       display: 'none',
@@ -210,9 +211,6 @@ function Navbar(props) {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <div>
-              <label htmlFor="language" className={classes.languageLabel}>
-                {translation.changeLanguage}
-              </label>
               <LanguageHandler />
             </div>
             <MenuItem className={classes.logOut} onClick={handleLogout}>
