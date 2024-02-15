@@ -224,6 +224,7 @@ const ActionFact = ({
               right: '10px',
               color: 'white',
               fontSize: '14px',
+              background: 'rgba(1,1,1,0.25)',
             }}
           >
             Photo by {randomImage['Artist']} from {randomImage['Country']}
