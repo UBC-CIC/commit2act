@@ -103,7 +103,7 @@ function PageContainer(props) {
         setUser,
       }}
     >
-      <Grid container direction="column">
+      <Grid direction="column">
         <a className={classes.skip_button} href="#main">
           Skip to Content
         </a>

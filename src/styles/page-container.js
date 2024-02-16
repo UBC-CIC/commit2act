@@ -24,7 +24,6 @@ export const usePageContainerStyles = makeStyles()((theme) => {
       },
     },
     content: {
-      flexGrow: 1,
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(3),
       },
@@ -33,8 +32,9 @@ export const usePageContainerStyles = makeStyles()((theme) => {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      marginLeft: -drawerWidth,
-      maxWidth: '100%',
+      // marginLeft: -drawerWidth,
+      maxWidth: '95%',
+      width: '100%',
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
@@ -42,9 +42,8 @@ export const usePageContainerStyles = makeStyles()((theme) => {
         duration: theme.transitions.duration.enteringScreen,
       }),
       marginLeft: 0,
-      maxWidth: '100%',
       [theme.breakpoints.up('md')]: {
-        maxWidth: '70%',
+        maxWidth: '75%',
       },
     },
     avatar: {
