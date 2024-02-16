@@ -1,39 +1,32 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Button,
   Typography,
   FormControl,
   FormControlLabel,
   RadioGroup,
   Radio,
 } from '@mui/material';
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { styled } from '@mui/material/styles';
 import ActionButtons from './ActionButtons';
 import useTranslation from '../customHooks/translations';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
 import { useActionDetailsContext } from '../../hooks/use-action-details-context';
+import { PropTypes } from 'prop-types';
 
-const StyledButton = styled(Button)`
-  margin-top: 5em;
-  width: 80%;
-`;
-
-const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
-  const { activeStep, actionStyle, setActiveStep } = useActiveStepContext();
+const BonusPointQuiz = ({ setQuizAnswered }) => {
+  const { activeStep, setActiveStep } = useActiveStepContext();
   const { quiz } = useActionDetailsContext();
   const answers = quiz?.answers;
   const correctAnswers = quiz?.correct_answers;
   const answersArray = answers ? answers.split('\n') : [];
   const correctAnswersArray = correctAnswers ? correctAnswers.split('\n') : [];
 
-  const [userAnswer, setUserAnswer] = useState();
+  const [userAnswer, setUserAnswer] = useState('');
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
   const [numTries, setNumTries] = useState(1);
 
   const translation = useTranslation();
+  const answeredCorrectly = correctAnswersArray.includes(userAnswer);
 
   const displayQuiz = () => {
     return (
@@ -43,6 +36,7 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
           sx={{
             fontSize: '1em',
             color: '#34b198',
+            fontWeight: 'bold',
           }}
         >
           {translation.extraPoints}
@@ -56,11 +50,11 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
               value={userAnswer}
               onChange={(e) => {
                 setUserAnswer(e.target.value);
+                setIsAnswerSelected(true);
               }}
               sx={{
                 mt: '0.5em',
                 alignSelf: 'center',
-                '& .Mui-checked': { color: actionStyle.color },
               }}
             >
               {answersArray.map((answer, index) => {
@@ -68,21 +62,23 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
                   <FormControlLabel
                     key={index}
                     value={answer}
-                    control={<Radio />}
                     label={answer}
+                    disabled={isAnswerSelected}
+                    sx={{
+                      '& .Mui-checked': {
+                        color: `${
+                          answeredCorrectly ? '#34b198' : 'red'
+                        } !important`,
+                      },
+                    }}
+                    control={<Radio />}
                   />
                 );
               })}
             </RadioGroup>
           </>
         </FormControl>
-        <Button
-          variant="contained"
-          disabled={!userAnswer}
-          onClick={() => setIsAnswerSelected(true)}
-        >
-          {translation.checkAnswer}
-        </Button>
+        {userAnswer ? displayAnswer() : null}
       </>
     );
   };
@@ -90,31 +86,25 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
   const displayAnswer = () => {
     return (
       <>
-        {correctAnswersArray.includes(userAnswer) ? (
+        {answeredCorrectly ? (
           <>
-            <Typography variant="h2">{translation.correct}</Typography>
-            <CheckCircleOutlineOutlinedIcon
-              sx={{ fontSize: 80, color: '#BCF10C' }}
-            />
-            <Typography variant="subtitle1" sx={{ mt: '1.5em' }}>
+            <Typography>
+              <span style={{ color: '#34b198', fontWeight: 'bold' }}>
+                {translation.correct}{' '}
+              </span>
               {numTries > 1
-                ? '0 bonus points will be added to your entry'
-                : '10 bonus points will be added to your entry'}
+                ? '0 bonus points will be added to your entry.'
+                : '10 bonus points will be added to your entry.'}
             </Typography>
           </>
         ) : (
           <>
-            <Typography variant="h2">{translation.incorrect}</Typography>
-            <CancelOutlinedIcon sx={{ fontSize: 80, color: '#BCF10C' }} />
-            <StyledButton
-              onClick={() => {
-                setNumTries(numTries + 1);
-                setIsAnswerSelected(false);
-              }}
-              variant="contained"
-            >
-              {translation.tryAgain}
-            </StyledButton>
+            <Typography>
+              <span style={{ color: 'red', fontWeight: 'bold' }}>
+                {translation.incorrect}{' '}
+              </span>
+              Try again to still earn some more points.
+            </Typography>
           </>
         )}
       </>
@@ -131,22 +121,33 @@ const BonusPointQuiz = ({ setQuizAnswered, setFirstQuizAnswerCorrect }) => {
         textAlign: 'start',
       }}
     >
-      {isAnswerSelected ? displayAnswer() : displayQuiz()}
+      {displayQuiz()}
       <ActionButtons
         forwardOnClick={() => {
-          if (userAnswer) {
+          if (answeredCorrectly || numTries > 1) {
             setActiveStep(activeStep + 1);
           } else {
-            setIsAnswerSelected(true);
+            setIsAnswerSelected(false);
             setQuizAnswered(true);
+            setNumTries(numTries + 1);
           }
         }}
         backOnClick={() => setActiveStep(activeStep + 1)}
-        backText={translation.bonusQuizSkip}
-        forwardText={translation[userAnswer ? 'continue' : 'bonusQuizSubmit']}
+        backText={translation.continue}
+        forwardText={
+          translation[
+            answeredCorrectly || !userAnswer || numTries > 1
+              ? 'bonusQuizSubmit'
+              : 'tryAgain'
+          ]
+        }
       />
     </Box>
   );
+};
+
+BonusPointQuiz.propTypes = {
+  setQuizAnswered: PropTypes.func,
 };
 
 export default BonusPointQuiz;
