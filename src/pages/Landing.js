@@ -153,7 +153,6 @@ const Landing = () => {
     <>
       {user ? (
         <Grid
-          container
           alignItems={{ xs: 'center', lg: 'flex-start' }}
           direction={{ xs: 'column', lg: 'row' }}
           gap={{ xs: '2em', lg: '0' }}
@@ -169,6 +168,7 @@ const Landing = () => {
               variant="h1"
               sx={{
                 fontSize: { xs: '2em', md: '2.5em' },
+                mx: 'auto',
                 mt: { xs: '1em', lg: '0' },
                 wordWrap: 'break-word',
                 maxWidth: { xs: '400px', sm: '100%' },
