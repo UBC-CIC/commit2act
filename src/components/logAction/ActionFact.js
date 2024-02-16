@@ -15,9 +15,9 @@ import ActionButtons from './ActionButtons';
 import { useActiveStepContext } from '../../hooks/use-active-step-context';
 import { useUserInfoContext } from '../../hooks/use-user-info-context';
 import { useActionDetailsContext } from '../../hooks/use-action-details-context';
-import { useActionFactImage } from '../../hooks/use-action-fact-image';
 
 import { useLanguageContext } from '../contexts/LanguageContext';
+import ActionFactImage from './ActionFactImage';
 import PropTypes from 'prop-types';
 
 if (document.getElementById('root')) {
@@ -34,7 +34,6 @@ const ActionFact = ({
   const { quiz, selectedDate, totalCO2Saved, actionItemValues, selectedImage } =
     useActionDetailsContext();
   const { user } = useUserInfoContext();
-  const { randomImage, isLoading } = useActionFactImage();
   const { contentTranslations } = useContentTranslationsContext();
   const translation = useTranslation();
   const [noPossibleQuizzes, setNoPossibleQuizzes] = useState(false);
@@ -202,39 +201,6 @@ const ActionFact = ({
     }
   };
 
-  const renderImage = () =>
-    !isLoading ? (
-      randomImage ? (
-        <figure
-          style={{
-            position: 'relative',
-            margin: '1.5rem auto',
-          }}
-        >
-          <img
-            height="250px"
-            src={randomImage['Thumb228']}
-            alt={randomImage?.title}
-            style={{ borderRadius: '1.5rem' }}
-          />
-          <figcaption
-            style={{
-              position: 'absolute',
-              bottom: '1rem',
-              right: '10px',
-              color: 'white',
-              fontSize: '14px',
-              background: 'rgba(1,1,1,0.25)',
-            }}
-          >
-            Photo by {randomImage['Artist']} from {randomImage['Country']}
-          </figcaption>
-        </figure>
-      ) : null
-    ) : (
-      <CircularProgress />
-    );
-
   return (
     <Grid
       item
@@ -257,7 +223,7 @@ const ActionFact = ({
           {translation.actionIsSubmitted}
         </Typography>
       </Box>
-      {renderImage()}
+      <ActionFactImage />
       <Box
         sx={{
           display: 'flex',

@@ -71,7 +71,13 @@ const BonusPointQuiz = ({ setQuizAnswered }) => {
                         } !important`,
                       },
                     }}
-                    control={<Radio />}
+                    control={
+                      <Radio
+                        inputProps={{
+                          'aria-label': { answer },
+                        }}
+                      />
+                    }
                   />
                 );
               })}
